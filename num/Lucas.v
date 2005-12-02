@@ -20,9 +20,9 @@ Definition lucastest (w:Set) (op:znz_op w) p :=
  let w2 := op.(znz_add) op.(znz_1) op.(znz_1) in
  let w4 := op.(znz_add) w2 w2 in
  let square_m2 :=
-   let mul := mod_op.(mul_mod) in
+   let square := mod_op.(square_mod) in
    let sub := mod_op.(sub_mod) in
-   fun x => sub (mul x x) w2   
+   fun x => sub (square x) w2   
  in
  op.(znz_to_Z) (iter_pos (Pminus p 2) _ square_m2 w4).
 
@@ -31,33 +31,43 @@ Definition lucastest (w:Set) (op:znz_op w) p :=
 
 
 Time Eval vm_compute in lucastest w1024_op 521.
-(* Finished transaction in 8. secs (7.66u,0.01s) *)
+(* sans square : Finished transaction in 8. secs (7.66u,0.01s) *)
+(* Finished transaction in 6. secs (5.74u,0.01s) *)
 
 Time Eval vm_compute in lucastest w1024_op 607.
-(* Finished transaction in 11. secs (11.09u,0.01s) *)
+(* sans square : Finished transaction in 11. secs (11.09u,0.01s) *)
+(* Finished transaction in 9. secs (8.98u,0.02s) *)
 
 Time Eval vm_compute in lucastest w2048_op 1279.
-(* Finished transaction in 71. secs (71.u,0.07s) *)
+(* sans square : Finished transaction in 71. secs (71.u,0.07s) *)
+(* Finished transaction in 58. secs (58.41u,0.06s) *)
 
 Time Eval vm_compute in lucastest w4096_op 2203.
-(* Finished transaction in 324. secs (323.43u,0.01s) *)
+(* sans square : Finished transaction in 324. secs (323.43u,0.01s) *)
+(* Finished transaction in 251. secs (250.2u,0.04s) *)
 
 Time Eval vm_compute in lucastest w4096_op 2281.
-(* Finished transaction in 348. secs (346.96u,0.04s) *)
+(* sans square : Finished transaction in 348. secs (346.96u,0.04s) *)
+(*  *)
 
 Time Eval vm_compute in lucastest w4096_op 3217.
-(*  Finished transaction in 743. secs (739.61u,0.11s) *)
+(* sans square : Finished transaction in 743. secs (739.61u,0.11s) *)
+(*  *)
 
 Time Eval vm_compute in lucastest w8192_op 4253.
-(* Finished transaction in 1831. secs (1828.36u,0.06s)*)
+(* sans square : Finished transaction in 1831. secs (1828.36u,0.06s)*)
+(*  *)
 
 Time Eval vm_compute in lucastest w8192_op 4423.
-(*Finished transaction in 2062. secs (2033.38u,4.11s)  *)
+(* sans square : Finished transaction in 2062. secs (2033.38u,4.11s)  *)
+(*  *)
 
 Time Eval vm_compute in lucastest w16384_op 9689.
-(* Finished transaction in 15458. secs (15401.47u,14.59s) *)
+(* sans square : Finished transaction in 15458. secs (15401.47u,14.59s) *)
+(* Finished transaction in 12702. secs (12641.09u,13.19s) *)
 
 Time Eval vm_compute in lucastest w16384_op 9941.
+(* sans square : Finished transaction in 16252. secs (16168.4u,6.86s) *)
 (*  *)
 
 Time Eval vm_compute in lucastest w16384_op 11213.

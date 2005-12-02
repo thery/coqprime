@@ -10,14 +10,15 @@ Section Mod_op.
  Variable w : Set.
  
  Record mod_op : Set := mk_mod_op {
-   w0_mod    : w;
-   w1_mod    : w;
-   succ_mod  : w -> w;
-   add_mod   : w -> w -> w;
-   pred_mod  : w -> w;
-   sub_mod   : w -> w -> w;
-   mul_mod   : w -> w -> w;
-   power_mod : w -> positive -> w
+   w0_mod     : w;
+   w1_mod     : w;
+   succ_mod   : w -> w;
+   add_mod    : w -> w -> w;
+   pred_mod   : w -> w;
+   sub_mod    : w -> w -> w;
+   mul_mod    : w -> w -> w;
+   square_mod : w -> w;
+   power_mod  : w -> positive -> w
  }.
  
  Variable w_op : znz_op w.
@@ -50,6 +51,7 @@ Section Mod_op.
 
  Let w_mul_c       := w_op.(znz_mul_c).
  Let w_mul         := w_op.(znz_mul).
+ Let w_square_c    := w_op.(znz_square_c).
 
  Let w_div21       := w_op.(znz_div21).
  Let w_add_mul_div := w_op.(znz_add_mul_div).
@@ -121,9 +123,11 @@ Section Mod_op.
   | C1 z => w_add z b
   end.
 
+ Let _ww_compare := ww_compare w_op.
+
  Let _mul_mod x y :=
   let xy := w_mul_c x y in
-  match ww_compare w_op xy wwb with
+  match _ww_compare xy wwb with
   | Lt => snd (split xy)
   | Eq => w0
   | Gt => 
@@ -133,16 +137,28 @@ Section Mod_op.
     w_lsr_n r 
   end.
 
+ Let _square_mod x :=
+  let x2 := w_square_c x in
+  match _ww_compare x2 wwb with
+  | Lt => snd (split x2)
+  | Eq => w0
+  | Gt => 
+    let x2_2n := ww_lsl_n x2 in
+    let (h,l) := split x2_2n in
+    let (q,r) := w_div21 h l b2n in
+    w_lsr_n r 
+  end.
+ 		    
  Let _power_mod :=
    fix pow_mod (x:w) (p:positive) {struct p} : w :=
      match p with
      | xH => x
      | xO p' => 
        let pow := pow_mod x p' in 
-       _mul_mod pow pow
+       _square_mod pow 
      | xI p' =>
        let pow := pow_mod x p' in
-       _mul_mod (_mul_mod pow pow) x
+       _mul_mod (_square_mod pow) x
      end.
 
  Definition make_mod_op := 
@@ -150,7 +166,7 @@ Section Mod_op.
      _w0_mod _w1_mod 
      _succ_mod _add_mod 
      _pred_mod _sub_mod
-     _mul_mod _power_mod.
+     _mul_mod _square_mod _power_mod.
 
 End Mod_op.
     

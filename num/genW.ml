@@ -78,6 +78,7 @@ let w_sub_carry_c = wt^"_sub_carry_c"
 let w_sub = wt^"_sub"
 let w_mul_c = wt^"_mul_c"
 let w_mul = wt^"_mul"
+let w_square_c = wt^"_square_c"
 let w_div_wB = wt^"_div_wB"
 let w_div21 = wt^"_div21"
 let w_lsl_i i = wt^"_lsl"^(string_of_int i)
@@ -357,7 +358,17 @@ let _ =
   println " | WW _ l => l";
   println " end.";
   println "";
-  
+
+  print_def w_square_c "x";
+  print_match "x";
+  for x = 0 to base - 1 do 
+    let prod = x * x in
+    print " | ";print_w x;print " => WW ";
+    print_w (prod/base);print " ";print_w prod;println ""
+  done;
+  println  " end.";
+  println "";
+
   print_title "Division";
 
   print_def w_div_wB "x y";
@@ -455,7 +466,7 @@ let _ =
   println ("       "^w_add_c^" "^w_add_carry_c^" "^w_add);
 	      println ("       "^w_pred_c); 
   println ("       "^w_sub_c^" "^w_sub_carry_c^" "^w_sub);
-  println ("       "^w_mul_c^" "^w_mul); 
+  println ("       "^w_mul_c^" "^w_mul^" "^w_square_c); 
   println ("       "^w_div21^" "^w_add_mul_div^"."); 
   println ""
 

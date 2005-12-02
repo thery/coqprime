@@ -355,6 +355,26 @@ Definition w4_mul x y :=
  | WW _ l => l
  end.
 
+Definition w4_square_c x :=
+ match x with
+ | OOOO => WW OOOO OOOO
+ | OOOI => WW OOOO OOOI
+ | OOIO => WW OOOO OIOO
+ | OOII => WW OOOO IOOI
+ | OIOO => WW OOOI OOOO
+ | OIOI => WW OOOI IOOI
+ | OIIO => WW OOIO OIOO
+ | OIII => WW OOII OOOI
+ | IOOO => WW OIOO OOOO
+ | IOOI => WW OIOI OOOI
+ | IOIO => WW OIIO OIOO
+ | IOII => WW OIII IOOI
+ | IIOO => WW IOOI OOOO
+ | IIOI => WW IOIO IOOI
+ | IIIO => WW IIOO OIOO
+ | IIII => WW IIIO OOOI
+ end.
+
 
 (* ** Division ** *)
 
@@ -550,6 +570,6 @@ Definition w4_op  :=
        w4_add_c w4_add_carry_c w4_add
        w4_pred_c
        w4_sub_c w4_sub_carry_c w4_sub
-       w4_mul_c w4_mul
+       w4_mul_c w4_mul w4_square_c
        w4_div21 w4_add_mul_div.
 

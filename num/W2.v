@@ -175,6 +175,14 @@ Definition w2_mul x y :=
  | WW _ l => l
  end.
 
+Definition w2_square_c x :=
+ match x with
+ | OO => WW OO OO
+ | OI => WW OO OI
+ | IO => WW OI OO
+ | II => WW IO OI
+ end.
+
 
 (* ** Division ** *)
 
@@ -252,6 +260,6 @@ Definition w2_op  :=
        w2_add_c w2_add_carry_c w2_add
        w2_pred_c
        w2_sub_c w2_sub_carry_c w2_sub
-       w2_mul_c w2_mul
+       w2_mul_c w2_mul w2_square_c
        w2_div21 w2_add_mul_div.
 

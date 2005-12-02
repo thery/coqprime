@@ -3,7 +3,6 @@ Set Implicit Arguments.
 
 Require Import ZArith.
 Require Import ZnZ.
-Require Import ZAux.
 
 Open Local Scope Z_scope.
 
@@ -42,17 +41,22 @@ Section Zn2Z.
 
  Let w_mul_c       := w_op.(znz_mul_c).
  Let w_mul         := w_op.(znz_mul).
+ Let w_square_c    := w_op.(znz_square_c).
 
  Let w_div21       := w_op.(znz_div21).
  Let w_add_mul_div := w_op.(znz_add_mul_div).
 
  Let _zn2z := zn2z w.
 
- Let wB := base w_digits.
+ Let wB := Zpower 2 (Zpos w_digits).
 
  Let ww_digits := xO w_digits.
 
- Let ww_to_Z := zn2z_to_Z wB w_to_Z.
+ Definition ww_to_Z x :=
+  match x with
+  | W0 => 0
+  | WW xh xl => wB * w_to_Z xh + w_to_Z xl
+  end.
 
  Definition ww_of_pos p :=
   match w_of_pos p with
@@ -329,7 +333,7 @@ Section Zn2Z.
       end
     end
   end.
-
+   			     
  Definition ww_karastuba_c x y :=
   match x, y with
   | W0, _ => W0
@@ -363,8 +367,27 @@ Section Zn2Z.
    xl*yl         = ll  =         |llh|lll 
  *)
 
-
-
+ Definition ww_square_c x  :=
+  match x with
+  | W0 => W0
+  | WW xh xl =>
+    let hh := w_square_c xh in
+    let ll := w_square_c xl in
+    let xhxl := w_mul_c xh xl in
+    let (wc,cc) := 
+      match add_c xhxl xhxl with
+      | C0 cc => (w0, cc)
+      | C1 cc => (w1, cc)
+      end in
+    match cc with
+    | W0 => WW (add hh (WW wc w0)) ll
+    | WW cch ccl =>
+      match add_c (WW ccl w0) ll with
+      | C0 l => WW (add hh (WW wc cch)) l
+      | C1 l => WW (add_carry hh (WW wc cch)) l
+      end
+    end
+  end.
  (* Division operation *)
 
  Let w_carry_mul cx y :=
@@ -486,7 +509,7 @@ Section Zn2Z.
     ww_add_c ww_add_carry_c ww_add
     ww_pred_c
     ww_sub_c ww_sub_carry_c ww_sub
-    ww_mul_c ww_mul
+    ww_mul_c ww_mul ww_square_c
     ww_div21 ww_add_mul_div.
 
  Definition mk_zn2z_op_karastuba := 
@@ -500,245 +523,10 @@ Section Zn2Z.
     ww_add_c ww_add_carry_c ww_add
     ww_pred_c
     ww_sub_c ww_sub_carry_c ww_sub
-    ww_karastuba_c ww_mul
+    ww_karastuba_c ww_mul ww_square_c
     ww_div21 ww_add_mul_div.
 
 End Zn2Z. 
- (* ********************************************************** *)
- (* **                    The Proofs ...                    ** *)
- (* ********************************************************** *)
-
-Section Proof.
- Variable w:Set.
- Variable w_op : znz_op w.
- Variable op_spec : znz_spec w_op.
-
- Hint Rewrite 
-    (spec_0 op_spec)
-    (spec_1 op_spec)
-    (spec_Bm1 op_spec)
-    (spec_WW op_spec)
-    (spec_CW op_spec)
-    (spec_opp_c op_spec)
-    (spec_opp_carry op_spec)
-    (spec_succ_c op_spec)
-    (spec_add_c op_spec)
-    (spec_add_carry_c op_spec)
-    (spec_add op_spec)
-    (spec_pred_c op_spec)
-    (spec_sub_c op_spec)
-    (spec_sub_carry_c op_spec)
-    (spec_sub op_spec)
-    (spec_mul_c op_spec)
-    (spec_mul op_spec)
-    : w_rewrite.
- 
- Ltac w_rewrite := autorewrite with w_rewrite.
- Ltac zarith := auto with zarith.
- Ltac w_solve := trivial;w_rewrite;trivial;try ring;try omega.
-
- Let wB := base (znz_digits w_op).
-
- Let ww_digits := xO (znz_digits w_op).
-
- Let ww_to_Z := (zn2z_to_Z (base (znz_digits w_op)) (znz_to_Z w_op)).
-
- Lemma base_xO_w_digits :
-   base (xO (znz_digits w_op)) = 
-    base (znz_digits w_op) * base (znz_digits w_op).
- Proof.
-  unfold base;rewrite (Zpos_xO (znz_digits w_op)).
-  replace  (2 * Zpos (znz_digits w_op)) with 
-    (Zpos (znz_digits w_op) + Zpos (znz_digits w_op)).
-  apply Zpower_exp; unfold Zge;simpl;intros;discriminate.
-  ring.
- Qed.
- 
- Lemma base_ww_digits :
-   base ww_digits = base (znz_digits w_op) * base (znz_digits w_op).
- Proof base_xO_w_digits.
- Hint Rewrite base_xO_w_digits base_ww_digits : w_rewrite.
-
-
- Notation "[| x |]" := 
-   (zn2z_to_Z (base (znz_digits w_op)) (znz_to_Z w_op) x)
-   (at level 0, x at level 99).
-  
- Notation "[+| c |]" := 
-   (interp_carry 1 (base (xO (znz_digits w_op)))
-          (zn2z_to_Z (base (znz_digits w_op)) (znz_to_Z w_op))Z c)  
-   (at level 0, x at level 99).
-
- Notation "[-| c |]" := 
-   (interp_carry (-1)  (base (xO (znz_digits w_op))) 
-          (zn2z_to_Z (base (znz_digits w_op)) (znz_to_Z w_op)) c)  
-   (at level 0, x at level 99).
-
- Notation "[|| x ||]" := 
-   (zn2z_to_Z  (base (xO (znz_digits w_op))) 
-          (zn2z_to_Z (base (znz_digits w_op)) (znz_to_Z w_op)) x)  
-   (at level 0, x at level 99).
-
- Lemma spec_ww_to_Z   : forall x, 0 <= [| x |] < base ww_digits.
- Proof with w_solve.
-  destruct x;simpl.
-  split. zarith. unfold base;apply Zpower_lt_0;zarith.
-  destruct (spec_to_Z op_spec w0);destruct (spec_to_Z op_spec w1)...
-  split.
-  change 0 with (0+0);apply Zplus_le_compat...
-  apply Zmult_le_0_compat ...
-  assert 
-   (base (znz_digits w_op) * znz_to_Z w_op w0 + znz_to_Z w_op w1 <=
-    base (znz_digits w_op)*(base (znz_digits w_op)) - 1)...
-  replace (base (znz_digits w_op) * base (znz_digits w_op) - 1) with
-    (base (znz_digits w_op) * (base (znz_digits w_op) - 1) + 
-                (base (znz_digits w_op) - 1)) ...
-  apply Zplus_le_compat...
-  apply Zmult_le_compat ...
- Qed.
-  
- Axiom spec_ww_of_pos : forall p, 
-       Zpos p = 
-        (Z_of_N (fst (ww_of_pos w_op p)))*wB + [|(snd (ww_of_pos w_op p))|].
-
- Lemma spec_ww_0   : [|W0|] = 0.
- Proof. trivial. Qed.
-
- Lemma spec_ww_1   : [|WW (znz_0 w_op) (znz_1 w_op)|] = 1.
- Proof. simpl;w_solve. Qed.
-
- Lemma spec_ww_Bm1 : [|WW (znz_Bm1 w_op) (znz_Bm1 w_op)|] = base ww_digits - 1.
- Proof. simpl;w_solve. Qed.
-
- Lemma spec_ww_WW  : forall h l,
-    [||ww_WW h l||] = [|h|] * (base ww_digits) + [|l|].
- Proof with w_solve.
-  intros;simpl;unfold ww_WW.
-  destruct h;simpl ... destruct l;simpl ...
- Qed.
-
- Hint Rewrite spec_ww_0 spec_ww_1 spec_ww_Bm1 spec_ww_WW : w_rewrite.
- Lemma spec_ww_CW  : 
-     forall sign c l, 
-       interp_carry sign ((base ww_digits)*(base ww_digits))
-         (zn2z_to_Z (base ww_digits) ww_to_Z) (ww_CW c l) =  
-       (interp_carry sign (base ww_digits) ww_to_Z c)*
-         (base ww_digits) + [|l|].
- Proof with w_solve.
-  intros sign c l;destruct c;simpl ...
- Qed.
-   
-    (* Comparison *)
-
- Axiom HELP_Laurent : False.
-
- Ltac HELP_Laurent := elim HELP_Laurent.
-
- Lemma spec_ww_compare :
-     forall x y, 
-       match ww_compare w_op x y with
-       | Eq => [|x|] = [|y|]
-       | Lt => [|x|] < [|y|]
-       | Gt => [|x|] > [|y|]
-       end.
- Proof with w_solve.
-  destruct x as [ |xh xl].
-
-  destruct y as [ | yh yl];simpl ...
-  destruct (spec_to_Z op_spec yl);destruct (spec_to_Z op_spec yh).
-  assert (Hyh := spec_compare op_spec (znz_0 w_op) yh);
-    destruct (znz_compare w_op (znz_0 w_op) yh).
-  rewrite <-Hyh. rewrite (spec_0 op_spec).
-  repeat rewrite Zmult_0_r. 
-  pattern 0 at 1 3 5;rewrite <- (spec_0 op_spec).
-  exact (spec_compare op_spec (znz_0 w_op) yl).
-  change 0 with (0+0);apply Zplus_lt_le_compat ...
-  apply Zmult_lt_0_compat...
-  rewrite (spec_0 op_spec) in Hyh ...
-  rewrite (spec_0 op_spec) in Hyh ...
-
-  destruct (spec_to_Z op_spec xl);destruct (spec_to_Z op_spec xh).
-  destruct y as [ | yh yl];simpl ...
-  assert (Hxh := spec_compare op_spec xh (znz_0 w_op));
-    destruct (znz_compare w_op xh (znz_0 w_op)).
-  rewrite Hxh. rewrite (spec_0 op_spec).
-  repeat rewrite Zmult_0_r. 
-  pattern 0 at 2 4 6;rewrite <- (spec_0 op_spec).
-  exact (spec_compare op_spec xl (znz_0 w_op)).
-  rewrite (spec_0 op_spec) in Hxh ...
-  rewrite (spec_0 op_spec) in Hxh; apply Zlt_gt.
-  change 0 with (0+0);apply Zplus_lt_le_compat ...
-  apply Zmult_lt_0_compat...
-
-  destruct (spec_to_Z op_spec yl);destruct (spec_to_Z op_spec yh).
-  assert (Hh := spec_compare op_spec xh yh);destruct (znz_compare w_op xh yh).
-  rewrite Hh.   
-  assert (Hl := spec_compare op_spec xl yl);
-    destruct (znz_compare w_op xl yl)...
-
-  HELP_Laurent.
-  HELP_Laurent.
- Qed.
-
-    (* Basic arithmetic operations *)
- Lemma spec_ww_opp_c : forall x, [-|ww_opp_c w_op x|] = -[|x|].
- Proof with w_solve.
-  destruct x;simpl ...
-  assert (H1:=spec_opp_c op_spec w1);destruct (znz_opp_c w_op w1).
-  simpl in H1.
-  assert (znz_to_Z w_op w1 = 0). 
-   destruct (spec_to_Z op_spec w2);destruct (spec_to_Z op_spec w1)...
-  rewrite H...
-  simpl in H1.
-  unfold interp_carry in * ...
-  change (-1*znz_to_Z w_op w1) with (-znz_to_Z w_op w1).
-  rewrite <- H1 ...
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    spec_ww_opp_carry : forall x, [|w_opp_carry x|] = [-|w_opp_c x|] - 1;
-
-    spec_ww_succ_c : forall x, [+|w_succ_c x|] = [|x|] + 1;
-    spec_ww_add_c  : forall x y, [+|w_add_c x y|] = [|x|] + [|y|];
-    spec_ww_add_carry_c : forall x y, [+|w_add_carry_c x y|] = [|x|] + [|y|] + 1;
-    spec_ww_add : forall x y, [|w_add x y|] = ([|x|] + [|y|]) mod (base (znz_digits ww_op);
-
-    spec_ww_pred_c : forall x, [-|w_pred_c x|] = [|x|] - 1;
-    spec_ww_sub_c : forall x y, [-|w_sub_c x y|] = [|x|] - [|y|];
-    spec_ww_sub_carry_c : forall x y, [-|w_sub_carry_c x y|] = [|x|] - [|y|] - 1;
-    spec_ww_sub : forall x y, [|w_sub x y|] = ([|x|] - [|y|]) mod (base (znz_digits ww_op);
-  
-    spec_ww_mul_c : forall x y, [|| w_mul_c x y ||] = [|x|] * [|y|];
-    spec_ww_mul : forall x y, [|w_mul x y|] = ([|x|] * [|y|]) mod (base (znz_digits ww_op);
-    
-    (* Special divisions operations *)
-    spec_ww_div21_fst : forall a1 a2 b, 
-     (base (znz_digits ww_op)/2 <= [|b|] ->
-     [+|fst (w_div21 a1 a2 b)|] = ([|a1|]*(base (znz_digits ww_op)+[|a2|])/ [|b|];
-    spec_ww_div21_snd : forall a1 a2 b, 
-     (base (znz_digits ww_op)/2 <= [|b|] ->
-     [|snd (w_div21 a1 a2 b)|] = ([|a1|]*(base (znz_digits ww_op)+[|a2|]) mod [|b|];
-    spec_ww_add_mul_div : forall x y p,
-       0 < Zpos p < Zpos w_digits ->
-       [| w_add_mul_div x y p|] =
-	 ([|x|] * (Zpower 2 (Zpos p)) + 
-          [|y|] / (Zpower 2 ((Zpos w_digits) - (Zpos p)))) mod (base (znz_digits ww_op)
-  }.
-
-
 
 
 
