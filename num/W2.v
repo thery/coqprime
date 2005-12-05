@@ -1,7 +1,9 @@
 Require Import ZArith.
 Require Import ZnZ.
 
+(*
 Unset Boxed Definitions.
+*)
 
 Open Local Scope Z_scope.
 
