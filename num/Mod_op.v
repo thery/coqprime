@@ -1,4 +1,6 @@
+(* 
 Unset Boxed Definitions.
+*)
 Set Implicit Arguments.
 
 Require Import ZArith.
@@ -10,15 +12,15 @@ Section Mod_op.
  Variable w : Set.
  
  Record mod_op : Set := mk_mod_op {
-   w0_mod     : w;
-   w1_mod     : w;
-   succ_mod   : w -> w;
-   add_mod    : w -> w -> w;
-   pred_mod   : w -> w;
-   sub_mod    : w -> w -> w;
-   mul_mod    : w -> w -> w;
+   w0_mod    : w;
+   w1_mod    : w;
+   succ_mod  : w -> w;
+   add_mod   : w -> w -> w;
+   pred_mod  : w -> w;
+   sub_mod   : w -> w -> w;
+   mul_mod   : w -> w -> w;
    square_mod : w -> w;
-   power_mod  : w -> positive -> w
+   power_mod : w -> positive -> w
  }.
  
  Variable w_op : znz_op w.
@@ -123,11 +125,9 @@ Section Mod_op.
   | C1 z => w_add z b
   end.
 
- Let _ww_compare := ww_compare w_op.
-
  Let _mul_mod x y :=
   let xy := w_mul_c x y in
-  match _ww_compare xy wwb with
+  match ww_compare w_op xy wwb with
   | Lt => snd (split xy)
   | Eq => w0
   | Gt => 
@@ -142,20 +142,20 @@ Section Mod_op.
   match _ww_compare x2 wwb with
   | Lt => snd (split x2)
   | Eq => w0
-  | Gt => 
+  | Gt =>
     let x2_2n := ww_lsl_n x2 in
     let (h,l) := split x2_2n in
     let (q,r) := w_div21 h l b2n in
-    w_lsr_n r 
+    w_lsr_n r
   end.
- 		    
- Let _power_mod :=
+
+  Let _power_mod :=
    fix pow_mod (x:w) (p:positive) {struct p} : w :=
      match p with
      | xH => x
-     | xO p' => 
-       let pow := pow_mod x p' in 
-       _square_mod pow 
+     | xO p' =>
+       let pow := pow_mod x p' in
+       _square_mod pow
      | xI p' =>
        let pow := pow_mod x p' in
        _mul_mod (_square_mod pow) x
