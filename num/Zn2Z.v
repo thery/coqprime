@@ -1105,6 +1105,51 @@ Theorem spec_ww_mul: forall x y, [[ww_mul w_op x y]] = ([[x]] * [[y]]) mod wwB.
   eq_tac; auto; rewrite wwB_wBwB; ring.
 Qed.
 
+Theorem spec_ww_square_c : forall x, [||ww_square_c w_op x||] = [[x]] * [[x]].
+  intros x; case x; auto; intros xh xl.
+  match goal with |- _ = ?X => set (tmp:= X); simpl; unfold tmp end.
+  set (hh :=  (znz_square_c w_op xh)).
+  set (ll  :=  (znz_square_c w_op xl)).
+  generalize (spec_ww_add_c (znz_mul_c w_op xh xl) (znz_mul_c w_op xh xl)).
+  case (ww_add_c w_op (znz_mul_c w_op xh xl) (znz_mul_c w_op xh xl)).
+  intros wc Hwc.
+  apply  spec_mul_aux with (cc := wc) (wc := w_op.(znz_0)) (hh := hh) (ll := ll).
+  unfold hh; unfold ww_to_Z; apply spec_square_c; auto.
+  unfold ll; unfold ww_to_Z; apply spec_square_c; auto.
+  simpl in Hwc; rewrite Hwc; autorewrite with w_rewrite.
+  unfold ww_to_Z; repeat rewrite spec_mul_c; auto.
+  ring.
+  intros z; case z.
+  autorewrite with w_rewrite; simpl.
+  autorewrite with w_rewrite; simpl.
+  intros H.
+  unfold ww_to_Z in H; rewrite spec_mul_c in H; auto.
+  rewrite Zmod_def_small.
+  rewrite wwB_wBwB in H; rewrite wwB_wBwB.
+  unfold hh, ll; unfold ww_to_Z; repeat rewrite spec_square_c; auto.
+  match goal with |-  _ = ?X =>
+    match type of H with _ = ?Y => apply trans_equal with (wB * (Y - Y) + X);
+         [pattern Y at 1; rewrite <- H | idtac]; ring
+   end end.
+  generalize (spec_to_Z op_spec xh); intros HH.
+  generalize (spec_ww_to_Z hh); intros HH1.
+  rewrite Zmult_1_r; split; auto with zarith.
+  apply Zle_lt_trans with ((wwB - 2 * wB + 1) + (wB + 0)); auto with zarith.
+  apply Zplus_le_compat_r.
+  unfold hh, ww_to_Z; repeat rewrite spec_square_c; auto with arith.
+  match goal with |- ?X <= ? Y => assert (0 <= X <= Y) end; auto with zarith.
+  rewrite wwB_wBwB; apply Zmult_lt_b; w_solve1.
+  assert (1 < wB); auto with zarith.
+  intros cc1 cc2 Hwc.
+  apply  spec_mul_aux with (cc := (WW cc1 cc2)) (wc := w_op.(znz_1)) (hh := hh) (ll := ll).
+  unfold hh; unfold ww_to_Z; apply spec_square_c; auto.
+  unfold ll; unfold ww_to_Z; apply spec_square_c; auto.
+  generalize Hwc; w_rewrite.
+  unfold ww_to_Z; repeat rewrite spec_mul_c; auto.
+  rewrite (Zmult_comm [|xl|]).
+  rewrite wwB_wBwB; clear Hwc; intros Hwc; rewrite <- Hwc; ring.
+Qed.
+
 (*
     
     (* Special divisions operations *)

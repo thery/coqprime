@@ -147,6 +147,8 @@ Section Spec.
  Let w_mul_c       := w_op.(znz_mul_c).
  Let w_mul         := w_op.(znz_mul).
 
+ Let w_square_c       := w_op.(znz_square_c).
+ 
  Let w_div21       := w_op.(znz_div21).
  Let w_add_mul_div := w_op.(znz_add_mul_div).
 
@@ -204,6 +206,8 @@ Record znz_spec : Set := mk_znz_spec {
 
     spec_mul_c : forall x y, [|| w_mul_c x y ||] = [|x|] * [|y|];
     spec_mul : forall x y, [|w_mul x y|] = ([|x|] * [|y|]) mod wB;
+
+   spec_square_c : forall x, [|| w_square_c x||] = [|x|] * [|x|];
 
     (* Special divisions operations *)
     spec_div21_fst : forall a1 a2 b,
