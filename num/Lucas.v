@@ -1,4 +1,6 @@
+(*
 Unset Boxed Definitions.
+*)
 Set Implicit Arguments.
 
 Require Import ZArith.
@@ -29,11 +31,14 @@ Definition lucastest (w:Set) (op:znz_op w) p :=
 
   
 
+Time Eval compute in lucastest w1024_op 521.
+(*
 
 Time Eval vm_compute in lucastest w1024_op 521.
 (* sans square : Finished transaction in 8. secs (7.66u,0.01s) *)
 (* Finished transaction in 6. secs (5.74u,0.01s) *)
 
+;
 Time Eval vm_compute in lucastest w1024_op 607.
 (* sans square : Finished transaction in 11. secs (11.09u,0.01s) *)
 (* Finished transaction in 9. secs (8.98u,0.02s) *)
@@ -88,3 +93,4 @@ Time Eval vm_compute in powertest w1024_op 3
 6864797660130609714981900799081393217269435300143305409394463459185543183397656052122559640661454554977296311391480858037121987999716643812574028291115057151.
 
 
+*)

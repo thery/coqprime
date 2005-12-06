@@ -32,17 +32,17 @@ Definition w131072 := zn2z w65536.
 Definition w16_op := mk_zn2z_op w8_op.           
 Definition w32_op := mk_zn2z_op w16_op.
 Definition w64_op := mk_zn2z_op w32_op.
-Definition w128_op := mk_zn2z_op_karastuba w64_op.
-Definition w256_op := mk_zn2z_op_karastuba w128_op.
-Definition w512_op := mk_zn2z_op_karastuba w256_op.
-Definition w1024_op := mk_zn2z_op_karastuba w512_op.
-Definition w2048_op := mk_zn2z_op_karastuba w1024_op.
-Definition w4096_op := mk_zn2z_op_karastuba w2048_op.
-Definition w8192_op := mk_zn2z_op_karastuba w4096_op.
-Definition w16384_op := mk_zn2z_op_karastuba w8192_op.
-Definition w32768_op := mk_zn2z_op_karastuba w16384_op.
-Definition w65536_op := mk_zn2z_op_karastuba w32768_op.
-Definition w131072_op := mk_zn2z_op_karastuba w65536_op.
+Definition w128_op := mk_zn2z_op_karatsuba w64_op.
+Definition w256_op := mk_zn2z_op_karatsuba w128_op.
+Definition w512_op := mk_zn2z_op_karatsuba w256_op.
+Definition w1024_op := mk_zn2z_op_karatsuba w512_op.
+Definition w2048_op := mk_zn2z_op_karatsuba w1024_op.
+Definition w4096_op := mk_zn2z_op_karatsuba w2048_op.
+Definition w8192_op := mk_zn2z_op_karatsuba w4096_op.
+Definition w16384_op := mk_zn2z_op_karatsuba w8192_op.
+Definition w32768_op := mk_zn2z_op_karatsuba w16384_op.
+Definition w65536_op := mk_zn2z_op_karatsuba w32768_op.
+Definition w131072_op := mk_zn2z_op_karatsuba w65536_op.
 
 
 

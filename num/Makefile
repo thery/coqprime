@@ -71,26 +71,36 @@ COQLIBS=-I .
 #                                 #
 ###################################
 
-VFILES=ZnZ.v\
-  Zn2Z.v\
+VFILES=Lucas.v\
   Mod_op.v\
+  Tactic.v\
   W2.v\
   W4.v\
   W8.v\
-  W.v
+  W.v\
+  ZAux.v\
+  ZDivModAux.v\
+  Zn2ZProof.v\
+  Zn2Z.v\
+  ZnZ.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
 HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
-all: ZnZ.vo\
-  Zn2Z.vo\
+all: Lucas.vo\
   Mod_op.vo\
+  Tactic.vo\
   W2.vo\
   W4.vo\
   W8.vo\
-  W.vo
+  W.vo\
+  ZAux.vo\
+  ZDivModAux.vo\
+  Zn2ZProof.vo\
+  Zn2Z.vo\
+  ZnZ.vo
 
 spec: $(VIFILES)
 
@@ -140,7 +150,7 @@ all-gal.ps: $(VFILES)
 	$(COQDOC) -html -g $< -o $@
 
 byte:
-	$(MAKE) all "OPT="
+	$(MAKE) all "OPT=-byte"
 
 opt:
 	$(MAKE) all "OPT=-opt"
