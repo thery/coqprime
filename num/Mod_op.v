@@ -139,7 +139,7 @@ Section Mod_op.
 
  Let _square_mod x :=
   let x2 := w_square_c x in
-  match _ww_compare x2 wwb with
+  match ww_compare w_op x2 wwb with
   | Lt => snd (split x2)
   | Eq => w0
   | Gt =>

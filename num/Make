@@ -1,8 +1,12 @@
-ZnZ.v
-Zn2Z.v
+Lucas.v
 Mod_op.v
+Tactic.v
 W2.v
 W4.v
 W8.v
 W.v
-
+ZAux.v
+ZDivModAux.v
+Zn2ZProof.v
+Zn2Z.v
+ZnZ.v
