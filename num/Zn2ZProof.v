@@ -9,6 +9,7 @@ Require Import ZnZ.
 Require Import ZAux.
 Require Import ZDivModAux.
 Require Import Zn2Z.
+Require Import ZPowerAux.
 
 Open Local Scope Z_scope.
 
@@ -580,16 +581,6 @@ Theorem spec_ww_mul_c : forall x y, [|| ww_mul_c w_op x y ||] = [[x]] * [[y]].
   generalize Hwc; w_rewrite.
   unfold ww_to_Z; repeat rewrite spec_mul_c; auto.
   rewrite wwB_wBwB; clear Hwc; intros Hwc; rewrite <- Hwc; ring.
-Qed.
-
-Theorem Zmult_mod_distr_l: forall a b c, 0 < a -> 0 < c -> (a * b) mod (a * c) = a * (b mod c).
-  intros a b c H Hc.
-  apply sym_equal; apply Zmod_unique with (b / c); auto with zarith.
-  apply Zmult_lt_0_compat; auto.
-  case (Z_mod_lt b c); auto with zarith; intros; split; auto with zarith.
-  apply Zmult_lt_compat_l; auto.
-  rewrite <- Zmult_assoc; rewrite <- Zmult_plus_distr_r.
-  rewrite <- Z_div_mod_eq; auto with zarith.
 Qed.
 
 Theorem spec_ww_mul: forall x y, [[ww_mul w_op x y]] = ([[x]] * [[y]]) mod wwB.
@@ -1833,8 +1824,6 @@ Theorem   spec_ww_div21 : forall a1 a2 b,
    end end.
   rewrite wwB_wBwB; rewrite Hr; ring.
 Qed.
-
-Require Import ZPowerAux.
 
 Let digits :=  znz_digits w_op.
 Let wdigits := xO (znz_digits w_op).
