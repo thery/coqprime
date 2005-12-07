@@ -143,7 +143,7 @@ apply Zle_lt_trans with (d  - b); auto with zarith.
 rewrite Zmult_minus_distr_l; auto with zarith.
 Qed.
 
-Theorem beta_lex_inv: forall a b c d beta, a < c -> 0 <= b < beta -> 0 <= d < beta -> beta * a + b < beta * c + d. 
+Theorem beta_lex_inv: forall a b c d beta, a < c -> 0 <= b < beta -> 0 <= d < beta -> beta * a + b < beta * c  + d. 
 intros a b c d beta H1 (H3, H4) (H5, H6).
 case (Zle_or_lt (beta * c + d) (beta * a + b)); auto with zarith.
 intros H7; contradict H1; apply Zle_not_lt; apply beta_lex with (1 := H7); auto.
@@ -1409,6 +1409,507 @@ Theorem spec_ww_karatsuba_c: forall x y, [||ww_karatsuba_c w_op x y||] = [[x]] *
            (znz_mul_c w_op xh yh)
            (znz_mul_c w_op xl yl)
            ); w_rewrite; auto.
+Qed.
+
+Lemma without_c_prec_c_pos: forall q1, 0 < [|q1|]  -> [|without_c (znz_pred_c w_op q1)|] = [|q1|] - 1.
+  intros q2.
+  generalize (spec_pred_c op_spec q2); case (znz_pred_c w_op q2); auto.
+  intros w0.
+  w_rewrite1.
+  intros V1 V2; contradict V2; apply Zle_not_lt.
+  replace [|q2|] with (([|q2|] - 1) + 1); auto with zarith.
+  rewrite <- V1; generalize (spec_to_Z op_spec w0); auto with zarith.
+Qed.
+
+(********************************************************************
+   Definition of the support function to adjust the result
+ ********************************************************************)
+
+Hint Rewrite Zmult_1_r Zmult_0_r Zmult_1_l Zmult_0_l Zplus_0_l Zplus_0_r Zminus_0_r: rm10.
+Hint Rewrite Zmult_plus_distr_r Zmult_plus_distr_l Zmult_minus_distr_r Zmult_minus_distr_l: distr.
+
+
+Theorem  spec_w_carry_pred_c: forall q, 0< [+|q|] ->
+ [+|match q with
+  | C0 x => C0 (without_c (znz_pred_c w_op x))
+  | C1 x =>
+    match znz_pred_c w_op x with
+    | C0 p => C1 p
+    | C1 p => C0 p
+    end
+  end|] = [+|q|] - 1.
+  intro q; case q; intro q1; w_rewrite1; simpl.
+  generalize (spec_pred_c op_spec q1); case (znz_pred_c w_op q1); auto.
+  intros w0.
+  w_rewrite1.
+  intros V1 V2; contradict V2; apply Zle_not_lt.
+  replace [|q1|] with (([|q1|] - 1) + 1); auto with zarith.
+  rewrite <- V1; generalize (spec_to_Z op_spec w0); auto with zarith.
+   match goal with |- context [znz_pred_c ?X ?Y] =>
+      generalize (spec_pred_c op_spec Y);  case (znz_pred_c X Y)
+   end.
+  intro w0; w_rewrite1; simpl; auto with zarith.
+  intro w0; w_rewrite1; simpl; auto with zarith.
+Qed.
+
+Theorem spec_w_carry:  forall q, 0 <= [+|q|].
+  intro q; case q; intros q1;   generalize (spec_to_Z op_spec q1); w_rewrite; simpl; auto with zarith.
+Qed.
+
+Theorem spec_ww_adjust: 
+forall a n (c: nat) q b r,
+ 0 <= a -> (if c then [[r]] < [[b]] else True) ->
+ a = [+|q|] * [[b]] + ([[r]] - (Z_of_nat c) * wwB) -> (Z_of_nat c) * wwB <= [[r]] + (Z_of_nat n) * [[b]] ->
+  let (q1, r1) := w_adjust w_op n c q b r in a = [+|q1|] * [[b]] + [[r1]] /\ 0 <= [[r1]] < [[b]].
+  assert (U: 0 < wB); auto with zarith.
+  apply Zlt_trans with 1; auto with zarith.
+  assert (U1: 0 < wwB); auto with zarith.
+  apply Zlt_trans with 1; auto with zarith.
+  intros a n c q b r Ha; generalize c q r; elim n; clear n c q r; simpl w_adjust.
+  intros c q r.
+  generalize (spec_ww_to_Z r); intros HH.
+  case c.
+  simpl; autorewrite with rm10; auto with zarith.
+  intros c1; rewrite inj_S; unfold Zsucc.
+  autorewrite with distr.
+  intros H1 H2 H3; contradict H3; apply Zlt_not_le; simpl Z_of_nat; autorewrite with rm10; auto with zarith.
+  assert (0 <= Z_of_nat c1 * wwB); auto with zarith.
+  intros n1 Rec c q r; generalize (spec_ww_to_Z r); case c.
+  rewrite inj_S; unfold Zsucc; simpl Z_of_nat; autorewrite with rm10; auto with zarith.
+  intros c1 _; repeat rewrite inj_S; unfold Zsucc.
+  autorewrite with distr rm10.
+  intros H1 H2.
+  assert (Eq: 0 < [+|q|]).
+  case (Zle_lt_or_eq 0 [+|q|]); auto with zarith.
+  apply spec_w_carry.
+  intro V; contradict Ha; apply Zlt_not_le; rewrite H2; rewrite <- V.
+  assert (0 <= Z_of_nat c1 * wwB); auto with zarith.
+  autorewrite with rm10; generalize (spec_ww_to_Z r); intros HH; auto with zarith.
+  match goal with |- context [ww_add_c ?X ?Y ?T] =>
+      generalize (spec_ww_add_c Y T); case (ww_add_c X Y T)
+   end.
+  intros z Hz; simpl in Hz.
+  match goal with |- context [w_adjust ?A ?X ?Y ?Z ?T ?U] =>
+     generalize (Rec  Y  Z U); case (w_adjust A X Y Z T U)
+  end.
+  rewrite inj_S; unfold Zsucc; simpl Z_of_nat; autorewrite with rm10; auto with zarith.
+  intros q0 r0 H H3; apply H; auto.
+  rewrite spec_w_carry_pred_c; auto with zarith.
+  rewrite Hz; rewrite H2; ring.
+  autorewrite with distr; auto with zarith.
+  intros z; w_rewrite1; rewrite <- wwB_wBwB; intros Hz H3.
+  match goal with |- context [w_adjust ?A ?X ?Y ?Z ?T ?U] =>
+     generalize (Rec  Y  Z U); case (w_adjust A X Y Z T U)
+  end.
+  intros c0 z0 H5; apply H5; clear H5; auto with zarith.
+  case c1; auto with zarith.
+  generalize (spec_ww_to_Z r); intros HH; auto with zarith.
+  rewrite spec_w_carry_pred_c; auto with zarith.
+  autorewrite with distr; rewrite H2.
+  match goal with |-  _ = ?X   =>
+    match type of Hz with ?Y = _ => apply trans_equal with ((Y - Y) + X);
+         [pattern Y at 1; rewrite  Hz| idtac]; ring
+   end end.
+Qed.
+
+
+Theorem spec_znz_WW: forall x y, [[znz_WW w_op x y]] = [|x|] * wB  + [|y|].
+  intros x y; unfold ww_to_Z; rewrite spec_WW; auto with zarith.
+Qed.
+Hint Rewrite spec_znz_WW: w_rewrite.
+
+Hypothesis wB_even: Zeven wB.
+
+Theorem wB_div_2:  2 * (wB / 2) = wB.
+pattern wB at 1; rewrite Zeven_div2; auto with zarith.
+rewrite (fun x => Zmult_comm 2 (Zdiv2 x)); auto with zarith.
+rewrite Z_div_mult; try (apply sym_equal; apply Zeven_div2); auto with zarith.
+Qed.
+
+Theorem wwB_div_2: wwB / 2 = wB / 2 * wB.
+rewrite wwB_wBwB.
+pattern wB at 1 3; rewrite Zeven_div2; auto.
+rewrite <- Zmult_assoc.
+repeat (rewrite (Zmult_comm 2); rewrite Z_div_mult); auto with zarith.
+Qed.
+
+Theorem wB_div2: forall x, wB/2  <= x -> wB <= 2 * x.
+intros x H; rewrite <- wB_div_2; apply Zmult_le_compat_l; auto with zarith.
+Qed.
+
+Theorem spec_ww_split: forall a, [[a]] = [|fst (ww_split w_op a)|] * wB + [|snd(ww_split w_op a)|].
+intros a; case a; w_rewrite1; simpl; w_rewrite; intros; ring.
+Qed.
+
+
+Theorem   spec_w_div32 : forall a1 a2 a3 b1 b2,
+     wB/2 <= [|b1|] ->
+     let (q,r) := w_div32 w_op a1 a2 a3 b1 b2 in
+     [|a1|] * wwB + [|a2|] * wB  + [|a3|] = [+|q|] *  ([|b1|] * wB + [|b2|])  + [[r]] /\ 0 <= [[r]] < [|b1|] * wB + [|b2|].
+  intros a1 a2 a3 b1 b2 H.
+  assert (U: 0 < wB); auto with zarith.
+  apply Zlt_trans with 1; auto with zarith.
+  assert (U1: 0 < wwB); auto with zarith.
+  apply Zlt_trans with 1; auto with zarith.
+  generalize (spec_to_Z op_spec a1); intros HH.
+  generalize (spec_to_Z op_spec a2); intros HH1.
+  generalize (spec_to_Z op_spec a3); intros HH2.
+  generalize (spec_to_Z op_spec b1); intros HH3. 
+  generalize (spec_to_Z op_spec b2); intros HH4. 
+  unfold w_div32.
+  match goal with |- context  [znz_div21 ?X ?Y ?Z ?T] =>
+    generalize (spec_div21 op_spec Y Z T); case (znz_div21 X Y Z T)
+  end.
+  intros c r; case c.
+  intros q1.
+  generalize (spec_to_Z op_spec q1); intros HH5.
+  match goal with |- context [ww_sub_c ?X ?Y ?T] =>
+      generalize (spec_ww_sub_c Y T); case (ww_sub_c X Y T)
+   end.
+  w_rewrite; intros z Hz; simpl in Hz.
+  generalize (spec_ww_to_Z z); intros HH6.
+  intros H1; case H1; auto; clear H1; intros H1 H2.
+  match goal with |- context [w_adjust ?A ?X ?Y ?Z ?T ?U] =>
+     generalize (@spec_ww_adjust ([|a1|] * wwB + [|a2|] * wB + [|a3|]) X Y Z T U); case (w_adjust A X Y Z T U) 
+  end.
+  simpl; w_rewrite1.
+  intros q2 r2 H3.
+  generalize (spec_w_carry q2); intros HH7.
+  generalize (spec_ww_to_Z r2); intros HH8.
+  case H3; auto with zarith.
+  rewrite Hz.
+  assert (0 <= [|q1|] * [|b2|]); auto with zarith.
+  match goal with |- ?X + ?Y - ?Z < ?T => apply Zle_lt_trans with (X + Y); auto with zarith end.
+  repeat (rewrite (fun x => Zmult_comm x wB)); apply wB_lex_inv; auto with zarith.
+  rewrite Hz; rewrite  Zmult_assoc; rewrite <- Zmult_plus_distr_l.
+  rewrite H1; simpl; ring.
+  intro z; w_rewrite1; intros Hz; simpl in Hz.
+  generalize (spec_ww_to_Z z); intros HH6.
+  intros H1; case H1; auto; clear H1; intros H1 H2; simpl in H1.
+  match goal with |- context [w_adjust ?A ?X ?Y ?Z ?T ?U] =>
+     generalize (@spec_ww_adjust ([|a1|]  * wwB + [|a2|] * wB + [|a3|]) X Y Z T U); case (w_adjust A X Y Z T U) 
+  end.
+  simpl Z_of_nat; autorewrite with rm10.
+  w_rewrite1.
+  intros q2 r2 H3.
+  generalize (spec_w_carry q2); intros HH7.
+  generalize (spec_ww_to_Z r2); intros HH8.
+  case H3; auto with zarith.
+  rewrite Hz; simpl.
+  rewrite  Zmult_assoc; rewrite <- Zmult_plus_distr_l; rewrite H1; ring.
+  autorewrite with distr; rewrite Zmult_assoc.
+  assert (wB * wB <= 2 * [|b1|] * wB); auto with zarith.
+  apply Zmult_le_compat_r; auto with zarith.
+  apply wB_div2; auto.
+  intros q1.
+  generalize (spec_to_Z op_spec q1); intros HH5.
+  w_rewrite1.
+  match goal with |- context [ww_sub_c ?X ?Y ?T] =>
+      generalize (spec_ww_sub_c Y T); case (ww_sub_c X Y T)
+   end.
+  w_rewrite; intros z Hz; simpl in Hz.
+  generalize (spec_ww_to_Z z); intros HH6.
+  intros H1; case H1; auto; clear H1; intros H1 H2.
+  match goal with |- context [ww_sub_c ?X ?Y ?T] =>
+      generalize (spec_ww_sub_c Y T); case (ww_sub_c X Y T)
+   end.
+  w_rewrite.
+  intros z0 Hz0; simpl in Hz0.
+  generalize (spec_ww_to_Z z0); intros HH7.
+  match goal with |- context [w_adjust ?A ?X ?Y ?Z ?T ?U] =>
+     generalize (@spec_ww_adjust ([|a1|] * wwB + [|a2|] * wB + [|a3|]) X Y Z T U); case (w_adjust A X Y Z T U) 
+  end.
+  w_rewrite1; simpl.
+  intros q2 r2 H3.
+  generalize (spec_w_carry q2); intros HH8.
+  generalize (spec_ww_to_Z r2); intros HH9.
+  case H3; auto with zarith.
+  rewrite Hz0; rewrite Hz.
+  assert (0 <= [|q1|] * [|b2|]); auto with zarith.
+  assert (0 <= [|b2|] * wB); auto with zarith.
+  match goal with |- ?X - ?Y - ?Z < ?T => apply Zle_lt_trans with X; auto with zarith end.
+  repeat (rewrite (fun x => Zmult_comm x wB)); apply wB_lex_inv; auto with zarith.
+  rewrite Hz0; rewrite Hz; rewrite  Zmult_assoc; rewrite <- Zmult_plus_distr_l.
+  rewrite H1; simpl; ring.
+  intro z0; w_rewrite1; intros Hz0.
+  generalize (spec_ww_to_Z z0); intros HH7.
+  match goal with |- context [w_adjust ?A ?X ?Y ?Z ?T ?U] =>
+     generalize (@spec_ww_adjust ([|a1|]  * wwB + [|a2|] * wB + [|a3|]) X Y Z T U); case (w_adjust A X Y Z T U) 
+  end.
+  intros q2 r2; w_rewrite1; intros H3.
+  generalize (spec_w_carry q2); intros HH8.
+  generalize (spec_ww_to_Z r2); intros HH9.
+  case H3; auto with zarith.
+  simpl Z_of_nat; autorewrite with rm10.
+  rewrite  Zmult_assoc; rewrite <- Zmult_plus_distr_l; rewrite H1.
+  match goal with |-  _ = ?X  =>
+    match type of Hz0 with ?Y = _ => apply trans_equal with ((Y - Y) + X);
+         [pattern Y at 1; rewrite  Hz0 | ring]
+   end end.
+  rewrite Hz; ring.
+  simpl Z_of_nat.
+  autorewrite with distr; rewrite Zmult_assoc.
+  assert (wB * wB <= 2 * [|b1|] * wB); auto with zarith.
+  apply Zmult_le_compat_r; auto with zarith.
+  apply wB_div2; auto.
+  autorewrite with rm10.
+  autorewrite with distr; rewrite Zmult_assoc.
+  assert (wB * wB <= 2 * [|b1|] * wB); auto with zarith.
+  intros z; autorewrite with w_rewrite; intros Hz.
+  match goal with |- context [ww_sub_c ?X ?Y ?T] =>
+      generalize (spec_ww_sub_c Y T); case (ww_sub_c X Y T)
+   end.
+  w_rewrite.
+  intro z0; w_rewrite; intros Hz0; simpl in Hz0.
+  intros H1; case H1; clear H1; auto; intros H1 H2.
+  generalize (spec_ww_to_Z z0); intros HH7.
+  match goal with |- context [w_adjust ?A ?X ?Y ?Z ?T ?U] =>
+     generalize (@spec_ww_adjust ([|a1|]  * wwB + [|a2|] * wB + [|a3|]) X Y Z T U); case (w_adjust A X Y Z T U) 
+  end.
+  intros q2 r2; w_rewrite1; intros H3.
+  generalize (spec_w_carry q2); intros HH8.
+  generalize (spec_ww_to_Z r2); intros HH9.
+  case H3; auto with zarith.
+  simpl Z_of_nat; autorewrite with rm10.
+  rewrite  Zmult_assoc; rewrite <- Zmult_plus_distr_l; rewrite H1.
+  rewrite Hz0.
+  match goal with |-  _ = ?X  =>
+    match type of Hz with ?Y = _ => apply trans_equal with ((Y - Y) + X);
+         [pattern Y at 1; rewrite  Hz | ring]
+   end end.
+  w_rewrite1; ring.
+  simpl Z_of_nat; autorewrite with rm10.
+  autorewrite with distr; rewrite Zmult_assoc.
+  assert (wB * wB <= 2 * [|b1|] * wB); auto with zarith.
+  apply Zmult_le_compat_r; auto with zarith.
+  apply wB_div2; auto.
+  intro z0; w_rewrite; intros Hz0; simpl in Hz0.
+  intros H1; case H1; clear H1; auto; intros H1 H2.
+  generalize (spec_ww_to_Z z0); intros HH7.
+  match goal with |- context [w_adjust ?A ?X ?Y ?Z ?T ?U] =>
+     generalize (@spec_ww_adjust ([|a1|]  * wwB + [|a2|] * wB + [|a3|]) X Y Z T U); case (w_adjust A X Y Z T U) 
+  end.
+  intros q2 r2; w_rewrite1; intros H3.
+  generalize (spec_w_carry q2); intros HH8.
+  generalize (spec_ww_to_Z r2); intros HH9.
+  case H3; auto with zarith.
+  simpl Z_of_nat; autorewrite with rm10.
+  rewrite  Zmult_assoc; rewrite <- Zmult_plus_distr_l; rewrite H1.
+  match goal with |-  _ = ?X  =>
+    match type of Hz0 with ?Y = _ => apply trans_equal with ((Y - Y) + X);
+         [pattern Y at 1; rewrite  Hz0 | ring]
+   end end.
+  match goal with |-  _ = ?X  =>
+    match type of Hz with ?Y = _ => apply trans_equal with ((Y - Y) + X);
+         [pattern Y at 1; rewrite  Hz | ring]
+   end end.
+  w_rewrite1; ring.
+  simpl Z_of_nat; autorewrite with rm10.
+  autorewrite with distr; rewrite Zmult_assoc.
+  assert (2 * wB * wB <= 4 * ([|b1|] * wB)); auto with zarith.
+  rewrite Zmult_assoc; apply Zmult_le_compat_r; auto with zarith.
+   replace 4 with (2 * 2); auto with zarith.
+  rewrite <- Zmult_assoc; apply Zmult_le_compat_l; auto with zarith.
+  apply wB_div2; auto.
+Qed.
+
+Theorem wwB_div: wwB  = 2 * (wwB / 2).
+rewrite wwB_div_2; rewrite  Zmult_assoc; rewrite  wB_div_2; auto.
+apply wwB_wBwB.
+Qed.
+
+Theorem   spec_ww_div21 : forall a1 a2 b,
+     wwB/2 <= [[b]] ->
+     let (q,r) := ww_div21 w_op a1 a2 b in
+     [[a1]] *wwB+[[a2]] = [+[q]] *  [[b]] + [[r]] /\ 0 <= [[r]] < [[b]].
+  assert (U: 0 < wB); auto with zarith.
+  apply Zlt_trans with 1; auto with zarith.
+  assert (U1: 0 < wwB); auto with zarith.
+  apply Zlt_trans with 1; auto with zarith.
+  intros a b c H; unfold ww_div21.
+  generalize (spec_ww_to_Z c); intros HH0.
+  assert (Eq: 0 < [[c]]).
+  apply Zmult_lt_reg_r with 2; auto with zarith.
+  autorewrite with rm10; rewrite Zmult_comm.
+  apply Zlt_le_trans with wwB; auto with zarith.
+  rewrite wwB_div; auto with zarith.
+  case a.
+  case b.
+  simpl; autorewrite with rm10; split; auto with zarith.
+  intros a1 a2.
+  generalize (spec_to_Z op_spec a1); intros HH.
+  generalize (spec_to_Z op_spec a2); intros HH1.
+  match goal with |-context [ww_compare ?X ?Y ?Z] =>
+    generalize (spec_ww_compare Y Z); case (ww_compare X Y Z)
+  end.
+  simpl; w_rewrite1; autorewrite with rm10; auto with zarith.
+  simpl; w_rewrite1; autorewrite with rm10; auto with zarith.
+  simpl; w_rewrite1; autorewrite with rm10; auto with zarith.
+  assert (Eq1: wB * [|a1|] + [|a2|] < wwB); auto with zarith.
+  generalize (spec_ww_to_Z (WW a1 a2)); simpl; auto with zarith.
+  intros H1; rewrite Zmod_def_small; auto with zarith.
+  split; auto with zarith.
+  split; auto with zarith.
+  assert (wB * [|a1|] + [|a2|] < 2 * [[c]]); auto with zarith.
+  apply Zlt_le_trans with (1:= Eq1).
+  rewrite wwB_div; auto with zarith.
+  split; auto with zarith.
+  rewrite <- wwB_wBwB; auto with zarith.
+  intros a1 a2.
+  generalize (spec_to_Z op_spec a1); intros HH.
+  generalize (spec_to_Z op_spec a2); intros HH1.
+  match goal with |- context [ww_split ?X ?Y] =>
+    generalize (spec_ww_split Y); case (ww_split X Y)
+  end.
+  intros a3 a4; simpl fst; simpl snd; intros Hb.
+  generalize (spec_to_Z op_spec a3); intros HH2.
+  generalize (spec_to_Z op_spec a4); intros HH3.
+  match goal with |- context [ww_split ?X ?Y] =>
+    generalize (spec_ww_split Y); case (ww_split X Y)
+  end.
+  intros b1 b2; simpl fst; simpl snd; intros Hc.
+  generalize (spec_to_Z op_spec b1); intros HH4.
+  generalize (spec_to_Z op_spec b2); intros HH5.
+  match goal with |-context [w_div32 ?K ?X ?Y ?Z ?T ?U] =>
+    generalize (spec_w_div32 X Y Z T U); case (w_div32 K X Y Z T U)
+  end.
+  assert (Eq1: wB / 2 <= [|b1|]).
+  apply (@wB_lex  (wB / 2) 0 [|b1|] [|b2|]); auto with zarith.
+  autorewrite with rm10; repeat rewrite (Zmult_comm wB).
+  rewrite <- wwB_div_2; rewrite <- Hc; auto with zarith.
+  intros q1 r V1; case V1; clear V1; try intros V1 V2; auto. 
+  match goal with |- context [ww_split ?X ?Y] =>
+    generalize (spec_ww_split Y); case (ww_split X Y)
+  end.
+  intros r1 r2; simpl fst; simpl snd; intros Hr.
+  match goal with |-context [w_div32 ?K ?X ?Y ?Z ?T ?U] =>
+    generalize (spec_w_div32 X Y Z T U); case (w_div32 K X Y Z T U)
+  end.
+  intros q2 s V3; case V3; clear V3; auto; intros V3 V4.
+  assert (Eq2: [|without_c q2|] = [+|q2|]).
+  generalize V3; case q2; auto; clear V3.
+  intros w0; w_rewrite1; intros V3.
+  case V2; clear V2; intros _ V5; contradict V5; apply Zle_not_lt.
+  rewrite Hr.
+  assert (Eq2: 0 <= [|snd (ww_split w_op s)|] <= [[s]]).
+  case s; simpl; w_solve1.
+  intros w1 w2; generalize (spec_to_Z op_spec w1); intros WW.
+  assert (0 <= wB * [|w1|]); auto with zarith.
+  generalize (spec_to_Z op_spec w2); auto with zarith.
+  match goal with |- ?X <= ?Y =>
+    apply (@beta_lex  X  [|snd (ww_split w_op s)|] Y [|a4|] wB) ; auto with zarith
+  end.
+  repeat (rewrite (Zmult_comm wB)); autorewrite with distr.
+  generalize (spec_to_Z op_spec w0); intros HH6.
+  repeat rewrite <- Zmult_assoc; rewrite V3; w_rewrite.
+  assert (0 <= [|b1|] * wB * [|w0|] + [|b2|] * [|w0|]); auto with zarith.
+  rewrite (Zmult_comm (wB + [|w0|])); autorewrite with distr.
+  repeat (rewrite Zmult_assoc || rewrite Zplus_assoc); auto with zarith.
+  apply (spec_to_Z op_spec (snd (ww_split w_op s))).
+  generalize V1; case q1; clear V1.
+  intros Q V1; simpl; w_rewrite1; rewrite Eq2.
+  simpl in V1.
+  split; auto with zarith.
+  rewrite Hb; rewrite Hc.
+  match goal with |-  _ = ?X  =>
+    match type of V1 with _ = ?Y => apply trans_equal with (wB *  (Y - Y) + X);
+         [pattern Y at 1; rewrite  <- V1 | ring]
+   end end.
+  match goal with |-  _ = ?X  =>
+    match type of V3 with _ = ?Y => apply trans_equal with ( (Y - Y) + X);
+         [pattern Y at 1; rewrite  <- V3 | ring]
+   end end.
+  rewrite wwB_wBwB; rewrite Hr; ring.
+  intros Q;  w_rewrite; simpl; w_rewrite1; intros V1; rewrite Eq2.
+  split; auto with zarith.
+  rewrite Hb; rewrite Hc.
+  match goal with |-  _ = ?X  =>
+    match type of V1 with _ = ?Y => apply trans_equal with (wB *  (Y - Y) + X);
+         [pattern Y at 1; rewrite  <- V1 | ring]
+   end end.
+  match goal with |-  _ = ?X  =>
+    match type of V3 with _ = ?Y => apply trans_equal with ( (Y - Y) + X);
+         [pattern Y at 1; rewrite  <- V3 | ring]
+   end end.
+  rewrite wwB_wBwB; rewrite Hr; ring.
+Qed.
+
+Require Import ZPowerAux.
+
+Let digits :=  znz_digits w_op.
+Let wdigits := xO (znz_digits w_op).
+
+Axiom wB_power: wB = 2 ^ (Zpos digits).
+Axiom wwB_power: wwB = 2 ^ (Zpos wdigits).
+
+Theorem spec_ww_add_mul_div : forall x y p,
+       0 < Zpos p < Zpos wdigits ->
+       [[ ww_add_mul_div w_op x y p]] =
+	 ([[x]] * (Zpower 2 (Zpos p)) + 
+          [[y]] / (Zpower 2 (Zpos wdigits - (Zpos p)))) mod wwB.
+  assert (U: 0 < wB); auto with zarith.
+  apply Zlt_trans with 1; auto with zarith.
+  assert (U1: 0 < wwB); auto with zarith.
+  apply Zlt_trans with 1; auto with zarith.
+  intros x y p Hp; case x; simpl ww_add_mul_div.
+  case y; simpl.
+  rewrite Zdiv_0; try rewrite Zmod_def_small; auto with zarith.
+  case Hp; clear Hp; intros Hp0 Hp1.
+  match goal with |- context [(?X ?= ?Y)%positive Eq] => case_eq (Pcompare X Y Eq) end; intros H1;
+   auto with zarith.
+  apply ok.
+  intros xh xl.
+  match goal with |- context [(?X ?= ?Y)%positive Eq] => case_eq (Pcompare X Y Eq) end; intros H1;
+   auto with zarith.
+  match goal with |- context [(?X ?= ?Y)%positive Eq] => case_eq (Pcompare X Y Eq) end; intros H2;
+   auto with zarith.
+  apply ok.
+  apply ok.
+  rewrite wwB_power.
+  w_rewrite1.
+  rewrite wB_power; autorewrite with rm10.
+  replace (wdigits - p)%positive  with digits.
+  apply ok.
+  apply ok.
+  match goal with |- context [(?X ?= ?Y)%positive Eq] => case_eq (Pcompare X Y Eq) end; intros H2;
+   auto with zarith.
+  apply ok.
+Fail.
+simpl.
+
+  generalize (Zgt_compare (Zpos wdigits) (Zpos p)); simpl; case ((wdigits ?= p)%positive Eq);
+     auto with zarith.
+  intros w1 w2. 
+  case (Zle_or_lt (Zpos p) (Zpos digits)); intros HH.
+  generalize (Zle_compare (Zpos p) (Zpos digits)); simpl; unfold digits; case ((p ?= znz_digits w_op)%positive Eq);
+     auto with zarith.
+  generalize (Zgt_compare (Zpos wdigits) (Zpos p)); simpl; case ((wdigits ?= p)%positive Eq);
+     auto with zarith.
+  intros _ _.
+  w_rewrite1.
+
+ unfold wB.
+  generalize (Zlt_compare (Zpos p) (Zpos (znz_digits w_op))); simpl; 
+     case ((p ?= (znz_digits w_op))%positive Eq);
+     auto with zarith.
+  intros _ _. 
+  w_rewrite1.
+  rewrite (spec_add_mul_div op_spec); auto with zarith.
+  w_rewrite1; autorewrite with rm10.
+  apply ok.
+  intros xh xl; case y.
+  generalize (Zlt_compare (Zpos p) (Zpos (znz_digits w_op))); simpl; 
+     case ((p ?= (znz_digits w_op))%positive Eq);
+     auto with zarith.
+  generalize (Zgt_compare (Zpos (znz_digits w_op)) (Zpos p)); simpl; case ((znz_digits w_op ?= p)%positive Eq);
+     auto with zarith.
+  intros _ _.
+  w_rewrite1.
+  repeat rewrite (spec_add_mul_div op_spec); auto with zarith.
+  w_rewrite1.
+  rewrite Zdiv_0; autorewrite with rm10.
+  
+  simpl. 
 Qed.
 
 (*

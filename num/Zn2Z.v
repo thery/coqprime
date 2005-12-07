@@ -458,16 +458,30 @@ Definition w_div32 a1 a2 a3 b1 b2 :=
   end.
  Let split := ww_split.
 
- Definition ww_div21 a b c:=
-  let (a1, a2) := split a in
-  let (a3, a4) := split b in
-  let (b1, b2) := split c in
-  let (q1, r) :=  div32 a1 a2 a3 b1 b2 in
-  let (r1, r2) := split r in
-  let (q2, s) := div32 r1 r2 a4 b1 b2 in
-  match q1 with
-  | C0 q'1 => (C0 (wWW q'1 (without_c q2)), s)
-  | C1 q'1 => (C1 (wWW q'1 (without_c q2)), s)
+ Definition ww_div21:=
+  let compare := ww_compare in
+  fun a b c =>
+  match a with
+  |  W0 =>  
+     match b with
+     |  W0 => (C0 W0, W0)
+     |  _  =>
+        match compare b c with
+       | Gt => (C0 ww_1, sub b c)
+       | Eq => (C0 ww_1, W0)
+        | Lt  => (C0 W0, b)
+       end
+      end
+   | WW a1 a2 =>
+     let (a3, a4) := split b in
+     let (b1, b2) := split c in
+     let (q1, r) :=  div32 a1 a2 a3 b1 b2 in
+     let (r1, r2) := split r in
+     let (q2, s) := div32 r1 r2 a4 b1 b2 in
+     match q1 with
+    | C0 q'1 => (C0 (wWW q'1 (without_c q2)), s)
+    | C1 q'1 => (C1 (wWW q'1 (without_c q2)), s)
+    end
   end.
 
 

@@ -210,12 +210,10 @@ Record znz_spec : Set := mk_znz_spec {
    spec_square_c : forall x, [|| w_square_c x||] = [|x|] * [|x|];
 
     (* Special divisions operations *)
-    spec_div21_fst : forall a1 a2 b,
+    spec_div21 : forall a1 a2 b,
+     let (q,r) := w_div21 a1 a2 b in
      wB/2 <= [|b|] ->
-     [+|fst (w_div21 a1 a2 b)|] = ([|a1|]*wB+[|a2|])/ [|b|];
-    spec_div21_snd : forall a1 a2 b,
-     wB/2 <= [|b|] ->
-     [|snd (w_div21 a1 a2 b)|] = ([|a1|]*wB+[|a2|]) mod [|b|];
+     [|a1|] *wB+ [|a2|] = [+|q|] *  [|b|] + [|r|] /\ 0 <= [|r|] < [|b|];
     spec_add_mul_div : forall x y p,
        0 < Zpos p < Zpos w_digits ->
        [| w_add_mul_div x y p|] =
