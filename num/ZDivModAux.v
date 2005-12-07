@@ -9,6 +9,7 @@
 Require Export ZArith.
 Require Export Znumtheory.
 Require Export Tactic.
+Require Import ZAux.
 
 Open Scope Z_scope. 
 
@@ -223,5 +224,16 @@ apply Zle_lt_trans with (1 := H3).
 pattern a at 1; rewrite (Z_div_mod_eq a b); auto with zarith.
 rewrite Zmult_plus_distr_l; rewrite (Zmult_comm b); case (Z_mod_lt a b); auto with zarith.
 Qed.
+
+Theorem Zmult_mod_distr_l: forall a b c, 0 < a -> 0 < c -> (a * b) mod (a * c) = a * (b mod c).
+  intros a b c H Hc.
+  apply sym_equal; apply Zmod_unique with (b / c); auto with zarith.
+  apply Zmult_lt_0_compat; auto.
+  case (Z_mod_lt b c); auto with zarith; intros; split; auto with zarith.
+  apply Zmult_lt_compat_l; auto.
+  rewrite <- Zmult_assoc; rewrite <- Zmult_plus_distr_r.
+  rewrite <- Z_div_mod_eq; auto with zarith.
+Qed.
+
 
 Close Scope Z_scope.
