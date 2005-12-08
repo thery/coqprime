@@ -214,6 +214,8 @@ Record znz_spec : Set := mk_znz_spec {
      let (q,r) := w_div21 a1 a2 b in
      wB/2 <= [|b|] ->
      [|a1|] *wB+ [|a2|] = [+|q|] *  [|b|] + [|r|] /\ 0 <= [|r|] < [|b|];
+    (* shift operations *)
+    spec_znz_head0  : forall x,  0 < [|x|] -> wB/ 2 <= 2 ^ (Z_of_N (w_head0 x)) * [|x|] < wB;  
     spec_add_mul_div : forall x y p,
        0 < Zpos p < Zpos w_digits ->
        [| w_add_mul_div x y p|] =
