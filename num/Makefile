@@ -82,7 +82,8 @@ VFILES=Lucas.v\
   ZDivModAux.v\
   Zn2ZProof.v\
   Zn2Z.v\
-  ZnZ.v
+  ZnZ.v\
+  ZPowerAux.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -100,7 +101,8 @@ all: Lucas.vo\
   ZDivModAux.vo\
   Zn2ZProof.vo\
   Zn2Z.vo\
-  ZnZ.vo
+  ZnZ.vo\
+  ZPowerAux.vo
 
 spec: $(VIFILES)
 
