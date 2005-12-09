@@ -31,7 +31,7 @@ Definition lucastest (w:Set) (op:znz_op w) p :=
 
   
 
-Time Eval compute in lucastest w1024_op 521.
+Time Eval compute in lucastest w1024_op 19.
 (*
 
 Time Eval vm_compute in lucastest w1024_op 521.

@@ -131,4 +131,50 @@ Qed.
 
 Definition Zmult_lt_0_compat := Zmult_lt_O_compat.
 
+Hint Rewrite Zmult_1_r Zmult_0_r Zmult_1_l Zmult_0_l Zplus_0_l Zplus_0_r Zminus_0_r: rm10.
+Hint Rewrite Zmult_plus_distr_r Zmult_plus_distr_l Zmult_minus_distr_r Zmult_minus_distr_l: distr.
+
+Theorem Zmult_lt_compat_bis:
+    forall n m p q : Z, 0 <= n < p -> 0 <= m < q -> n * m < p * q.
+intros n m p q (H1, H2) (H3,H4).
+case Zle_lt_or_eq with (1 := H1); intros H5; auto with zarith.
+case Zle_lt_or_eq with (1 := H3); intros H6; auto with zarith.
+apply Zlt_trans with (n * q).
+apply Zmult_lt_compat_l; auto.
+apply Zmult_lt_compat_r; auto with zarith.
+rewrite <- H6; autorewrite with rm10; apply Zmult_lt_0_compat; auto with zarith.
+rewrite <- H5; autorewrite with rm10; apply Zmult_lt_0_compat; auto with zarith.
+Qed.
+
+
+Theorem nat_of_P_xO: 
+  forall p,  nat_of_P (xO p) =  (2 * nat_of_P p)%nat.
+intros p; unfold nat_of_P; simpl; rewrite Pmult_nat_2_mult_2_permute; auto with arith.
+Qed.
+
+Theorem nat_of_P_xI: 
+  forall p,  nat_of_P (xI p) =  (2 * nat_of_P p + 1)%nat.
+intros p; unfold nat_of_P; simpl; rewrite Pmult_nat_2_mult_2_permute; auto with arith.
+rewrite S_to_plus_one;  ring.
+Qed.
+
+Theorem nat_of_P_xH: nat_of_P xH = 1%nat.
+trivial.
+Qed.
+
+Hint Rewrite
+  nat_of_P_xO nat_of_P_xI nat_of_P_xH
+  nat_of_P_succ_morphism
+  nat_of_P_plus_carry_morphism
+  nat_of_P_plus_morphism
+  nat_of_P_mult_morphism
+  nat_of_P_minus_morphism: pos_morph.
+
+Ltac pos_tac :=
+  match goal with |- ?X = ?Y => 
+    assert (tmp: Zpos X = Zpos Y); 
+     [idtac; repeat rewrite Zpos_eq_Z_of_nat_o_nat_of_P; eq_tac | injection tmp; auto]
+  end; autorewrite with pos_morph.
+
+
 Close Scope Z_scope.

@@ -31,7 +31,7 @@ Section Data.
   Definition zn2z_to_Z (wB:Z) (w_to_Z:znz->Z) (x:zn2z) :=
   match x with
   | W0 => 0
-  | WW xh xl => wB * w_to_Z xh + w_to_Z xl
+  | WW xh xl => w_to_Z xh * wB + w_to_Z xl
   end.
 
  Definition base digits := Zpower 2 (Zpos digits).
@@ -211,8 +211,8 @@ Record znz_spec : Set := mk_znz_spec {
 
     (* Special divisions operations *)
     spec_div21 : forall a1 a2 b,
-     let (q,r) := w_div21 a1 a2 b in
      wB/2 <= [|b|] ->
+     let (q,r) := w_div21 a1 a2 b in
      [|a1|] *wB+ [|a2|] = [+|q|] *  [|b|] + [|r|] /\ 0 <= [|r|] < [|b|];
     (* shift operations *)
     spec_znz_head0  : forall x,  0 < [|x|] -> wB/ 2 <= 2 ^ (Z_of_N (w_head0 x)) * [|x|] < wB;  

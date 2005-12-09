@@ -1,5 +1,7 @@
 Lucas.v
+MkSpec.v
 Mod_op.v
+Pos.v
 Tactic.v
 W2.v
 W4.v
