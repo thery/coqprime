@@ -10,6 +10,7 @@ Require Export ZArith.
 Require Export Znumtheory.
 Require Export Tactic.
 Require Import ZAux.
+Require Import ZPowerAux.
 
 Open Scope Z_scope. 
 
@@ -234,6 +235,103 @@ Theorem Zmult_mod_distr_l: forall a b c, 0 < a -> 0 < c -> (a * b) mod (a * c) =
   rewrite <- Zmult_assoc; rewrite <- Zmult_plus_distr_r.
   rewrite <- Z_div_mod_eq; auto with zarith.
 Qed.
+
+
+Theorem Zmod_distr: forall a b r t, 0 <= a <= b -> 0 <= r -> 0 <= t < 2 ^a ->
+  (2 ^a * r + t) mod (2 ^ b) = (2 ^a * r) mod (2 ^ b) + t.
+intros a b r t (H1, H2) H3 (H4, H5).
+assert (t < 2 ^ b).
+apply Zlt_le_trans with (1:= H5); auto with zarith.
+apply Zpower_le_monotone; auto with zarith.
+rewrite Zmod_plus; auto with zarith.
+rewrite Zmod_def_small with (a := t); auto with zarith.
+apply Zmod_def_small; auto with zarith.
+split; auto with zarith.
+assert (0 <= 2 ^a * r); auto with zarith.
+apply Zplus_le_0_compat; auto with zarith.
+match goal with |- context [?X mod ?Y] => case (Z_mod_lt X Y) end; auto with zarith.
+pattern (2 ^ b) at 2; replace (2 ^ b) with ((2 ^ b - 2 ^a) + 2 ^ a); try ring.
+apply Zplus_le_lt_compat; auto with zarith.
+replace b with ((b - a) + a); try ring.
+rewrite Zpower_exp; auto with zarith.
+pattern (2 ^a) at 4; rewrite <- (Zmult_1_l (2 ^a)); try rewrite <- Zmult_minus_distr_r.
+rewrite (Zmult_comm (2 ^(b - a))); rewrite  Zmult_mod_distr_l; auto with zarith.
+rewrite (Zmult_comm (2 ^a)); apply Zmult_le_compat_r; auto with zarith.
+match goal with |- context [?X mod ?Y] => case (Z_mod_lt X Y) end; auto with zarith.
+Qed.
+
+Theorem Zmult_mod_distr_r:
+  forall a b c : Z, 0 < a -> 0 < c -> (b * a) mod (c * a) = (b mod c) * a.
+intros; repeat rewrite (fun x => (Zmult_comm x a)).
+apply Zmult_mod_distr_l; auto.
+Qed.
+
+Theorem Z_div_plus_l: forall a b c : Z, 0 < b -> (a * b + c) / b = a  + c / b.
+intros a b c H; rewrite Zplus_comm; rewrite Z_div_plus; try apply Zplus_comm; auto with zarith.
+Qed.
+
+Theorem Zmod_shift_r: forall a b r t, 0 <= a <= b -> 0 <= r -> 0 <= t < 2 ^a ->
+  (r * 2 ^a + t) mod (2 ^ b) = (r * 2 ^a) mod (2 ^ b) + t.
+intros a b r t (H1, H2) H3 (H4, H5).
+assert (t < 2 ^ b).
+apply Zlt_le_trans with (1:= H5); auto with zarith.
+apply Zpower_le_monotone; auto with zarith.
+rewrite Zmod_plus; auto with zarith.
+rewrite Zmod_def_small with (a := t); auto with zarith.
+apply Zmod_def_small; auto with zarith.
+split; auto with zarith.
+assert (0 <= 2 ^a * r); auto with zarith.
+apply Zplus_le_0_compat; auto with zarith.
+match goal with |- context [?X mod ?Y] => case (Z_mod_lt X Y) end; auto with zarith.
+pattern (2 ^ b) at 2; replace (2 ^ b) with ((2 ^ b - 2 ^a) + 2 ^ a); try ring.
+apply Zplus_le_lt_compat; auto with zarith.
+replace b with ((b - a) + a); try ring.
+rewrite Zpower_exp; auto with zarith.
+pattern (2 ^a) at 4; rewrite <- (Zmult_1_l (2 ^a)); try rewrite <- Zmult_minus_distr_r.
+repeat rewrite (fun x => Zmult_comm x (2 ^ a)); rewrite  Zmult_mod_distr_l; auto with zarith.
+apply Zmult_le_compat_l; auto with zarith.
+match goal with |- context [?X mod ?Y] => case (Z_mod_lt X Y) end; auto with zarith.
+Qed.
+
+  Theorem Zdiv_lt_0: forall a b, 0 <= a < b -> a / b = 0.
+  intros a b H; apply sym_equal; apply Zdiv_unique with a; auto with zarith.
+  Qed.
+
+  Theorem Zmod_mult_0: forall a b, 0 < b  -> (a * b) mod b = 0.
+  intros a b H; rewrite <- (Zplus_0_l (a * b)); rewrite Z_mod_plus; auto with zarith.
+  Qed.
+
+  Theorem Zdiv_shift_r: forall a b r t, 0 <= a <= b -> 0 <= r -> 0 <= t < 2 ^a ->
+    (r * 2 ^a + t) /  (2 ^ b) = (r * 2 ^a) / (2 ^ b).
+  intros a b r t (H1, H2) H3 (H4, H5).
+  assert (Eq: t < 2 ^ b); auto with zarith.
+  apply Zlt_le_trans with (1 := H5); auto with zarith.
+  apply Zpower_le_monotone; auto with zarith.
+  pattern (r * 2 ^ a) at 1; rewrite Z_div_mod_eq with (b := 2 ^ b); auto with zarith.
+  rewrite <- Zplus_assoc.
+  rewrite <- Zmod_shift_r; auto with zarith.
+  rewrite (Zmult_comm (2 ^ b)); rewrite Z_div_plus_l; auto with zarith.
+  rewrite (fun x y => @Zdiv_lt_0 (x mod y)); auto with zarith.
+  match goal with |- context [?X mod ?Y] => case (Z_mod_lt X Y) end; auto with zarith.
+  Qed.
+
+
+  Theorem Zpos_minus: forall a b, Zpos a < Zpos b -> Zpos (b- a) = Zpos b - Zpos a.
+  intros a b H.
+  repeat rewrite Zpos_eq_Z_of_nat_o_nat_of_P; autorewrite with pos_morph; auto with zarith.
+  rewrite inj_minus1; auto with zarith.
+  match goal with |- (?X <= ?Y)%nat =>
+    case (le_or_lt X Y); auto; intro tmp; absurd (Z_of_nat X < Z_of_nat Y); 
+        try apply Zle_not_lt; auto with zarith
+  end.
+  repeat rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+  generalize (Zlt_gt _ _ H); auto.
+Qed.
+
+  Theorem Zdiv_Zmult_compat_r:
+  forall a b c : Z, 0 <= a -> 0 < b -> 0 < c -> a * c / (b * c) = a / b.
+  intros a b c H H1 H2; repeat rewrite (fun x => Zmult_comm x c); apply Zdiv_Zmult_compat_l; auto.
+  Qed.
 
 
 Close Scope Z_scope.

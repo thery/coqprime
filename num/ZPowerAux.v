@@ -127,3 +127,15 @@ repeat rewrite Zpower_exp_1.
 apply Zle_trans with (a ^x * b); auto with zarith.
 Qed.
 
+Theorem Zpower_lt_monotone: forall a b c: Z, 1 < a -> 0 <= b < c -> a ^ b < a ^
+ c.
+intros a b c H (H1, H2).
+rewrite <- (Zmult_1_r (a ^ b)); replace c with (b + (c - b)); auto with zarith.
+rewrite Zpower_exp; auto with zarith.
+apply Zmult_lt_compat_l; auto with zarith.
+assert (0 < a ^ (c - b)); auto with zarith.
+apply Zlt_le_trans with (a ^1); auto with zarith.
+rewrite Zpower_exp_1; auto with zarith.
+apply Zpower_le_monotone; auto with zarith.
+Qed.
+

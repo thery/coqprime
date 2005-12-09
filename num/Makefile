@@ -72,7 +72,9 @@ COQLIBS=-I .
 ###################################
 
 VFILES=Lucas.v\
+  MkSpec.v\
   Mod_op.v\
+  Pos.v\
   Tactic.v\
   W2.v\
   W4.v\
@@ -91,7 +93,9 @@ HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
 all: Lucas.vo\
+  MkSpec.vo\
   Mod_op.vo\
+  Pos.vo\
   Tactic.vo\
   W2.vo\
   W4.vo\
