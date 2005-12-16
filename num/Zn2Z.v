@@ -1,13 +1,11 @@
-(*
-Unset Boxed Definitions.
-*)
-
 Set Implicit Arguments.
 
 Require Import ZArith.
-Require Import ZnZ.
 Require Import ZAux.
 Require Import ZDivModAux.
+Require Import Basic_type.
+Require Import ZnZ.
+
 
 Open Local Scope Z_scope.
 
@@ -409,7 +407,7 @@ Fixpoint w_adjust (n c: nat) (q : carry w) (b r : zn2z w) {struct n}: carry w * 
   | O => (q, r)
   | S c1 =>
     match n with
-    | O => (w_carry_pred_c q, ww_add r b)
+    | O => (w_carry_pred_c q, add r b)
     | S n1 =>
       match ww_add_c r b with
       | C0 r1 => w_adjust n1 c (w_carry_pred_c q) b r1
