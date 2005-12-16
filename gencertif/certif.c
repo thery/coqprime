@@ -645,8 +645,6 @@ void print_prelude(FILE *out)
   fprintf(out,"Open Local Scope positive_scope.\n\n");
 
   fprintf(out,"Set Virtual Machine.\n");
-  fprintf(out,"Unset Boxed Values.\n");
-  fprintf(out,"Unset Boxed Definitions.\n\n");
 }
 
 
@@ -659,8 +657,6 @@ void print_file(char *filename, pre_certif_t p, certif_t lc)
   fprintf(out, "Require Import PocklingtonRefl.\n\n"); 
 
   fprintf(out,"Set Virtual Machine.\n");
-  fprintf(out,"Unset Boxed Values.\n");
-  fprintf(out,"Unset Boxed Definitions.\n\n");
   
   fprintf(out,"Open Local Scope positive_scope.\n\n");
 

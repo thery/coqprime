@@ -11201,8 +11201,6 @@ main (int argc, char *argv[])
   fprintf(out, "Require Import PocklingtonRefl.\n\n"); 
  
   fprintf(out,"Set Virtual Machine.\n");
-  fprintf(out,"Unset Boxed Values.\n");
-  fprintf(out,"Unset Boxed Definitions.\n\n");
   
   fprintf(out,"Open Local Scope positive_scope.\n\n");
 
