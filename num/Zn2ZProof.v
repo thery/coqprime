@@ -1,15 +1,14 @@
-(*
-Unset Boxed Definitions.
-*)
 
 Set Implicit Arguments.
 
 Require Import ZArith.
-Require Import ZnZ.
 Require Import ZAux.
 Require Import ZDivModAux.
-Require Import Zn2Z.
 Require Import ZPowerAux.
+Require Import Basic_type.
+Require Import ZnZ.
+Require Import Zn2Z.
+
 
 Open Local Scope Z_scope.
 
@@ -1866,7 +1865,7 @@ Theorem   spec_w_div32 : forall a1 a2 a3 b1 b2,
   destruct (znz_compare w_op xh (znz_0 w_op)).
   generalize Hl; w_rewrite1; clear Hl; intros Hl.
   generalize H; rewrite Hl; autorewrite with rm10; clear H; intros H.
-  assert (Hl1 := spec_znz_head0 op_spec xl);
+  assert (Hl1 := spec_head0 op_spec xl);
   destruct (znz_head0 w_op xl).
   simpl in Hl1; rewrite Zmult_1_l in Hl1.
   generalize (wB_power); simpl; unfold digits; intros tmp; rewrite <-tmp; clear tmp.
@@ -1887,7 +1886,7 @@ Theorem   spec_w_div32 : forall a1 a2 a3 b1 b2,
   intros tmp; rewrite <- tmp; auto with zarith.
   generalize Hl; w_rewrite1; clear Hl; intros Hl; contradict Hl; auto with zarith.
   generalize Hl; w_rewrite1; clear Hl; intros Hl.
-  assert (Hl1 := spec_znz_head0 op_spec xh);  destruct (znz_head0 w_op xh).
+  assert (Hl1 := spec_head0 op_spec xh);  destruct (znz_head0 w_op xh).
   simpl in Hl1; rewrite Zmult_1_l in Hl1.
   simpl; rewrite Zmult_1_l.
   split; auto with zarith.

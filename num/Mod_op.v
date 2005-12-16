@@ -1,9 +1,7 @@
-(* 
-Unset Boxed Definitions.
-*)
 Set Implicit Arguments.
 
 Require Import ZArith.
+Require Import Basic_type.
 Require Import ZnZ.
 Require Import Zn2Z.
 

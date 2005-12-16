@@ -1,0 +1,24 @@
+W2_basic.vo: W2_basic.v ../../Basic_type.vo
+W2_basic.vi: W2_basic.v ../../Basic_type.vo
+W2_basic_spec.vo: W2_basic_spec.v W2_basic.vo
+W2_basic_spec.vi: W2_basic_spec.v W2_basic.vo
+W2_opp.vo: W2_opp.v W2_basic.vo
+W2_opp.vi: W2_opp.v W2_basic.vo
+W2_opp_spec.vo: W2_opp_spec.v W2_basic.vo W2_basic_spec.vo W2_opp.vo
+W2_opp_spec.vi: W2_opp_spec.v W2_basic.vo W2_basic_spec.vo W2_opp.vo
+W2_add.vo: W2_add.v W2_basic.vo
+W2_add.vi: W2_add.v W2_basic.vo
+W2_add_spec.vo: W2_add_spec.v W2_basic.vo W2_basic_spec.vo W2_add.vo
+W2_add_spec.vi: W2_add_spec.v W2_basic.vo W2_basic_spec.vo W2_add.vo
+W2_sub.vo: W2_sub.v W2_basic.vo
+W2_sub.vi: W2_sub.v W2_basic.vo
+W2_sub_spec.vo: W2_sub_spec.v W2_basic.vo W2_basic_spec.vo W2_sub.vo
+W2_sub_spec.vi: W2_sub_spec.v W2_basic.vo W2_basic_spec.vo W2_sub.vo
+W2_basic.html: W2_basic.v ../../Basic_type.html
+W2_basic_spec.html: W2_basic_spec.v W2_basic.html
+W2_opp.html: W2_opp.v W2_basic.html
+W2_opp_spec.html: W2_opp_spec.v W2_basic.html W2_basic_spec.html W2_opp.html
+W2_add.html: W2_add.v W2_basic.html
+W2_add_spec.html: W2_add_spec.v W2_basic.html W2_basic_spec.html W2_add.html
+W2_sub.html: W2_sub.v W2_basic.html
+W2_sub_spec.html: W2_sub_spec.v W2_basic.html W2_basic_spec.html W2_sub.html

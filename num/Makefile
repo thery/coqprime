@@ -62,8 +62,10 @@ PP=-pp "camlp4o -I . -I $(COQTOP)/parsing $(CAMLP4EXTEND) $(GRAMMARS) -impl"
 #                       #
 #########################
 
-OCAMLLIBS=-I .
-COQLIBS=-I .
+OCAMLLIBS=-I .\
+  -I W/W8
+COQLIBS=-I .\
+  -I W/W8
 
 ###################################
 #                                 #
@@ -71,40 +73,35 @@ COQLIBS=-I .
 #                                 #
 ###################################
 
-VFILES=Lucas.v\
+VFILES=Tactic.v\
+  ZAux.v\
+  ZPowerAux.v\
+  ZDivModAux.v\
+  Basic_type.v\
+  ZnZ.v\
+  Zn2Z.v\
+  Zn2ZProof.v\
   MkSpec.v\
   Mod_op.v\
-  Tactic.v\
-  W2.v\
-  W4.v\
-  W8.v\
-  W.v\
-  ZAux.v\
-  ZDivModAux.v\
-  Zn2ZProof.v\
-  Zn2Z.v\
-  ZnZ.v\
-  ZPowerAux.v
+  Lucas.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
 HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
-all: Lucas.vo\
+all: Tactic.vo\
+  ZAux.vo\
+  ZPowerAux.vo\
+  ZDivModAux.vo\
+  Basic_type.vo\
+  ZnZ.vo\
+  W\
+  Zn2Z.vo\
+  Zn2ZProof.vo\
   MkSpec.vo\
   Mod_op.vo\
-  Tactic.vo\
-  W2.vo\
-  W4.vo\
-  W8.vo\
-  W.vo\
-  ZAux.vo\
-  ZDivModAux.vo\
-  Zn2ZProof.vo\
-  Zn2Z.vo\
-  ZnZ.vo\
-  ZPowerAux.vo
+  Lucas.vo
 
 spec: $(VIFILES)
 
@@ -122,13 +119,22 @@ all-gal.ps: $(VFILES)
 
 
 
+###################
+#                 #
+# Subdirectories. #
+#                 #
+###################
+
+W:
+	cd W ; $(MAKE) all
+
 ####################
 #                  #
 # Special targets. #
 #                  #
 ####################
 
-.PHONY: all opt byte archclean clean install depend html
+.PHONY: all opt byte archclean clean install depend html W
 
 .SUFFIXES: .v .vo .vi .g .html .tex .g.tex .g.html
 
@@ -154,7 +160,7 @@ all-gal.ps: $(VFILES)
 	$(COQDOC) -html -g $< -o $@
 
 byte:
-	$(MAKE) all "OPT=-byte"
+	$(MAKE) all "OPT="
 
 opt:
 	$(MAKE) all "OPT=-opt"
@@ -165,24 +171,30 @@ include .depend
 	rm -f .depend
 	$(COQDEP) -i $(COQLIBS) $(VFILES) *.ml *.mli >.depend
 	$(COQDEP) $(COQLIBS) -suffix .html $(VFILES) >>.depend
+	(cd W ; $(MAKE) depend)
 
 install:
 	mkdir -p `$(COQC) -where`/user-contrib
 	cp -f $(VOFILES) `$(COQC) -where`/user-contrib
+	(cd W ; $(MAKE) install)
 
 Makefile: Make
 	mv -f Makefile Makefile.bak
 	$(COQBIN)coq_makefile -f Make -o Makefile
 
+	(cd W ; $(MAKE) Makefile)
 
 clean:
 	rm -f *.cmo *.cmi *.cmx *.o $(VOFILES) $(VIFILES) $(GFILES) *~
 	rm -f all.ps all-gal.ps $(HTMLFILES) $(GHTMLFILES)
+	(cd W ; $(MAKE) clean)
 
 archclean:
 	rm -f *.cmx *.o
+	(cd W ; $(MAKE) archclean)
 
 html:
+	(cd W ; $(MAKE) html)
 
 # WARNING
 #

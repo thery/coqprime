@@ -1,46 +1,13 @@
 Set Implicit Arguments.
 
 Require Import ZArith.
+Require Import Basic_type.
 
 Open Local Scope Z_scope.
 
-Section Carry.
-
- Variable A : Set.
-
- Inductive carry : Set :=
-  | C0 : A -> carry
-  | C1 : A -> carry.
-
- Definition without_c c :=
-  match c with
-  | C0 a => a
-  | C1 a => a
-  end.
-
-End Carry.
-
-Section Data.
+Section ZnZ_Op.
 
  Variable znz : Set.
-
- Inductive zn2z : Set :=
-  | W0 : zn2z
-  | WW : znz -> znz -> zn2z.
-
-  Definition zn2z_to_Z (wB:Z) (w_to_Z:znz->Z) (x:zn2z) :=
-  match x with
-  | W0 => 0
-  | WW xh xl => w_to_Z xh * wB + w_to_Z xl
-  end.
-
- Definition base digits := Zpower 2 (Zpos digits).
-
- Definition interp_carry sign B (interp:znz -> Z) c :=
-  match c with
-  | C0 x => interp x
-  | C1 x => sign*B + interp x
-  end.
 
  Record znz_op : Set := mk_znz_op {
     (* Conversion functions with Z *)
@@ -52,8 +19,8 @@ Section Data.
     znz_0   : znz;
     znz_1   : znz;
     znz_Bm1 : znz;
-    znz_WW  : znz -> znz -> zn2z;
-    znz_CW  : carry znz -> znz -> carry zn2z;
+    znz_WW  : znz -> znz -> zn2z znz;
+    znz_CW  : carry znz -> znz -> carry (zn2z znz);
     
     (* Comparison *)
     znz_compare     : znz -> znz -> comparison;
@@ -72,9 +39,9 @@ Section Data.
     znz_sub_carry_c : znz -> znz -> carry znz;
     znz_sub         : znz -> znz -> znz;
   
-    znz_mul_c       : znz -> znz -> zn2z;
+    znz_mul_c       : znz -> znz -> zn2z znz;
     znz_mul         : znz -> znz -> znz;
-    znz_square_c    : znz -> zn2z;
+    znz_square_c    : znz -> zn2z znz;
 
     (* Special divisions operations *)
     znz_div21       : znz -> znz -> znz -> (carry znz)*znz;
@@ -82,38 +49,7 @@ Section Data.
 				    
   }.
 
- Inductive z2nz : Set :=
-  | Wpos : znz -> z2nz
-  | Wneg : znz -> z2nz.
-
- Record signed_z2nz_op : Set := mk_signed_op {
-    z2nz_B : Z;
-    z2nz_to_Z : z2nz -> Z;
-    z2nz_of_Z : Z -> z2nz;
-    z2nz_0 : z2nz;
-    z2nz_1 : z2nz;
-    z2nz_opp : z2nz -> z2nz;
-    z2nz_succ : z2nz -> z2nz;
-    z2nz_add : z2nz -> z2nz -> z2nz;
-    z2nz_pred : z2nz -> z2nz;
-    z2nz_sub : z2nz -> z2nz -> z2nz
-  }.
-
-End Data.
-
-Implicit Arguments W0 [znz].
-
-Section W.
-
- Variable w : Set.
-
- Fixpoint word (s:nat) : Set :=
-  match s with
-  | O => w
-  | S s' => zn2z (word s')
-  end.
-
-End W.
+End ZnZ_Op.
 
 Section Spec.
  Variable w : Set.
@@ -165,12 +101,13 @@ Section Spec.
  Notation "[|| x ||]" :=
    (zn2z_to_Z wB w_to_Z x)  (at level 0, x at level 99).
  
-Record znz_spec : Set := mk_znz_spec {
+ Record znz_spec : Set := mk_znz_spec {
+
     (* Conversion functions with Z *)
     spec_to_Z   : forall x, 0 <= [| x |] < base w_digits;
     spec_of_pos : forall p,
            Zpos p = (Z_of_N (fst (w_of_pos p)))*wB + [|(snd (w_of_pos p))|];
-(*    spec_head0  : ; *)
+
     (* Basic constructors *)
     spec_0   : [|w0|] = 0;
     spec_1   : [|w1|] = 1;
@@ -207,15 +144,17 @@ Record znz_spec : Set := mk_znz_spec {
     spec_mul_c : forall x y, [|| w_mul_c x y ||] = [|x|] * [|y|];
     spec_mul : forall x y, [|w_mul x y|] = ([|x|] * [|y|]) mod wB;
 
-   spec_square_c : forall x, [|| w_square_c x||] = [|x|] * [|x|];
+    spec_square_c : forall x, [|| w_square_c x||] = [|x|] * [|x|];
 
     (* Special divisions operations *)
     spec_div21 : forall a1 a2 b,
      wB/2 <= [|b|] ->
      let (q,r) := w_div21 a1 a2 b in
      [|a1|] *wB+ [|a2|] = [+|q|] *  [|b|] + [|r|] /\ 0 <= [|r|] < [|b|];
+ 
     (* shift operations *)
-    spec_znz_head0  : forall x,  0 < [|x|] -> wB/ 2 <= 2 ^ (Z_of_N (w_head0 x)) * [|x|] < wB;  
+    spec_head0  : forall x,  0 < [|x|] ->
+	 wB/ 2 <= 2 ^ (Z_of_N (w_head0 x)) * [|x|] < wB;  
     spec_add_mul_div : forall x y p,
        0 < Zpos p < Zpos w_digits ->
        [| w_add_mul_div x y p|] =

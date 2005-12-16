@@ -1,13 +1,11 @@
-(*
-Unset Boxed Definitions.
-*)
 Set Implicit Arguments.
 
 Require Import ZArith.
+Require Import Basic_type.
 Require Import ZnZ.
 Require Import Zn2Z.
 Require Import Mod_op.
-Require Import W8.
+Require Import W8_op.
 Require Import W.
 
 Definition znz_of_Z (w:Set) (op:znz_op w) z :=
@@ -29,16 +27,12 @@ Definition lucastest (w:Set) (op:znz_op w) p :=
  op.(znz_to_Z) (iter_pos (Pminus p 2) _ square_m2 w4).
 
 
-  
-
-Time Eval compute in lucastest w1024_op 19.
-(*
-
+(*  
 Time Eval vm_compute in lucastest w1024_op 521.
 (* sans square : Finished transaction in 8. secs (7.66u,0.01s) *)
 (* Finished transaction in 6. secs (5.74u,0.01s) *)
 
-;
+
 Time Eval vm_compute in lucastest w1024_op 607.
 (* sans square : Finished transaction in 11. secs (11.09u,0.01s) *)
 (* Finished transaction in 9. secs (8.98u,0.02s) *)
@@ -94,3 +88,4 @@ Time Eval vm_compute in powertest w1024_op 3
 
 
 *)
+

@@ -1,14 +1,9 @@
-(*
-Unset Boxed Definitions.
-*)
-
 Set Implicit Arguments.
 
-
-Require Import ZArith.
+Require Import Basic_type.
 Require Import ZnZ.
 Require Import Zn2Z.
-Require Import W8.
+Require Import W8_op.
 
 
 (* ** Type of words ** *)
@@ -43,7 +38,6 @@ Definition w16384_op := mk_zn2z_op_karatsuba w8192_op.
 Definition w32768_op := mk_zn2z_op_karatsuba w16384_op.
 Definition w65536_op := mk_zn2z_op_karatsuba w32768_op.
 Definition w131072_op := mk_zn2z_op_karatsuba w65536_op.
-
 
 
 
