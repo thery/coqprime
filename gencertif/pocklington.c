@@ -12,8 +12,9 @@
 
 void usage ()
 {
-  fprintf(stdout,"usage ; pocklington [-v] [-no] [-o file] numspec\n");
+  fprintf(stdout,"usage ; pocklington [-v] [-o file] numspec\n");
   fprintf(stdout,"numspec = prime | -next number\n");
+  frpintf(stdout,"        = -size number | -proth k n | -lucas number \n");
   fprintf(stdout,"        | -mersenne number | -dec filename\n");
   fflush(stdout);
   exit (-1);    
