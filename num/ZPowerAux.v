@@ -10,7 +10,7 @@ Require Export ZArith.
 Require Export Znumtheory.
 Require Export Tactic.
 
-Open Scope Z_scope. 
+Open Local Scope Z_scope. 
 
 Hint  Extern 2 (Zle _ _) => 
  (match goal with
