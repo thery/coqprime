@@ -12,7 +12,7 @@ Require Export Tactic.
 Require Import ZAux.
 Require Import ZPowerAux.
 
-Open Scope Z_scope. 
+Open Local Scope Z_scope. 
 
 Hint  Extern 2 (Zle _ _) => 
  (match goal with
@@ -334,4 +334,3 @@ Qed.
   Qed.
 
 
-Close Scope Z_scope.

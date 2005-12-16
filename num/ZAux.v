@@ -12,7 +12,7 @@ Require Export Tactic.
 (* Require Import MOmega. *)
 
 
-Open Scope Z_scope. 
+Open Local Scope Z_scope. 
 
 Hint  Extern 2 (Zle _ _) => 
  (match goal with
@@ -177,4 +177,3 @@ Ltac pos_tac :=
   end; autorewrite with pos_morph.
 
 
-Close Scope Z_scope.
