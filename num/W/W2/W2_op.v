@@ -18,11 +18,13 @@ Definition w2_op  :=
        OO OI II
        w2_WW w2_CW
        w2_compare
-       w2_opp_c w2_opp_carry
-       w2_succ_c
-       w2_add_c w2_add_carry_c w2_add
-       w2_pred_c
-       w2_sub_c w2_sub_carry_c w2_sub
+       w2_opp_c w2_opp w2_opp_carry
+       w2_succ_c w2_add_c w2_add_carry_c
+       w2_succ w2_add w2_add_carry
+       w2_pred_c w2_sub_c w2_sub_carry_c
+       w2_pred w2_sub w2_sub_carry
        w2_mul_c w2_mul w2_square_c
-       w2_div21 w2_add_mul_div.
+       w2_div21 w2_divn1 w2_div w2_div
+       w2_modn1 w2_mod w2_mod
+       w2_gcd w2_gcd w2_add_mul_div.
 

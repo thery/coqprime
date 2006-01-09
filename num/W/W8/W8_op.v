@@ -18,11 +18,13 @@ Definition w8_op  :=
        OOOOOOOO OOOOOOOI IIIIIIII
        w8_WW w8_CW
        w8_compare
-       w8_opp_c w8_opp_carry
-       w8_succ_c
-       w8_add_c w8_add_carry_c w8_add
-       w8_pred_c
-       w8_sub_c w8_sub_carry_c w8_sub
+       w8_opp_c w8_opp w8_opp_carry
+       w8_succ_c w8_add_c w8_add_carry_c
+       w8_succ w8_add w8_add_carry
+       w8_pred_c w8_sub_c w8_sub_carry_c
+       w8_pred w8_sub w8_sub_carry
        w8_mul_c w8_mul w8_square_c
-       w8_div21 w8_add_mul_div.
+       w8_div21 w8_divn1 w8_div w8_div
+       w8_modn1 w8_mod w8_mod
+       w8_gcd w8_gcd w8_add_mul_div.
 

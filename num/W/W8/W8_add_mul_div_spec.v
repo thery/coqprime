@@ -13,7 +13,7 @@ Require Import W8_add_mul_div_4_spec.
 Require Import W8_add_mul_div_5_spec.
 Require Import W8_add_mul_div_6_spec.
 Require Import W8_add_mul_div_7_spec.
-Lemma w8_add_mul_div_spec : forall x y p, 0 < Zpos p < Zpos 8 -> [| w8_add_mul_div x y p|] = ([|x|] * (Zpower 2 (Zpos p)) + [|y|] / (Zpower 2 ((Zpos 8) - (Zpos p)))) mod w8_B.
+Lemma w8_add_mul_div_spec : forall x y p, 0 < Zpos p < Zpos 8 -> [| w8_add_mul_div p x y|] = ([|x|] * (Zpower 2 (Zpos p)) + [|y|] / (Zpower 2 ((Zpos 8) - (Zpos p)))) mod w8_B.
 Proof.
  intros x y p H.
  assert (H7:Zpos p <= 7). omega.

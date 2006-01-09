@@ -15,6 +15,14 @@ Definition w2_opp_c x :=
  | II => C1 OI
  end.
 
+Definition w2_opp x :=
+ match x with
+ | OO => OO
+ | OI => II
+ | IO => IO
+ | II => OI
+ end.
+
 Definition w2_opp_carry x :=
  match x with
  | OO => II

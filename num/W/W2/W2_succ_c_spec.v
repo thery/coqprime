@@ -15,6 +15,16 @@ fun x =>
  | II => refl_equal (3+1)
  end.
 
+Lemma w2_succ_spec : forall x, [|w2_succ x|] = ([|x|] + 1) mod w2_B.
+Proof
+fun x =>
+ match x as x return [|w2_succ x|] = ([|x|] + 1) mod w2_B with
+ | OO => refl_equal ((0+1) mod w2_B)
+ | OI => refl_equal ((1+1) mod w2_B)
+ | IO => refl_equal ((2+1) mod w2_B)
+ | II => refl_equal ((3+1) mod w2_B)
+ end.
+
 Lemma w2_carry_succ_c_spec : forall c, [+|c|] <= w2_B + (w2_B - 2) -> [+|w2_carry_succ_c c|] = [+|c|] + 1.
 Proof
 fun c =>
