@@ -79,11 +79,11 @@ VFILES=Tactic.v\
   ZDivModAux.v\
   Basic_type.v\
   ZnZ.v\
+  ZnZDivn1.v\
   Zn2Z.v\
+  Zn2Z_for_Proof.v\
   Zn2ZProof.v\
-  MkSpec.v\
-  Mod_op.v\
-  Lucas.v
+  MkSpec.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -97,11 +97,11 @@ all: Tactic.vo\
   Basic_type.vo\
   ZnZ.vo\
   W\
+  ZnZDivn1.vo\
   Zn2Z.vo\
+  Zn2Z_for_Proof.vo\
   Zn2ZProof.vo\
-  MkSpec.vo\
-  Mod_op.vo\
-  Lucas.vo
+  MkSpec.vo
 
 spec: $(VIFILES)
 

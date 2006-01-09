@@ -1,0 +1,96 @@
+W8_basic.vo: W8_basic.v ../../Basic_type.vo
+W8_basic.vi: W8_basic.v ../../Basic_type.vo
+W8_basic_spec.vo: W8_basic_spec.v W8_basic.vo
+W8_basic_spec.vi: W8_basic_spec.v W8_basic.vo
+W8_compare.vo: W8_compare.v W8_basic.vo
+W8_compare.vi: W8_compare.v W8_basic.vo
+W8_compare_spec.vo: W8_compare_spec.v W8_basic.vo W8_basic_spec.vo W8_compare.vo
+W8_compare_spec.vi: W8_compare_spec.v W8_basic.vo W8_basic_spec.vo W8_compare.vo
+W8_opp.vo: W8_opp.v W8_basic.vo
+W8_opp.vi: W8_opp.v W8_basic.vo
+W8_opp_spec.vo: W8_opp_spec.v W8_basic.vo W8_basic_spec.vo W8_opp.vo
+W8_opp_spec.vi: W8_opp_spec.v W8_basic.vo W8_basic_spec.vo W8_opp.vo
+W8_add.vo: W8_add.v W8_basic.vo
+W8_add.vi: W8_add.v W8_basic.vo
+W8_succ_c_spec.vo: W8_succ_c_spec.v W8_basic.vo W8_add.vo
+W8_succ_c_spec.vi: W8_succ_c_spec.v W8_basic.vo W8_add.vo
+W8_add_c_spec.vo: W8_add_c_spec.v W8_basic.vo W8_add.vo
+W8_add_c_spec.vi: W8_add_c_spec.v W8_basic.vo W8_add.vo
+W8_add_carry_c_spec.vo: W8_add_carry_c_spec.v W8_basic.vo W8_add.vo
+W8_add_carry_c_spec.vi: W8_add_carry_c_spec.v W8_basic.vo W8_add.vo
+W8_add_spec.vo: W8_add_spec.v W8_basic.vo W8_add.vo
+W8_add_spec.vi: W8_add_spec.v W8_basic.vo W8_add.vo
+W8_add_carry_spec.vo: W8_add_carry_spec.v W8_basic.vo W8_add.vo
+W8_add_carry_spec.vi: W8_add_carry_spec.v W8_basic.vo W8_add.vo
+W8_sub.vo: W8_sub.v W8_basic.vo
+W8_sub.vi: W8_sub.v W8_basic.vo
+W8_pred_c_spec.vo: W8_pred_c_spec.v W8_basic.vo W8_sub.vo
+W8_pred_c_spec.vi: W8_pred_c_spec.v W8_basic.vo W8_sub.vo
+W8_sub_c_spec.vo: W8_sub_c_spec.v W8_basic.vo W8_sub.vo
+W8_sub_c_spec.vi: W8_sub_c_spec.v W8_basic.vo W8_sub.vo
+W8_sub_carry_c_spec.vo: W8_sub_carry_c_spec.v W8_basic.vo W8_sub.vo
+W8_sub_carry_c_spec.vi: W8_sub_carry_c_spec.v W8_basic.vo W8_sub.vo
+W8_sub_spec.vo: W8_sub_spec.v W8_basic.vo W8_sub.vo
+W8_sub_spec.vi: W8_sub_spec.v W8_basic.vo W8_sub.vo
+W8_sub_carry_spec.vo: W8_sub_carry_spec.v W8_basic.vo W8_sub.vo
+W8_sub_carry_spec.vi: W8_sub_carry_spec.v W8_basic.vo W8_sub.vo
+W8_mul.vo: W8_mul.v W8_basic.vo
+W8_mul.vi: W8_mul.v W8_basic.vo
+W8_mul_c_spec.vo: W8_mul_c_spec.v W8_basic.vo W8_mul.vo
+W8_mul_c_spec.vi: W8_mul_c_spec.v W8_basic.vo W8_mul.vo
+W8_mul_spec.vo: W8_mul_spec.v W8_basic.vo W8_basic_spec.vo W8_mul.vo ../../ZDivModAux.vo W8_mul_c_spec.vo
+W8_mul_spec.vi: W8_mul_spec.v W8_basic.vo W8_basic_spec.vo W8_mul.vo ../../ZDivModAux.vo W8_mul_c_spec.vo
+W8_square_c_spec.vo: W8_square_c_spec.v W8_basic.vo W8_mul.vo
+W8_square_c_spec.vi: W8_square_c_spec.v W8_basic.vo W8_mul.vo
+W8_div_aux.vo: W8_div_aux.v W8_basic.vo
+W8_div_aux.vi: W8_div_aux.v W8_basic.vo
+W8_div.vo: W8_div.v W8_basic.vo ../../ZnZDivn1.vo W8_compare.vo W8_add.vo W8_sub.vo W8_div_aux.vo W8_lift.vo
+W8_div.vi: W8_div.v W8_basic.vo ../../ZnZDivn1.vo W8_compare.vo W8_add.vo W8_sub.vo W8_div_aux.vo W8_lift.vo
+W8_div_wB_spec.vo: W8_div_wB_spec.v W8_basic.vo W8_div.vo ../../Pmod.vo
+W8_div_wB_spec.vi: W8_div_wB_spec.v W8_basic.vo W8_div.vo ../../Pmod.vo
+W8_div_spec.vo: W8_div_spec.v W8_basic.vo W8_basic_spec.vo W8_div.vo W8_compare.vo W8_add.vo W8_sub.vo W8_compare_spec.vo W8_succ_c_spec.vo W8_add_c_spec.vo W8_sub_spec.vo W8_div_wB_spec.vo W8_add_mul_div_spec.vo W8_head0_spec.vo ../../ZDivModAux.vo ../../ZnZDivn1.vo
+W8_div_spec.vi: W8_div_spec.v W8_basic.vo W8_basic_spec.vo W8_div.vo W8_compare.vo W8_add.vo W8_sub.vo W8_compare_spec.vo W8_succ_c_spec.vo W8_add_c_spec.vo W8_sub_spec.vo W8_div_wB_spec.vo W8_add_mul_div_spec.vo W8_head0_spec.vo ../../ZDivModAux.vo ../../ZnZDivn1.vo
+W8_lift.vo: W8_lift.v W8_basic.vo
+W8_lift.vi: W8_lift.v W8_basic.vo
+W8_head0_spec.vo: W8_head0_spec.v W8_basic.vo W8_lift.vo
+W8_head0_spec.vi: W8_head0_spec.v W8_basic.vo W8_lift.vo
+W8_add_mul_div_1_spec.vo: W8_add_mul_div_1_spec.v W8_basic.vo W8_lift.vo
+W8_add_mul_div_1_spec.vi: W8_add_mul_div_1_spec.v W8_basic.vo W8_lift.vo
+W8_add_mul_div_spec.vo: W8_add_mul_div_spec.v W8_basic.vo W8_lift.vo W8_head0_spec.vo W8_add_mul_div_1_spec.vo W8_add_mul_div_2_spec.vo W8_add_mul_div_3_spec.vo W8_add_mul_div_4_spec.vo W8_add_mul_div_5_spec.vo W8_add_mul_div_6_spec.vo W8_add_mul_div_7_spec.vo
+W8_add_mul_div_spec.vi: W8_add_mul_div_spec.v W8_basic.vo W8_lift.vo W8_head0_spec.vo W8_add_mul_div_1_spec.vo W8_add_mul_div_2_spec.vo W8_add_mul_div_3_spec.vo W8_add_mul_div_4_spec.vo W8_add_mul_div_5_spec.vo W8_add_mul_div_6_spec.vo W8_add_mul_div_7_spec.vo
+W8_op.vo: W8_op.v W8_basic.vo W8_compare.vo W8_opp.vo W8_add.vo W8_sub.vo W8_mul.vo W8_div.vo W8_lift.vo ../../ZnZ.vo
+W8_op.vi: W8_op.v W8_basic.vo W8_compare.vo W8_opp.vo W8_add.vo W8_sub.vo W8_mul.vo W8_div.vo W8_lift.vo ../../ZnZ.vo
+W8_op_spec.vo: W8_op_spec.v W8_basic.vo W8_basic_spec.vo W8_op.vo W8_opp_spec.vo W8_compare_spec.vo W8_succ_c_spec.vo W8_add_c_spec.vo W8_add_carry_c_spec.vo W8_add_spec.vo W8_add_carry_spec.vo W8_pred_c_spec.vo W8_sub_c_spec.vo W8_sub_carry_c_spec.vo W8_sub_spec.vo W8_sub_carry_spec.vo W8_mul_c_spec.vo W8_mul_spec.vo W8_square_c_spec.vo W8_div_wB_spec.vo W8_div_spec.vo W8_head0_spec.vo W8_add_mul_div_spec.vo ../../ZnZ.vo
+W8_op_spec.vi: W8_op_spec.v W8_basic.vo W8_basic_spec.vo W8_op.vo W8_opp_spec.vo W8_compare_spec.vo W8_succ_c_spec.vo W8_add_c_spec.vo W8_add_carry_c_spec.vo W8_add_spec.vo W8_add_carry_spec.vo W8_pred_c_spec.vo W8_sub_c_spec.vo W8_sub_carry_c_spec.vo W8_sub_spec.vo W8_sub_carry_spec.vo W8_mul_c_spec.vo W8_mul_spec.vo W8_square_c_spec.vo W8_div_wB_spec.vo W8_div_spec.vo W8_head0_spec.vo W8_add_mul_div_spec.vo ../../ZnZ.vo
+W8_basic.html: W8_basic.v ../../Basic_type.html
+W8_basic_spec.html: W8_basic_spec.v W8_basic.html
+W8_compare.html: W8_compare.v W8_basic.html
+W8_compare_spec.html: W8_compare_spec.v W8_basic.html W8_basic_spec.html W8_compare.html
+W8_opp.html: W8_opp.v W8_basic.html
+W8_opp_spec.html: W8_opp_spec.v W8_basic.html W8_basic_spec.html W8_opp.html
+W8_add.html: W8_add.v W8_basic.html
+W8_succ_c_spec.html: W8_succ_c_spec.v W8_basic.html W8_add.html
+W8_add_c_spec.html: W8_add_c_spec.v W8_basic.html W8_add.html
+W8_add_carry_c_spec.html: W8_add_carry_c_spec.v W8_basic.html W8_add.html
+W8_add_spec.html: W8_add_spec.v W8_basic.html W8_add.html
+W8_add_carry_spec.html: W8_add_carry_spec.v W8_basic.html W8_add.html
+W8_sub.html: W8_sub.v W8_basic.html
+W8_pred_c_spec.html: W8_pred_c_spec.v W8_basic.html W8_sub.html
+W8_sub_c_spec.html: W8_sub_c_spec.v W8_basic.html W8_sub.html
+W8_sub_carry_c_spec.html: W8_sub_carry_c_spec.v W8_basic.html W8_sub.html
+W8_sub_spec.html: W8_sub_spec.v W8_basic.html W8_sub.html
+W8_sub_carry_spec.html: W8_sub_carry_spec.v W8_basic.html W8_sub.html
+W8_mul.html: W8_mul.v W8_basic.html
+W8_mul_c_spec.html: W8_mul_c_spec.v W8_basic.html W8_mul.html
+W8_mul_spec.html: W8_mul_spec.v W8_basic.html W8_basic_spec.html W8_mul.html ../../ZDivModAux.html W8_mul_c_spec.html
+W8_square_c_spec.html: W8_square_c_spec.v W8_basic.html W8_mul.html
+W8_div_aux.html: W8_div_aux.v W8_basic.html
+W8_div.html: W8_div.v W8_basic.html ../../ZnZDivn1.html W8_compare.html W8_add.html W8_sub.html W8_div_aux.html W8_lift.html
+W8_div_wB_spec.html: W8_div_wB_spec.v W8_basic.html W8_div.html ../../Pmod.html
+W8_div_spec.html: W8_div_spec.v W8_basic.html W8_basic_spec.html W8_div.html W8_compare.html W8_add.html W8_sub.html W8_compare_spec.html W8_succ_c_spec.html W8_add_c_spec.html W8_sub_spec.html W8_div_wB_spec.html W8_add_mul_div_spec.html W8_head0_spec.html ../../ZDivModAux.html ../../ZnZDivn1.html
+W8_lift.html: W8_lift.v W8_basic.html
+W8_head0_spec.html: W8_head0_spec.v W8_basic.html W8_lift.html
+W8_add_mul_div_1_spec.html: W8_add_mul_div_1_spec.v W8_basic.html W8_lift.html
+W8_add_mul_div_spec.html: W8_add_mul_div_spec.v W8_basic.html W8_lift.html W8_head0_spec.html W8_add_mul_div_1_spec.html W8_add_mul_div_2_spec.html W8_add_mul_div_3_spec.html W8_add_mul_div_4_spec.html W8_add_mul_div_5_spec.html W8_add_mul_div_6_spec.html W8_add_mul_div_7_spec.html
+W8_op.html: W8_op.v W8_basic.html W8_compare.html W8_opp.html W8_add.html W8_sub.html W8_mul.html W8_div.html W8_lift.html ../../ZnZ.html
+W8_op_spec.html: W8_op_spec.v W8_basic.html W8_basic_spec.html W8_op.html W8_opp_spec.html W8_compare_spec.html W8_succ_c_spec.html W8_add_c_spec.html W8_add_carry_c_spec.html W8_add_spec.html W8_add_carry_spec.html W8_pred_c_spec.html W8_sub_c_spec.html W8_sub_carry_c_spec.html W8_sub_spec.html W8_sub_carry_spec.html W8_mul_c_spec.html W8_mul_spec.html W8_square_c_spec.html W8_div_wB_spec.html W8_div_spec.html W8_head0_spec.html W8_add_mul_div_spec.html ../../ZnZ.html

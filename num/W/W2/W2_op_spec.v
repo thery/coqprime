@@ -12,13 +12,16 @@ Require Import W2_succ_c_spec.
 Require Import W2_add_c_spec.
 Require Import W2_add_carry_c_spec.
 Require Import W2_add_spec.
+Require Import W2_add_carry_spec.
 Require Import W2_pred_c_spec.
 Require Import W2_sub_c_spec.
 Require Import W2_sub_carry_c_spec.
 Require Import W2_sub_spec.
+Require Import W2_sub_carry_spec.
 Require Import W2_mul_c_spec.
 Require Import W2_mul_spec.
 Require Import W2_square_c_spec.
+Require Import W2_div_wB_spec.
 Require Import W2_div_spec.
 Require Import W2_head0_spec.
 Require Import W2_add_mul_div_spec.
@@ -35,19 +38,32 @@ Proof.
  exact w2_CW_spec.
  exact w2_compare_spec.
  exact w2_opp_c_spec.
+ exact w2_opp_spec.
  exact w2_opp_carry_spec.
  exact w2_succ_c_spec.
  exact w2_add_c_spec.
  exact w2_add_carry_c_spec.
+ exact w2_succ_spec.
  exact w2_add_spec.
+ exact w2_add_carry_spec.
  exact w2_pred_c_spec.
  exact w2_sub_c_spec.
  exact w2_sub_carry_c_spec.
+ exact w2_pred_spec.
  exact w2_sub_spec.
+ exact w2_sub_carry_spec.
  exact w2_mul_c_spec.
  exact w2_mul_spec.
  exact w2_square_c_spec.
  exact w2_div21_spec.
+ exact w2_divn1_spec.
+ exact w2_div_gt_spec.
+ exact w2_div_spec.
+ exact w2_modn1_spec.
+ exact w2_mod_gt_spec.
+ exact w2_mod_spec.
+ exact w2_gcd_gt_spec.
+ exact w2_gcd_spec.
  exact w2_head0_spec.
  exact w2_add_mul_div_spec.
 Qed.

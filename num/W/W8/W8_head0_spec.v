@@ -8,13 +8,7 @@ Require Import W8_lift.
 Lemma Eq_not_Gt : Eq <> Gt.
 Proof. intro H;discriminate H. Qed.
 
-Lemma Eq_not_Lt : Eq <> Lt.
-Proof. intro H;discriminate H. Qed.
-
 Lemma Lt_not_Gt : Lt <> Gt.
-Proof. intro H;discriminate H. Qed.
-
-Lemma Gt_not_Lt : Gt <> Lt.
 Proof. intro H;discriminate H. Qed.
 
 Lemma w8_head0_spec : forall x, 0 < [|x|] -> w8_B/ 2 <= 2 ^ (Z_of_N (w8_head0 x)) * [|x|] < w8_B.

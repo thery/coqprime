@@ -84,27 +84,24 @@ VFILES=W8_basic.v\
   W8_add_c_spec.v\
   W8_add_carry_c_spec.v\
   W8_add_spec.v\
+  W8_add_carry_spec.v\
   W8_sub.v\
   W8_pred_c_spec.v\
   W8_sub_c_spec.v\
   W8_sub_carry_c_spec.v\
   W8_sub_spec.v\
+  W8_sub_carry_spec.v\
   W8_mul.v\
   W8_mul_c_spec.v\
   W8_mul_spec.v\
   W8_square_c_spec.v\
+  W8_div_aux.v\
   W8_div.v\
   W8_div_wB_spec.v\
   W8_div_spec.v\
   W8_lift.v\
   W8_head0_spec.v\
   W8_add_mul_div_1_spec.v\
-  W8_add_mul_div_2_spec.v\
-  W8_add_mul_div_3_spec.v\
-  W8_add_mul_div_4_spec.v\
-  W8_add_mul_div_5_spec.v\
-  W8_add_mul_div_6_spec.v\
-  W8_add_mul_div_7_spec.v\
   W8_add_mul_div_spec.v\
   W8_op.v\
   W8_op_spec.v
@@ -125,27 +122,24 @@ all: W8_basic.vo\
   W8_add_c_spec.vo\
   W8_add_carry_c_spec.vo\
   W8_add_spec.vo\
+  W8_add_carry_spec.vo\
   W8_sub.vo\
   W8_pred_c_spec.vo\
   W8_sub_c_spec.vo\
   W8_sub_carry_c_spec.vo\
   W8_sub_spec.vo\
+  W8_sub_carry_spec.vo\
   W8_mul.vo\
   W8_mul_c_spec.vo\
   W8_mul_spec.vo\
   W8_square_c_spec.vo\
+  W8_div_aux.vo\
   W8_div.vo\
   W8_div_wB_spec.vo\
   W8_div_spec.vo\
   W8_lift.vo\
   W8_head0_spec.vo\
   W8_add_mul_div_1_spec.vo\
-  W8_add_mul_div_2_spec.vo\
-  W8_add_mul_div_3_spec.vo\
-  W8_add_mul_div_4_spec.vo\
-  W8_add_mul_div_5_spec.vo\
-  W8_add_mul_div_6_spec.vo\
-  W8_add_mul_div_7_spec.vo\
   W8_add_mul_div_spec.vo\
   W8_op.vo\
   W8_op_spec.vo
@@ -177,7 +171,7 @@ all-gal.ps: $(VFILES)
 .SUFFIXES: .v .vo .vi .g .html .tex .g.tex .g.html
 
 .v.vo:
-	$(COQC) $(COQDEBUG) $(COQFLAGS) $*
+	time -p $(COQC) $(COQDEBUG) $(COQFLAGS) $*
 
 .v.vi:
 	$(COQC) -i $(COQDEBUG) $(COQFLAGS) $*

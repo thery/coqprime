@@ -1,11 +1,13 @@
 (**********************************************************************
-    ZPowerAux.v                                                                                           
-                                                                                                          
-     Auxillary functions & Theorems for Zpower                                             
-                                                                                                          
-                                                                                                          
-                                    Laurent.Thery@inria.fr (2005)                  
+
+
+    ZPowerAux.v      Auxillary functions & Theorems for Zpower 
+
+
+                  Laurent.Thery@inria.fr (2005)                  
+
   **********************************************************************)
+
 Require Export ZArith.
 Require Export Znumtheory.
 Require Export Tactic.
@@ -139,3 +141,39 @@ rewrite Zpower_exp_1; auto with zarith.
 apply Zpower_le_monotone; auto with zarith.
 Qed.
 
+Lemma Zpower_le_monotone_inv  : 
+  forall a b c, 1 < a -> 0 < b -> a^b <= a^c -> b <= c.
+Proof.
+ intros a b c H H0 H1.
+ destruct (Z_le_gt_dec b c);trivial.
+ assert (2 <= a^b).
+  apply Zle_trans with (2^b).
+  pattern 2 at 1;replace 2 with (2^1);trivial.
+  apply Zpower_le_monotone;auto with zarith.
+  apply Zpower_le_monotone_exp;auto with zarith.
+ assert (c > 0).
+ destruct (Z_le_gt_dec 0 c);trivial. 
+ destruct (Zle_lt_or_eq _ _ z0);auto with zarith.
+ rewrite <- H3 in H1;simpl in H1; elimtype False;omega.
+ destruct c;try discriminate z0. simpl in H1. elimtype False;omega.
+ assert (H4 := Zpower_lt_monotone a c b H). elimtype False;omega.
+Qed.
+
+
+Theorem Zpower_le_monotone2:
+   forall a b c: Z, 0 < a -> b <= c -> a ^ b <= a ^ c.
+intros a b c H H2.
+destruct (Z_le_gt_dec 0 b).
+rewrite <- (Zmult_1_r (a ^ b)); replace c with (b + (c - b)); auto with zarith.
+rewrite Zpower_exp; auto with zarith.
+apply Zmult_le_compat_l; auto with zarith.
+assert (0 < a ^ (c - b)); auto with zarith.
+replace (a^b) with 0.
+destruct (Z_le_gt_dec 0 c).
+destruct (Zle_lt_or_eq _ _ z0).
+apply Zlt_le_weak;apply Zpower_lt_0;trivial.
+rewrite <- H0;simpl;auto with zarith.
+replace (a^c) with 0. auto with zarith.
+destruct c;trivial;unfold Zgt in z0;discriminate z0.
+destruct b;trivial;unfold Zgt in z;discriminate z.
+Qed.

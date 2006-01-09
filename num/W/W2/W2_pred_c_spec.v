@@ -15,3 +15,13 @@ fun x =>
  | II => refl_equal (2)
  end.
 
+Lemma w2_pred_spec : forall x,  [|w2_pred x|] = ([|x|] - 1) mod w2_B.
+Proof
+fun x =>
+ match x as x return  [|w2_pred x|] = ([|x|] - 1) mod w2_B with
+ | OO => refl_equal 3
+ | OI => refl_equal 0
+ | IO => refl_equal 1
+ | II => refl_equal 2
+ end.
+

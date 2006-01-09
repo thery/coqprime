@@ -47,8 +47,8 @@ Definition w2_add_mul_div1 x y :=
     end
  end.
 
-Definition w2_add_mul_div x y p :=
+Definition w2_add_mul_div p :=
  match p with
- | xH => w2_add_mul_div1 x y
- | _ => OO
+ | xH => w2_add_mul_div1
+ | _ => fun x y => OO
  end.

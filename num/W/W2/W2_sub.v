@@ -15,6 +15,14 @@ Definition w2_pred_c x :=
  | II => C0 IO
  end.
 
+Definition w2_pred x :=
+ match x with
+ | OO => II
+ | OI => OO
+ | IO => OI
+ | II => IO
+ end.
+
 Definition w2_sub_c x y :=
  match y with
  | OO => C0 x
@@ -91,5 +99,31 @@ Definition w2_sub x y :=
     | IO => II
     | II => OO
     end
+ end.
+
+Definition w2_sub_carry x y :=
+ match y with
+ | OO =>
+    match x with
+    | OO => II
+    | OI => OO
+    | IO => OI
+    | II => IO
+    end
+ | OI =>
+    match x with
+    | OO => IO
+    | OI => II
+    | IO => OO
+    | II => OI
+    end
+ | IO =>
+    match x with
+    | OO => OI
+    | OI => IO
+    | IO => II
+    | II => OO
+    end
+ | II => x
  end.
 

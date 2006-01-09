@@ -16,6 +16,16 @@ fun x =>
  | II => refl_equal (-3)
  end.
 
+Lemma w2_opp_spec : forall x, [|w2_opp x|] = (-[|x|]) mod w2_B.
+Proof
+fun x =>
+ match x as x return [|w2_opp x|] = (-[|x|]) mod w2_B with
+ | OO => refl_equal 0
+ | OI => refl_equal 3
+ | IO => refl_equal 2
+ | II => refl_equal 1
+ end.
+
 Lemma w2_opp_carry_spec : forall x, [|w2_opp_carry x|] = w2_B - [|x|] - 1.
 Proof
 fun x =>

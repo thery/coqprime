@@ -84,15 +84,18 @@ VFILES=W2_basic.v\
   W2_add_c_spec.v\
   W2_add_carry_c_spec.v\
   W2_add_spec.v\
+  W2_add_carry_spec.v\
   W2_sub.v\
   W2_pred_c_spec.v\
   W2_sub_c_spec.v\
   W2_sub_carry_c_spec.v\
   W2_sub_spec.v\
+  W2_sub_carry_spec.v\
   W2_mul.v\
   W2_mul_c_spec.v\
   W2_mul_spec.v\
   W2_square_c_spec.v\
+  W2_div_aux.v\
   W2_div.v\
   W2_div_wB_spec.v\
   W2_div_spec.v\
@@ -119,15 +122,18 @@ all: W2_basic.vo\
   W2_add_c_spec.vo\
   W2_add_carry_c_spec.vo\
   W2_add_spec.vo\
+  W2_add_carry_spec.vo\
   W2_sub.vo\
   W2_pred_c_spec.vo\
   W2_sub_c_spec.vo\
   W2_sub_carry_c_spec.vo\
   W2_sub_spec.vo\
+  W2_sub_carry_spec.vo\
   W2_mul.vo\
   W2_mul_c_spec.vo\
   W2_mul_spec.vo\
   W2_square_c_spec.vo\
+  W2_div_aux.vo\
   W2_div.vo\
   W2_div_wB_spec.vo\
   W2_div_spec.vo\

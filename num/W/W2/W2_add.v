@@ -80,6 +80,14 @@ Definition w2_add_carry_c x y :=
  | II => C1 y
  end.
 
+Definition w2_succ x :=
+ match x with
+ | OO => OI
+ | OI => IO
+ | IO => II
+ | II => OO
+ end.
+
 Definition w2_add x y :=
  match x with
  | OO => y
@@ -104,5 +112,31 @@ Definition w2_add x y :=
     | IO => OI
     | II => IO
     end
+ end.
+
+Definition w2_add_carry x y :=
+ match x with
+ | OO => 
+    match y with
+    | OO => OI
+    | OI => IO
+    | IO => II
+    | II => OO
+    end
+ | OI => 
+    match y with
+    | OO => IO
+    | OI => II
+    | IO => OO
+    | II => OI
+    end
+ | IO => 
+    match y with
+    | OO => II
+    | OI => OO
+    | IO => OI
+    | II => IO
+    end
+ | II => y
  end.
 
