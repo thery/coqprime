@@ -2236,8 +2236,15 @@ Section Proof.
   rewrite Zmult_0_l;rewrite Zplus_0_l;auto.
   generalize Hc;w_rewrite;intros;assert (H := spec_to_Z op_spec b1);
    elimtype False;omega.
+(********** BEUUUUUUUUUUUUURK ****)
+  replace
+      (match word_tr_word (zn2z w) n in (_ = y) return y with
+      | refl_equal => a
+      end) with (word_of_word_tr (zn2z w) n a).
   apply spec_gen_divn1;auto with ww_spec.
   exact spec_ww_div21.
+ unfold word_of_word_tr; simpl.
+ case (word_tr_word (zn2z w) n); auto.
  Qed.
 
  Lemma to_Z_div_minus_p : forall x p,

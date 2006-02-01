@@ -63,9 +63,9 @@ PP=-pp "camlp4o -I . -I $(COQTOP)/parsing $(CAMLP4EXTEND) $(GRAMMARS) -impl"
 #########################
 
 OCAMLLIBS=-I .\
-  -I W/W8
+  -I W/W2
 COQLIBS=-I .\
-  -I W/W8
+  -I W/W2
 
 ###################################
 #                                 #
@@ -160,7 +160,7 @@ W:
 	$(COQDOC) -html -g $< -o $@
 
 byte:
-	$(MAKE) all "OPT="
+	$(MAKE) all "OPT=-byte"
 
 opt:
 	$(MAKE) all "OPT=-opt"

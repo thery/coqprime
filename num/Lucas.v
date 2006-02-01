@@ -27,7 +27,7 @@ Definition lucastest (w:Set) (op:znz_op w) p :=
  op.(znz_to_Z) (iter_pos (Pminus p 2) _ square_m2 w4).
 
 
-(*  
+  
 Time Eval vm_compute in lucastest w1024_op 521.
 (* sans square : Finished transaction in 8. secs (7.66u,0.01s) *)
 (* Finished transaction in 6. secs (5.74u,0.01s) *)
@@ -87,5 +87,5 @@ Time Eval vm_compute in powertest w1024_op 3
 6864797660130609714981900799081393217269435300143305409394463459185543183397656052122559640661454554977296311391480858037121987999716643812574028291115057151.
 
 
-*)
+
 
