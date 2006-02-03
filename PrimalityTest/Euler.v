@@ -8,7 +8,7 @@ Require Import ZArith.
 Require Export Znumtheory.
 Require Import Tactic.
 Require Export ZSum.
-Require Import ZAux.
+Require Import PZAux.
 
 Open Scope Z_scope.
 

@@ -6,7 +6,7 @@
                                                                                                          
                                      Laurent.Thery@inria.fr (2005)                
 ************************************************************************)
-Require Import ZAux.
+Require Import PZAux.
 Require Import List.
 Require Import Root.
 Require Import UList.

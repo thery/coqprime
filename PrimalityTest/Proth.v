@@ -8,7 +8,7 @@
                                     Laurent.Thery@inria.fr (2005)    
   **********************************************************************)
 Require Import ZArith.
-Require Import ZAux.
+Require Import PZAux.
 Require Import Pocklington.
 
 Open Scope Z_scope.

@@ -11,7 +11,7 @@
 Require Import List.
 Require Import UList.
 Require Import ListAux.
-Require Import ZAux.
+Require Import PZAux.
 Require Import NatAux.
 Require Import FGroup.
 

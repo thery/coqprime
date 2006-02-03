@@ -81,7 +81,6 @@ VFILES=BasePrimes.v\
   Lagrange.v\
   ListAux.v\
   LucasLehmer.v\
-  MOmega.v\
   NatAux.v\
   Pepin.v\
   Permutation.v\
@@ -115,7 +114,6 @@ all: BasePrimes.vo\
   Lagrange.vo\
   ListAux.vo\
   LucasLehmer.vo\
-  MOmega.vo\
   NatAux.vo\
   Pepin.vo\
   Permutation.vo\
