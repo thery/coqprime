@@ -12,16 +12,6 @@ W2_opp_spec.vo: W2_opp_spec.v W2_basic.vo W2_basic_spec.vo W2_opp.vo
 W2_opp_spec.vi: W2_opp_spec.v W2_basic.vo W2_basic_spec.vo W2_opp.vo
 W2_add.vo: W2_add.v W2_basic.vo
 W2_add.vi: W2_add.v W2_basic.vo
-<<<<<<< .mine
-W2_succ_c_spec.vo: W2_succ_c_spec.v W2_basic.vo W2_add.vo
-W2_succ_c_spec.vi: W2_succ_c_spec.v W2_basic.vo W2_add.vo
-W2_add_c_spec.vo: W2_add_c_spec.v W2_basic.vo W2_add.vo
-W2_add_c_spec.vi: W2_add_c_spec.v W2_basic.vo W2_add.vo
-W2_add_carry_c_spec.vo: W2_add_carry_c_spec.v W2_basic.vo W2_add.vo
-W2_add_carry_c_spec.vi: W2_add_carry_c_spec.v W2_basic.vo W2_add.vo
-W2_add_spec.vo: W2_add_spec.v W2_basic.vo W2_add.vo
-W2_add_spec.vi: W2_add_spec.v W2_basic.vo W2_add.vo
-=======
 W2_succ_c_spec.vo: W2_succ_c_spec.v W2_basic.vo W2_add.vo
 W2_succ_c_spec.vi: W2_succ_c_spec.v W2_basic.vo W2_add.vo
 W2_add_c_spec.vo: W2_add_c_spec.v W2_basic.vo W2_add.vo
@@ -32,45 +22,8 @@ W2_add_spec.vo: W2_add_spec.v W2_basic.vo W2_add.vo
 W2_add_spec.vi: W2_add_spec.v W2_basic.vo W2_add.vo
 W2_add_carry_spec.vo: W2_add_carry_spec.v W2_basic.vo W2_add.vo
 W2_add_carry_spec.vi: W2_add_carry_spec.v W2_basic.vo W2_add.vo
->>>>>>> .r20
 W2_sub.vo: W2_sub.v W2_basic.vo
 W2_sub.vi: W2_sub.v W2_basic.vo
-<<<<<<< .mine
-W2_pred_c_spec.vo: W2_pred_c_spec.v W2_basic.vo W2_sub.vo
-W2_pred_c_spec.vi: W2_pred_c_spec.v W2_basic.vo W2_sub.vo
-W2_sub_c_spec.vo: W2_sub_c_spec.v W2_basic.vo W2_sub.vo
-W2_sub_c_spec.vi: W2_sub_c_spec.v W2_basic.vo W2_sub.vo
-W2_sub_carry_c_spec.vo: W2_sub_carry_c_spec.v W2_basic.vo W2_sub.vo
-W2_sub_carry_c_spec.vi: W2_sub_carry_c_spec.v W2_basic.vo W2_sub.vo
-W2_sub_spec.vo: W2_sub_spec.v W2_basic.vo W2_sub.vo
-W2_sub_spec.vi: W2_sub_spec.v W2_basic.vo W2_sub.vo
-W2_mul.vo: W2_mul.v W2_basic.vo
-W2_mul.vi: W2_mul.v W2_basic.vo
-W2_mul_c_spec.vo: W2_mul_c_spec.v W2_basic.vo W2_mul.vo
-W2_mul_c_spec.vi: W2_mul_c_spec.v W2_basic.vo W2_mul.vo
-W2_mul_spec.vo: W2_mul_spec.v W2_basic.vo W2_basic_spec.vo W2_mul.vo ../../ZDivModAux.vo W2_mul_c_spec.vo
-W2_mul_spec.vi: W2_mul_spec.v W2_basic.vo W2_basic_spec.vo W2_mul.vo ../../ZDivModAux.vo W2_mul_c_spec.vo
-W2_square_c_spec.vo: W2_square_c_spec.v W2_basic.vo W2_mul.vo
-W2_square_c_spec.vi: W2_square_c_spec.v W2_basic.vo W2_mul.vo
-W2_div.vo: W2_div.v W2_basic.vo W2_compare.vo W2_add.vo W2_sub.vo
-W2_div.vi: W2_div.v W2_basic.vo W2_compare.vo W2_add.vo W2_sub.vo
-W2_div_wB_spec.vo: W2_div_wB_spec.v W2_basic.vo W2_div.vo
-W2_div_wB_spec.vi: W2_div_wB_spec.v W2_basic.vo W2_div.vo
-W2_div_spec.vo: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo ../../ZDivModAux.vo
-W2_div_spec.vi: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo ../../ZDivModAux.vo
-W2_lift.vo: W2_lift.v W2_basic.vo
-W2_lift.vi: W2_lift.v W2_basic.vo
-W2_head0_spec.vo: W2_head0_spec.v W2_basic.vo W2_lift.vo
-W2_head0_spec.vi: W2_head0_spec.v W2_basic.vo W2_lift.vo
-W2_add_mul_div_1_spec.vo: W2_add_mul_div_1_spec.v W2_basic.vo W2_lift.vo
-W2_add_mul_div_1_spec.vi: W2_add_mul_div_1_spec.v W2_basic.vo W2_lift.vo
-W2_add_mul_div_spec.vo: W2_add_mul_div_spec.v W2_basic.vo W2_lift.vo W2_head0_spec.vo W2_add_mul_div_1_spec.vo
-W2_add_mul_div_spec.vi: W2_add_mul_div_spec.v W2_basic.vo W2_lift.vo W2_head0_spec.vo W2_add_mul_div_1_spec.vo
-W2_op.vo: W2_op.v W2_basic.vo W2_compare.vo W2_opp.vo W2_add.vo W2_sub.vo W2_mul.vo W2_div.vo W2_lift.vo ../../ZnZ.vo
-W2_op.vi: W2_op.v W2_basic.vo W2_compare.vo W2_opp.vo W2_add.vo W2_sub.vo W2_mul.vo W2_div.vo W2_lift.vo ../../ZnZ.vo
-W2_op_spec.vo: W2_op_spec.v W2_basic.vo W2_basic_spec.vo W2_op.vo W2_opp_spec.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_add_carry_c_spec.vo W2_add_spec.vo W2_pred_c_spec.vo W2_sub_c_spec.vo W2_sub_carry_c_spec.vo W2_sub_spec.vo W2_mul_c_spec.vo W2_mul_spec.vo W2_square_c_spec.vo W2_div_spec.vo W2_head0_spec.vo W2_add_mul_div_spec.vo ../../ZnZ.vo
-W2_op_spec.vi: W2_op_spec.v W2_basic.vo W2_basic_spec.vo W2_op.vo W2_opp_spec.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_add_carry_c_spec.vo W2_add_spec.vo W2_pred_c_spec.vo W2_sub_c_spec.vo W2_sub_carry_c_spec.vo W2_sub_spec.vo W2_mul_c_spec.vo W2_mul_spec.vo W2_square_c_spec.vo W2_div_spec.vo W2_head0_spec.vo W2_add_mul_div_spec.vo ../../ZnZ.vo
-=======
 W2_pred_c_spec.vo: W2_pred_c_spec.v W2_basic.vo W2_sub.vo
 W2_pred_c_spec.vi: W2_pred_c_spec.v W2_basic.vo W2_sub.vo
 W2_sub_c_spec.vo: W2_sub_c_spec.v W2_basic.vo W2_sub.vo
@@ -93,10 +46,10 @@ W2_div_aux.vo: W2_div_aux.v W2_basic.vo
 W2_div_aux.vi: W2_div_aux.v W2_basic.vo
 W2_div.vo: W2_div.v W2_basic.vo ../../ZnZDivn1.vo W2_compare.vo W2_add.vo W2_sub.vo W2_div_aux.vo W2_lift.vo
 W2_div.vi: W2_div.v W2_basic.vo ../../ZnZDivn1.vo W2_compare.vo W2_add.vo W2_sub.vo W2_div_aux.vo W2_lift.vo
-W2_div_wB_spec.vo: W2_div_wB_spec.v W2_basic.vo W2_div.vo
-W2_div_wB_spec.vi: W2_div_wB_spec.v W2_basic.vo W2_div.vo
-W2_div_spec.vo: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo ../../ZDivModAux.vo
-W2_div_spec.vi: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo ../../ZDivModAux.vo
+W2_div_wB_spec.vo: W2_div_wB_spec.v W2_basic.vo W2_div.vo ../../Pmod.vo
+W2_div_wB_spec.vi: W2_div_wB_spec.v W2_basic.vo W2_div.vo ../../Pmod.vo
+W2_div_spec.vo: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo W2_add_mul_div_spec.vo W2_head0_spec.vo ../../ZDivModAux.vo ../../ZnZDivn1.vo
+W2_div_spec.vi: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo W2_add_mul_div_spec.vo W2_head0_spec.vo ../../ZDivModAux.vo ../../ZnZDivn1.vo
 W2_lift.vo: W2_lift.v W2_basic.vo
 W2_lift.vi: W2_lift.v W2_basic.vo
 W2_head0_spec.vo: W2_head0_spec.v W2_basic.vo W2_lift.vo
@@ -105,11 +58,10 @@ W2_add_mul_div_1_spec.vo: W2_add_mul_div_1_spec.v W2_basic.vo W2_lift.vo
 W2_add_mul_div_1_spec.vi: W2_add_mul_div_1_spec.v W2_basic.vo W2_lift.vo
 W2_add_mul_div_spec.vo: W2_add_mul_div_spec.v W2_basic.vo W2_lift.vo W2_head0_spec.vo W2_add_mul_div_1_spec.vo
 W2_add_mul_div_spec.vi: W2_add_mul_div_spec.v W2_basic.vo W2_lift.vo W2_head0_spec.vo W2_add_mul_div_1_spec.vo
-W2_op.vo: W2_op.v W2_basic.vo W2_compare.vo W2_opp.vo W2_add.vo W2_sub.vo W2_mul.vo W2_div.vo W2_lift.vo ../../ZnZ.vo
-W2_op.vi: W2_op.v W2_basic.vo W2_compare.vo W2_opp.vo W2_add.vo W2_sub.vo W2_mul.vo W2_div.vo W2_lift.vo ../../ZnZ.vo
-W2_op_spec.vo: W2_op_spec.v W2_basic.vo W2_basic_spec.vo W2_op.vo W2_opp_spec.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_add_carry_c_spec.vo W2_add_spec.vo W2_add_carry_spec.vo W2_pred_c_spec.vo W2_sub_c_spec.vo W2_sub_carry_c_spec.vo W2_sub_spec.vo W2_sub_carry_spec.vo W2_mul_c_spec.vo W2_mul_spec.vo W2_square_c_spec.vo W2_div_spec.vo W2_head0_spec.vo W2_add_mul_div_spec.vo ../../ZnZ.vo
-W2_op_spec.vi: W2_op_spec.v W2_basic.vo W2_basic_spec.vo W2_op.vo W2_opp_spec.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_add_carry_c_spec.vo W2_add_spec.vo W2_add_carry_spec.vo W2_pred_c_spec.vo W2_sub_c_spec.vo W2_sub_carry_c_spec.vo W2_sub_spec.vo W2_sub_carry_spec.vo W2_mul_c_spec.vo W2_mul_spec.vo W2_square_c_spec.vo W2_div_spec.vo W2_head0_spec.vo W2_add_mul_div_spec.vo ../../ZnZ.vo
->>>>>>> .r20
+W2_op.vo: W2_op.v W2_basic.vo W2_compare.vo W2_opp.vo W2_add.vo W2_sub.vo W2_mul.vo W2_div.vo W2_lift.vo W2_mod.vo ../../ZnZ.vo
+W2_op.vi: W2_op.v W2_basic.vo W2_compare.vo W2_opp.vo W2_add.vo W2_sub.vo W2_mul.vo W2_div.vo W2_lift.vo W2_mod.vo ../../ZnZ.vo
+W2_op_spec.vo: W2_op_spec.v W2_basic.vo W2_basic_spec.vo W2_op.vo W2_opp_spec.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_add_carry_c_spec.vo W2_add_spec.vo W2_add_carry_spec.vo W2_pred_c_spec.vo W2_sub_c_spec.vo W2_sub_carry_c_spec.vo W2_sub_spec.vo W2_sub_carry_spec.vo W2_mul_c_spec.vo W2_mul_spec.vo W2_square_c_spec.vo W2_div_wB_spec.vo W2_div_spec.vo W2_head0_spec.vo W2_add_mul_div_spec.vo W2_mod_spec.vo ../../ZnZ.vo
+W2_op_spec.vi: W2_op_spec.v W2_basic.vo W2_basic_spec.vo W2_op.vo W2_opp_spec.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_add_carry_c_spec.vo W2_add_spec.vo W2_add_carry_spec.vo W2_pred_c_spec.vo W2_sub_c_spec.vo W2_sub_carry_c_spec.vo W2_sub_spec.vo W2_sub_carry_spec.vo W2_mul_c_spec.vo W2_mul_spec.vo W2_square_c_spec.vo W2_div_wB_spec.vo W2_div_spec.vo W2_head0_spec.vo W2_add_mul_div_spec.vo W2_mod_spec.vo ../../ZnZ.vo
 W2_basic.html: W2_basic.v ../../Basic_type.html
 W2_basic_spec.html: W2_basic_spec.v W2_basic.html
 W2_compare.html: W2_compare.v W2_basic.html
@@ -117,38 +69,12 @@ W2_compare_spec.html: W2_compare_spec.v W2_basic.html W2_basic_spec.html W2_comp
 W2_opp.html: W2_opp.v W2_basic.html
 W2_opp_spec.html: W2_opp_spec.v W2_basic.html W2_basic_spec.html W2_opp.html
 W2_add.html: W2_add.v W2_basic.html
-<<<<<<< .mine
-W2_succ_c_spec.html: W2_succ_c_spec.v W2_basic.html W2_add.html
-W2_add_c_spec.html: W2_add_c_spec.v W2_basic.html W2_add.html
-W2_add_carry_c_spec.html: W2_add_carry_c_spec.v W2_basic.html W2_add.html
-W2_add_spec.html: W2_add_spec.v W2_basic.html W2_add.html
-=======
 W2_succ_c_spec.html: W2_succ_c_spec.v W2_basic.html W2_add.html
 W2_add_c_spec.html: W2_add_c_spec.v W2_basic.html W2_add.html
 W2_add_carry_c_spec.html: W2_add_carry_c_spec.v W2_basic.html W2_add.html
 W2_add_spec.html: W2_add_spec.v W2_basic.html W2_add.html
 W2_add_carry_spec.html: W2_add_carry_spec.v W2_basic.html W2_add.html
->>>>>>> .r20
 W2_sub.html: W2_sub.v W2_basic.html
-<<<<<<< .mine
-W2_pred_c_spec.html: W2_pred_c_spec.v W2_basic.html W2_sub.html
-W2_sub_c_spec.html: W2_sub_c_spec.v W2_basic.html W2_sub.html
-W2_sub_carry_c_spec.html: W2_sub_carry_c_spec.v W2_basic.html W2_sub.html
-W2_sub_spec.html: W2_sub_spec.v W2_basic.html W2_sub.html
-W2_mul.html: W2_mul.v W2_basic.html
-W2_mul_c_spec.html: W2_mul_c_spec.v W2_basic.html W2_mul.html
-W2_mul_spec.html: W2_mul_spec.v W2_basic.html W2_basic_spec.html W2_mul.html ../../ZDivModAux.html W2_mul_c_spec.html
-W2_square_c_spec.html: W2_square_c_spec.v W2_basic.html W2_mul.html
-W2_div.html: W2_div.v W2_basic.html W2_compare.html W2_add.html W2_sub.html
-W2_div_wB_spec.html: W2_div_wB_spec.v W2_basic.html W2_div.html
-W2_div_spec.html: W2_div_spec.v W2_basic.html W2_basic_spec.html W2_div.html W2_compare.html W2_add.html W2_sub.html W2_compare_spec.html W2_succ_c_spec.html W2_add_c_spec.html W2_sub_spec.html W2_div_wB_spec.html ../../ZDivModAux.html
-W2_lift.html: W2_lift.v W2_basic.html
-W2_head0_spec.html: W2_head0_spec.v W2_basic.html W2_lift.html
-W2_add_mul_div_1_spec.html: W2_add_mul_div_1_spec.v W2_basic.html W2_lift.html
-W2_add_mul_div_spec.html: W2_add_mul_div_spec.v W2_basic.html W2_lift.html W2_head0_spec.html W2_add_mul_div_1_spec.html
-W2_op.html: W2_op.v W2_basic.html W2_compare.html W2_opp.html W2_add.html W2_sub.html W2_mul.html W2_div.html W2_lift.html ../../ZnZ.html
-W2_op_spec.html: W2_op_spec.v W2_basic.html W2_basic_spec.html W2_op.html W2_opp_spec.html W2_compare_spec.html W2_succ_c_spec.html W2_add_c_spec.html W2_add_carry_c_spec.html W2_add_spec.html W2_pred_c_spec.html W2_sub_c_spec.html W2_sub_carry_c_spec.html W2_sub_spec.html W2_mul_c_spec.html W2_mul_spec.html W2_square_c_spec.html W2_div_spec.html W2_head0_spec.html W2_add_mul_div_spec.html ../../ZnZ.html
-=======
 W2_pred_c_spec.html: W2_pred_c_spec.v W2_basic.html W2_sub.html
 W2_sub_c_spec.html: W2_sub_c_spec.v W2_basic.html W2_sub.html
 W2_sub_carry_c_spec.html: W2_sub_carry_c_spec.v W2_basic.html W2_sub.html
@@ -160,12 +86,11 @@ W2_mul_spec.html: W2_mul_spec.v W2_basic.html W2_basic_spec.html W2_mul.html ../
 W2_square_c_spec.html: W2_square_c_spec.v W2_basic.html W2_mul.html
 W2_div_aux.html: W2_div_aux.v W2_basic.html
 W2_div.html: W2_div.v W2_basic.html ../../ZnZDivn1.html W2_compare.html W2_add.html W2_sub.html W2_div_aux.html W2_lift.html
-W2_div_wB_spec.html: W2_div_wB_spec.v W2_basic.html W2_div.html
-W2_div_spec.html: W2_div_spec.v W2_basic.html W2_basic_spec.html W2_div.html W2_compare.html W2_add.html W2_sub.html W2_compare_spec.html W2_succ_c_spec.html W2_add_c_spec.html W2_sub_spec.html W2_div_wB_spec.html ../../ZDivModAux.html
+W2_div_wB_spec.html: W2_div_wB_spec.v W2_basic.html W2_div.html ../../Pmod.html
+W2_div_spec.html: W2_div_spec.v W2_basic.html W2_basic_spec.html W2_div.html W2_compare.html W2_add.html W2_sub.html W2_compare_spec.html W2_succ_c_spec.html W2_add_c_spec.html W2_sub_spec.html W2_div_wB_spec.html W2_add_mul_div_spec.html W2_head0_spec.html ../../ZDivModAux.html ../../ZnZDivn1.html
 W2_lift.html: W2_lift.v W2_basic.html
 W2_head0_spec.html: W2_head0_spec.v W2_basic.html W2_lift.html
 W2_add_mul_div_1_spec.html: W2_add_mul_div_1_spec.v W2_basic.html W2_lift.html
 W2_add_mul_div_spec.html: W2_add_mul_div_spec.v W2_basic.html W2_lift.html W2_head0_spec.html W2_add_mul_div_1_spec.html
-W2_op.html: W2_op.v W2_basic.html W2_compare.html W2_opp.html W2_add.html W2_sub.html W2_mul.html W2_div.html W2_lift.html ../../ZnZ.html
-W2_op_spec.html: W2_op_spec.v W2_basic.html W2_basic_spec.html W2_op.html W2_opp_spec.html W2_compare_spec.html W2_succ_c_spec.html W2_add_c_spec.html W2_add_carry_c_spec.html W2_add_spec.html W2_add_carry_spec.html W2_pred_c_spec.html W2_sub_c_spec.html W2_sub_carry_c_spec.html W2_sub_spec.html W2_sub_carry_spec.html W2_mul_c_spec.html W2_mul_spec.html W2_square_c_spec.html W2_div_spec.html W2_head0_spec.html W2_add_mul_div_spec.html ../../ZnZ.html
->>>>>>> .r20
+W2_op.html: W2_op.v W2_basic.html W2_compare.html W2_opp.html W2_add.html W2_sub.html W2_mul.html W2_div.html W2_lift.html W2_mod.html ../../ZnZ.html
+W2_op_spec.html: W2_op_spec.v W2_basic.html W2_basic_spec.html W2_op.html W2_opp_spec.html W2_compare_spec.html W2_succ_c_spec.html W2_add_c_spec.html W2_add_carry_c_spec.html W2_add_spec.html W2_add_carry_spec.html W2_pred_c_spec.html W2_sub_c_spec.html W2_sub_carry_c_spec.html W2_sub_spec.html W2_sub_carry_spec.html W2_mul_c_spec.html W2_mul_spec.html W2_square_c_spec.html W2_div_wB_spec.html W2_div_spec.html W2_head0_spec.html W2_add_mul_div_spec.html W2_mod_spec.html ../../ZnZ.html

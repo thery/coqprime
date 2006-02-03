@@ -63,8 +63,10 @@ PP=-pp "camlp4o -I . -I $(COQTOP)/parsing $(CAMLP4EXTEND) $(GRAMMARS) -impl"
 #########################
 
 OCAMLLIBS=-I .\
+  -I ../PrimalityTest\
   -I W/W2
 COQLIBS=-I .\
+  -I ../PrimalityTest\
   -I W/W2
 
 ###################################
@@ -73,35 +75,44 @@ COQLIBS=-I .\
 #                                 #
 ###################################
 
-VFILES=Tactic.v\
+VFILES=Basic_type.v\
+  Lucas.v\
+  MkSpec.v\
+  Mod_op.v\
+  Pmod.v\
+  Tactic.v\
+  W.v\
   ZAux.v\
-  ZPowerAux.v\
   ZDivModAux.v\
-  Basic_type.v\
-  ZnZ.v\
-  ZnZDivn1.v\
-  Zn2Z.v\
+  Zmisc.v\
   Zn2Z_for_Proof.v\
   Zn2ZProof.v\
-  MkSpec.v
+  Zn2Z.v\
+  ZnZDivn1.v\
+  ZnZ.v\
+  ZPowerAux.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
 HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
-all: Tactic.vo\
+all: Basic_type.vo\
+  Lucas.vo\
+  MkSpec.vo\
+  Mod_op.vo\
+  Pmod.vo\
+  Tactic.vo\
+  W.vo\
   ZAux.vo\
-  ZPowerAux.vo\
   ZDivModAux.vo\
-  Basic_type.vo\
-  ZnZ.vo\
-  W\
-  ZnZDivn1.vo\
-  Zn2Z.vo\
+  Zmisc.vo\
   Zn2Z_for_Proof.vo\
   Zn2ZProof.vo\
-  MkSpec.vo
+  Zn2Z.vo\
+  ZnZDivn1.vo\
+  ZnZ.vo\
+  ZPowerAux.vo
 
 spec: $(VIFILES)
 
@@ -119,22 +130,13 @@ all-gal.ps: $(VFILES)
 
 
 
-###################
-#                 #
-# Subdirectories. #
-#                 #
-###################
-
-W:
-	cd W ; $(MAKE) all
-
 ####################
 #                  #
 # Special targets. #
 #                  #
 ####################
 
-.PHONY: all opt byte archclean clean install depend html W
+.PHONY: all opt byte archclean clean install depend html
 
 .SUFFIXES: .v .vo .vi .g .html .tex .g.tex .g.html
 
@@ -171,30 +173,24 @@ include .depend
 	rm -f .depend
 	$(COQDEP) -i $(COQLIBS) $(VFILES) *.ml *.mli >.depend
 	$(COQDEP) $(COQLIBS) -suffix .html $(VFILES) >>.depend
-	(cd W ; $(MAKE) depend)
 
 install:
 	mkdir -p `$(COQC) -where`/user-contrib
 	cp -f $(VOFILES) `$(COQC) -where`/user-contrib
-	(cd W ; $(MAKE) install)
 
 Makefile: Make
 	mv -f Makefile Makefile.bak
 	$(COQBIN)coq_makefile -f Make -o Makefile
 
-	(cd W ; $(MAKE) Makefile)
 
 clean:
 	rm -f *.cmo *.cmi *.cmx *.o $(VOFILES) $(VIFILES) $(GFILES) *~
 	rm -f all.ps all-gal.ps $(HTMLFILES) $(GHTMLFILES)
-	(cd W ; $(MAKE) clean)
 
 archclean:
 	rm -f *.cmx *.o
-	(cd W ; $(MAKE) archclean)
 
 html:
-	(cd W ; $(MAKE) html)
 
 # WARNING
 #

@@ -104,7 +104,8 @@ VFILES=W2_basic.v\
   W2_add_mul_div_1_spec.v\
   W2_add_mul_div_spec.v\
   W2_op.v\
-  W2_op_spec.v
+  W2_op_spec.v\
+  W2_mod.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -142,7 +143,8 @@ all: W2_basic.vo\
   W2_add_mul_div_1_spec.vo\
   W2_add_mul_div_spec.vo\
   W2_op.vo\
-  W2_op_spec.vo
+  W2_op_spec.vo\
+  W2_mod.vo
 
 spec: $(VIFILES)
 
@@ -192,7 +194,7 @@ all-gal.ps: $(VFILES)
 	$(COQDOC) -html -g $< -o $@
 
 byte:
-	$(MAKE) all "OPT="
+	$(MAKE) all "OPT=-byte"
 
 opt:
 	$(MAKE) all "OPT=-opt"

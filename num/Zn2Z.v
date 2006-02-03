@@ -65,6 +65,8 @@ Section Zn2Z.
 
  Let w_add_mul_div := w_op.(znz_add_mul_div). 
 
+ Let w_pos_mod := w_op.(znz_pos_mod).
+
  Let _zn2z := zn2z w.
 
  Let wB := base w_digits.
@@ -566,6 +568,21 @@ Section Zn2Z.
     end
   end.
 
+ (* 0 < p < ww_digits *)
+ Definition pos_mod p x := 
+  match x with
+  | W0 => W0
+  | WW xh xl =>
+    match Pcompare p w_digits Eq with
+    | Eq => wWW w0 xl 
+    | Lt => wWW w0 (w_pos_mod p xl)
+    | Gt =>
+      let n := Pminus p w_digits in
+      wWW (w_pos_mod n xh) xl
+    end
+  end.
+
+
  Let _gen_divn1 := 
     gen_divn1 ww_digits W0 ww_WW head0 add_mul_div div21.
 
@@ -736,7 +753,8 @@ Section Zn2Z.
     div21 ww_divn1 ww_div_gt ww_div
     ww_modn1 ww_mod_gt ww_mod
     ww_gcd_gt ww_gcd
-    add_mul_div.
+    add_mul_div
+    pos_mod.
 
  Definition mk_zn2z_op_karatsuba := 
   mk_znz_op ww_digits
@@ -753,7 +771,8 @@ Section Zn2Z.
     div21 ww_divn1 ww_div_gt ww_div
     ww_modn1 ww_mod_gt ww_mod
     ww_gcd_gt ww_gcd
-    add_mul_div.
+    add_mul_div
+    pos_mod.
 
 End Zn2Z. 
  

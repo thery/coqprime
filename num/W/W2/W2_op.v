@@ -6,6 +6,7 @@ Require Export W2_sub.
 Require Export W2_mul.
 Require Export W2_div.
 Require Export W2_lift.
+Require Export W2_mod.
 Require Import ZnZ.
 
 
@@ -26,5 +27,5 @@ Definition w2_op  :=
        w2_mul_c w2_mul w2_square_c
        w2_div21 w2_divn1 w2_div w2_div
        w2_modn1 w2_mod w2_mod
-       w2_gcd w2_gcd w2_add_mul_div.
+       w2_gcd w2_gcd w2_add_mul_div w2_pos_mod.
 

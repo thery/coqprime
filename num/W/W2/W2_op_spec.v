@@ -25,6 +25,7 @@ Require Import W2_div_wB_spec.
 Require Import W2_div_spec.
 Require Import W2_head0_spec.
 Require Import W2_add_mul_div_spec.
+Require Import W2_mod_spec.
 Require Import ZnZ.
 Lemma w2_op_spec : znz_spec w2_op.
 Proof.
@@ -66,5 +67,6 @@ Proof.
  exact w2_gcd_spec.
  exact w2_head0_spec.
  exact w2_add_mul_div_spec.
+ exact w2_pos_mod_spec.
 Qed.
 

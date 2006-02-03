@@ -61,8 +61,8 @@ Section ZnZ_Op.
 
     znz_gcd_gt      : znz -> znz -> znz;
     znz_gcd         : znz -> znz -> znz; 
-    znz_add_mul_div : positive -> znz -> znz -> znz   
-				    
+    znz_add_mul_div : positive -> znz -> znz -> znz;
+    znz_pos_mod     : positive -> znz -> znz				    
   }.
 
 End ZnZ_Op.
@@ -120,6 +120,8 @@ Section Spec.
  Let w_gcd         := w_op.(znz_gcd).
 
  Let w_add_mul_div := w_op.(znz_add_mul_div).
+
+ Let w_pos_mod         := w_op.(znz_pos_mod).
 
  Notation "[| x |]" := (w_to_Z x)  (at level 0, x at level 99).
 
@@ -223,10 +225,12 @@ Section Spec.
     spec_head0  : forall x,  0 < [|x|] ->
 	 wB/ 2 <= 2 ^ (Z_of_N (w_head0 x)) * [|x|] < wB;  
     spec_add_mul_div : forall x y p,
-       0 < Zpos p < Zpos w_digits ->
+       Zpos p < Zpos w_digits ->
        [| w_add_mul_div p x y |] =
          ([|x|] * (Zpower 2 (Zpos p)) +
-          [|y|] / (Zpower 2 ((Zpos w_digits) - (Zpos p)))) mod wB
+          [|y|] / (Zpower 2 ((Zpos w_digits) - (Zpos p)))) mod wB;
+    spec_pos_mod : forall w p,
+       [|w_pos_mod p w|] = [|w|] mod (2 ^ Zpos p)
   }.
 
 End Spec.
