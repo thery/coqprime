@@ -90,10 +90,10 @@ VFILES=BasePrimes.v\
   PocklingtonRefl.v\
   Pocklington.v\
   Proth.v\
+  PZAux.v\
   Root.v\
   Tactic.v\
   UList.v\
-  ZAux.v\
   Zmisc.v\
   ZProgression.v\
   Zp.v\
@@ -123,10 +123,10 @@ all: BasePrimes.vo\
   PocklingtonRefl.vo\
   Pocklington.vo\
   Proth.vo\
+  PZAux.vo\
   Root.vo\
   Tactic.vo\
   UList.vo\
-  ZAux.vo\
   Zmisc.vo\
   ZProgression.vo\
   Zp.vo\

@@ -1,7 +1,7 @@
 Require Import List.
 Require Import ZArith.
 Require Import Zorder.
-Require Import PZAux.
+Require Import ZAux.
 Require Import LucasLehmer.
 Require Import Pocklington.
 Require Import Zmisc.
