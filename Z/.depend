@@ -1,0 +1,18 @@
+Pmod.vo: Pmod.v Zmisc.vo
+Pmod.vi: Pmod.v Zmisc.vo
+ZAux.vo: ZAux.v ../Tactic/Tactic.vo
+ZAux.vi: ZAux.v ../Tactic/Tactic.vo
+ZDivModAux.vo: ZDivModAux.v ../Tactic/Tactic.vo ZAux.vo ZPowerAux.vo
+ZDivModAux.vi: ZDivModAux.v ../Tactic/Tactic.vo ZAux.vo ZPowerAux.vo
+Zmisc.vo: Zmisc.v
+Zmisc.vi: Zmisc.v
+ZPowerAux.vo: ZPowerAux.v ../Tactic/Tactic.vo
+ZPowerAux.vi: ZPowerAux.v ../Tactic/Tactic.vo
+ZSum.vo: ZSum.v ../List/ListAux.vo ZAux.vo ../List/Iterator.vo ../List/ZProgression.vo
+ZSum.vi: ZSum.v ../List/ListAux.vo ZAux.vo ../List/Iterator.vo ../List/ZProgression.vo
+Pmod.html: Pmod.v Zmisc.html
+ZAux.html: ZAux.v ../Tactic/Tactic.html
+ZDivModAux.html: ZDivModAux.v ../Tactic/Tactic.html ZAux.html ZPowerAux.html
+Zmisc.html: Zmisc.v
+ZPowerAux.html: ZPowerAux.v ../Tactic/Tactic.html
+ZSum.html: ZSum.v ../List/ListAux.html ZAux.html ../List/Iterator.html ../List/ZProgression.html
