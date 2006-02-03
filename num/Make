@@ -1,6 +1,8 @@
 -I ../Tactic
+-I ../N
 -I ../Z
 -I ../PrimalityTest
+-I ../List
 -I W/W2
 Basic_type.v
 Lucas.v

@@ -100,6 +100,92 @@ match goal with |- context[S ?X] =>
 end.
 Defined.
 
+Require Import W2_op_spec.
+
+Definition cmk_spec n: znz_spec (cmk_op n).
+assert (S1: znz_spec w2_1_op).
+unfold w2_1_op; apply mk_znz2_spec.
+exact w2_op_spec.
+assert (S2: znz_spec w2_2_op).
+unfold w2_2_op; apply mk_znz2_spec.
+exact S1.
+assert (S3: znz_spec w2_3_op).
+unfold w2_3_op; apply mk_znz2_spec.
+exact S2.
+assert (S4: znz_spec w2_4_op).
+unfold w2_4_op; apply mk_znz2_karatsuba_spec.
+exact S3.
+assert (S5: znz_spec w2_5_op).
+unfold w2_5_op; apply mk_znz2_karatsuba_spec.
+exact S4.
+assert (S6: znz_spec w2_6_op).
+unfold w2_6_op; apply mk_znz2_karatsuba_spec.
+exact S5.
+assert (S7: znz_spec w2_7_op).
+unfold w2_7_op; apply mk_znz2_karatsuba_spec.
+exact S6.
+assert (S8: znz_spec w2_8_op).
+unfold w2_8_op; apply mk_znz2_karatsuba_spec.
+exact S7.
+assert (S9: znz_spec w2_9_op).
+unfold w2_9_op; apply mk_znz2_karatsuba_spec.
+exact S8.
+assert (S10: znz_spec w2_10_op).
+unfold w2_10_op; apply mk_znz2_karatsuba_spec.
+exact S9.
+assert (S11: znz_spec w2_11_op).
+unfold w2_11_op; apply mk_znz2_karatsuba_spec.
+exact S10.
+assert (S12: znz_spec w2_12_op).
+unfold w2_12_op; apply mk_znz2_karatsuba_spec.
+exact S11.
+assert (S13: znz_spec w2_13_op).
+unfold w2_13_op; apply mk_znz2_karatsuba_spec.
+exact S12.
+assert (S14: znz_spec w2_14_op).
+unfold w2_14_op; apply mk_znz2_karatsuba_spec.
+exact S13.
+intros n; case n; clear n.
+exact w2_op_spec.
+intros n; case n; clear n.
+exact S1.
+intros n; case n; clear n.
+exact S2.
+intros n; case n; clear n.
+exact S3.
+intros n; case n; clear n.
+exact S4.
+intros n; case n; clear n.
+exact S5.
+intros n; case n; clear n.
+exact S6.
+intros n; case n; clear n.
+exact S7.
+intros n; case n; clear n.
+exact S8.
+intros n; case n; clear n.
+exact S9.
+intros n; case n; clear n.
+exact S10.
+intros n; case n; clear n.
+exact S11.
+intros n; case n; clear n.
+exact S12.
+intros n; case n; clear n.
+exact S13.
+intros n; case n; clear n.
+exact S14.
+intro n.
+simpl cmk_op.
+repeat match goal with |- znz_spec (mk_zn2z_op_karatsuba ?X) =>
+  generalize (@mk_znz2_karatsuba_spec _ X); intros tmp;
+  apply tmp; clear tmp
+end.
+apply mk_spec.
+exact w2_op_spec.
+Defined.
+
+
 Theorem cmk_op_digits: forall n, 
   (Zpos (znz_digits (cmk_op n)) = 2 ^ Z_of_nat (S n))%Z.
 do 15 (intros n; case n; clear n; [reflexivity | idtac]).
