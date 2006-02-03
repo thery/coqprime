@@ -63,9 +63,13 @@ PP=-pp "camlp4o -I . -I $(COQTOP)/parsing $(CAMLP4EXTEND) $(GRAMMARS) -impl"
 #########################
 
 OCAMLLIBS=-I .\
+  -I ../Tactic\
+  -I ../Z\
   -I ../PrimalityTest\
   -I W/W2
 COQLIBS=-I .\
+  -I ../Tactic\
+  -I ../Z\
   -I ../PrimalityTest\
   -I W/W2
 
@@ -82,15 +86,11 @@ VFILES=Basic_type.v\
   Pmod.v\
   Tactic.v\
   W.v\
-  ZAux.v\
-  ZDivModAux.v\
-  Zmisc.v\
   Zn2Z_for_Proof.v\
   Zn2ZProof.v\
   Zn2Z.v\
   ZnZDivn1.v\
-  ZnZ.v\
-  ZPowerAux.v
+  ZnZ.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -104,15 +104,11 @@ all: Basic_type.vo\
   Pmod.vo\
   Tactic.vo\
   W.vo\
-  ZAux.vo\
-  ZDivModAux.vo\
-  Zmisc.vo\
   Zn2Z_for_Proof.vo\
   Zn2ZProof.vo\
   Zn2Z.vo\
   ZnZDivn1.vo\
-  ZnZ.vo\
-  ZPowerAux.vo
+  ZnZ.vo
 
 spec: $(VIFILES)
 
