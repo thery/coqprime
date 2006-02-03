@@ -1,3 +1,5 @@
+ -I ../../../Tactic
+ -I ../../../Z
  -I ../..
  W2_basic.v
  W2_basic_spec.v
