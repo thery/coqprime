@@ -17,10 +17,10 @@ PocklingtonCertificat.v
 PocklingtonRefl.v
 Pocklington.v
 Proth.v
+PZAux.v
 Root.v
 Tactic.v
 UList.v
-ZAux.v
 Zmisc.v
 ZProgression.v
 Zp.v
