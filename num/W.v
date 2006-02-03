@@ -3,42 +3,100 @@ Set Implicit Arguments.
 Require Import Basic_type.
 Require Import ZnZ.
 Require Import Zn2Z.
-Require Import W8_op.
-
+Require Import W2_op.
+Require Import ZArith.
 
 (* ** Type of words ** *)
 
-Definition w16 := zn2z w8.
-Definition w32 := zn2z w16.
-Definition w64 := zn2z w32.
-Definition w128 := zn2z w64.
-Definition w256 := zn2z w128.
-Definition w512 := zn2z w256.
-Definition w1024 := zn2z w512.
-Definition w2048 := zn2z w1024.
-Definition w4096 := zn2z w2048.
-Definition w8192 := zn2z w4096.
-Definition w16384 := zn2z w8192.
-Definition w32768 := zn2z w16384.
-Definition w65536 := zn2z w32768.
-Definition w131072 := zn2z w65536.
+
+(* Make the words *)
+
+Definition mk_word (w: Set) (n:nat): Set.
+fix 2.
+intros w n; case n; simpl.
+exact w2.
+intros n1; exact (zn2z (mk_word w n1)).
+Defined.
+
+(* Make the op *)
+
+Fixpoint mk_op (w : Set) (op : znz_op w) (n : nat) {struct n} :
+  znz_op (word w n) :=
+  match n as n0 return (znz_op (word w n0)) with
+  | O => op
+  | S n1 => mk_zn2z_op_karatsuba (mk_op op n1)
+  end.
+
+Theorem mk_op_digits: forall w (op: znz_op w) n, 
+  (Zpos (znz_digits (mk_op op n)) = 2 ^ Z_of_nat n * Zpos (znz_digits op))%Z.
+intros w op n; elim n; simpl mk_op; auto; clear n.
+intros n Rec; simpl znz_digits.
+rewrite Zpos_xO; rewrite Rec.
+rewrite Zmult_assoc; apply f_equal2 with (f := Zmult); auto.
+rewrite inj_S; unfold Zsucc; rewrite Zplus_comm.
+rewrite Zpower_exp; auto with zarith.
+Qed.
 
 (* ** Operators ** *)
-Definition w16_op := mk_zn2z_op w8_op.           
-Definition w32_op := mk_zn2z_op w16_op.
-Definition w64_op := mk_zn2z_op w32_op.
-Definition w128_op := mk_zn2z_op_karatsuba w64_op.
-Definition w256_op := mk_zn2z_op_karatsuba w128_op.
-Definition w512_op := mk_zn2z_op_karatsuba w256_op.
-Definition w1024_op := mk_zn2z_op_karatsuba w512_op.
-Definition w2048_op := mk_zn2z_op_karatsuba w1024_op.
-Definition w4096_op := mk_zn2z_op_karatsuba w2048_op.
-Definition w8192_op := mk_zn2z_op_karatsuba w4096_op.
-Definition w16384_op := mk_zn2z_op_karatsuba w8192_op.
-Definition w32768_op := mk_zn2z_op_karatsuba w16384_op.
-Definition w65536_op := mk_zn2z_op_karatsuba w32768_op.
-Definition w131072_op := mk_zn2z_op_karatsuba w65536_op.
+Definition w2_1_op := mk_zn2z_op w2_op.           
+Definition w2_2_op := mk_zn2z_op w2_1_op.
+Definition w2_3_op := mk_zn2z_op w2_2_op.
+Definition w2_4_op := mk_zn2z_op_karatsuba w2_3_op.
+Definition w2_5_op := mk_zn2z_op_karatsuba w2_4_op.
+Definition w2_6_op := mk_zn2z_op_karatsuba w2_5_op.
+Definition w2_7_op := mk_zn2z_op_karatsuba w2_6_op.
+Definition w2_8_op := mk_zn2z_op_karatsuba w2_7_op.
+Definition w2_9_op := mk_zn2z_op_karatsuba w2_8_op.
+Definition w2_10_op := mk_zn2z_op_karatsuba w2_9_op.
+Definition w2_11_op := mk_zn2z_op_karatsuba w2_10_op.
+Definition w2_12_op := mk_zn2z_op_karatsuba w2_11_op.
+Definition w2_13_op := mk_zn2z_op_karatsuba w2_12_op.
+Definition w2_14_op := mk_zn2z_op_karatsuba w2_13_op.
 
+Definition cmk_op (n: nat): znz_op (word w2 n).
+intros n; case n; clear n.
+exact w2_op.
+intros n; case n; clear n.
+exact w2_1_op.
+intros n; case n; clear n.
+exact w2_2_op.
+intros n; case n; clear n.
+exact w2_3_op.
+intros n; case n; clear n.
+exact w2_4_op.
+intros n; case n; clear n.
+exact w2_5_op.
+intros n; case n; clear n.
+exact w2_6_op.
+intros n; case n; clear n.
+exact w2_7_op.
+intros n; case n; clear n.
+exact w2_8_op.
+intros n; case n; clear n.
+exact w2_9_op.
+intros n; case n; clear n.
+exact w2_10_op.
+intros n; case n; clear n.
+exact w2_11_op.
+intros n; case n; clear n.
+exact w2_12_op.
+intros n; case n; clear n.
+exact w2_13_op.
+intros n; case n; clear n.
+exact w2_14_op.
+intros n.
+match goal with |- context[S ?X] =>
+ exact (mk_op w2_op (S X))
+end.
+Defined.
 
-
-
+Theorem cmk_op_digits: forall n, 
+  (Zpos (znz_digits (cmk_op n)) = 2 ^ Z_of_nat (S n))%Z.
+do 15 (intros n; case n; clear n; [reflexivity | idtac]).
+intros n; unfold cmk_op; lazy beta.
+rewrite mk_op_digits.
+simpl znz_digits.
+match goal with |- (_ = 2 ^ Z_of_nat (S ?X))%Z =>
+  rewrite (inj_S X)
+end; unfold Zsucc; rewrite Zpower_exp; auto with zarith.
+Qed.

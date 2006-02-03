@@ -31,3 +31,5 @@
  W2_add_mul_div_spec.v 
  W2_op.v
  W2_op_spec.v
+ W2_mod.v
+

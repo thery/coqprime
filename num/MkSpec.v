@@ -66,7 +66,8 @@ Section MkSpec.
 
   refine (spec_ww_head0 _); auto.
   apply (spec_ww_add_mul_div op_spec); auto.
- Qed.
+  apply (spec_ww_pos_mod op_spec); auto.
+  Qed.
 
 
  Lemma mk_znz2_karatsuba_spec : znz_spec (mk_zn2z_op_karatsuba w_op).
@@ -116,6 +117,7 @@ Section MkSpec.
 
   refine (spec_ww_head0 _); auto.
   apply (spec_ww_add_mul_div op_spec); auto.
+  apply (spec_ww_pos_mod op_spec); auto.
  Qed. 
 
 End MkSpec.

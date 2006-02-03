@@ -2010,7 +2010,7 @@ Section Proof.
  Qed.
 
  Theorem spec_ww_add_mul_div_aux : forall xh xl yh yl p,
-   0 < Zpos p < Zpos wdigits ->
+   Zpos p < Zpos wdigits ->
    [[match (p ?= znz_digits w_op)%positive Eq with
           | Eq => znz_WW w_op xl yh
           | Lt =>
@@ -2107,7 +2107,7 @@ Section Proof.
   assert (Eq1: Zpos p > Zpos digits); auto.
   assert (Eq2: Zpos digits - (Zpos p - Zpos digits) = Zpos wdigits - Zpos p).
   rewrite U5; ring.
-  assert(Eq3: 0 < Zpos(p - digits) < Zpos digits); auto with zarith.
+  assert(Eq3: Zpos(p - digits) < Zpos digits); auto with zarith.
   rewrite Zpos_minus; auto with zarith.
   rewrite wwB_power.
   w_rewrite1.
@@ -2174,7 +2174,7 @@ Section Proof.
  Qed.
 
  Theorem spec_ww_add_mul_div : forall x y p,
-    0 < Zpos p < Zpos wdigits ->
+    Zpos p < Zpos wdigits ->
     [[ ww_add_mul_div w_op p x y]] =
     ([[x]] * (2 ^ (Zpos p)) + [[y]] / (2 ^ (Zpos wdigits - (Zpos p)))) mod wwB.
  Proof.
@@ -2215,6 +2215,73 @@ Section Proof.
 
  Hint Resolve 
    spec_ww_WW spec_ww_head0 spec_ww_add_mul_div spec_ww_div21 : ww_spec.
+
+ Lemma spec_ww_pos_mod : forall w p,
+       [[ww_pos_mod w_op p w]] = [[w]] mod (2 ^ Zpos p).
+ assert (F0: forall x y, x - y + y = x); auto with zarith.
+ intros w1 p; unfold ww_pos_mod; case w1.
+ autorewrite with w_rewrite; rewrite Zmod_def_small; auto with zarith.
+  match goal with |- context [(?X ?= ?Y)%positive Eq] =>
+       case_eq (Pcompare X Y Eq) end; intros H1.
+ assert (E1: Zpos p = Zpos digits); auto.
+ rewrite Pcompare_Eq_eq with (1:= H1); auto with zarith.
+ rewrite E1.
+ intros xh xl; autorewrite with w_rewrite rm10.
+ match goal with |- context id [2 ^Zpos digits] =>
+   let v := context id [wB] in change v
+ end.
+ rewrite Zmod_plus; auto with zarith.
+ rewrite Zmod_mult_0; auto with zarith.
+ autorewrite with rm10.
+ rewrite Zmod_mod; auto with zarith.
+ rewrite Zmod_def_small; auto with zarith.
+ apply spec_to_Z; auto.
+ assert (Eq1: Zpos p < Zpos digits); auto.
+ intros xh xl; autorewrite with w_rewrite rm10.
+ rewrite spec_pos_mod; auto with zarith.
+ assert (Eq2: Zpos p + (Zpos digits - Zpos p) = Zpos digits); auto with zarith.
+ unfold base; unfold digits in Eq1; unfold digits in Eq2; rewrite <- Eq2.
+ rewrite Zpower_exp; auto with zarith.
+ rewrite (fun x => (Zmult_comm (2 ^ x))); rewrite Zmult_assoc.
+ rewrite Zmod_plus; auto with zarith.
+ rewrite Zmod_mult_0; auto with zarith.
+ autorewrite with rm10.
+ rewrite Zmod_mod; auto with zarith.
+ assert (Eq1: Zpos p > Zpos digits); auto.
+ intros xh xl; autorewrite with w_rewrite rm10.
+ rewrite spec_pos_mod; auto with zarith.
+ pattern [|xh|] at 2; rewrite Z_div_mod_eq with (b := 2 ^ Zpos (p - znz_digits w_op));
+  auto with zarith.
+ rewrite (fun x => (Zmult_comm (2 ^ x))); rewrite Zmult_plus_distr_l.
+ unfold base; rewrite <- Zmult_assoc; rewrite <- Zpower_exp;
+    auto with zarith.
+ unfold digits in Eq1; rewrite Zpos_minus; auto with zarith.
+ rewrite F0; auto with zarith.
+ rewrite <- Zplus_assoc; rewrite Zmod_plus; auto with zarith.
+ rewrite Zmod_mult_0; auto with zarith.
+ autorewrite with rm10.
+ rewrite Zmod_mod; auto with zarith.
+ apply sym_equal; apply Zmod_def_small; auto with zarith.
+ case (spec_to_Z op_spec xh); intros U1 U2.
+ case (spec_to_Z op_spec xl); intros U3 U4.
+ split; auto with zarith.
+ apply Zplus_le_0_compat; auto with zarith.
+ apply Zmult_le_0_compat; auto with zarith.
+ match goal with |- 0 <= ?X mod ?Y =>
+  case (Z_mod_lt X Y); auto with zarith
+ end.
+ match goal with |- ?X mod ?Y * ?U + ?Z < ?T =>
+  apply Zle_lt_trans with ((Y - 1) * U + Z );
+   [case (Z_mod_lt X Y); auto with zarith | idtac]
+ end.
+ match goal with |- ?X * ?U + ?Y < ?Z =>
+  apply Zle_lt_trans with (X * U + (U - 1))
+ end.
+ apply Zplus_le_compat_l; auto with zarith.
+ case (spec_to_Z op_spec xl); unfold base; auto with zarith.
+ rewrite Zmult_minus_distr_r; rewrite <- Zpower_exp; auto with zarith.
+ rewrite F0; auto with zarith.
+ Qed.
    
  Lemma spec_ww_divn1 : forall n a b, 0 < [[b]] ->
     let (q,r) := ww_divn1 w_op n a b in
@@ -2242,13 +2309,15 @@ Section Proof.
       | refl_equal => a
       end) with (word_of_word_tr (zn2z w) n a).
   apply spec_gen_divn1;auto with ww_spec.
+  intros; apply spec_ww_add_mul_div; auto with zarith.
+  unfold wdigits; auto with zarith.
   exact spec_ww_div21.
- unfold word_of_word_tr; simpl.
- case (word_tr_word (zn2z w) n); auto.
+  unfold word_of_word_tr; simpl.
+  case (word_tr_word (zn2z w) n); auto.
  Qed.
 
  Lemma to_Z_div_minus_p : forall x p,
-   0 < Zpos p < Zpos (znz_digits w_op) ->
+   Zpos p < Zpos (znz_digits w_op) ->
    0 <= [|x|] / 2 ^ (Zpos (znz_digits w_op) - Zpos p) < 2 ^ Zpos p.
  Proof.
   intros x p H;assert (H0 := spec_to_Z op_spec x).
@@ -2270,8 +2339,8 @@ Section Proof.
       0 <= [[r]] < [[b]].
  Proof.
   intros a b bh bl Hgt Heq Hpos;unfold ww_div_gt_aux.
-  assert (Hh := spec_head0 op_spec bh Hpos);destruct (znz_head0 w_op bh).
-  simpl in Hh;rewrite Zmult_1_l in Hh;destruct Hh.
+  assert (Hh := spec_head0 op_spec bh Hpos); destruct (znz_head0 w_op bh).
+  simpl Z_of_N in Hh; rewrite Zpower_exp_0 in Hh; rewrite Zmult_1_l in Hh;destruct Hh.
   assert (wwB <= 2*[[b]]).
    rewrite Heq. apply Zle_trans with (2*[|bh|]*wB).
    rewrite wwB_wBwB; apply Zmult_le_compat_r; zarith.
@@ -2279,13 +2348,12 @@ Section Proof.
    replace (2*([|bh|]*wB + [|bl|])) with (2*[|bh|]*wB + 2*[|bl|]);try ring.
    assert (H1 := spec_to_Z op_spec bl);zarith.
   assert (H2 := spec_ww_to_Z a).
-  simpl;w_rewrite;rewrite Zmult_0_l;simpl;rewrite Zmult_1_l;
+  simpl;w_rewrite;rewrite Zmult_0_l; autorewrite with rm10;
   rewrite Zmod_def_small;split;zarith.
   unfold Z_of_N in Hh.
   assert (Hsplita := spec_ww_split a);destruct (ww_split w_op a) as (ah,al).
   simpl in Hsplita. 
-  assert (0 < Zpos p < Zpos (znz_digits w_op)).
-   split. unfold Zlt;reflexivity.
+  assert (H: Zpos p < Zpos (znz_digits w_op)).
    destruct (Z_lt_ge_dec  (Zpos p) (Zpos (znz_digits w_op)));trivial.
    elimtype False.
    assert (2 ^ Zpos p * [|bh|] >= wB);auto with zarith.
@@ -2308,6 +2376,8 @@ Section Proof.
   assert (2^Zpos p < wB). unfold base;apply Zpower_lt_monotone;zarith.
   unfold base in H0;rewrite Zmod_def_small;zarith.
   fold wB; rewrite (Zmod_def_small ([|bh|] * 2 ^ Zpos p));zarith.
+  assert (F: 0 < Zpos (znz_digits w_op)); auto with zarith.
+  red; auto with zarith.
   intros U1 U2 U3 V1 V2.
   generalize (spec_w_div32(znz_add_mul_div w_op p (znz_0 w_op) ah)
               (znz_add_mul_div w_op p ah al)
@@ -2342,7 +2412,8 @@ Section Proof.
   unfold base;apply Zpower_le_monotone;zarith.
   pattern 2 at 2;replace 2 with (2^1);trivial.
   rewrite <- Zpower_exp;zarith. ring (Zpos (znz_digits w_op) - 1 + 1);trivial.
-  w_rewrite. rewrite Zmult_0_l;rewrite Zplus_0_l.
+  w_rewrite. 
+  rewrite Zmult_0_l;rewrite Zplus_0_l.
   replace [[ww_add_mul_div w_op (xO (znz_digits w_op) - p) W0 r]] with
    ([[r]]/2^Zpos p).
   assert (0 < 2^Zpos p). apply Zpower_lt_0;zarith.
@@ -2359,6 +2430,7 @@ Section Proof.
   assert (H8 := spec_ww_to_Z r).
   apply Zlt_le_trans with wwB;zarith.
   rewrite <- (Zmult_1_r wwB);apply Zmult_le_compat;zarith.
+  assert (0 < Zpos p);zarith.
  Qed.
 
  Lemma spec_ww_div_gt : forall a b, [[a]] > [[b]] -> 0 < [[b]] ->
