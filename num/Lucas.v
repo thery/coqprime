@@ -1,6 +1,5 @@
 Set Implicit Arguments.
 
-Require Import PZAux.
 Require Import ZArith.
 Require Import ZDivModAux.
 Require Import Basic_type.

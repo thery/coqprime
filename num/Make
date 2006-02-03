@@ -1,3 +1,5 @@
+-I ../Tactic
+-I ../Z
 -I ../PrimalityTest
 -I W/W2
 Basic_type.v
@@ -7,12 +9,8 @@ Mod_op.v
 Pmod.v
 Tactic.v
 W.v
-ZAux.v
-ZDivModAux.v
-Zmisc.v
 Zn2Z_for_Proof.v
 Zn2ZProof.v
 Zn2Z.v
 ZnZDivn1.v
 ZnZ.v
-ZPowerAux.v

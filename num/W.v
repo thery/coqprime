@@ -5,6 +5,7 @@ Require Import ZnZ.
 Require Import Zn2Z.
 Require Import W2_op.
 Require Import ZArith.
+Require Import MkSpec.
 
 (* ** Type of words ** *)
 
@@ -22,9 +23,18 @@ Defined.
 
 Fixpoint mk_op (w : Set) (op : znz_op w) (n : nat) {struct n} :
   znz_op (word w n) :=
-  match n as n0 return (znz_op (word w n0)) with
+  match n return (znz_op (word w n)) with
   | O => op
   | S n1 => mk_zn2z_op_karatsuba (mk_op op n1)
+  end.
+
+Fixpoint mk_spec (w : Set) (op : znz_op w) (op_spec : znz_spec op) (n : nat)
+            {struct n} : znz_spec (mk_op op n) :=
+  match n return (znz_spec (mk_op op n)) with
+  | O => op_spec
+  | S n1 =>
+      mk_znz2_karatsuba_spec (word w n1) (mk_op op n1)
+        (mk_spec op_spec n1)
   end.
 
 Theorem mk_op_digits: forall w (op: znz_op w) n, 
