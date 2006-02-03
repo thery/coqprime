@@ -7,7 +7,7 @@
 Require Import ZArith.
 Require Export Znumtheory.
 Require Import Tactic.
-Require Import PZAux.
+Require Import ZAux.
 Require Import Zp.
 Require Import FGroup.
 Require Import EGroup. 

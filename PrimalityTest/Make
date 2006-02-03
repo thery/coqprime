@@ -1,27 +1,21 @@
+-I ../Tactic
+-I ../N
+-I ../Z
+-I ../List
 BasePrimes.v
 Cyclic.v
 EGroup.v
 Euler.v
 FGroup.v
 IGroup.v
-Iterator.v
 Lagrange.v
-ListAux.v
 LucasLehmer.v
-NatAux.v
 Pepin.v
-Permutation.v
 PGroup.v
-Pmod.v
 PocklingtonCertificat.v
 PocklingtonRefl.v
 Pocklington.v
 Proth.v
-PZAux.v
 Root.v
-Tactic.v
-UList.v
-Zmisc.v
-ZProgression.v
 Zp.v
-ZSum.v
+

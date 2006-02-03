@@ -9,7 +9,7 @@
                                     Laurent.Thery@inria.fr (2005)    
   **********************************************************************)
 Require Import ZArith.
-Require Import PZAux.
+Require Import ZAux.
 Require Import Tactic.
 Require Import Wf_nat.
 Require Import ListAux.

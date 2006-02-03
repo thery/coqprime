@@ -62,8 +62,16 @@ PP=-pp "camlp4o -I . -I $(COQTOP)/parsing $(CAMLP4EXTEND) $(GRAMMARS) -impl"
 #                       #
 #########################
 
-OCAMLLIBS=-I .
-COQLIBS=-I .
+OCAMLLIBS=-I .\
+  -I ../Tactic\
+  -I ../N\
+  -I ../Z\
+  -I ../List
+COQLIBS=-I .\
+  -I ../Tactic\
+  -I ../N\
+  -I ../Z\
+  -I ../List
 
 ###################################
 #                                 #
@@ -77,27 +85,16 @@ VFILES=BasePrimes.v\
   Euler.v\
   FGroup.v\
   IGroup.v\
-  Iterator.v\
   Lagrange.v\
-  ListAux.v\
   LucasLehmer.v\
-  NatAux.v\
   Pepin.v\
-  Permutation.v\
   PGroup.v\
-  Pmod.v\
   PocklingtonCertificat.v\
   PocklingtonRefl.v\
   Pocklington.v\
   Proth.v\
-  PZAux.v\
   Root.v\
-  Tactic.v\
-  UList.v\
-  Zmisc.v\
-  ZProgression.v\
-  Zp.v\
-  ZSum.v
+  Zp.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -110,27 +107,16 @@ all: BasePrimes.vo\
   Euler.vo\
   FGroup.vo\
   IGroup.vo\
-  Iterator.vo\
   Lagrange.vo\
-  ListAux.vo\
   LucasLehmer.vo\
-  NatAux.vo\
   Pepin.vo\
-  Permutation.vo\
   PGroup.vo\
-  Pmod.vo\
   PocklingtonCertificat.vo\
   PocklingtonRefl.vo\
   Pocklington.vo\
   Proth.vo\
-  PZAux.vo\
   Root.vo\
-  Tactic.vo\
-  UList.vo\
-  Zmisc.vo\
-  ZProgression.vo\
-  Zp.vo\
-  ZSum.vo
+  Zp.vo
 
 spec: $(VIFILES)
 

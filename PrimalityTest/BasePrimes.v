@@ -1,6 +1,6 @@
 Require Import List.
 Require Import ZArith.
-Require Import PZAux.
+Require Import ZAux.
 
 Require Import PocklingtonCertificat.
 
