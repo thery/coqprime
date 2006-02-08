@@ -34,4 +34,5 @@
  W2_op.v
  W2_op_spec.v
  W2_mod.v
+ W2_mod_spec.v
 

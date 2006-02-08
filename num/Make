@@ -6,10 +6,9 @@
 -I W/W2
 Basic_type.v
 Lucas.v
+Pock.v
 MkSpec.v
 Mod_op.v
-Pmod.v
-Tactic.v
 W.v
 Zn2Z_for_Proof.v
 Zn2ZProof.v

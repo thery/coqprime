@@ -85,10 +85,9 @@ COQLIBS=-I .\
 
 VFILES=Basic_type.v\
   Lucas.v\
+  Pock.v\
   MkSpec.v\
   Mod_op.v\
-  Pmod.v\
-  Tactic.v\
   W.v\
   Zn2Z_for_Proof.v\
   Zn2ZProof.v\
@@ -103,10 +102,9 @@ GHTMLFILES=$(VFILES:.v=.g.html)
 
 all: Basic_type.vo\
   Lucas.vo\
+  Pock.vo\
   MkSpec.vo\
   Mod_op.vo\
-  Pmod.vo\
-  Tactic.vo\
   W.vo\
   Zn2Z_for_Proof.vo\
   Zn2ZProof.vo\

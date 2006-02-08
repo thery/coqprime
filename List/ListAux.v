@@ -216,7 +216,28 @@ intros H1; exists a; auto.
 intros H1; case H with ( 1 := H1 ).
 intros b [H2 H3]; exists b; simpl; auto.
 Qed.
- 
+
+(************************************** 
+  Properties of fold_left 
+**************************************)
+
+Theorem fold_left_invol: 
+  forall (f: A -> B -> A) (P: A -> Prop) l a,
+  P a ->  (forall x y, P x -> P (f x y)) -> P (fold_left f l a).
+intros f1 P l; elim l; simpl; auto.
+Qed. 
+
+Theorem fold_left_invol_in: 
+  forall (f: A -> B -> A) (P: A -> Prop) l a b,
+  In b l -> (forall x, P (f x b)) -> (forall x y, P x -> P (f x y)) ->
+  P (fold_left f l a).
+intros f1 P l; elim l; simpl; auto.
+intros a1 b HH; case HH.
+intros a1 l1 Rec a2 b [V|V] V1 V2; subst; auto.
+apply fold_left_invol; auto.
+apply Rec with (b := b); auto.
+Qed.
+
 End List.
 
 
