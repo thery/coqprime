@@ -1,0 +1,35 @@
+genW.cmo: genW.ml
+genW.cmx: genW.ml
+Basic_type.vo: Basic_type.v ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo
+Basic_type.vi: Basic_type.v ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo
+Lucas.vo: Lucas.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo Zn2Z.vo Mod_op.vo W/W2/W2_op.vo W.vo ../PrimalityTest/LucasLehmer.vo
+Lucas.vi: Lucas.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo Zn2Z.vo Mod_op.vo W/W2/W2_op.vo W.vo ../PrimalityTest/LucasLehmer.vo
+Pock.vo: Pock.v ../Z/ZAux.vo ../PrimalityTest/LucasLehmer.vo ../PrimalityTest/Pocklington.vo ZnZ.vo ../Z/Zmisc.vo ../Z/Pmod.vo Mod_op.vo W.vo Lucas.vo ../PrimalityTest/PocklingtonCertificat.vo
+Pock.vi: Pock.v ../Z/ZAux.vo ../PrimalityTest/LucasLehmer.vo ../PrimalityTest/Pocklington.vo ZnZ.vo ../Z/Zmisc.vo ../Z/Pmod.vo Mod_op.vo W.vo Lucas.vo ../PrimalityTest/PocklingtonCertificat.vo
+MkSpec.vo: MkSpec.v ZnZ.vo ../Z/ZAux.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo Zn2Z.vo Zn2Z_for_Proof.vo Zn2ZProof.vo
+MkSpec.vi: MkSpec.v ZnZ.vo ../Z/ZAux.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo Zn2Z.vo Zn2Z_for_Proof.vo Zn2ZProof.vo
+Mod_op.vo: Mod_op.v ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo Zn2Z.vo Zn2Z_for_Proof.vo Zn2ZProof.vo
+Mod_op.vi: Mod_op.v ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo Zn2Z.vo Zn2Z_for_Proof.vo Zn2ZProof.vo
+W.vo: W.v Basic_type.vo ZnZ.vo Zn2Z.vo W/W2/W2_op.vo MkSpec.vo W/W2/W2_op_spec.vo
+W.vi: W.v Basic_type.vo ZnZ.vo Zn2Z.vo W/W2/W2_op.vo MkSpec.vo W/W2/W2_op_spec.vo
+Zn2Z_for_Proof.vo: Zn2Z_for_Proof.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo ZnZDivn1.vo
+Zn2Z_for_Proof.vi: Zn2Z_for_Proof.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo ZnZDivn1.vo
+Zn2ZProof.vo: Zn2ZProof.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo Basic_type.vo ZnZ.vo ZnZDivn1.vo Zn2Z_for_Proof.vo
+Zn2ZProof.vi: Zn2ZProof.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo Basic_type.vo ZnZ.vo ZnZDivn1.vo Zn2Z_for_Proof.vo
+Zn2Z.vo: Zn2Z.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo ZnZDivn1.vo
+Zn2Z.vi: Zn2Z.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo ZnZDivn1.vo
+ZnZDivn1.vo: ZnZDivn1.v Basic_type.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo
+ZnZDivn1.vi: ZnZDivn1.v Basic_type.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo
+ZnZ.vo: ZnZ.v Basic_type.vo
+ZnZ.vi: ZnZ.v Basic_type.vo
+Basic_type.html: Basic_type.v ../Z/ZDivModAux.html ../Z/ZPowerAux.html
+Lucas.html: Lucas.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html ZnZ.html Zn2Z.html Mod_op.html W/W2/W2_op.html W.html ../PrimalityTest/LucasLehmer.html
+Pock.html: Pock.v ../Z/ZAux.html ../PrimalityTest/LucasLehmer.html ../PrimalityTest/Pocklington.html ZnZ.html ../Z/Zmisc.html ../Z/Pmod.html Mod_op.html W.html Lucas.html ../PrimalityTest/PocklingtonCertificat.html
+MkSpec.html: MkSpec.v ZnZ.html ../Z/ZAux.html ../Z/ZDivModAux.html ../Z/ZPowerAux.html Zn2Z.html Zn2Z_for_Proof.html Zn2ZProof.html
+Mod_op.html: Mod_op.v ../Z/ZDivModAux.html Basic_type.html ZnZ.html Zn2Z.html Zn2Z_for_Proof.html Zn2ZProof.html
+W.html: W.v Basic_type.html ZnZ.html Zn2Z.html W/W2/W2_op.html MkSpec.html W/W2/W2_op_spec.html
+Zn2Z_for_Proof.html: Zn2Z_for_Proof.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html ZnZ.html ZnZDivn1.html
+Zn2ZProof.html: Zn2ZProof.v ../Z/ZAux.html ../Z/ZDivModAux.html ../Z/ZPowerAux.html Basic_type.html ZnZ.html ZnZDivn1.html Zn2Z_for_Proof.html
+Zn2Z.html: Zn2Z.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html ZnZ.html ZnZDivn1.html
+ZnZDivn1.html: ZnZDivn1.v Basic_type.html ../Z/ZDivModAux.html ../Z/ZPowerAux.html
+ZnZ.html: ZnZ.v Basic_type.html
