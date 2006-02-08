@@ -193,6 +193,7 @@ Qed.
 
 Definition pheight p := plength (Ppred (plength (Ppred p))).
 
+
 Theorem pheight_correct: forall p, (Zpos p <= 2 ^ (2 ^ (Zpos (pheight p))))%Z.
 intros p; apply Zle_trans with (1 := (plength_pred_correct p)).
 apply ZPowerAux.Zpower_le_monotone; auto with zarith.
@@ -227,6 +228,13 @@ Section znz_of_pos.
  unfold base; auto with zarith.
  case (spec_to_Z op_spec w1); auto with zarith.
  Qed.
+
+ Theorem znz_of_Z_correct:
+   forall p, 0 <= p < base (znz_digits w_op) -> [|znz_of_Z w_op p|] = p.
+ intros p; case p; simpl; try rewrite spec_0; auto.
+ intros; rewrite znz_of_pos_correct; auto with zarith.
+ intros p1 (H1, _); contradict H1; apply Zlt_not_le; red; simpl; auto.
+ Qed.
 End znz_of_pos.
 
 Theorem lucas_prime:
@@ -239,14 +247,15 @@ end.
 unfold w_op; apply cmk_spec.
 assert (F0: p <= znz_digits w_op).
 unfold w_op, base; rewrite (cmk_op_digits (nat_of_P (plength p) - 1)).
-replace  (S (nat_of_P (plength p) - 1)) with (nat_of_P (plength p)).
-rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P.
+apply Zle_trans with (2 ^ plength p).
 apply Zlt_le_weak; apply plength_correct.
-generalize Hp; case p; simpl; auto.
-intros; rewrite nat_of_P_succ_morphism; simpl; rewrite <- minus_n_O;
-  auto.
-intros; rewrite nat_of_P_succ_morphism; simpl; rewrite <- minus_n_O;
-  auto.
+apply Zpower_le_monotone; auto with zarith.
+split; auto with zarith.
+rewrite inj_minus1; simpl; auto with zarith.
+rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+apply inj_le_inv; simpl.
+rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+assert (0 < plength p); auto with zarith; red; simpl; auto.
 assert (F1: znz_to_Z w_op (znz_of_Z w_op (2 ^ p - 1)) = 2 ^ p - 1).
 assert (F1: 0 < 2 ^ p - 1).
 assert (F2: 2 ^ 0 < 2 ^ p); auto with zarith.
@@ -276,65 +285,4 @@ rewrite Zmisc.Zpos_mult; auto with zarith.
 rewrite (Zpos_xO (znz_digits w_op)); auto with zarith.
 rewrite Zmisc.Zpos_mult; auto with zarith.
 Qed.
-
-Time Eval vm_compute in lucastest w1024_op 521.
-(* sans square : Finished transaction in 8. secs (7.66u,0.01s) *)
-(* Finished transaction in 6. secs (5.74u,0.01s) *)
-
-
-Time Eval vm_compute in lucastest w1024_op 607.
-(* sans square : Finished transaction in 11. secs (11.09u,0.01s) *)
-(* Finished transaction in 9. secs (8.98u,0.02s) *)
-
-Time Eval vm_compute in lucastest w2048_op 1279.
-(* sans square : Finished transaction in 71. secs (71.u,0.07s) *)
-(* Finished transaction in 58. secs (58.41u,0.06s) *)
-
-Time Eval vm_compute in lucastest w4096_op 2203.
-(* sans square : Finished transaction in 324. secs (323.43u,0.01s) *)
-(* Finished transaction in 251. secs (250.2u,0.04s) *)
-
-Time Eval vm_compute in lucastest w4096_op 2281.
-(* sans square : Finished transaction in 348. secs (346.96u,0.04s) *)
-(*  *)
-
-Time Eval vm_compute in lucastest w4096_op 3217.
-(* sans square : Finished transaction in 743. secs (739.61u,0.11s) *)
-(*  *)
-
-Time Eval vm_compute in lucastest w8192_op 4253.
-(* sans square : Finished transaction in 1831. secs (1828.36u,0.06s)*)
-(*  *)
-
-Time Eval vm_compute in lucastest w8192_op 4423.
-(* sans square : Finished transaction in 2062. secs (2033.38u,4.11s)  *)
-(*  *)
-
-Time Eval vm_compute in lucastest w16384_op 9689.
-(* sans square : Finished transaction in 15458. secs (15401.47u,14.59s) *)
-(* Finished transaction in 12702. secs (12641.09u,13.19s) *)
-
-Time Eval vm_compute in lucastest w16384_op 9941.
-(* sans square : Finished transaction in 16252. secs (16168.4u,6.86s) *)
-(*  *)
-
-Time Eval vm_compute in lucastest w16384_op 11213.
-(*  *)
-
-(* Test power *)
-
-Definition powertest (w:Set) (op:znz_op w) x p b :=
-  let wb := znz_of_Z op b in  
-  let wx := znz_of_Z op x in 
-  let mod_op := make_mod_op op wb in
-  mod_op.(power_mod) wx p.
-
-Eval compute in ((Zpower 2 521) - 1)%Z.
-
-Time Eval vm_compute in powertest w1024_op 3 
-6864797660130609714981900799081393217269435300143305409394463459185543183397656052122559640661454554977296311391480858037121987999716643812574028291115057150
-6864797660130609714981900799081393217269435300143305409394463459185543183397656052122559640661454554977296311391480858037121987999716643812574028291115057151.
-
-
-
 

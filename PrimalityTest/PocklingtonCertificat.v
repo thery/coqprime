@@ -483,32 +483,6 @@ Proof with mauto.
  rewrite H1 ...
 Qed.
 
-Lemma fold_aux_4 : 
- forall a N l prod,
-  (fold_left
-      (fun r (k:positive*positive) => 
-        (r * (a ^ (N / (fst k)) - 1))) l prod) =
-  (fold_right
-      (fun (k:positive*positive) r => 
-        (r * (a ^ (N / (fst k)) - 1))) 1 l) * prod.
-Proof.
- induction l;simpl;intros;auto with zarith.
- rewrite IHl;ring.
-Qed.
-
-Lemma fold_right_divide : 
- forall a N (l:dec_prime) k,
-   In k l ->
- ((a ^ (N / (fst k)) - 1) | 
-   (fold_right
-      (fun (k:positive*positive) r => 
-        (r * (a ^ (N / (fst k)) - 1))) 1 l)).
-Proof.
- induction l;simpl;intros. elim H.
- destruct H.
- subst. apply Zdivide_mult_r. mauto.
- apply Zdivide_mult_l;auto.
-Qed.
 
 Lemma is_odd_Zodd : forall p, is_odd p = true -> Zodd p.
 Proof. 
@@ -662,14 +636,11 @@ Proof with mauto.
   rewrite H2;rewrite H12 ...
   rewrite <- Zpower_mult...
   clear H12.
- rewrite fold_aux_4;intros H14.
- assert (Zpos prod =
-      (fold_right
-         (fun (k : positive * positive) (r : Z) =>
-          r * (a ^ (R1 * mkProd dec / fst k) - 1)) 1 dec) mod N).
-  rewrite Zmult_1_r in H14;apply H14 ...
-  symmetry;apply lt_Zmod...
-  clear H14.
+ intros H14.
+ match type of H14 with _ -> _ -> _ -> ?X =>
+  assert (H12:X); try apply H14; clear H14
+ end...
+ rewrite Zmod_def_small...
  assert (1 < mkProd dec).
   assert (H14 := Zlt_0_pos (mkProd dec)). 
   assert (1 <= mkProd dec)...
@@ -686,31 +657,27 @@ Proof with mauto.
  rewrite H2;ring.
  apply is_even_Zeven... 
  apply is_odd_Zodd... 
- intros p Hprime Hdec; exists (Zpos a);repeat split...
- rewrite <-H2 in H12.
- set (FR := fold_right
-        (fun (k : positive * positive) (r : Z) =>
-         r * (a ^ ((N - 1) / fst k) - 1)) 1 dec) in H12.
- assert (Zis_gcd FR N 1).
- rewrite (Z_div_mod_eq FR N)...
- rewrite <-H12.
- apply Zis_gcd_sym. apply Zis_gcd_for_euclid2.
- rewrite <- H10;apply gcd_Zis_gcd.
- apply Zis_gcd_gcd...
- apply Zis_gcd_intro; auto with zarith.
- intros x HD1 HD2.
- destruct H16.
- apply H18...
- unfold FR.
- apply Zdivide_trans with (a ^ ((N - 1) / p) - 1)...
- assert (exists p', p = Zpos p').
-  assert (H19 := prime_le_2 _ Hprime).
-  unfold Zle in H19;destruct p;simpl in H19;try(elim H19;trivial;fail).
-  exists p;trivial.
- destruct H19 as (p',H19);subst p.
+ intros p; case p; clear p.
+ intros HH; contradict HH.
+ apply not_prime_0.
+ 2: intros p (V1, _); contradict V1; apply Zle_not_lt; red; simpl; intros;
+     discriminate.
+ intros p Hprime Hdec; exists (Zpos a);repeat split; auto with zarith.
+ apply Zis_gcd_gcd; auto with zarith.
+ change (rel_prime (a ^ ((N - 1) / p) - 1) N).
+ match type of H12 with _ = ?X mod _ =>
+   apply rel_prime_div with (p := X); auto with zarith
+ end.
+ apply rel_prime_mod_rev; auto with zarith.
+ red.
+ pattern 1 at 3; rewrite <- H10; rewrite <- H12.
+ apply Pmod.gcd_Zis_gcd.
  destruct (in_mkProd_prime_div_in _ Hprime _ H Hdec) as (q,Hin).
- change p'  with (fst (p',q)).
- apply fold_right_divide...
+ rewrite <- H2.
+ match goal with |- context [fold_left ?f _ _] =>
+   apply (ListAux.fold_left_invol_in _ _ f (fun k => (a ^ ((N - 1) / p) - 1 | k))) 
+     with (b := (p, q)); auto with zarith
+ end.
  rewrite <- Heqr.
  generalizeclear H0; ring
     (((mkProd dec + mkProd dec + r + 1) * mkProd dec + r) * mkProd dec + 1)

@@ -187,12 +187,9 @@ Defined.
 
 
 Theorem cmk_op_digits: forall n, 
-  (Zpos (znz_digits (cmk_op n)) = 2 ^ Z_of_nat (S n))%Z.
+  (Zpos (znz_digits (cmk_op n)) = 2 ^ (Z_of_nat n + 1))%Z.
 do 15 (intros n; case n; clear n; [reflexivity | idtac]).
 intros n; unfold cmk_op; lazy beta.
-rewrite mk_op_digits.
-simpl znz_digits.
-match goal with |- (_ = 2 ^ Z_of_nat (S ?X))%Z =>
-  rewrite (inj_S X)
-end; unfold Zsucc; rewrite Zpower_exp; auto with zarith.
+rewrite mk_op_digits; auto.
+rewrite Zpower_exp; auto with zarith.
 Qed.

@@ -599,6 +599,21 @@ rewrite <- H2.
 pattern p at 3; rewrite (Z_div_mod_eq p q); try ring; auto with zarith.
 Qed.
 
+Theorem rel_prime_mod_rev: forall p q, 0 < q -> rel_prime (p mod q) q -> rel_prime p q.
+intros p q H H0.
+rewrite (Z_div_mod_eq p q); auto with zarith.
+red.
+apply Zis_gcd_sym; apply Zis_gcd_for_euclid2; auto with zarith.
+Qed.
+
+Theorem rel_prime_div: forall p q r, rel_prime p q -> (r | p) -> rel_prime r q.
+intros p q r H (u, H1); subst.
+inversion_clear H as [H1 H2 H3].
+red; apply Zis_gcd_intro; try apply Zone_divide.
+intros x H4 H5; apply H3; auto.
+apply Zdivide_mult_r; auto.
+Qed.
+
 Theorem rel_prime_1: forall n, rel_prime 1 n.
 intros n; red; apply Zis_gcd_intro; auto.
 exists 1; auto with zarith.
