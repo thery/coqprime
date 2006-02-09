@@ -2,7 +2,6 @@
 -I ../N
 -I ../Z
 -I ../List
-BasePrimes.v
 Cyclic.v
 EGroup.v
 Euler.v
@@ -13,7 +12,6 @@ LucasLehmer.v
 Pepin.v
 PGroup.v
 PocklingtonCertificat.v
-PocklingtonRefl.v
 Pocklington.v
 Proth.v
 Root.v

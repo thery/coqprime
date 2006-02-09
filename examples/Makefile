@@ -66,12 +66,18 @@ OCAMLLIBS=-I .\
   -I ../Tactic\
   -I ../N\
   -I ../Z\
-  -I ../List
+  -I ../PrimalityTest\
+  -I ../List\
+  -I ../num\
+  -I ../num/W/W8
 COQLIBS=-I .\
   -I ../Tactic\
   -I ../N\
   -I ../Z\
-  -I ../List
+  -I ../PrimalityTest\
+  -I ../List\
+  -I ../num\
+  -I ../num/W/W8
 
 ###################################
 #                                 #
@@ -79,40 +85,18 @@ COQLIBS=-I .\
 #                                 #
 ###################################
 
-VFILES=Cyclic.v\
-  EGroup.v\
-  Euler.v\
-  FGroup.v\
-  IGroup.v\
-  Lagrange.v\
-  LucasLehmer.v\
-  Pepin.v\
-  PGroup.v\
-  PocklingtonCertificat.v\
-  Pocklington.v\
-  Proth.v\
-  Root.v\
-  Zp.v
+VFILES=BasePrimes.v\
+  PocklingtonRefl.v\
+  TestLucas.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
 HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
-all: Cyclic.vo\
-  EGroup.vo\
-  Euler.vo\
-  FGroup.vo\
-  IGroup.vo\
-  Lagrange.vo\
-  LucasLehmer.vo\
-  Pepin.vo\
-  PGroup.vo\
-  PocklingtonCertificat.vo\
-  Pocklington.vo\
-  Proth.vo\
-  Root.vo\
-  Zp.vo
+all: BasePrimes.vo\
+  PocklingtonRefl.vo\
+  TestLucas.vo
 
 spec: $(VIFILES)
 
