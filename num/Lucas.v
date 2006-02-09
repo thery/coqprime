@@ -7,7 +7,7 @@ Require Import Basic_type.
 Require Import ZnZ.
 Require Import Zn2Z.
 Require Import Mod_op.
-Require Import W2_op.
+Require Import W8_op.
 Require Import W.
 Require Import LucasLehmer.
 
@@ -160,7 +160,7 @@ Fixpoint plength (p: positive) : positive :=
   end.
 
 Definition lucas p :=
- let op := cmk_op (nat_of_P (plength p) - 1) in
+ let op := cmk_op (nat_of_P (plength p) - 3) in
  let b := znz_of_Z op (Zpower 2 (Zpos p) - 1) in
  let mod_op := mmake_mod_op op b p (2 * op.(znz_digits) - p) in
   lucastest op p mod_op.
@@ -242,20 +242,20 @@ Theorem lucas_prime:
 unfold lucas; intros p Hp H.
 match type of H with lucastest (cmk_op ?x) ?y ?z = _ =>
    set (w_op := (cmk_op x)); assert(A1: znz_spec w_op)
-
 end.
 unfold w_op; apply cmk_spec.
 assert (F0: p <= znz_digits w_op).
-unfold w_op, base; rewrite (cmk_op_digits (nat_of_P (plength p) - 1)).
+unfold w_op, base; rewrite (cmk_op_digits (nat_of_P (plength p) - 3)).
 apply Zle_trans with (2 ^ plength p).
 apply Zlt_le_weak; apply plength_correct.
 apply Zpower_le_monotone; auto with zarith.
 split; auto with zarith.
+case (le_or_lt 3 (nat_of_P (plength p))); intros A2.
 rewrite inj_minus1; simpl; auto with zarith.
 rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
-apply inj_le_inv; simpl.
+rewrite inj_minus2; simpl; auto with zarith.
+generalize (inj_le (nat_of_P (plength p)) 3); simpl; auto with zarith.
 rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
-assert (0 < plength p); auto with zarith; red; simpl; auto.
 assert (F1: znz_to_Z w_op (znz_of_Z w_op (2 ^ p - 1)) = 2 ^ p - 1).
 assert (F1: 0 < 2 ^ p - 1).
 assert (F2: 2 ^ 0 < 2 ^ p); auto with zarith.

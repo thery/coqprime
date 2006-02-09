@@ -6,7 +6,7 @@ Require Export W2_sub.
 Require Export W2_mul.
 Require Export W2_div.
 Require Export W2_lift.
-Require Export W2_mod.
+Require Export W2_pos_mod.
 Require Import ZnZ.
 
 

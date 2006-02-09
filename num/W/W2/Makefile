@@ -77,80 +77,82 @@ COQLIBS=-I .\
 #                                 #
 ###################################
 
-VFILES=W2_basic.v\
-  W2_basic_spec.v\
-  W2_compare.v\
-  W2_compare_spec.v\
-  W2_opp.v\
-  W2_opp_spec.v\
-  W2_add.v\
-  W2_succ_c_spec.v\
-  W2_add_c_spec.v\
-  W2_add_carry_c_spec.v\
-  W2_add_spec.v\
+VFILES=W2_add_carry_c_spec.v\
   W2_add_carry_spec.v\
-  W2_sub.v\
-  W2_pred_c_spec.v\
-  W2_sub_c_spec.v\
-  W2_sub_carry_c_spec.v\
-  W2_sub_spec.v\
-  W2_sub_carry_spec.v\
-  W2_mul.v\
-  W2_mul_c_spec.v\
-  W2_mul_spec.v\
-  W2_square_c_spec.v\
-  W2_div_aux.v\
-  W2_div.v\
-  W2_div_wB_spec.v\
-  W2_div_spec.v\
-  W2_lift.v\
-  W2_head0_spec.v\
+  W2_add_c_spec.v\
   W2_add_mul_div_1_spec.v\
   W2_add_mul_div_spec.v\
-  W2_op.v\
+  W2_add_spec.v\
+  W2_add.v\
+  W2_basic_spec.v\
+  W2_basic.v\
+  W2_compare_spec.v\
+  W2_compare.v\
+  W2_div_aux.v\
+  W2_div_spec.v\
+  W2_div.v\
+  W2_div_wB_spec.v\
+  W2_head0_spec.v\
+  W2_lift.v\
+  W2_mul_c_spec.v\
+  W2_mul_spec.v\
+  W2_mul.v\
+  W2_opp_spec.v\
+  W2_opp.v\
   W2_op_spec.v\
-  W2_mod.v\
-  W2_mod_spec.v
+  W2_op.v\
+  W2_pos_mod_1_spec.v\
+  W2_pos_mod_spec.v\
+  W2_pos_mod.v\
+  W2_pred_c_spec.v\
+  W2_square_c_spec.v\
+  W2_sub_carry_c_spec.v\
+  W2_sub_carry_spec.v\
+  W2_sub_c_spec.v\
+  W2_sub_spec.v\
+  W2_sub.v\
+  W2_succ_c_spec.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
 HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
-all: W2_basic.vo\
-  W2_basic_spec.vo\
-  W2_compare.vo\
-  W2_compare_spec.vo\
-  W2_opp.vo\
-  W2_opp_spec.vo\
-  W2_add.vo\
-  W2_succ_c_spec.vo\
-  W2_add_c_spec.vo\
-  W2_add_carry_c_spec.vo\
-  W2_add_spec.vo\
+all: W2_add_carry_c_spec.vo\
   W2_add_carry_spec.vo\
-  W2_sub.vo\
-  W2_pred_c_spec.vo\
-  W2_sub_c_spec.vo\
-  W2_sub_carry_c_spec.vo\
-  W2_sub_spec.vo\
-  W2_sub_carry_spec.vo\
-  W2_mul.vo\
-  W2_mul_c_spec.vo\
-  W2_mul_spec.vo\
-  W2_square_c_spec.vo\
-  W2_div_aux.vo\
-  W2_div.vo\
-  W2_div_wB_spec.vo\
-  W2_div_spec.vo\
-  W2_lift.vo\
-  W2_head0_spec.vo\
+  W2_add_c_spec.vo\
   W2_add_mul_div_1_spec.vo\
   W2_add_mul_div_spec.vo\
-  W2_op.vo\
+  W2_add_spec.vo\
+  W2_add.vo\
+  W2_basic_spec.vo\
+  W2_basic.vo\
+  W2_compare_spec.vo\
+  W2_compare.vo\
+  W2_div_aux.vo\
+  W2_div_spec.vo\
+  W2_div.vo\
+  W2_div_wB_spec.vo\
+  W2_head0_spec.vo\
+  W2_lift.vo\
+  W2_mul_c_spec.vo\
+  W2_mul_spec.vo\
+  W2_mul.vo\
+  W2_opp_spec.vo\
+  W2_opp.vo\
   W2_op_spec.vo\
-  W2_mod.vo\
-  W2_mod_spec.vo
+  W2_op.vo\
+  W2_pos_mod_1_spec.vo\
+  W2_pos_mod_spec.vo\
+  W2_pos_mod.vo\
+  W2_pred_c_spec.vo\
+  W2_square_c_spec.vo\
+  W2_sub_carry_c_spec.vo\
+  W2_sub_carry_spec.vo\
+  W2_sub_c_spec.vo\
+  W2_sub_spec.vo\
+  W2_sub.vo\
+  W2_succ_c_spec.vo
 
 spec: $(VIFILES)
 

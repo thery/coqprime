@@ -22,10 +22,15 @@ let usage_mul =
 let usage_div = 
   "  -div : generate files containing the division mod and gcd functions and corresponding proofs\n"
 
+let usage_mod = 
+  "  -mod : generate files containing the mod and corresponding proofs\n"
+
 let usage_lift = 
   "  -lift : generate files containing the lift function and its proofs\n"
 let usage_op = 
   "  -op : generate files containing the record of operators and specifications \n"
+let usage_noproof = 
+  "  -noproof : generate files with no proof \n"
 let usage =  
   "Usage : genW [option] digits\n"^
   " Options are \n" ^
@@ -37,8 +42,10 @@ let usage =
   usage_sub ^
   usage_mul ^
   usage_div ^
+  usage_mod ^
   usage_lift ^
-  usage_op
+  usage_op ^
+  usage_noproof
   
 
 let setsize s =
@@ -64,11 +71,16 @@ let add = ref false
 let sub = ref false
 let mul = ref false
 let div = ref false
+let pos_mod = ref false
 let lift = ref false
 let op = ref false
+let noproof = ref false
 
 let set_opt opt = 
   Arg.Unit (fun _ -> all := false; opt := true)
+
+let set_opt1 opt = 
+  Arg.Unit (fun _ -> opt := true)
 (* ** Parse the arguments ** *)
 
 let _ = 
@@ -80,8 +92,10 @@ let _ =
      ("-sub",set_opt sub , "");
      ("-mul",set_opt mul , "");
      ("-div",set_opt div , "");
+     ("-mod",set_opt pos_mod , "");
      ("-lift",set_opt lift , "");
      ("-op",set_opt op , "");
+     ("-noproof",set_opt1 noproof , "")
    ] 
     setsize 
     usage
@@ -123,6 +137,13 @@ let print_lemma f args concl =
   if String.length args <> 0 then (print "forall ";print args;print ", ");
   print concl; println ".";
   println "Proof."
+
+let print_admitted_spec() =
+  println ".";
+  println "Admitted."
+
+let print_admitted() =
+  println "Admitted."
 
 let print_fun args = print "fun ";print args;println" =>"
 
@@ -292,6 +313,8 @@ let print_basic () =
 
   let typ = "0 <= [|x|] < "^w_B in
   print_spec w_to_Z "x" typ;
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" typ;
   print " | ";print_w 0;println " => conj (Zle_refl 0) (refl_equal Lt)";
@@ -300,6 +323,7 @@ let print_basic () =
       printi x; println ") (refl_equal Lt)"
   done;
   println "end.";
+  end;
   println "";
 
   let typ p = 
@@ -324,28 +348,43 @@ let print_basic () =
   print_spec w_of_pos "p" 
     ("Zpos p = (Z_of_N (fst ("^w_of_pos^" p)))*"^w_B^" + [|snd ("^
                                                      w_of_pos^" p)|]");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "p0";
   println (" eq_ind_r (fun z : Z => Zpos p0 = z + [|snd ("^w_of_pos^" p0)|])");
 
   print_m "" 0 (fun p -> p);
   println (" (Zmult_comm (Z_of_N (fst ("^w_of_pos^" p0))) "^w_B^").");
+  end;
   println "";
+
 
   print_spec w_0 "" ("[|"^(string_w 0)^"|] = 0");
+  if (!noproof) then print_admitted_spec()
+  else begin
   println "(refl_equal 0).";
+  end;
   println "";
-
+  
   print_spec w_1 "" ("[|"^(string_w 1)^"|] = 1");
+  if (!noproof) then print_admitted_spec()
+  else begin
   println "(refl_equal 1).";
+  end;
   println "";
  
   print_spec w_Bm1 "" ("[|"^(string_w (base - 1))^"|] = "^w_B^" - 1");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print "(refl_equal ";printi (base-1);println ").";
+  end;
   println "";
 		     
   let typ h l = 
     "[||"^w_WW^" "^h^" "^l^"||] = [|"^h^"|] * "^w_B^" + [|"^l^"|]" in
   print_spec w_WW "h l" (typ "h" "l");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "h l";
   print_match_dep "h" (typ "h" "l");
   print " | ";print_w 0;println " => ";
@@ -360,16 +399,20 @@ let print_basic () =
     print (w_WW^" ");print_w i;println " l||])"
   done;
   println " end.";
+  end;
   println "";
     
   print_lemma w_CW "sign c l" 
     ("interp_carry sign ("^w_B^"*"^w_B^") (zn2z_to_Z "^w_B^" "^
      w_to_Z^") ("^w_CW^" c l) = (interp_carry sign "^w_B^" "^w_to_Z^
       " c)*"^w_B^" + [|l|]");
+  if (!noproof) then print_admitted()
+  else begin
   print "intros sign c l;case c;intro h;simpl;fold (";print w_WW;
   print " h l); rewrite ";print w_WW;print "_spec;";
   println ("unfold "^w_B^"; ring.");
   println "Qed.";
+  end;
   println "";
       
   end_file out
@@ -410,6 +453,8 @@ let print_compare () =
      " | Lt => [|"^x^"|] < [|"^y^"|]"^
      " | Gt => [|"^x^"|] > [|"^y^"|] end" in
   print_spec w_compare "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print " let typ x y := ";print (typ "x" "y");println " in";
   print_match_dep "x" ("typ x y");
@@ -424,6 +469,7 @@ let print_compare () =
     println "    end"
   done;
   println " end.";
+  end;
   println "";
   end_file out
   
@@ -468,16 +514,21 @@ let print_opp () =
   print_require true "opp";
   let typ x = "[-|"^w_opp_c^" x|] = -[|"^x^"|]" in
   print_spec w_opp_c "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x");
   for x = 0 to base - 1 do
     print " | ";print_w x;print " => refl_equal (-";printi x;println ")"
   done;
   println " end.";
+  end;
   println "";
  
  let typ x = "[|"^w_opp^" x|] = (-[|"^x^"|]) mod "^w_B in
   print_spec w_opp "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x");
   for x = 0 to base - 1 do
@@ -485,10 +536,13 @@ let print_opp () =
       println ""
   done;
   println " end.";
+  end;
   println "";
 
   let typ x = "[|"^w_opp_carry^" "^x^"|] = "^w_B^" - [|"^x^"|] - 1" in
   print_spec w_opp_carry "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x"); 
   for x = 0 to base - 1 do
@@ -496,6 +550,7 @@ let print_opp () =
     printi (base - x - 1);println ""
   done;
   println " end.";
+  end;
   println "";
   end_file out
 
@@ -607,16 +662,21 @@ let print_add () =
 
   let typ x = "[+|"^w_succ_c^" "^x^"|] = [|"^x^"|] + 1" in
   print_spec w_succ_c "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x");
   for x = 0 to base - 1 do
     print " | ";print_w x;print " => refl_equal (";printi x;println "+1)"
   done;
   println " end.";
+  end;
   println "";
  
   let typ x = "[|"^w_succ^" "^x^"|] = ([|"^x^"|] + 1) mod "^w_B in
   print_spec w_succ "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x");
   for x = 0 to base - 1 do
@@ -624,12 +684,15 @@ let print_add () =
            printi x;print "+1) mod ";print w_B;println ")"
   done;
   println " end.";
+  end;
   println "";
 
   let hyp c = "[+|"^c^"|] <= "^w_B^" + ("^w_B^" - 2)" in
   let concl c = "[+|"^w_carry_succ_c^" "^c^"|] = [+|"^c^"|] + 1" in
   let typ c = (hyp c)^" -> "^(concl c) in
   print_spec w_carry_succ_c "c" (typ "c");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "c";
   print_match_dep "c" (typ "c");
   print " | C0 x => fun (H:";print (hyp "C0 x");print ")=> ";
@@ -650,6 +713,7 @@ let print_add () =
   println "          (H (refl_equal Gt))";
   println "    end";
   println " end.";
+  end;
   println "";
   
   end_file out;
@@ -659,6 +723,8 @@ let print_add () =
 
   let typ x y = "[+|"^w_add_c^" "^x^" "^y^"|] = [|"^x^"|] + [|"^y^"|]" in
   print_spec w_add_c "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "x" (typ "x" "y"); 
   print     " | ";print_w 0;println " => refl_equal [|y|]";
@@ -672,6 +738,7 @@ let print_add () =
     println "    end"
   done;
   println  " end.";
+  end;
   println "";
   
   end_file out;
@@ -683,6 +750,8 @@ let print_add () =
   let typ x y = 
     "[+|"^w_add_carry_c^" "^x^" "^y^"|] = [|"^x^"|] + [|"^y^"|] + 1" in
   print_spec w_add_carry_c "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "x" (typ "x" "y"); 
   for x = 0 to base - 1 do
@@ -695,6 +764,7 @@ let print_add () =
     println "    end"
   done;
   println  " end.";
+  end;
   println "";
  
   end_file out;
@@ -705,6 +775,8 @@ let print_add () =
   let typ x y =
     "[|"^w_add^" "^x^" "^y^"|] = ([|"^x^"|] + [|"^y^"|]) mod "^w_B in
   print_spec w_add "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "x" (typ "x" "y"); 
   for x = 0 to base - 1 do
@@ -717,6 +789,7 @@ let print_add () =
     println "    end"
   done;
   println  " end.";
+  end;
   println "";
 
   end_file out;
@@ -727,6 +800,8 @@ let print_add () =
   let typ x y =
     "[|"^w_add_carry^" "^x^" "^y^"|] = ([|"^x^"|] + [|"^y^"|] + 1) mod "^w_B in
   print_spec w_add_carry "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "x" (typ "x" "y"); 
   for x = 0 to base - 1 do
@@ -739,6 +814,7 @@ let print_add () =
     println "    end"
   done;
   println  " end.";
+  end;
   println "";
 
   end_file out
@@ -841,6 +917,8 @@ let print_sub () =
 
   let typ x = " [-|"^w_pred_c^" "^x^"|] = [|"^x^"|] - 1" in
   print_spec w_pred_c "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x");
   for x = 0 to base - 1 do
@@ -848,10 +926,13 @@ let print_sub () =
    printi ((x-1) mod base); println ")"
   done;
   println " end.";
+  end;
   println "";
 
   let typ x = " [|"^w_pred^" "^x^"|] = ([|"^x^"|] - 1) mod "^w_B in
   print_spec w_pred "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x");
   for x = 0 to base - 1 do
@@ -860,6 +941,7 @@ let print_sub () =
     printi(if r < 0 then r+base else r);println ""
   done;
   println " end.";
+  end;
   println "";
 
   end_file out;
@@ -869,6 +951,8 @@ let print_sub () =
 
   let typ x y = "[-|"^w_sub_c^" "^x^" "^y^"|] = [|"^x^"|] - [|"^y^"|]" in
   print_spec w_sub_c "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "y" (typ "x" "y");
   for y = 0 to base - 1 do
@@ -881,6 +965,7 @@ let print_sub () =
     println "   end";
   done;
   println " end.";
+  end;
   println "";
 
   end_file out;
@@ -891,6 +976,8 @@ let print_sub () =
   let typ x y = 
     "[-|"^w_sub_carry_c^" "^x^" "^y^"|] = [|"^x^"|] - [|"^y^"|] - 1" in
   print_spec w_sub_carry_c "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "y" (typ "x" "y");
   for y = 0 to base - 1 do
@@ -903,6 +990,7 @@ let print_sub () =
     println "   end";
   done;
   println " end.";
+  end;
   println "";
 
   end_file out;
@@ -913,6 +1001,8 @@ let print_sub () =
   let typ x y =
     "[|"^w_sub^" "^x^" "^y^"|] = ([|"^x^"|] - [|"^y^"|]) mod "^w_B in
   print_spec w_sub "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "y" (typ "x" "y");
   for y = 0 to base - 1 do
@@ -926,6 +1016,7 @@ let print_sub () =
     println "   end";
   done;
   println " end.";
+  end;
   println "";
 
   end_file out;
@@ -937,6 +1028,8 @@ let print_sub () =
     "[|"^w_sub_carry^" "^x^" "^y^"|] = ([|"^x^"|] - [|"^y^"|] - 1) mod "^w_B
   in
   print_spec w_sub_carry "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "y" (typ "x" "y");
   for y = 0 to base - 1 do
@@ -950,6 +1043,7 @@ let print_sub () =
     println "   end";
   done;
   println " end.";
+  end;
   println "";
 
   end_file out
@@ -1009,6 +1103,8 @@ let print_mul () =
   let typ x y = 
      "[||"^w_mul_c^" "^x^" "^y^"||] = [|"^x^"|] * [|"^y^"|]" in
   print_spec w_mul_c "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "x" (typ "x" "y");
   print " | ";print_w 0;println " => refl_equal 0";
@@ -1022,6 +1118,7 @@ let print_mul () =
     println "    end"
   done;
   println " end.";
+  end;
   println "";
    
   end_file out;
@@ -1037,6 +1134,8 @@ let print_mul () =
   let typ x y = 
     "[|"^w_mul^" "^x^" "^y^"|] = ([|"^x^"|] * [|"^y^"|]) mod "^w_B in
   print_lemma w_mul "x y" (typ "x" "y");
+  if (!noproof) then print_admitted()
+  else begin
   println (" assert (H1: 0 < "^w_B^"). exact (refl_equal Lt).");
   println (" assert (H2: "^w_B^" > 0). exact (refl_equal Gt).");
   println (" unfold "^w_mul^";intros x y.");
@@ -1052,6 +1151,7 @@ let print_mul () =
   println (" apply "^w_to_Z^"_spec.");
   println (" split;[intro Heq;discriminate Heq | exact (refl_equal Lt)].");
   println ("Qed.");
+  end;
   println "";
  
   end_file out;
@@ -1061,12 +1161,15 @@ let print_mul () =
  
   let typ x = "[|| "^w_square_c^" "^x^"||] = [|"^x^"|] * [|"^x^"|]" in
   print_spec w_square_c "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x");
   for x = 0 to base - 1 do
     print " | ";print_w x;print " => refl_equal ";printi (x*x);println ""
   done;
   println " end.";
+  end;
   println "";
 
   end_file out
@@ -1127,11 +1230,17 @@ let print_lift () =
   print_require false "lift";
 
   println "Lemma Eq_not_Gt : Eq <> Gt.";
+  if (!noproof) then print_admitted()
+  else begin
   println "Proof. intro H;discriminate H. Qed.";
+  end;
   println "";
 
   println "Lemma Lt_not_Gt : Lt <> Gt.";
+  if (!noproof) then print_admitted()
+  else begin
   println "Proof. intro H;discriminate H. Qed.";
+  end;
   println "";
  
   let hyp x = "0 < [|"^x^"|]" in
@@ -1139,6 +1248,8 @@ let print_lift () =
     w_B^"/ 2 <= 2 ^ (Z_of_N ("^w_head0^" "^x^")) * [|"^x^"|] < "^w_B in
   let typ x = (hyp x)^" -> "^(concl x) in
   print_spec w_head0 "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x";
   print_match_dep "x" (typ "x");
   print " | ";print_w 0;print " => ";
@@ -1161,6 +1272,7 @@ let print_lift () =
     println ""
   done;
   println " end.";
+  end;
   println "";
 
   end_file out;
@@ -1175,6 +1287,8 @@ let print_lift () =
           "[|"^y^"|] / (Zpower 2 ((Zpos "^(string_of_int !digits)^
            ") - (Zpos "^(string_of_int i)^")))) mod "^w_B in
     print_spec (w_add_mul_div_i i) "x y" (typ "x" "y");
+    if (!noproof) then print_admitted_spec()
+    else begin
     print_fun "x y";
     print_match_dep "x" (typ "x" "y");
     for x = 0 to base - 1 do
@@ -1187,6 +1301,7 @@ let print_lift () =
       println "    end";
     done;
     println " end.";
+    end;
     println "";
   
     end_file out
@@ -1200,7 +1315,7 @@ let print_lift () =
     println  ("_add_mul_div_"^(string_of_int i)^"_spec.")
   done;
 
-  let hyp p = "0 < Zpos "^p^" < Zpos "^(string_of_int !digits) in
+  let hyp p = "Zpos "^p^" < Zpos "^(string_of_int !digits) in
   let concl x y p = 
      "[| "^w_add_mul_div^" "^p^" "^x^" "^y^"|] = "^
          "([|"^x^"|] * (Zpower 2 (Zpos "^p^")) + "^
@@ -1220,9 +1335,13 @@ let print_lift () =
     print " exact (";print w_add_mul_div;printi i;println "_spec x y)."
   in
   print_lemma w_add_mul_div "x y p" (typ "x" "y" "p");
+  if (!noproof) then print_admitted()
+  else begin
   println " intros x y p H.";
+  println " assert (H0: 0 < Zpos p); [red; simpl; auto | idtac].";
   print_proof (!digits - 1);
   println "Qed.";
+  end;
   println "";
 
   end_file out
@@ -1348,9 +1467,7 @@ let print_div () =
   print_w 0;print " ";print w_WW;
   println (" "^w_head0^" "^w_add_mul_div^" "^w_div21^" in");
   println " fun n x y => _gen_divn1 n ";
-  println ("   (match word_tr_word "^wt^" n in (_ = y) return y with");
-  println "    | refl_equal => x";
-  println "    end) y.";
+  println ("    (word_of_word_tr "^wt^" n x) y."); 
   println "";
 
   print_title "Modulo of n digits by one";
@@ -1358,9 +1475,7 @@ let print_div () =
   print " let _gen_modn1 := gen_modn1 ";printi !digits;print " ";
   print_w 0;print " ";println(" "^w_head0^" "^w_add_mul_div^" "^w_div21^" in");
   println " fun n x y => _gen_modn1 n ";
-  println ("   (match word_tr_word "^wt^" n in (_ = y) return y with");
-  println "    | refl_equal => x";
-  println "    end) y.";
+  println ("    (word_of_word_tr "^wt^" n x) y."); 
   println "";
    
 
@@ -1370,11 +1485,17 @@ let print_div () =
   print_require false "div";
 
   println "Lemma Eq_not_Lt : Eq <> Lt.";
+  if (!noproof) then print_admitted()
+  else begin
   println "Proof. intro H;discriminate H. Qed.";
+  end;
   println "";
 
   println "Lemma Gt_not_Lt : Gt <> Lt.";
+  if (!noproof) then print_admitted()
+  else begin
   println "Proof. intro H;discriminate H. Qed.";
+  end;
   println "";
 
   let hyp1 y =  w_B^"/2 <= [|"^y^"|]" in
@@ -1386,6 +1507,8 @@ let print_div () =
   let typ1 x y = (hyp2 x y)^" -> "^(concl x y) in
   let typ x y =  (hyp1 y)^" -> "^(hyp2 x y)^" -> "^(concl x y) in
   print_spec w_div_wB "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y";
   print_match_dep "y" (typ "x" "y"); 
   for y = 0 to base/2 - 1 do
@@ -1425,10 +1548,13 @@ let print_div () =
     println "     end";
   done; 
   println " end.";
+  end;
   println "";
  
   let typ x y = "[|"^w_mod^" "^x^" "^y^"|] = Zmod [|"^x^"|] [|"^y^"|]" in
   print_spec w_mod "x y" ("0 < [|y|] -> "^(typ "x" "y"));
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y (H:0<[|y|])";
   print_match_dep "y" (typ "x" "y");
   for y = 0 to base - 1 do
@@ -1441,18 +1567,24 @@ let print_div () =
     println "   end"
   done;
   println " end.";
+  end;
   println "";
   
   print_spec (w_mod^"_gt") "x y" 
     ("[|x|] > [|y|] -> 0 < [|y|] -> "^(typ "x" "y"));
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "x y (H1:[|x|] > [|y|]) (H2:0<[|y|])";
   println (w_mod^"_spec x y H2.");
+  end;
   println "";
      
 
   let typ x y = "(match "^w_div^" "^x^" "^y^" return Prop with "^
            " (q,r) => ([|q|],[|r|]) = Zdiv_eucl [|"^x^"|] [|"^y^"|] end)" in
   println ("Lemma "^w_div^"_eq : forall x y, "^ (typ "x" "y")^".");
+  if (!noproof) then print_admitted()
+  else begin
   print "Proof ";print_fun "x y";
   print_match_dep "y" (typ "x" "y");
   for y = 0 to base - 1 do
@@ -1468,6 +1600,7 @@ let print_div () =
     println "   end"
   done;
   println " end.";
+  end;
   println "";
  
   println "Require Import Znumtheory.";
@@ -1475,6 +1608,8 @@ let print_div () =
   println "";
   let typ x y = "[|"^w_gcd^" "^x^" "^y^"|] = Zgcd [|"^x^"|] [|"^y^"|]" in
   println ("Lemma "^w_gcd^"_eq : forall x y, "^ (typ "x" "y")^".");
+  if (!noproof) then print_admitted()
+  else begin
   print "Proof ";print_fun "x y";
   print_match_dep "x" (typ "x" "y");
   for x = 0 to base - 1 do
@@ -1487,21 +1622,28 @@ let print_div () =
     println "    end";
   done;
   println " end.";
+  end;
     
   println ("Lemma "^w_gcd^"_spec : forall x y, Zis_gcd [|x|] [|y|] [|"^
                            w_gcd^" x y|].");
+  if (!noproof) then print_admitted()
+  else begin
   println "Proof.";
   println (" intros x y; rewrite ("^w_gcd^"_eq x y).");
   println " apply Zgcd_is_gcd.";
   println "Qed.";
+  end;
   println "";
 
   println ("Lemma "^w_gcd^
              "_gt_spec : forall x y, [|x|] > [|y|] ->Zis_gcd [|x|] [|y|] [|"^
                            w_gcd^" x y|].");
+  if (!noproof) then print_admitted()
+  else begin
   println "Proof.";
   println (" intros x y H; apply "^w_gcd^"_spec.");
   println "Qed.";
+  end;
   println "";
 
   println "Open Scope Z_scope.";
@@ -1509,6 +1651,8 @@ let print_div () =
   println ("      let (q,r) := "^w_div^" a b in");
   println "      [|a|] = [|q|] * [|b|] + [|r|] /\\ ";
   println "      0 <= [|r|] < [|b|].";
+  if (!noproof) then print_admitted()
+  else begin
   println "Proof.";
   println (" intros a b Hpos;assert (Heq := "^w_div^"_eq a b).");
   println  " assert (Hde := Z_div_mod [|a|] [|b|] (Zlt_gt _ _ Hpos)).";
@@ -1516,6 +1660,7 @@ let print_div () =
   println " destruct (Zdiv_eucl [|a|] [|b|]).";
   println " inversion Heq;subst;rewrite Zmult_comm;trivial.";
   println "Qed.";
+  end;
   println "";
   
   println "Open Scope Z_scope.";
@@ -1524,9 +1669,12 @@ let print_div () =
   println ("      let (q,r) := "^w_div^" a b in");
   println "      [|a|] = [|q|] * [|b|] + [|r|] /\\ ";
   println "      0 <= [|r|] < [|b|].";
+  if (!noproof) then print_admitted()
+  else begin
   println "Proof.";
   println (" intros a b Hgt Hpos;exact ("^w_div^"_spec a b Hpos).");
   println "Qed.";
+  end;
   println "";
    
   end_file out;
@@ -1553,6 +1701,8 @@ let print_div () =
   println ("     let (q,r) := "^w_div21^" a1 a2 b in");
   println ("     [|a1|] *"^w_B^
            "+ [|a2|] = [|q|] *  [|b|] + [|r|] /\\ 0 <= [|r|] < [|b|].");
+  if (!noproof) then print_admitted()
+  else begin
   println ("Proof.");
   println (" intros a1 a2 b Hle Hlta1b.");
   println (" unfold "^w_div21^".");
@@ -1663,6 +1813,7 @@ let print_div () =
   println (" assert (H6 := "^w_to_Z^"_spec ("^w_sub^" r b)).");
   println (" change "^w_B^" with (2*("^w_B^"/2)) in H6;omega.");
   println ("Qed.");
+  end;
   println "";
 
   print_spec w_divn1 "n x y" 
@@ -1673,6 +1824,8 @@ let print_div () =
           "gen_to_Z "^(string_of_int !digits)^" "^w_to_Z^" n q * "^
           w_to_Z^" y + "^w_to_Z^" r /\\ \n    "^
            "0 <= [|r|] < [|y|]");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "n x y (H:0<[|y|])";
   print "  @spec_gen_divn1 ";println (wt^" "^(string_of_int !digits));
   print    "     ";print_w 0;print " ";println w_WW;
@@ -1681,6 +1834,7 @@ let print_div () =
   println ("     "^w_WW^"_spec "^w_head0^"_spec");
   println ("     "^w_add_mul_div^"_spec "^w_div21^"_spec");
   println ("     n (word_of_word_tr "^wt^" n x) y H.");
+  end;
   println "";
 
   print_spec w_modn1 "n x y" 
@@ -1688,6 +1842,8 @@ let print_div () =
           "[|"^w_modn1^" n x y|] = "^
           "(gen_to_Z "^(string_of_int !digits)^" "^w_to_Z^
           " n (word_of_word_tr "^wt^" n x)) mod [|y|]");
+  if (!noproof) then print_admitted_spec()
+  else begin
   print_fun "n x y (H:0<[|y|])";
   print "  @spec_gen_modn1 ";println (wt^" "^(string_of_int !digits));
   print    "     ";print_w 0;print " ";println w_WW;
@@ -1696,9 +1852,112 @@ let print_div () =
   println ("     "^w_WW^"_spec "^w_head0^"_spec");
   println ("     "^w_add_mul_div^"_spec "^w_div21^"_spec");
   println ("     n (word_of_word_tr "^wt^" n x) y H.");
+  end;
   println "";
   
   end_file out
+
+let w_pos_mod = wt^"_pos_mod"
+let w_pos_mod_i i = wt^"_pos_mod"^(string_of_int i)
+
+let print_pos_mod () =
+  let out = start_file "pos_mod" in
+  print_require false "";
+  print_title "Modulo";
+  let r = ref 1 in 
+  for i = 1 to !digits - 1 do
+    r := !r * 2;
+    print_def (w_pos_mod_i i) "x";
+    print_match "x";
+    for x = 0 to base - 1 do
+      print " | ";print_w x;print " => "; print_w (x mod !r);println ""
+    done;
+    println " end.";
+    println "";
+  done;
+  print_def w_pos_mod "p";
+  print_match "p";
+  for i = 1 to !digits  - 1 do
+    print " | ";print_pos i;print " => "; println  (w_pos_mod_i i)
+  done;
+  println " | _  => fun x => x ";
+  println " end.";
+  println "";
+  end_file out;
+
+  let r = ref 1 in 
+  for i = 1 to !digits - 1 do
+    r := !r * 2;
+    let out = start_file ("pos_mod_"^(string_of_int i)^"_spec") in
+    print_require false "pos_mod";
+    let typ x =
+      "[| "^(w_pos_mod_i i)^" "^x^"|] = "^
+         "[|"^x^"|] mod (Zpower 2 (Zpos "^(string_of_int i)^"))" in
+    print_spec (w_pos_mod_i i) "x" (typ "x");
+    if (!noproof) then print_admitted_spec()
+    else begin
+    print_fun "x";
+    print_match_dep "x" (typ "x");
+    for x = 0 to base - 1 do
+      print " | ";print_w x;print " => refl_equal ";
+	printi (x mod !r);println ""
+    done;
+    println " end.";
+    end;
+    println "";
+    end_file out
+  done;
+
+  let out = start_file "pos_mod_spec" in
+  print_require false "pos_mod";
+  print "Require Import ";print !basename; println "_basic_spec.";
+  for i = 1 to !digits - 1 do
+  print "Require Import ";print !basename;
+    println  ("_pos_mod_"^(string_of_int i)^"_spec.")
+  done;
+  println "";
+
+  println "Lemma Eq_not_Gt : Eq <> Gt.";
+  if (!noproof) then print_admitted()
+  else begin
+  println "Proof. intro H;discriminate H. Qed.";
+  end;
+  println "";
+
+  println "Lemma Lt_not_Gt : Lt <> Gt.";
+  if (!noproof) then print_admitted()
+  else begin
+  println "Proof. intro H;discriminate H. Qed.";
+  end;
+  println "";
+
+  let typ x p = 
+     "[| "^w_pos_mod^" "^p^" "^x^"|] = "^
+         "[|"^x^"|] mod (Zpower 2 (Zpos "^p^"))" in
+  print_lemma w_pos_mod "x p" (typ "x" "p");
+  if (!noproof) then print_admitted()
+  else begin
+  println " intros x.";
+  println (" case ("^wt^"_to_Z_spec x); intros H1 H2.");
+  let v = (int_of_float (0.0001 +. log (float_of_int !digits) /.  log 2.)) + 1 in
+  println (" do "^(string_of_int v)^
+            " (try (intros p; case p; simpl "^wt^"_pos_mod; clear p));");
+  println (" intros; try (apply "^wt^"_pos_mod1_spec");
+  for i = 2 to !digits - 1 do
+    print ("           || apply "^wt^"_pos_mod"); printi i; println "_spec";
+  done;
+  println "                  );";
+  println " rewrite ZAux.Zmod_def_small; split; auto;"; 
+  println " apply Zlt_le_trans with (1 := H2);";
+  println (" replace "^wt^"_B with (2 ^ "^(string_of_int !digits)^"); auto;");
+  println " apply ZPowerAux.Zpower_le_monotone; try split; red; simpl;";
+  println " intros; auto; try (apply Eq_not_Gt || apply Lt_not_Gt).";
+  println "Qed.";
+  end;
+  println "";
+
+  end_file out
+
 
 let w_op = wt^"_op"
 
@@ -1712,6 +1971,7 @@ let print_op () =
   print "Require Export ";print !basename;println "_mul.";
   print "Require Export ";print !basename;println "_div.";
   print "Require Export ";print !basename;println "_lift.";
+  print "Require Export ";print !basename;println "_pos_mod.";
   println "Require Import ZnZ.";
   println "";
   println "";
@@ -1734,7 +1994,7 @@ let print_op () =
    
   println ("       "^w_div21^" "^w_divn1^" "^w_div^" "^w_div);
   println ("       "^w_modn1^" "^w_mod^" "^w_mod);
-  println ("       "^w_gcd^" "^w_gcd^" "^w_add_mul_div^"."); 
+  println ("       "^w_gcd^" "^w_gcd^" "^w_add_mul_div^" "^w_pos_mod^"."); 
   println "";
 
   end_file out;
@@ -1760,9 +2020,12 @@ let print_op () =
   print "Require Import ";print !basename;println "_div_spec."; 
   print "Require Import ";print !basename;println "_head0_spec."; 
   print "Require Import ";print !basename;println "_add_mul_div_spec."; 
+  print "Require Import ";print !basename;println "_pos_mod_spec."; 
   println "Require Import ZnZ.";
 
   println ("Lemma "^w_op^"_spec : znz_spec "^w_op^".");
+  if (!noproof) then print_admitted()
+  else begin
   println ("Proof.");
   println " apply mk_znz_spec.";
   println (" exact "^w_to_Z^"_spec.");
@@ -1802,7 +2065,9 @@ let print_op () =
   println (" exact "^w_gcd^"_spec.");
   println (" exact "^w_head0^"_spec.");
   println (" exact "^w_add_mul_div^"_spec.");
+  println (" exact "^w_pos_mod^"_spec.");
   println ("Qed.");
+  end;
   println "";
 
   end_file out
@@ -1819,6 +2084,7 @@ let _ =
      print_sub ();
      print_mul ();
      print_div ();
+     print_pos_mod ();
      print_lift ();
      print_op ()
    end
@@ -1830,6 +2096,7 @@ let _ =
      if !sub then print_sub ();
      if !mul then print_mul ();
      if !div then print_div ();
+     if !pos_mod then print_pos_mod ();
      if !lift then print_lift ();
      if !op then print_op ()
    end

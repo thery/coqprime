@@ -68,14 +68,14 @@ OCAMLLIBS=-I .\
   -I ../Z\
   -I ../PrimalityTest\
   -I ../List\
-  -I W/W2
+  -I W/W8
 COQLIBS=-I .\
   -I ../Tactic\
   -I ../N\
   -I ../Z\
   -I ../PrimalityTest\
   -I ../List\
-  -I W/W2
+  -I W/W8
 
 ###################################
 #                                 #

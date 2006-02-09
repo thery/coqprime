@@ -38,9 +38,7 @@ Definition w2_div21 a1 a2 b :=
 Definition w2_divn1  :=
  let _gen_divn1 := gen_divn1 2 OO w2_WW w2_head0 w2_add_mul_div w2_div21 in
  fun n x y => _gen_divn1 n 
-   (match word_tr_word w2 n in (_ = y) return y with
-    | refl_equal => x
-    end) y.
+    (word_of_word_tr w2 n x) y.
 
 
 (* ** Modulo of n digits by one ** *)
@@ -48,7 +46,5 @@ Definition w2_divn1  :=
 Definition w2_modn1  :=
  let _gen_modn1 := gen_modn1 2 OO  w2_head0 w2_add_mul_div w2_div21 in
  fun n x y => _gen_modn1 n 
-   (match word_tr_word w2 n in (_ = y) return y with
-    | refl_equal => x
-    end) y.
+    (word_of_word_tr w2 n x) y.
 

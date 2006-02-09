@@ -2309,8 +2309,6 @@ Section Proof.
       | refl_equal => a
       end) with (word_of_word_tr (zn2z w) n a).
   apply spec_gen_divn1;auto with ww_spec.
-  intros; apply spec_ww_add_mul_div; auto with zarith.
-  unfold wdigits; auto with zarith.
   exact spec_ww_div21.
   unfold word_of_word_tr; simpl.
   case (word_tr_word (zn2z w) n); auto.

@@ -271,7 +271,7 @@ Definition test_pock N a dec sqrt :=
             match r' with
             | Npos r =>
               if (a ?< N) then
-              let op := cmk_op (nat_of_P (pheight (N + 1)) - 1) in
+              let op := cmk_op (nat_of_P (pheight (N + 1)) - 3) in
               let wN := znz_of_Z op (Zpos N) in
               let wa := znz_of_Z op (Zpos a) in
               let w1 := znz_of_Z op 1 in
@@ -304,6 +304,7 @@ Definition test_pock N a dec sqrt :=
     end      
   else false.
 
+Set Printing All.
 Lemma test_pock_correct : forall N a dec sqrt,
    (forall k, In k dec -> prime (Zpos (fst k))) ->
    test_pock N a dec sqrt = true ->
@@ -356,23 +357,26 @@ match goal with H: (?X ?< ?Y) = true |- _ =>
   generalize (is_lt_spec X Y); rewrite H; clear H; intros H
 end.
 2: intros; discriminate.
-set (bb := (nat_of_P (pheight (N + 1)) - 1)%nat).
+set (bb := (nat_of_P (pheight (N + 1)) - 3)%nat).
 set (w_op := cmk_op bb).
 assert (op_spec: znz_spec w_op).
 unfold bb, w_op; apply cmk_spec; auto.
 assert (F0: N < Basic_type.base (znz_digits w_op)).
 unfold w_op, bb, Basic_type.base; rewrite cmk_op_digits; 
   auto with zarith.
-rewrite inj_minus1; simpl.
-rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P.
-assert (tmp: forall p, p - 1 + 1 = p); auto with zarith;
-  rewrite tmp.
 apply Zlt_le_trans with (N + 1)%positive; auto with zarith.
 rewrite Zpos_plus; auto with zarith.
-apply pheight_correct.
-apply inj_le_inv; simpl.
-rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P.
-assert (0 < pheight (N + 1)); auto with zarith; red; simpl; auto.
+apply Zle_trans with (1 := (pheight_correct (N + 1)%positive)).
+apply Zpower_le_monotone; auto with zarith.
+split; auto with zarith.
+apply Zpower_le_monotone; auto with zarith.
+split; auto with zarith.
+case (le_or_lt 3 (nat_of_P (pheight (N + 1)))); intros A2.
+rewrite inj_minus1; simpl; auto with arith zarith.
+rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+rewrite inj_minus2; simpl; auto with zarith.
+generalize (inj_le (nat_of_P (pheight (N + 1))) 3); simpl; auto with zarith.
+rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
 assert (F1: znz_to_Z w_op (znz_of_Z w_op N) = N).
 rewrite znz_of_Z_correct; auto with zarith.
 assert (F2: 1 < znz_to_Z w_op (znz_of_Z w_op N)).
