@@ -10,10 +10,10 @@ Require Import W2_add_mul_div_1_spec.
 Lemma w2_add_mul_div_spec : forall x y p, Zpos p < Zpos 2 -> [| w2_add_mul_div p x y|] = ([|x|] * (Zpower 2 (Zpos p)) + [|y|] / (Zpower 2 ((Zpos 2) - (Zpos p)))) mod w2_B.
 Proof.
  intros x y p H.
+ assert (H0: 0 < Zpos p); [red; simpl; auto | idtac].
  assert (H1:Zpos p <= 1). omega.
  destruct (Zle_lt_or_eq _ _ H1) as [Hlt1|Heq1].
- absurd (1 <= Zpos p); auto with zarith.
- case p; intros; red; simpl; intros; discriminate.
+ elimtype False;omega.
  inversion Heq1.
  exact (w2_add_mul_div1_spec x y).
 Qed.

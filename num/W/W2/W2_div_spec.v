@@ -129,8 +129,25 @@ Lemma w2_divn1_spec : forall n x y, 0<[|y|] ->
     gen_to_Z 2 w2_to_Z n (word_of_word_tr w2 n x) =
       gen_to_Z 2 w2_to_Z n q * w2_to_Z y + w2_to_Z r /\ 
     0 <= [|r|] < [|y|].
-Admitted.
+Proof
+fun n x y (H:0<[|y|]) =>
+  @spec_gen_divn1 w2 2
+     OO w2_WW
+ w2_head0 w2_add_mul_div w2_div21 w2_to_Z
+     w2_to_Z_spec (refl_equal 0)
+     w2_WW_spec w2_head0_spec
+     w2_add_mul_div_spec w2_div21_spec
+     n (word_of_word_tr w2 n x) y H.
 
 Lemma w2_modn1_spec : forall n x y, 0 < [|y|] ->
     [|w2_modn1 n x y|] = (gen_to_Z 2 w2_to_Z n (word_of_word_tr w2 n x)) mod [|y|].
-Admitted.
+Proof
+fun n x y (H:0<[|y|]) =>
+  @spec_gen_modn1 w2 2
+     OO w2_WW
+ w2_head0 w2_add_mul_div w2_div21 w2_to_Z
+     w2_to_Z_spec (refl_equal 0)
+     w2_WW_spec w2_head0_spec
+     w2_add_mul_div_spec w2_div21_spec
+     n (word_of_word_tr w2 n x) y H.
+

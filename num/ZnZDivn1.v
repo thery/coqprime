@@ -31,7 +31,7 @@ Section GENDIVN1.
  Variable spec_head0  : forall x,  0 < [|x|] ->
 	 wB/ 2 <= 2 ^ (Z_of_N (w_head0 x)) * [|x|] < wB.
  Variable spec_add_mul_div : forall x y p,
-       0 < Zpos p < Zpos w_digits ->
+       Zpos p < Zpos w_digits ->
        [| w_add_mul_div p x y |] =
          ([|x|] * (Zpower 2 (Zpos p)) +
           [|y|] / (Zpower 2 ((Zpos w_digits) - (Zpos p)))) mod wB.
@@ -161,7 +161,7 @@ Section GENDIVN1.
   Qed.
  
   Variable p : positive.
-  Variable p_bounded : 0 < Zpos p < Zpos w_digits.
+  Variable p_bounded : Zpos p < Zpos w_digits.
   Let add_mul_divp := w_add_mul_div p.
 
   Lemma spec_add_mul_divp : forall x y,
@@ -187,6 +187,7 @@ Section GENDIVN1.
 
   Lemma p_lt_gen_digits : forall n, Zpos p < Zpos (gen_digits w_digits n).
   Proof.
+   assert (tmp: 0 < Zpos p); try (red; simpl; auto; fail).
    induction n;simpl.
    auto with zarith.
    change (Zpos (xO (gen_digits w_digits n))) with (2*(Zpos (gen_digits w_digits n)));
@@ -202,6 +203,7 @@ Section GENDIVN1.
         mod gen_wB w_digits n = [!n|q!] * [|b2p|] + [|r'|] /\
     0 <= [|r'|] < [|b2p|].
   Proof.
+   assert (tmp: 0 < Zpos p); try (red; simpl; auto; fail).
    induction n;intros.
    unfold gen_divn1_p, gen_to_Z, gen_wB, gen_digits.
    rewrite <- spec_add_mul_divp.
@@ -421,8 +423,8 @@ Section GENDIVN1.
    rewrite spec_0 in H2;rewrite Zmult_0_l in H2;rewrite Zplus_0_l in H2.
    exact H2.
    unfold Z_of_N in H0.
-   assert (0 < Zpos p < Zpos w_digits).
-    split. exact (refl_equal Lt).
+   assert (tmp: 0 < Zpos p); try refine (refl_equal _).
+   assert (Zpos p < Zpos w_digits).
     destruct (Z_lt_le_dec (Zpos p) (Zpos w_digits));trivial.
     assert (2 ^ Zpos p < wB).
      apply Zle_lt_trans with (2 ^ Zpos p * [|b|]);auto with zarith.

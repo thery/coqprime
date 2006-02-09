@@ -3,7 +3,7 @@
 -I ../Z
 -I ../PrimalityTest
 -I ../List
--I W/W2
+-I W/W8
 Basic_type.v
 Lucas.v
 Pock.v
