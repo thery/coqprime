@@ -1,5 +1,3 @@
-BasePrimes.vo: BasePrimes.v ../Z/ZAux.vo PocklingtonCertificat.vo
-BasePrimes.vi: BasePrimes.v ../Z/ZAux.vo PocklingtonCertificat.vo
 Cyclic.vo: Cyclic.v ../Z/ZAux.vo Root.vo ../List/UList.vo IGroup.vo EGroup.vo FGroup.vo
 Cyclic.vi: Cyclic.v ../Z/ZAux.vo Root.vo ../List/UList.vo IGroup.vo EGroup.vo FGroup.vo
 EGroup.vo: EGroup.v ../Tactic/Tactic.vo ../Z/ZAux.vo ../List/UList.vo FGroup.vo Lagrange.vo
@@ -20,8 +18,6 @@ PGroup.vo: PGroup.v ../Z/ZAux.vo ../Tactic/Tactic.vo ../List/ListAux.vo ../List/
 PGroup.vi: PGroup.v ../Z/ZAux.vo ../Tactic/Tactic.vo ../List/ListAux.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo
 PocklingtonCertificat.vo: PocklingtonCertificat.v ../Z/ZAux.vo LucasLehmer.vo Pocklington.vo ../Z/Zmisc.vo ../Z/Pmod.vo
 PocklingtonCertificat.vi: PocklingtonCertificat.v ../Z/ZAux.vo LucasLehmer.vo Pocklington.vo ../Z/Zmisc.vo ../Z/Pmod.vo
-PocklingtonRefl.vo: PocklingtonRefl.v ../Z/ZAux.vo PocklingtonCertificat.vo BasePrimes.vo
-PocklingtonRefl.vi: PocklingtonRefl.v ../Z/ZAux.vo PocklingtonCertificat.vo BasePrimes.vo
 Pocklington.vo: Pocklington.v ../Tactic/Tactic.vo ../Z/ZAux.vo Zp.vo FGroup.vo EGroup.vo Euler.vo
 Pocklington.vi: Pocklington.v ../Tactic/Tactic.vo ../Z/ZAux.vo Zp.vo FGroup.vo EGroup.vo Euler.vo
 Proth.vo: Proth.v ../Z/ZAux.vo Pocklington.vo
@@ -30,7 +26,6 @@ Root.vo: Root.v ../List/UList.vo ../Tactic/Tactic.vo ../List/Permutation.vo
 Root.vi: Root.v ../List/UList.vo ../Tactic/Tactic.vo ../List/Permutation.vo
 Zp.vo: Zp.v ../Z/ZAux.vo ../Tactic/Tactic.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo Cyclic.vo Euler.vo ../List/ZProgression.vo
 Zp.vi: Zp.v ../Z/ZAux.vo ../Tactic/Tactic.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo Cyclic.vo Euler.vo ../List/ZProgression.vo
-BasePrimes.html: BasePrimes.v ../Z/ZAux.html PocklingtonCertificat.html
 Cyclic.html: Cyclic.v ../Z/ZAux.html Root.html ../List/UList.html IGroup.html EGroup.html FGroup.html
 EGroup.html: EGroup.v ../Tactic/Tactic.html ../Z/ZAux.html ../List/UList.html FGroup.html Lagrange.html
 Euler.html: Euler.v ../Tactic/Tactic.html ../Z/ZSum.html ../Z/ZAux.html
@@ -41,7 +36,6 @@ LucasLehmer.html: LucasLehmer.v ../Z/ZAux.html ../Tactic/Tactic.html ../N/NatAux
 Pepin.html: Pepin.v ../Z/ZAux.html Pocklington.html
 PGroup.html: PGroup.v ../Z/ZAux.html ../Tactic/Tactic.html ../List/ListAux.html ../List/UList.html FGroup.html EGroup.html IGroup.html
 PocklingtonCertificat.html: PocklingtonCertificat.v ../Z/ZAux.html LucasLehmer.html Pocklington.html ../Z/Zmisc.html ../Z/Pmod.html
-PocklingtonRefl.html: PocklingtonRefl.v ../Z/ZAux.html PocklingtonCertificat.html BasePrimes.html
 Pocklington.html: Pocklington.v ../Tactic/Tactic.html ../Z/ZAux.html Zp.html FGroup.html EGroup.html Euler.html
 Proth.html: Proth.v ../Z/ZAux.html Pocklington.html
 Root.html: Root.v ../List/UList.html ../Tactic/Tactic.html ../List/Permutation.html

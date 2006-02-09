@@ -284,9 +284,9 @@ Definition test_pock N a dec sqrt :=
               match all_pow_mod _ mod_op w1 A dec with
               | (p, aNm1) =>
                 match znz_to_Z op aNm1 with 
-                  xH => 
+                  (Zpos xH) => 
                    match znz_to_Z op (gcd p wN) with 
-                   xH => 
+                   (Zpos xH) => 
                     if check_s_r s r sqrt then 
 		      (N ?< (times ((times ((xO F1)+r+1) F1) + r) F1) + 1)
                     else false
