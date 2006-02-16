@@ -3,6 +3,7 @@ Set Implicit Arguments.
 Require Import ZArith.
 Require Import Znumtheory.
 Require Import Basic_type.
+Require Import GenBase.
 
 Open Local Scope Z_scope.
 
@@ -21,10 +22,12 @@ Section ZnZ_Op.
     znz_1   : znz;
     znz_Bm1 : znz;
     znz_WW  : znz -> znz -> zn2z znz;
-    znz_CW  : carry znz -> znz -> carry (zn2z znz);
-    
+    znz_W0  : znz -> zn2z znz;
+    znz_0W  : znz -> zn2z znz;
+
     (* Comparison *)
     znz_compare     : znz -> znz -> comparison;
+    znz_eq0         : znz -> bool;
 
     (* Basic arithmetic operations *)
     znz_opp_c       : znz -> carry znz;
@@ -51,11 +54,9 @@ Section ZnZ_Op.
 
     (* Special divisions operations *)
     znz_div21       : znz -> znz -> znz -> znz*znz;
-    znz_divn1       : forall n, word_tr znz n -> znz -> word znz n * znz;
     znz_div_gt      : znz -> znz -> znz * znz;
     znz_div         : znz -> znz -> znz * znz;
 
-    znz_modn1       : forall n, word_tr znz n -> znz -> znz; 
     znz_mod_gt      : znz -> znz -> znz; 
     znz_mod         : znz -> znz -> znz; 
 
@@ -81,9 +82,11 @@ Section Spec.
  Let wBm1          := w_op.(znz_Bm1).
 
  Let wWW           := w_op.(znz_WW).
- Let wCW           := w_op.(znz_CW).
+ Let w0W           := w_op.(znz_0W).
+ Let wW0           := w_op.(znz_W0).
 
  Let w_compare     := w_op.(znz_compare).
+ Let w_eq0         := w_op.(znz_eq0).
 
  Let w_opp_c       := w_op.(znz_opp_c).
  Let w_opp         := w_op.(znz_opp).
@@ -108,11 +111,9 @@ Section Spec.
  Let w_square_c       := w_op.(znz_square_c).
  
  Let w_div21       := w_op.(znz_div21).
- Let w_divn1       := w_op.(znz_divn1).
  Let w_div_gt      := w_op.(znz_div_gt).
  Let w_div         := w_op.(znz_div).
 
- Let w_modn1       := w_op.(znz_modn1).
  Let w_mod_gt      := w_op.(znz_mod_gt).
  Let w_mod         := w_op.(znz_mod).
 
@@ -151,10 +152,8 @@ Section Spec.
     spec_1   : [|w1|] = 1;
     spec_Bm1 : [|wBm1|] = wB - 1;
     spec_WW  : forall h l, [||wWW h l||] = [|h|] * wB + [|l|];
-    spec_CW  :
-     forall sign c l,
-       interp_carry sign (wB*wB) (zn2z_to_Z wB w_to_Z) (wCW c l) =
-       (interp_carry sign wB w_to_Z c)*wB + [|l|];
+    spec_0W  : forall l, [||w0W l||] = [|l|];
+    spec_W0  : forall h, [||wW0 h||] = [|h|]*wB;
 
     (* Comparison *)
     spec_compare :
@@ -164,6 +163,7 @@ Section Spec.
        | Lt => [|x|] < [|y|]
        | Gt => [|x|] > [|y|]
        end;
+    spec_eq0 : forall x, w_eq0 x = true -> [|x|] = 0;
     (* Basic arithmetic operations *)
     spec_opp_c : forall x, [-|w_opp_c x|] = -[|x|];
     spec_opp : forall x, [|w_opp x|] = (-[|x|]) mod wB;
@@ -196,10 +196,6 @@ Section Spec.
       let (q,r) := w_div21 a1 a2 b in
       [|a1|] *wB+ [|a2|] = [|q|] * [|b|] + [|r|] /\
       0 <= [|r|] < [|b|];
-    spec_divn1 : forall n a b, 0 < [|b|] ->
-      let (q,r) := w_divn1 n a b in
-      ([!n|word_of_word_tr w n a!]) = [!n|q!] * [|b|] + [|r|] /\
-      0 <= [|r|] < [|b|];
     spec_div_gt : forall a b, [|a|] > [|b|] -> 0 < [|b|] ->
       let (q,r) := w_div_gt a b in
       [|a|] = [|q|] * [|b|] + [|r|] /\
@@ -209,8 +205,6 @@ Section Spec.
       [|a|] = [|q|] * [|b|] + [|r|] /\
       0 <= [|r|] < [|b|]; 
    
-    spec_modn1 : forall n a b, 0 < [|b|] ->
-      [|w_modn1 n a b|] = [!n|word_of_word_tr w n a!] mod [|b|];
     spec_mod_gt : forall a b, [|a|] > [|b|] -> 0 < [|b|] ->
       [|w_mod_gt a b|] = [|a|] mod [|b|];
     spec_mod :  forall a b, 0 < [|b|] ->

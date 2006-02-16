@@ -4,7 +4,6 @@ Require Import W2_basic.
 Open Local Scope w2_scope.
 
 
-Require Import ZnZDivn1.
 Require Import W2_compare.
 Require Import W2_add.
 Require Import W2_sub.
@@ -31,20 +30,4 @@ Definition w2_div21 a1 a2 b :=
    | Gt => (w2_succ q, w2_sub r' b)
    end
  end.
-
-
-(* ** Division of n digits by one ** *)
-
-Definition w2_divn1  :=
- let _gen_divn1 := gen_divn1 2 OO w2_WW w2_head0 w2_add_mul_div w2_div21 in
- fun n x y => _gen_divn1 n 
-    (word_of_word_tr w2 n x) y.
-
-
-(* ** Modulo of n digits by one ** *)
-
-Definition w2_modn1  :=
- let _gen_modn1 := gen_modn1 2 OO  w2_head0 w2_add_mul_div w2_div21 in
- fun n x y => _gen_modn1 n 
-    (word_of_word_tr w2 n x) y.
 

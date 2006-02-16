@@ -22,10 +22,10 @@ W2_compare.vo: W2_compare.v W2_basic.vo
 W2_compare.vi: W2_compare.v W2_basic.vo
 W2_div_aux.vo: W2_div_aux.v W2_basic.vo
 W2_div_aux.vi: W2_div_aux.v W2_basic.vo
-W2_div_spec.vo: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo W2_add_mul_div_spec.vo W2_head0_spec.vo ../../../Z/ZDivModAux.vo ../../ZnZDivn1.vo
-W2_div_spec.vi: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo W2_add_mul_div_spec.vo W2_head0_spec.vo ../../../Z/ZDivModAux.vo ../../ZnZDivn1.vo
-W2_div.vo: W2_div.v W2_basic.vo ../../ZnZDivn1.vo W2_compare.vo W2_add.vo W2_sub.vo W2_div_aux.vo W2_lift.vo
-W2_div.vi: W2_div.v W2_basic.vo ../../ZnZDivn1.vo W2_compare.vo W2_add.vo W2_sub.vo W2_div_aux.vo W2_lift.vo
+W2_div_spec.vo: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo W2_add_mul_div_spec.vo W2_head0_spec.vo ../../../Z/ZDivModAux.vo
+W2_div_spec.vi: W2_div_spec.v W2_basic.vo W2_basic_spec.vo W2_div.vo W2_compare.vo W2_add.vo W2_sub.vo W2_compare_spec.vo W2_succ_c_spec.vo W2_add_c_spec.vo W2_sub_spec.vo W2_div_wB_spec.vo W2_add_mul_div_spec.vo W2_head0_spec.vo ../../../Z/ZDivModAux.vo
+W2_div.vo: W2_div.v W2_basic.vo W2_compare.vo W2_add.vo W2_sub.vo W2_div_aux.vo W2_lift.vo
+W2_div.vi: W2_div.v W2_basic.vo W2_compare.vo W2_add.vo W2_sub.vo W2_div_aux.vo W2_lift.vo
 W2_div_wB_spec.vo: W2_div_wB_spec.v W2_basic.vo W2_div.vo ../../../Z/Pmod.vo
 W2_div_wB_spec.vi: W2_div_wB_spec.v W2_basic.vo W2_div.vo ../../../Z/Pmod.vo
 W2_head0_spec.vo: W2_head0_spec.v W2_basic.vo W2_lift.vo
@@ -80,8 +80,8 @@ W2_basic.html: W2_basic.v ../../Basic_type.html
 W2_compare_spec.html: W2_compare_spec.v W2_basic.html W2_basic_spec.html W2_compare.html
 W2_compare.html: W2_compare.v W2_basic.html
 W2_div_aux.html: W2_div_aux.v W2_basic.html
-W2_div_spec.html: W2_div_spec.v W2_basic.html W2_basic_spec.html W2_div.html W2_compare.html W2_add.html W2_sub.html W2_compare_spec.html W2_succ_c_spec.html W2_add_c_spec.html W2_sub_spec.html W2_div_wB_spec.html W2_add_mul_div_spec.html W2_head0_spec.html ../../../Z/ZDivModAux.html ../../ZnZDivn1.html
-W2_div.html: W2_div.v W2_basic.html ../../ZnZDivn1.html W2_compare.html W2_add.html W2_sub.html W2_div_aux.html W2_lift.html
+W2_div_spec.html: W2_div_spec.v W2_basic.html W2_basic_spec.html W2_div.html W2_compare.html W2_add.html W2_sub.html W2_compare_spec.html W2_succ_c_spec.html W2_add_c_spec.html W2_sub_spec.html W2_div_wB_spec.html W2_add_mul_div_spec.html W2_head0_spec.html ../../../Z/ZDivModAux.html
+W2_div.html: W2_div.v W2_basic.html W2_compare.html W2_add.html W2_sub.html W2_div_aux.html W2_lift.html
 W2_div_wB_spec.html: W2_div_wB_spec.v W2_basic.html W2_div.html ../../../Z/Pmod.html
 W2_head0_spec.html: W2_head0_spec.v W2_basic.html W2_lift.html
 W2_lift.html: W2_lift.v W2_basic.html

@@ -28,5 +28,45 @@ Require Import W2_add_mul_div_spec.
 Require Import W2_pos_mod_spec.
 Require Import ZnZ.
 Lemma w2_op_spec : znz_spec w2_op.
-Admitted.
+Proof.
+ apply mk_znz_spec.
+ exact w2_to_Z_spec.
+ exact w2_of_pos_spec.
+ exact w2_0_spec.
+ exact w2_1_spec.
+ exact w2_Bm1_spec.
+ exact w2_WW_spec.
+ exact w2_0W_spec.
+ exact w2_W0_spec.
+ exact w2_compare_spec.
+ exact w2_eq0_spec.
+ exact w2_opp_c_spec.
+ exact w2_opp_spec.
+ exact w2_opp_carry_spec.
+ exact w2_succ_c_spec.
+ exact w2_add_c_spec.
+ exact w2_add_carry_c_spec.
+ exact w2_succ_spec.
+ exact w2_add_spec.
+ exact w2_add_carry_spec.
+ exact w2_pred_c_spec.
+ exact w2_sub_c_spec.
+ exact w2_sub_carry_c_spec.
+ exact w2_pred_spec.
+ exact w2_sub_spec.
+ exact w2_sub_carry_spec.
+ exact w2_mul_c_spec.
+ exact w2_mul_spec.
+ exact w2_square_c_spec.
+ exact w2_div21_spec.
+ exact w2_div_gt_spec.
+ exact w2_div_spec.
+ exact w2_mod_gt_spec.
+ exact w2_mod_spec.
+ exact w2_gcd_gt_spec.
+ exact w2_gcd_spec.
+ exact w2_head0_spec.
+ exact w2_add_mul_div_spec.
+ exact w2_pos_mod_spec.
+Qed.
 

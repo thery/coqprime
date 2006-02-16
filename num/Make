@@ -4,14 +4,18 @@
 -I ../PrimalityTest
 -I ../List
 -I W/W8
+
 Basic_type.v
+GenBase.v
+GenAdd.v
+GenSub.v
+GenMul.v
+GenLift.v
+GenDivn1.v
+GenDiv.v
+ZnZ.v
+Zn2Z.v
+W.v
 Lucas.v
 Pock.v
-MkSpec.v
-Mod_op.v
-W.v
-Zn2Z_for_Proof.v
-Zn2ZProof.v
-Zn2Z.v
-ZnZDivn1.v
-ZnZ.v
+

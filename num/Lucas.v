@@ -5,10 +5,8 @@ Require Import ZAux.
 Require Import ZDivModAux.
 Require Import Basic_type.
 Require Import ZnZ.
-Require Import Zn2Z.
-Require Import Mod_op.
-Require Import W8_op.
 Require Import W.
+Require Import Mod_op.
 Require Import LucasLehmer.
 
 Open Scope Z_scope. 
@@ -23,6 +21,7 @@ Variable b: w.
 
 Notation "[| x |]" :=
    (znz_to_Z w_op x)  (at level 0, x at level 99).
+
 
 Hypothesis p_more_1: 2 < Zpos p.
 Hypothesis b_p: [|b|] = 2 ^ Zpos p - 1.

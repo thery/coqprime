@@ -4,8 +4,14 @@ Require Import ZArith.
 Require Import ZAux.
 Require Import ZDivModAux.
 Require Import Basic_type.
+Require Import GenBase.
+Require Import GenAdd.
+Require Import GenSub.
+Require Import GenMul.
+Require Import GenLift.
+Require Import GenDivn1.
+Require Import GenDiv. 
 Require Import ZnZ.
-Require Import ZnZDivn1.
 
 Open Local Scope Z_scope.
 
@@ -20,14 +26,17 @@ Section Zn2Z.
  Let w_of_pos      := w_op.(znz_of_pos).
  Let w_head0       := w_op.(znz_head0).
 
- Let w0            := w_op.(znz_0).
- Let w1            := w_op.(znz_1).
- Let wBm1          := w_op.(znz_Bm1).
+ Let w_0            := w_op.(znz_0).
+ Let w_1            := w_op.(znz_1).
+ Let w_Bm1          := w_op.(znz_Bm1).
 
- Let wWW           := w_op.(znz_WW).
- Let wCW           := w_op.(znz_CW).
+ Let w_WW           := w_op.(znz_WW).
+ Let w_W0           := w_op.(znz_W0).
+ Let w_0W           := w_op.(znz_0W).
 
  Let w_compare     := w_op.(znz_compare).
+ Let w_eq0         := w_op.(znz_eq0).
+
  Let w_opp_c       := w_op.(znz_opp_c).
  Let w_opp         := w_op.(znz_opp).
  Let w_opp_carry   := w_op.(znz_opp_carry).
@@ -52,11 +61,9 @@ Section Zn2Z.
  Let w_square_c    := w_op.(znz_square_c).
 
  Let w_div21       := w_op.(znz_div21).
- Let w_divn1       := w_op.(znz_divn1).
  Let w_div_gt      := w_op.(znz_div_gt).
  Let w_div         := w_op.(znz_div).
 
- Let w_modn1       := w_op.(znz_modn1).
  Let w_mod_gt      := w_op.(znz_mod_gt).
  Let w_mod         := w_op.(znz_mod).
 
@@ -71,708 +78,582 @@ Section Zn2Z.
 
  Let wB := base w_digits.
 
- Let wBm2 := w_pred wBm1.
+ Let w_Bm2 := w_pred w_Bm1.
+ 
+ Let ww_1 := ww_1 w_0 w_1.
+ Let ww_Bm1 := ww_Bm1 w_Bm1.
 
- Let ww_digits := xO w_digits.
+ Let _ww_digits := xO w_digits.
 
- Let ww_to_Z := zn2z_to_Z wB w_to_Z.
+ Let to_Z := zn2z_to_Z wB w_to_Z.
 
  Let ww_of_pos p :=
   match w_of_pos p with
-  | (N0, l) => (N0, WW w0 l)
+  | (N0, l) => (N0, WW w_0 l)
   | (Npos ph,l) => 
-    let (n,h) := w_of_pos ph in (n, wWW h l)
+    let (n,h) := w_of_pos ph in (n, w_WW h l)
   end.
 
- Let head0 x :=
-  match x with
-  | W0 => Npos ww_digits
-  | WW xh xl =>
-    match w_compare xh w0 with
-    | Eq => Nplus (Npos w_digits) (w_head0 xl)
-    | _ => w_head0 xh
-    end
-  end.
+ Let head0 :=
+  Eval lazy beta delta [ww_head0] in 
+  ww_head0 w_0 w_compare w_head0 w_digits _ww_digits.
 
- Let ww_1 :=  WW w0 w1.
-
- Let ww_Bm1 := WW wBm1 wBm1.
-
- Let ww_WW xh xl : zn2z _zn2z :=
-  match xh, xl with
-  | W0, W0 => W0
-  | _, _ => WW xh xl
-  end.
- 
- Let ww_CW ch l : carry (zn2z _zn2z) :=
-  match ch with
-  | C0 h => C0 (ww_WW h l)
-  | C1 h => C1 (ww_WW h l)
-  end.
+ Let ww_WW := Eval lazy beta delta [ww_WW] in (@ww_WW w).
+ Let ww_0W := Eval lazy beta delta [ww_0W] in (@ww_0W w).
+ Let ww_W0 := Eval lazy beta delta [ww_W0] in (@ww_W0 w).
 
  (* ** Comparison ** *)
- Let compare x y :=
-  match x, y with
-  | W0, W0 => Eq
-  | W0, WW yh yl =>
-    match w_compare w0 yh with
-    | Eq => w_compare w0 yl 
-    | cmp => cmp
-    end
-  | WW xh xl, W0 =>
-    match w_compare xh w0 with
-    | Eq => w_compare xl w0
-    | cmp => cmp
-    end
-  | WW xh xl, WW yh yl =>
-    match w_compare xh yh with
-    | Eq => w_compare xl yl
-    | cmp => cmp
-    end
+ Let compare :=
+  Eval lazy beta delta[ww_compare] in ww_compare w_0 w_compare.
+
+ Let eq0 (x:zn2z w) := 
+  match x with
+  | W0 => true
+  | _ => false
   end.
 
  (* ** Opposites ** *)
- Let ww_opp_c x :=
-  match x with
-  | W0 => C0 W0
-  | WW xh xl => 
-    match w_opp_c xl with
-    | C0 _ => wCW (w_opp_c xh) w0
-    | C1 l => C1 (wWW (w_opp_carry xh) l)
-    end
-  end.
+ Let opp_c :=
+  Eval lazy beta delta [ww_opp_c] in ww_opp_c w_0 w_opp_c w_opp_carry.
 
- Let ww_opp x :=
-  match x with
-  | W0 => W0
-  | WW xh xl => 
-    match w_opp_c xl with
-    | C0 _ => WW (w_opp xh) w0
-    | C1 l => WW (w_opp_carry xh) l
-    end
-  end.
+ Let opp :=
+  Eval lazy beta delta [ww_opp] in ww_opp w_0 w_opp_c w_opp_carry w_opp.
 
- Let ww_opp_carry x :=
-  match x with
-  | W0 => ww_Bm1
-  | WW xh xl => wWW (w_opp_carry xh) (w_opp_carry xl)
-  end.
+ Let opp_carry :=
+  Eval lazy beta delta [ww_opp_carry] in ww_opp_carry w_WW ww_Bm1 w_opp_carry.
   
  (* ** Additions ** *)
 
- Let ww_succ_c x :=
-  match x with
-  | W0 => C0 ww_1
-  | WW xh xl => 
-    match w_succ_c xl with
-    | C0 l => C0 (WW xh l)
-    | C1 l => wCW (w_succ_c xh) l
-    end
-  end.
+ Let succ_c :=
+  Eval lazy beta delta [ww_succ_c] in ww_succ_c w_0 ww_1 w_succ_c.
 
- Let ww_succ x := 
-  match x with
-  | W0 => ww_1
-  | WW xh xl =>
-    match w_succ_c xl with
-    | C0 l => WW xh l
-    | C1 l => WW (w_succ xh) l
-    end
-  end.
+ Let add_c :=
+  Eval lazy beta delta [ww_add_c] in ww_add_c w_WW w_add_c w_add_carry_c.
 
- Let add_c x y :=
-  match x, y with
-  | W0, _ => C0 y
-  | _, W0 => C0 x
-  | WW xh xl, WW yh yl =>
-    match w_add_c xl yl with
-    | C0 l => wCW (w_add_c xh yh) l
-    | C1 l => wCW (w_add_carry_c xh yh) l
-    end
-  end.
+ Let add_carry_c :=
+  Eval lazy beta iota delta [ww_add_carry_c ww_succ_c] in 
+  ww_add_carry_c w_0 w_WW ww_1 w_succ_c w_add_c w_add_carry_c.
 
- Let add x y :=
-  match x, y with
-  | W0, _ => y
-  | _, W0 => x
-  | WW xh xl, WW yh yl =>
-    match w_add_c xl yl with
-    | C0 l => wWW (w_add xh yh) l
-    | C1 l => wWW (w_add_carry xh yh) l
-    end
-  end.
+ Let succ := 
+  Eval lazy beta delta [ww_succ] in ww_succ w_W0 ww_1 w_succ_c w_succ.
 
- Let add_carry_c x y :=
-  match x, y with
-  | W0, W0 => C0 ww_1
-  | W0, WW yh yl =>
-    match w_succ_c yl with
-    | C0 l => C0 (WW yh l)
-    | C1 l => wCW (w_succ_c yh) l
-    end
-  | WW xh xl, W0 =>
-    match w_succ_c xl with
-    | C0 l => C0 (WW xh l)
-    | C1 l => wCW (w_succ_c xh) l
-    end
-  | WW xh xl, WW yh yl =>
-    match w_add_carry_c xl yl with
-    | C0 l => wCW (w_add_c xh yh) l
-    | C1 l => wCW (w_add_carry_c xh yh) l
-    end
-  end.
+ Let add :=
+  Eval lazy beta delta [ww_add] in ww_add w_add_c w_add w_add_carry.
 
- Let add_carry x y := 
-  match x, y with
-  | W0, W0 => ww_1
-  | W0, WW yh yl =>
-    match w_succ_c yl with
-    | C0 l => WW yh l
-    | C1 l => WW (w_succ yh) l
-    end
-  | WW xh xl, W0 =>
-    match w_succ_c xl with
-    | C0 l => WW xh l
-    | C1 l => WW (w_succ xh) l
-    end
-  | WW xh xl, WW yh yl =>
-    match w_add_carry_c xl yl with
-    | C0 l => WW (w_add xh yh) l
-    | C1 l => WW (w_add_carry xh yh) l
-    end
-  end.
+ Let add_carry := 
+  Eval lazy beta iota delta [ww_add_carry ww_succ] in
+  ww_add_carry w_W0 ww_1 w_succ_c w_add_carry_c w_succ w_add w_add_carry.
 
  (* ** Subtractions ** *)
 
- Let ww_pred_c x :=
-  match x with
-  | W0 => C1 ww_Bm1
-  | WW xh xl =>
-    match w_pred_c xl with
-    | C0 l => C0 (wWW xh l)
-    | C1 l => wCW (w_pred_c xh) l
-    end
-  end.
+ Let pred_c :=
+  Eval lazy beta delta [ww_pred_c] in ww_pred_c w_Bm1 w_WW ww_Bm1 w_pred_c.
  
- Let ww_pred x :=
-  match x with
-  | W0 => ww_Bm1
-  | WW xh xl =>
-    match w_pred_c xl with
-    | C0 l => wWW xh l
-    | C1 l => wWW (w_pred xh) l
-    end
-  end.
-     
- Let sub_c x y :=
-  match y, x with
-  | W0, _ => C0 x
-  | WW yh yl, W0 => 
-    match w_opp_c yl with
-    | C0 _ => wCW (w_opp_c yh) w0
-    | C1 l => C1 (wWW (w_opp_carry yh) l)
-    end
-  | WW yh yl, WW xh xl =>
-    match w_sub_c xl yl with
-    | C0 l => wCW (w_sub_c xh yh) l
-    | C1 l => wCW (w_sub_carry_c xh yh) l
-    end
-  end.
+ Let sub_c :=
+  Eval lazy beta iota delta [ww_sub_c ww_opp_c] in 
+  ww_sub_c w_0 w_WW w_opp_c w_opp_carry w_sub_c w_sub_carry_c.
 
- Let sub x y := 
-  match y, x with
-  | W0, _ => x
-  | WW yh yl, W0 => 
-    match w_opp_c yl with
-    | C0 _ => WW (w_opp yh) w0
-    | C1 l => WW (w_opp_carry yh) l
-    end
-  | WW yh yl, WW xh xl =>
-    match w_sub_c xl yl with
-    | C0 l => wWW (w_sub xh yh) l
-    | C1 l => wWW (w_sub_carry xh yh) l
-    end
-  end.
+ Let sub_carry_c :=
+  Eval lazy beta iota delta [ww_sub_carry_c ww_pred_c ww_opp_carry] in
+  ww_sub_carry_c w_Bm1 w_WW ww_Bm1 w_opp_carry w_pred_c w_sub_c w_sub_carry_c.
 
- Let ww_sub_carry_c x y :=
-  match y, x with
-  | W0, W0 => C1 ww_Bm1
-  | W0, WW xh xl => 
-    match w_pred_c xl with
-    | C0 l => C0 (wWW xh l)
-    | C1 l => wCW (w_pred_c xh) l
-    end  
-  | WW yh yl, W0 => C1 (wWW (w_opp_carry yh) (w_opp_carry yl))
-  | WW yh yl, WW xh xl =>
-    match w_sub_carry_c xl yl with
-    | C0 l => wCW (w_sub_c xh yh) l
-    | C1 l => wCW (w_sub_carry_c xh yh) l
-    end
-  end.
+ Let pred :=
+  Eval lazy beta delta [ww_pred] in ww_pred w_Bm1 w_WW ww_Bm1 w_pred_c w_pred.
 
- Let ww_sub_carry x y :=
-  match y, x with
-  | W0, W0 => ww_Bm1
-  | W0, WW xh xl => 
-    match w_pred_c xl with
-    | C0 l => wWW xh l
-    | C1 l => wWW (w_pred xh) l
-    end  
-  | WW yh yl, W0 => wWW (w_opp_carry yh) (w_opp_carry yl)
-  | WW yh yl, WW xh xl =>
-    match w_sub_carry_c xl yl with
-    | C0 l => wWW (w_sub xh yh) l
-    | C1 l => wWW (w_sub_carry xh yh) l
-    end
-  end.
+ Let sub := 
+  Eval lazy beta iota delta [ww_sub ww_opp] in 
+  ww_sub w_0 w_WW w_opp_c w_opp_carry w_sub_c w_opp w_sub w_sub_carry.
+
+ Let sub_carry :=
+  Eval lazy beta iota delta [ww_sub_carry ww_pred ww_opp_carry] in
+  ww_sub_carry w_Bm1 w_WW ww_Bm1 w_opp_carry w_pred_c w_sub_carry_c w_pred
+  w_sub w_sub_carry.
+
 
  (* ** Multiplication ** *)
 
- (*   (xh*B+xl) (yh*B + yl)
-   xh*yh         = hh  = |hhh|hhl|B2
-   xh*yl +xl*yh  = cc  =     |cch|ccl|B
-   xl*yl         = ll  =         |llh|lll 
- *)
+ Let mul_c :=
+  Eval lazy beta iota delta [ww_mul_c gen_mul_c] in
+  ww_mul_c w_0 w_1 w_WW w_W0 w_mul_c add_c add add_carry.
 
- Let ww_mul_c x y :=
-  match x, y with
-  | W0, _ => W0
-  | _, W0 => W0
-  | WW xh xl, WW yh yl =>
-    let hh := w_mul_c xh yh in
-    let ll := w_mul_c xl yl in
-    let cc_c := add_c (w_mul_c xh yl) (w_mul_c xl yh) in 
-    let (wc,cc) :=
-      match cc_c with
-      | C0 cc => (w0, cc)
-      | C1 cc => (w1, cc)
-      end
-    in match cc with
-    | W0 => WW (add hh (WW wc w0)) ll
-    | WW cch ccl =>
-      match add_c (WW ccl w0) ll with
-      | C0 l => WW (add hh (WW wc cch)) l
-      | C1 l => WW (add_carry hh (WW wc cch)) l
-      end
-    end
-  end.
+ Let karatsuba_c :=
+  Eval lazy beta iota delta [ww_karatsuba_c gen_mul_c kara_prod 
+    kara_prod_carry2 kara_prod_carry1 kara_prod_C0_C1] in
+  ww_karatsuba_c w_0 w_1 w_WW w_W0 w_add_c w_mul_c 
+    add_c add add_carry sub_c sub.
 
- Definition kara_prod cxhl cyhl hh ll :=
-  match cxhl, cyhl with
-  | C0 xhl, C0 yhl => (w0, sub (sub (w_mul_c xhl yhl) hh) ll)
-  | C0 xhl, C1 yhl => 
-    match add_c (w_mul_c xhl yhl) (WW xhl w0) with
-    | C0 m => (w0, sub (sub m hh) ll)
-    | C1 m => (* carry = 1 *)
-      match sub_c m hh with
-      | C0 mhh =>
-	match sub_c mhh ll with
-        | C0 mhhll => (w1, mhhll)
-        | C1 mhhll => (w0, mhhll)
-        end
-      | C1 mhh =>  (w0, sub mhh ll)
-      end
-    end
-  | C1 xhl, C0 yhl => 
-    match add_c (w_mul_c xhl yhl) (WW yhl w0) with
-    | C0 m => (w0, sub (sub m hh) ll)
-    | C1 m => (* carry = 1 *)
-      match sub_c m hh with
-      | C0 mhh =>
-	match sub_c mhh ll with
-        | C0 mhhll => (w1, mhhll)
-        | C1 mhhll => (w0, mhhll)
-        end
-      | C1 mhh =>  (w0, sub mhh ll)
-      end
-    end
-  | C1 xhl, C1 yhl => (* carry = 1 *)
-    match w_add_c xhl yhl with
-    | C0 suml =>      (* carry = 1 *)
-      match add_c (w_mul_c xhl yhl) (WW suml w0) with
-      | C0 m =>       (* carry = 1 *)
-	match sub_c m hh with
-	| C0 mhh =>
-	  match sub_c mhh ll with
-          | C0 mhhll => (w1, mhhll)
-          | C1 mhhll => (w0, mhhll)
-          end
-        | C1 mhh =>  (w0, sub mhh ll)
-        end
-      | C1 m =>       (* carry = 2 *)  
-	match sub_c m hh with
-	| C0 mhh =>   (* carry = 2 => -ll a yn carry de 1 *)
-          (w1,sub mhh ll)
-        | C1 mhh =>  (* carry = 1 *)
-          match sub_c mhh ll with
-          | C0 mhhll => (w1, mhhll)
-          | C1 mhhll => (w0, mhhll)
-          end
-        end
-      end
-    | C1 suml =>      (* carry = 2 *)
-      match add_c (w_mul_c xhl yhl) (WW suml w0) with
-      | C0 m =>       (* carry = 2 *) 
-	match sub_c m hh with
-	| C0 mhh =>  (* carry = 2 => -ll a yn carry de 1 *)
-	  (w1,  sub mhh ll)
-        | C1 mhh => (* carry = 1 *)
-          match sub_c mhh ll with
-          | C0 mhhll => (w1, mhhll)
-          | C1 mhhll => (w0, mhhll)
-          end  
-        end
-      | C1 m =>       (* carry = 3 => les deux soutraction on une carry *)
-        (w1, sub (sub m hh) ll)
-      end
-    end
-  end.
+ Let mul :=
+  Eval lazy beta delta [ww_mul] in
+  ww_mul w_W0 w_add w_mul_c w_mul add.
 
- Let ww_karatsuba_c x y :=
-  Eval lazy beta delta [kara_prod] in
-  match x, y with
-  | W0, _ => W0
-  | _, W0 => W0
-  | WW xh xl, WW yh yl =>
-    let hh := w_mul_c xh yh in
-    let ll := w_mul_c xl yl in
-    let (wc,cc) := kara_prod (w_add_c xh xl) (w_add_c yh yl) hh ll in
-    match cc with
-    | W0 => WW (add hh (WW wc w0)) ll
-    | WW cch ccl =>
-      match add_c (WW ccl w0) ll with
-      | C0 l => WW (add hh (WW wc cch)) l
-      | C1 l => WW (add_carry hh (WW wc cch)) l
-      end
-    end
-  end.
- 
- Let ww_mul x y :=
-  match x, y with
-  | W0, _ => W0
-  | _, W0 => W0  
-  | WW xh xl, WW yh yl => 
-    let ccl := w_add (w_mul xh yl) (w_mul xl yh) in
-    add (WW ccl w0) (w_mul_c xl yl)
-  end.
-
- (*   (xh*B+xl) (yh*B + yl)
-   xh*yh         = hh  = |hhh|hhl|B2
-   xh*yl +xl*yh  = cc  =     |cch|ccl|B
-   xl*yl         = ll  =         |llh|lll 
- *)
-
- Let ww_square_c x  :=
-  match x with
-  | W0 => W0
-  | WW xh xl =>
-    let hh := w_square_c xh in
-    let ll := w_square_c xl in
-    let xhxl := w_mul_c xh xl in
-    let (wc,cc) :=
-      match add_c xhxl xhxl with
-      | C0 cc => (w0, cc)
-      | C1 cc => (w1, cc)
-      end in
-    match cc with
-    | W0 => WW (add hh (WW wc w0)) ll
-    | WW cch ccl =>
-      match add_c (WW ccl w0) ll with
-      | C0 l => WW (add hh (WW wc cch)) l
-      | C1 l => WW (add_carry hh (WW wc cch)) l
-      end
-    end
-  end.
-
+ Let square_c :=
+  Eval lazy beta delta [ww_square_c] in
+  ww_square_c w_0 w_1 w_WW w_W0 w_mul_c w_square_c add_c add add_carry.
 
  (* Division operation *)
 
- Let div32 a1 a2 a3 b1 b2 :=
-  match w_compare a1 b1 with
-  | Lt =>
-    let (q,r) := w_div21 a1 a2 b1 in
-    match sub_c (wWW r a3) (w_mul_c q b2) with 
-    | C0 r1 => (q,r1)
-    | C1 r1 =>
-      let b := WW b1 b2 in
-      let q := w_pred q in
-      match add_c r1 b with
-      | C0 r2 => (w_pred q, add r2 b)
-      | C1 r2 => (q, r2)
-      end
-    end
-  | Eq =>
-    let b := WW b1 b2 in
-    match add_c (WW (w_sub a2 b2) a3) b with
-    | C0 r => (wBm2, add r b)
-    | C1 r => (wBm1,r)
-    end
-  | Gt => (w0, W0) (* cas absurde *)
-  end.
+ Let div32 :=
+   Eval lazy beta iota delta [w_div32] in
+   w_div32 w_0 w_Bm1 w_Bm2 w_WW w_compare w_add_c w_add_carry_c 
+   w_add w_add_carry w_pred w_sub w_mul_c w_div21 sub_c.
 
- Let split x :=
-  match x with
-  | W0 => (w0,w0)
-  | WW h l => (h, l)
-  end.
+ Let div21 :=
+  Eval lazy beta iota delta [ww_div21] in
+   ww_div21 w_0 w_0W div32 ww_1 compare sub.
 
- Let div21:=
-  fun a b c =>
-   match a with
-   | W0 =>  
-     match b with
-     | W0 => (W0, W0)
-     | _  =>
-       match compare b c with
-       | Gt => (ww_1, sub b c)
-       | Eq => (ww_1, W0)
-       | Lt => (W0, b)
-       end
-     end
-   | WW a1 a2 =>
-     let (a3, a4) := split b in
-     let (b1, b2) := split c in
-     let (q1, r) :=  div32 a1 a2 a3 b1 b2 in
-     let (r1, r2) := split r in
-     let (q2, s) := div32 r1 r2 a4 b1 b2 in
-     (wWW q1 q2, s)
-  end.
+ Let add_mul_div :=
+  Eval lazy beta delta [ww_add_mul_div] in
+  ww_add_mul_div w_0 w_WW w_W0 w_0W w_add_mul_div w_digits.
 
- (* 0 < p < ww_digits *)
- Let add_mul_div p x y := 
-  match x, y with
-  | W0, W0 => W0
-  | W0, WW yh yl =>
-    match Pcompare p w_digits Eq with
-    | Eq => wWW w0 yh 
-    | Lt => wWW w0 (w_add_mul_div p w0 yh)
-    | Gt =>
-      let n := Pminus p w_digits in
-      wWW (w_add_mul_div n w0 yh) (w_add_mul_div n yh yl)
-    end
-  | WW xh xl, W0 =>
-   match Pcompare p w_digits Eq with
-    | Eq => wWW xl w0 
-    | Lt => wWW (w_add_mul_div p xh xl) (w_add_mul_div p xl w0)
-    | Gt =>
-      let n := Pminus p w_digits in
-      wWW (w_add_mul_div n xl w0) w0
-    end
-  | WW xh xl, WW yh yl =>
-    match Pcompare p w_digits Eq with
-    | Eq => wWW xl yh 
-    | Lt => wWW (w_add_mul_div p xh xl) (w_add_mul_div p xl yh)
-    | Gt =>
-      let n := Pminus p w_digits in
-      wWW (w_add_mul_div n xl yh) (w_add_mul_div n yh yl)
-    end
-  end.
+ Let div_gt :=
+  Eval lazy beta delta [ww_div_gt] in
+  ww_div_gt w_digits w_0 w_WW w_0W w_compare w_eq0 w_sub_c w_sub w_sub_carry
+  w_div_gt w_add_mul_div w_head0 w_div21 div32 _ww_digits ww_1 add_mul_div.
 
- (* 0 < p < ww_digits *)
- Definition pos_mod p x := 
-  match x with
-  | W0 => W0
-  | WW xh xl =>
-    match Pcompare p w_digits Eq with
-    | Eq => wWW w0 xl 
-    | Lt => wWW w0 (w_pos_mod p xl)
-    | Gt =>
-      let n := Pminus p w_digits in
-      wWW (w_pos_mod n xh) xl
-    end
-  end.
-
-
- Let _gen_divn1 := 
-    gen_divn1 ww_digits W0 ww_WW head0 add_mul_div div21.
-
- Let ww_divn1 n (a:word_tr (zn2z w) n) (b:zn2z w):= 
-   let (b1,b2) := split b in
-   match w_compare b1 w0 with
-   | Eq => let (q,r) := w_divn1 (S n) a b2 in 
-    (match zn2z_word_comm w n in (_ = y) return y with
-     | refl_equal => q 
-     end, wWW w0 r)
-   | _ => 
-     _gen_divn1 n 
-      (match word_tr_word (zn2z w) n in (_ = y) return y with
-      | refl_equal => a
-      end) b
-   end.
- 
- Definition ww_div_gt_aux a b bh bl :=
-  let nb0 := w_head0 bh in
-    match nb0 with
-    | N0 => (ww_1, sub a b)
-    | Npos p => 
-      let (ah,al) := split a in
-      let b1 := w_add_mul_div p bh bl in
-      let b2 := w_add_mul_div p bl w0 in
-      let a1 := w_add_mul_div p w0 ah in
-      let a2 := w_add_mul_div p ah al in
-      let a3 := w_add_mul_div p al w0 in
-      let (q,r) := div32 a1 a2 a3 b1 b2 in
-      (wWW w0 q, add_mul_div (Pminus ww_digits p) W0 r)
-    end.
-
- Let ww_div_gt a b :=
-  Eval lazy beta delta [ww_div_gt_aux] in
-  let (bh,bl) := split b in
-  match w_compare w0 bh with
-  | Eq =>
-    let (ah,al) := split a in
-    match w_compare w0 ah with
-    | Eq => let (q,r) := w_div_gt al bl in (wWW w0 q, wWW w0 r)
-    | _ => let (q,r) := w_divn1 1 a bl in (q, wWW w0 r)
-    end
-  | _ => ww_div_gt_aux a b bh bl
-  end.
-
- Let ww_div a b :=
-  match compare a b with 
-  | Gt => ww_div_gt a b 
-  | Eq => (ww_1, W0)
-  | Lt => (W0, a)
-  end.
- 
- Let _gen_modn1 := 
-    gen_modn1 ww_digits W0 head0 add_mul_div div21.
-
- Let ww_modn1 n (a:word_tr (zn2z w) n) (b:zn2z w):= 
-   let (b1,b2) := split b in
-   match w_compare b1 w0 with
-   | Eq => wWW w0 (w_modn1 (S n) a b2)
-   | _ => 
-     _gen_modn1 n 
-      (match word_tr_word (zn2z w) n in (_ = y) return y with
-      | refl_equal => a
-      end) b
-   end.
- 
- Definition ww_mod_gt_aux a ah al b bh bl := 
-  let nb0 := w_head0 bh in
-  match nb0 with
-  | N0 => sub a b
-  | Npos p => 
-    let b1 := w_add_mul_div p bh bl in
-    let b2 := w_add_mul_div p bl w0 in
-    let a1 := w_add_mul_div p w0 ah in
-    let a2 := w_add_mul_div p ah al in
-    let a3 := w_add_mul_div p al w0 in
-    let (q,r) := div32 a1 a2 a3 b1 b2 in
-    add_mul_div (Pminus ww_digits p) W0 r
-  end.
-
- Definition ww_mod_gt a b :=
-  Eval lazy beta delta [ww_mod_gt_aux] in
-  let (bh,bl) := split b in
-  let (ah,al) := split a in	
-  match w_compare w0 bh with
-  | Eq =>
-    match w_compare w0 ah with
-    | Eq => wWW w0 (w_mod_gt al bl)
-    | _ => wWW w0 (w_modn1 1 a bl)
-    end
-  | _ => ww_mod_gt_aux a ah al b bh bl
-  end.
- 
- Let ww_mod a b :=
+ Let div :=
+  Eval lazy beta delta [ww_div] in ww_div ww_1 compare div_gt.
+  
+ Let mod_gt :=
   Eval lazy beta delta [ww_mod_gt] in
-  match compare a b with 
-  | Gt => ww_mod_gt a b 
-  | Eq => W0
-  | Lt => a
-  end.
+  ww_mod_gt w_digits w_0 w_WW w_0W w_compare w_eq0 w_sub_c w_sub w_sub_carry
+  w_mod_gt w_add_mul_div w_head0 w_div21 div32 _ww_digits add_mul_div.
 
- Fixpoint ww_gcd_gt_aux 
-  (p:positive) (cont: zn2z w -> zn2z w -> zn2z w) (a b : zn2z w) 
-        {struct p} : zn2z w :=
-  let (bh,bl) := split b in
-  match w_compare w0 bh with
-  | Eq =>
-    match w_compare w0 bl with
-    | Eq => a
-    | _  => WW w0 (w_gcd_gt bl (w_modn1 1 a bl))
-    end
-  | _ =>
-    let (ah,al) := split a in
-    let m := ww_mod_gt_aux a ah al b bh bl in
-    let (mh,ml) := split m in
-    match w_compare w0 mh with
-    | Eq =>
-      match w_compare w0 ml with
-      | Eq => b
-      | _  => WW w0 (w_gcd_gt ml (w_modn1 1 b ml))
-      end
-    | _ =>
-      let r := ww_mod_gt_aux b bh bl m mh ml in
-      match p with
-      | xH => cont m r 
-      | xO p => ww_gcd_gt_aux p (ww_gcd_gt_aux p cont) m r 
-      | xI p => ww_gcd_gt_aux p (ww_gcd_gt_aux p cont) m r
-      end
-    end
-  end. 
+ Let mod_ := 
+  Eval lazy beta delta [ww_mod] in ww_mod compare mod_gt.
 
- Let _ww_gcd_gt_aux := 
-  Eval cbv beta delta[ww_gcd_gt_aux ww_mod_gt_aux] in ww_gcd_gt_aux.
+ Let pos_mod := 
+  Eval lazy beta delta [ww_pos_mod] in ww_pos_mod w_0 w_digits w_WW w_pos_mod.
 
- Let ww_gcd_gt a b := 
-  let (ah,al) := split a in
-  match w_compare w0 ah with
-  | Eq => let (bh,bl) := split b in WW w0 (w_gcd_gt al bl)
-  | _  => _ww_gcd_gt_aux ww_digits 
-    (fun x y => match compare ww_1 y with
-                | Eq => ww_1 
-                | _ => x
-                end) a b
-  end.
+ Let gcd_gt_fix := 
+  Eval cbv beta delta [ww_gcd_gt_aux ww_gcd_gt_body] in
+  ww_gcd_gt_aux w_digits w_0 w_WW w_compare w_sub_c w_sub w_sub_carry w_gcd_gt
+  w_add_mul_div w_head0 w_div21 div32 _ww_digits add_mul_div.
 
- Definition ww_gcd a b :=
+ Let gcd_cont :=
+  Eval lazy beta delta [gcd_cont] in gcd_cont ww_1 w_1 w_compare.
+
+ Let gcd_gt :=
   Eval lazy beta delta [ww_gcd_gt] in 
-  match compare a b with
-  | Gt => ww_gcd_gt a b
-  | Eq => a
-  | Lt => ww_gcd_gt b a
-  end.
+  ww_gcd_gt w_0 w_eq0 w_gcd_gt _ww_digits gcd_gt_fix gcd_cont.
+
+ Let gcd :=
+  Eval lazy beta delta [ww_gcd] in
+  ww_gcd compare w_0 w_eq0 w_gcd_gt _ww_digits gcd_gt_fix gcd_cont.
 
  (* ** Record of operators on 2 words *)
    
  Definition mk_zn2z_op := 
-  mk_znz_op ww_digits
-    ww_to_Z ww_of_pos head0
+  mk_znz_op _ww_digits
+    to_Z ww_of_pos head0
     W0 ww_1 ww_Bm1
-    ww_WW ww_CW 
-    compare
-    ww_opp_c ww_opp ww_opp_carry
-    ww_succ_c add_c add_carry_c 
-    ww_succ add add_carry 
-    ww_pred_c sub_c ww_sub_carry_c 
-    ww_pred sub ww_sub_carry
-    ww_mul_c ww_mul ww_square_c   
-    div21 ww_divn1 ww_div_gt ww_div
-    ww_modn1 ww_mod_gt ww_mod
-    ww_gcd_gt ww_gcd
+    ww_WW ww_W0 ww_0W  
+    compare eq0
+    opp_c opp opp_carry
+    succ_c add_c add_carry_c 
+    succ add add_carry 
+    pred_c sub_c sub_carry_c 
+    pred sub sub_carry
+    mul_c mul square_c   
+    div21 div_gt div
+    mod_gt mod_
+    gcd_gt gcd
     add_mul_div
     pos_mod.
 
  Definition mk_zn2z_op_karatsuba := 
-  mk_znz_op ww_digits
-    ww_to_Z ww_of_pos head0
+   mk_znz_op _ww_digits
+    to_Z ww_of_pos head0
     W0 ww_1 ww_Bm1
-    ww_WW ww_CW 
-    compare
-    ww_opp_c ww_opp ww_opp_carry
-    ww_succ_c add_c add_carry_c 
-    ww_succ add add_carry 
-    ww_pred_c sub_c ww_sub_carry_c 
-    ww_pred sub ww_sub_carry
-    ww_karatsuba_c ww_mul ww_square_c   
-    div21 ww_divn1 ww_div_gt ww_div
-    ww_modn1 ww_mod_gt ww_mod
-    ww_gcd_gt ww_gcd
+    ww_WW ww_W0 ww_0W  
+    compare eq0
+    opp_c opp opp_carry
+    succ_c add_c add_carry_c 
+    succ add add_carry 
+    pred_c sub_c sub_carry_c 
+    pred sub sub_carry
+    karatsuba_c mul square_c   
+    div21 div_gt div
+    mod_gt mod_
+    gcd_gt gcd
     add_mul_div
     pos_mod.
+
+ (* Proof *)
+ Variable op_spec : znz_spec w_op.
+
+ Hint Resolve 
+    (spec_to_Z op_spec)
+    (spec_of_pos op_spec)
+    (spec_0 op_spec)
+    (spec_1 op_spec)
+    (spec_Bm1 op_spec)
+    (spec_WW op_spec)
+    (spec_0W op_spec)
+    (spec_W0 op_spec)
+    (spec_compare op_spec)
+    (spec_eq0 op_spec)
+    (spec_opp_c op_spec)
+    (spec_opp op_spec)
+    (spec_opp_carry op_spec)
+    (spec_succ_c op_spec)
+    (spec_add_c op_spec)
+    (spec_add_carry_c op_spec)
+    (spec_succ op_spec)
+    (spec_add op_spec)
+    (spec_add_carry op_spec)
+    (spec_pred_c op_spec)
+    (spec_sub_c op_spec)
+    (spec_sub_carry_c op_spec)
+    (spec_pred op_spec)
+    (spec_sub op_spec)
+    (spec_sub_carry op_spec)
+    (spec_mul_c op_spec)
+    (spec_mul op_spec)
+    (spec_square_c op_spec)
+    (spec_div21 op_spec)
+    (spec_div_gt op_spec)
+    (spec_div op_spec)    
+    (spec_mod_gt op_spec)
+    (spec_mod op_spec)      
+    (spec_gcd_gt op_spec)
+    (spec_gcd op_spec) 
+    (spec_head0 op_spec) 
+    (spec_add_mul_div op_spec).
+
+
+
+ Let wwB := base _ww_digits.
+
+ Notation "[| x |]" := (to_Z x)  (at level 0, x at level 99).
+
+ Notation "[+| c |]" :=
+   (interp_carry 1 wwB to_Z c)  (at level 0, x at level 99).
+
+ Notation "[-| c |]" :=
+   (interp_carry (-1) wwB to_Z c)  (at level 0, x at level 99).
+
+ Notation "[[ x ]]" := (zn2z_to_Z wwB to_Z x)  (at level 0, x at level 99).
+
+ Let spec_ww_to_Z   : forall x, 0 <= [| x |] < wwB.
+ Proof. refine (spec_ww_to_Z w_digits w_to_Z _);auto. Qed.
+
+ Let spec_ww_of_pos : forall p,
+     Zpos p = (Z_of_N (fst (ww_of_pos p)))*wwB + [|(snd (ww_of_pos p))|].
+ Proof.
+  unfold ww_of_pos;intros.
+  assert (H:= spec_of_pos op_spec p);unfold w_of_pos;
+   destruct (znz_of_pos w_op p). simpl in H.
+  rewrite H;clear H;destruct n;simpl to_Z.
+  simpl;unfold w_to_Z,w_0;rewrite (spec_0 op_spec);trivial.
+  unfold Z_of_N; assert (H:= spec_of_pos op_spec p0);
+  destruct (znz_of_pos w_op p0). simpl in H.
+  rewrite H;unfold fst, snd,Z_of_N, w_WW, to_Z.
+  rewrite (spec_WW op_spec). replace wwB with (wB*wB).
+  unfold wB,w_digits;clear H;destruct n;ring.
+  symmetry. exact (wwB_wBwB w_digits).
+ Qed.
+
+ Let spec_ww_0 : [|W0|] = 0.
+ Proof. reflexivity. Qed.
+
+ Let spec_ww_1 : [|ww_1|] = 1.
+ Proof. refine (spec_ww_1 w_0 w_1 w_digits w_to_Z _ _);auto. Qed.
+
+ Let spec_ww_Bm1 : [|ww_Bm1|] = wwB - 1.
+ Proof. refine (spec_ww_Bm1 w_Bm1 w_digits w_to_Z _);auto. Qed.
+
+ Let spec_ww_WW  : forall h l, [[ww_WW h l]] = [|h|] * wwB + [|l|].
+ Proof. 
+  intros h l. replace wwB with (wB*wB). destruct h;simpl.
+  destruct l;simpl;ring. ring.
+  symmetry. exact (wwB_wBwB w_digits).
+ Qed.
+
+ Let spec_ww_0W  : forall l, [[ww_0W l]] = [|l|].
+ Proof. 
+  intros l. replace wwB with (wB*wB). 
+  destruct l;simpl;ring. 
+  symmetry. exact (wwB_wBwB w_digits).
+ Qed.
+
+ Let spec_ww_W0  : forall h, [[ww_W0 h]] = [|h|]*wwB.
+ Proof.
+  intros h. replace wwB with (wB*wB). 
+  destruct h;simpl;ring. 
+  symmetry. exact (wwB_wBwB w_digits).
+ Qed.
+
+ Let spec_ww_compare : 
+     forall x y,
+       match compare x y with
+       | Eq => [|x|] = [|y|]
+       | Lt => [|x|] < [|y|]
+       | Gt => [|x|] > [|y|]
+       end.
+ Proof. 
+  refine (spec_ww_compare w_0 w_digits w_to_Z w_compare _ _ _);auto. 
+  exact (spec_compare op_spec). 
+ Qed.
+
+ Let spec_ww_eq0 : forall x, eq0 x = true -> [|x|] = 0.
+ Proof. destruct x;simpl;intros;trivial;discriminate. Qed. 
+
+ Let spec_ww_opp_c : forall x, [-|opp_c x|] = -[|x|].
+ Proof.
+  refine(spec_ww_opp_c w_0 w_0 W0 w_opp_c w_opp_carry w_digits w_to_Z _ _ _ _);
+  auto.
+ Qed.
+
+ Let spec_ww_opp : forall x, [|opp x|] = (-[|x|]) mod wwB.
+ Proof.
+  refine(spec_ww_opp w_0 w_0 W0 w_opp_c w_opp_carry w_opp 
+   w_digits w_to_Z _ _ _ _ _);
+  auto.
+ Qed.
+
+ Let spec_ww_opp_carry : forall x, [|opp_carry x|] = wwB - [|x|] - 1.
+ Proof.
+  refine (spec_ww_opp_carry w_WW ww_Bm1 w_opp_carry w_digits w_to_Z _ _ _);
+  auto. exact (spec_WW op_spec).
+ Qed.
+
+ Let spec_ww_succ_c : forall x, [+|succ_c x|] = [|x|] + 1.
+ Proof.
+  refine (spec_ww_succ_c w_0 w_0 ww_1 w_succ_c w_digits w_to_Z _ _ _ _);auto.
+ Qed.
+
+ Let spec_ww_add_c  : forall x y, [+|add_c x y|] = [|x|] + [|y|].
+ Proof.
+  refine (spec_ww_add_c w_WW w_add_c w_add_carry_c w_digits w_to_Z _ _ _);auto.
+  exact (spec_WW op_spec).
+ Qed.
+
+ Let spec_ww_add_carry_c : forall x y, [+|add_carry_c x y|] = [|x|]+[|y|]+1.
+ Proof.
+  refine (spec_ww_add_carry_c w_0 w_0 w_WW ww_1 w_succ_c w_add_c w_add_carry_c
+   w_digits w_to_Z _ _ _ _ _ _ _);auto. exact (spec_WW op_spec).
+ Qed.
+
+ Let spec_ww_succ : forall x, [|succ x|] = ([|x|] + 1) mod wwB.
+ Proof.
+  refine (spec_ww_succ w_W0 ww_1 w_succ_c w_succ w_digits w_to_Z _ _ _ _ _);
+  auto. exact (spec_W0 op_spec).
+ Qed.
+
+ Let spec_ww_add : forall x y, [|add x y|] = ([|x|] + [|y|]) mod wwB.
+ Proof.
+  refine (spec_ww_add w_add_c w_add w_add_carry w_digits w_to_Z _ _ _ _);auto.
+ Qed.
+
+ Let spec_ww_add_carry : forall x y, [|add_carry x y|]=([|x|]+[|y|]+1)mod wwB.
+ Proof.
+  refine (spec_ww_add_carry w_W0 ww_1 w_succ_c w_add_carry_c w_succ 
+  w_add w_add_carry w_digits w_to_Z _ _ _ _ _ _ _ _);auto.
+  exact (spec_W0 op_spec).
+ Qed.
+
+ Let spec_ww_pred_c : forall x, [-|pred_c x|] = [|x|] - 1.
+ Proof.
+  refine (spec_ww_pred_c w_0 w_Bm1 w_WW ww_Bm1 w_pred_c w_digits w_to_Z 
+   _ _ _ _ _);auto. exact (spec_WW op_spec).
+ Qed.
+
+ Let spec_ww_sub_c : forall x y, [-|sub_c x y|] = [|x|] - [|y|].
+ Proof.
+  refine (spec_ww_sub_c w_0 w_0 w_WW W0 w_opp_c w_opp_carry w_sub_c 
+   w_sub_carry_c w_digits w_to_Z _ _ _ _ _ _ _);auto. exact (spec_WW op_spec). 
+ Qed.
+
+ Let spec_ww_sub_carry_c : forall x y, [-|sub_carry_c x y|] = [|x|]-[|y|]-1.
+ Proof.
+  refine (spec_ww_sub_carry_c w_0 w_Bm1 w_WW ww_Bm1 w_opp_carry w_pred_c 
+   w_sub_c w_sub_carry_c w_digits w_to_Z _ _ _ _ _ _ _ _);auto.
+  exact (spec_WW op_spec). 
+ Qed.
+
+ Let spec_ww_pred : forall x, [|pred x|] = ([|x|] - 1) mod wwB.
+ Proof.
+  refine (spec_ww_pred w_0 w_Bm1 w_WW ww_Bm1 w_pred_c w_pred w_digits w_to_Z
+   _ _ _ _ _ _);auto. exact (spec_WW op_spec). 
+ Qed.
+
+ Let spec_ww_sub : forall x y, [|sub x y|] = ([|x|] - [|y|]) mod wwB.
+ Proof.
+  refine (spec_ww_sub w_0 w_0 w_WW W0 w_opp_c w_opp_carry w_sub_c w_opp
+   w_sub w_sub_carry w_digits w_to_Z _ _ _ _ _ _ _ _ _);auto.
+  exact (spec_WW op_spec). 
+ Qed.
+
+ Let spec_ww_sub_carry : forall x y, [|sub_carry x y|]=([|x|]-[|y|]-1) mod wwB.
+ Proof.
+  refine (spec_ww_sub_carry w_0 w_Bm1 w_WW ww_Bm1 w_opp_carry w_pred_c
+   w_sub_carry_c w_pred w_sub w_sub_carry w_digits w_to_Z _ _ _ _ _ _ _ _ _ _);
+  auto.   exact (spec_WW op_spec). 
+ Qed.
+
+ Let spec_ww_mul_c : forall x y, [[mul_c x y ]] = [|x|] * [|y|].
+ Proof.
+  refine (spec_ww_mul_c w_0 w_1 w_WW w_W0 w_mul_c add_c add add_carry w_digits
+   w_to_Z _ _ _ _ _ _ _ _ _);auto. exact (spec_WW op_spec).  
+  exact (spec_W0 op_spec). exact (spec_mul_c op_spec).
+ Qed.
+
+ Let spec_ww_karatsuba_c : forall x y, [[karatsuba_c x y ]] = [|x|] * [|y|].
+ Proof.
+  refine (spec_ww_karatsuba_c w_0 w_1 w_WW w_W0 w_add_c w_mul_c 
+   add_c add add_carry sub_c sub w_digits w_to_Z _ _ _ _ _ _ _ _ _ _ _ _);
+  auto. exact (spec_WW op_spec).  
+  exact (spec_W0 op_spec). exact (spec_mul_c op_spec).
+ Qed.
+
+ Let spec_ww_mul : forall x y, [|mul x y|] = ([|x|] * [|y|]) mod wwB.
+ Proof.
+  refine (spec_ww_mul w_W0 w_add w_mul_c w_mul add w_digits w_to_Z _ _ _ _ _);
+  auto. exact (spec_W0 op_spec). exact (spec_mul_c op_spec).
+ Qed.
+
+ Let spec_ww_square_c : forall x, [[square_c x]] = [|x|] * [|x|].
+ Proof.
+  refine (spec_ww_square_c w_0 w_1 w_WW w_W0 w_mul_c w_square_c add_c add 
+   add_carry w_digits w_to_Z _ _ _ _ _ _ _ _ _ _);auto.
+  exact (spec_WW op_spec). exact (spec_W0 op_spec).
+  exact (spec_mul_c op_spec). exact (spec_square_c op_spec).
+ Qed.
+
+ Let spec_w_div32 : forall a1 a2 a3 b1 b2,
+       wB / 2 <= (w_to_Z b1) ->
+       [|WW a1 a2|] < [|WW b1 b2|] ->
+       let (q, r) := div32 a1 a2 a3 b1 b2 in
+       (w_to_Z a1) * wwB + (w_to_Z a2) * wB + (w_to_Z a3) =
+       (w_to_Z q) * ((w_to_Z b1)*wB + (w_to_Z b2)) + [|r|] /\
+       0 <= [|r|] < (w_to_Z b1)*wB + w_to_Z b2.
+ Proof.
+  refine (spec_w_div32 w_0 w_Bm1 w_Bm2 w_WW w_compare w_add_c w_add_carry_c
+   w_add w_add_carry w_pred w_sub w_mul_c w_div21 sub_c w_digits w_to_Z
+   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _);auto.
+  unfold w_Bm2, w_to_Z, w_pred, w_Bm1.
+  rewrite (spec_pred op_spec);rewrite (spec_Bm1 op_spec).
+  unfold w_digits;rewrite Zmod_def_small. ring.
+  assert (H:= wB_pos(znz_digits w_op)). omega.
+  exact (spec_WW op_spec). exact (spec_compare op_spec).
+  exact (spec_mul_c op_spec).  exact (spec_div21 op_spec).
+ Qed.
+
+ Let spec_ww_div21 : forall a1 a2 b,
+      wwB/2 <= [|b|] ->
+      [|a1|] < [|b|] ->
+      let (q,r) := div21 a1 a2 b in
+      [|a1|] *wwB+ [|a2|] = [|q|] * [|b|] + [|r|] /\
+      0 <= [|r|] < [|b|].
+ Proof.
+  refine (spec_ww_div21 w_0 w_0W div32 ww_1 compare sub w_digits w_to_Z
+   _ _ _ _ _ _ _);auto. exact (spec_0W op_spec).
+ Qed.
+
+ Let spec_ww_head0  : forall x,  0 < [|x|] ->
+	 wwB/ 2 <= 2 ^ (Z_of_N (head0 x)) * [|x|] < wwB.
+ Proof.
+  refine (spec_ww_head0 w_0 w_compare w_head0 w_digits _ww_digits 
+   w_to_Z _ _ _ _);auto. exact (spec_compare op_spec).
+ Qed.
+
+ Lemma spec_ww_add_mul_div : forall x y p,
+       Zpos p < Zpos _ww_digits ->
+       [| add_mul_div p x y |] =
+         ([|x|] * (Zpower 2 (Zpos p)) +
+          [|y|] / (Zpower 2 ((Zpos _ww_digits) - (Zpos p)))) mod wwB.
+ Proof.
+  refine (@spec_ww_add_mul_div w w_0 w_WW w_W0 w_0W w_add_mul_div w_digits
+    w_to_Z _ _ _ _ _ _);auto. exact (spec_WW op_spec). 
+  exact (spec_W0 op_spec). exact (spec_0W op_spec). 
+ Qed.
+
+ Let spec_ww_div_gt : forall a b, 
+      [|a|] > [|b|] -> 0 < [|b|] ->
+      let (q,r) := div_gt a b in
+      [|a|] = [|q|] * [|b|] + [|r|] /\ 0 <= [|r|] < [|b|].
+ Proof.
+  refine (@spec_ww_div_gt w w_digits w_0 w_WW w_0W w_compare w_eq0 
+   w_opp_c w_opp w_opp_carry w_sub_c w_sub w_sub_carry w_div_gt
+   w_add_mul_div w_head0 w_div21 div32 _ww_digits ww_1 add_mul_div w_to_Z
+   _ _ _ _ _   _ _ _ _ _   _ _ _ _ _   _ _ _ _ _);auto.
+  exact (spec_WW op_spec). exact (spec_0W op_spec). 
+  exact (spec_compare op_spec). exact (spec_div_gt op_spec).
+  exact (spec_div21 op_spec). exact spec_ww_add_mul_div.
+ Qed.
+
+ Let spec_ww_div : forall a b, 0 < [|b|] ->
+      let (q,r) := div a b in
+      [|a|] = [|q|] * [|b|] + [|r|] /\
+      0 <= [|r|] < [|b|].
+ Proof.
+  refine (spec_ww_div w_digits ww_1 compare div_gt w_to_Z _ _ _ _);auto.
+ Qed.
+
+ Let spec_ww_mod_gt : forall a b, 
+      [|a|] > [|b|] -> 0 < [|b|] ->
+      [|mod_gt a b|] = [|a|] mod [|b|].
+ Proof.
+  refine (@spec_ww_mod_gt w w_digits w_0 w_WW w_0W w_compare w_eq0 
+   w_opp_c w_opp w_opp_carry w_sub_c w_sub w_sub_carry w_div_gt w_mod_gt
+   w_add_mul_div w_head0 w_div21 div32 _ww_digits ww_1 add_mul_div w_to_Z 
+   _ _ _ _ _   _ _ _ _ _   _ _ _ _ _   _ _ _ _ _ _);auto.
+  exact (spec_WW op_spec). exact (spec_0W op_spec). 
+  exact (spec_compare op_spec). exact (spec_div_gt op_spec).
+  exact (spec_div21 op_spec). exact spec_ww_add_mul_div.
+ Qed.
+
+ Let spec_ww_mod :  forall a b, 0 < [|b|] -> [|mod_ a b|] = [|a|] mod [|b|].
+ Proof.
+  refine (spec_ww_mod w_digits W0 compare mod_gt w_to_Z _ _ _);auto.
+ Qed.
+
+ Let spec_ww_gcd_gt : forall a b, [|a|] > [|b|] ->
+      Zis_gcd [|a|] [|b|] [|gcd_gt a b|].
+ Proof.
+  refine (@spec_ww_gcd_gt w w_digits W0 w_to_Z _ 
+    w_0 w_0 w_eq0 w_gcd_gt _ww_digits
+  _ gcd_gt_fix _ _ _ _ gcd_cont _);auto.
+  refine (@spec_ww_gcd_gt_aux w w_digits w_0 w_WW w_compare w_opp_c w_opp
+   w_opp_carry w_sub_c w_sub w_sub_carry w_gcd_gt w_add_mul_div w_head0
+   w_div21 div32 _ww_digits ww_1 add_mul_div w_to_Z 
+   _ _ _ _ _   _ _ _ _ _   _ _ _ _ _   _ _ _);auto.
+  exact (spec_WW op_spec). exact (spec_compare op_spec).
+  exact (spec_div21 op_spec). exact spec_ww_add_mul_div.
+  refine (@spec_gcd_cont w w_digits ww_1 w_to_Z _ _ w_0 w_1 w_compare
+   _ _);auto. exact (spec_compare op_spec).
+ Qed.
+
+ Let spec_ww_gcd : forall a b, Zis_gcd [|a|] [|b|] [|gcd a b|].
+ Proof.
+  refine (@spec_ww_gcd w w_digits W0 compare w_to_Z _ _ w_0 w_0 w_eq0 w_gcd_gt
+  _ww_digits _ gcd_gt_fix _ _ _ _ gcd_cont _);auto.
+  refine (@spec_ww_gcd_gt_aux w w_digits w_0 w_WW w_compare w_opp_c w_opp
+   w_opp_carry w_sub_c w_sub w_sub_carry w_gcd_gt w_add_mul_div w_head0
+   w_div21 div32 _ww_digits ww_1 add_mul_div w_to_Z 
+   _ _ _ _ _   _ _ _ _ _   _ _ _ _ _   _ _ _);auto.
+  exact (spec_WW op_spec). exact (spec_compare op_spec).
+  exact (spec_div21 op_spec). exact spec_ww_add_mul_div.
+  refine (@spec_gcd_cont w w_digits ww_1 w_to_Z _ _ w_0 w_1 w_compare
+   _ _);auto. exact (spec_compare op_spec).
+ Qed.
+
+
+ Lemma mk_znz2_spec : znz_spec mk_zn2z_op.
+ Proof.
+  apply mk_znz_spec;auto.
+  exact spec_ww_add_mul_div.
+  refine (@spec_ww_pos_mod w w_0 w_digits w_WW w_pos_mod w_to_Z
+       _ _ _ _);auto. exact (spec_WW op_spec). exact (spec_pos_mod op_spec).
+ Qed.
+
+ Lemma mk_znz2_karatsuba_spec : znz_spec mk_zn2z_op_karatsuba.
+ Proof.
+  apply mk_znz_spec;auto.
+  exact spec_ww_add_mul_div.
+  refine (@spec_ww_pos_mod w w_0 w_digits w_WW w_pos_mod w_to_Z
+       _ _ _ _);auto. exact (spec_WW op_spec). exact (spec_pos_mod op_spec).
+ Qed.
 
 End Zn2Z. 
  

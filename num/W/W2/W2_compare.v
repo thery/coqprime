@@ -33,3 +33,9 @@ Definition w2_compare x y :=
     end
  end.
 
+Definition w2_eq0 x :=
+ match x with
+ | OO => true
+ | _ => false
+ end.
+

@@ -7,6 +7,35 @@ Require Import W2_sub.
 
 Lemma w2_sub_spec : forall x y, [|w2_sub x y|] = ([|x|] - [|y|]) mod w2_B.
 Proof
-.
-Admitted.
+fun x y =>
+ match y as y return [|w2_sub x y|] = ([|x|] - [|y|]) mod w2_B with
+ | OO =>
+    match x as x return [|w2_sub x OO|] = ([|x|] - [|OO|]) mod w2_B with
+    | OO => refl_equal (0)
+    | OI => refl_equal (1)
+    | IO => refl_equal (2)
+    | II => refl_equal (3)
+   end
+ | OI =>
+    match x as x return [|w2_sub x OI|] = ([|x|] - [|OI|]) mod w2_B with
+    | OO => refl_equal (3)
+    | OI => refl_equal (0)
+    | IO => refl_equal (1)
+    | II => refl_equal (2)
+   end
+ | IO =>
+    match x as x return [|w2_sub x IO|] = ([|x|] - [|IO|]) mod w2_B with
+    | OO => refl_equal (2)
+    | OI => refl_equal (3)
+    | IO => refl_equal (0)
+    | II => refl_equal (1)
+   end
+ | II =>
+    match x as x return [|w2_sub x II|] = ([|x|] - [|II|]) mod w2_B with
+    | OO => refl_equal (1)
+    | OI => refl_equal (2)
+    | IO => refl_equal (3)
+    | II => refl_equal (0)
+   end
+ end.
 
