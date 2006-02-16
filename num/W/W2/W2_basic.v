@@ -48,12 +48,17 @@ Definition w2_WW xh xl :=
  | _, _ => WW xh xl
 end.
 
-Definition w2_CW ch xl :=
-Eval compute in
- match ch with
- | C0 xh => C0 (w2_WW xh xl)
- | C1 xh => C1 (w2_WW xh xl)
- end.
+Definition w2_W0 h :=
+ match h with
+ | OO => W0
+ | _ => WW h OO
+end.
+
+Definition w2_0W l :=
+ match l with
+ | OO => W0
+ | _ => WW OO l
+end.
 
 Notation "[| x |]" := (w2_to_Z x)  (at level 0, x at level 99) : w2_scope.
 Notation "[+| x |]" := (interp_carry 1 w2_B w2_to_Z x)  (at level 0, x at level 99) : w2_scope.

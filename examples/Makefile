@@ -155,8 +155,8 @@ include .depend
 
 .depend depend:
 	rm -f .depend
-	$(COQDEP) -i $(COQLIBS) $(VFILES) *.ml *.mli >.depend
-	$(COQDEP) $(COQLIBS) -suffix .html $(VFILES) >>.depend
+	$(COQDEP) -i $(COQLIBS) *.v *.ml *.mli >.depend
+	$(COQDEP) $(COQLIBS) -suffix .html *.v >>.depend
 
 install:
 	mkdir -p `$(COQC) -where`/user-contrib

@@ -1,6 +1,6 @@
 all: genfile
-#	cd W2 ; $(MAKE) all
-#	cd W8 ; $(MAKE) all
+	cd W2 ; $(MAKE) all
+	cd W8 ; $(MAKE) all
 
 
 genW: genW.ml

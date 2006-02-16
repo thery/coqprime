@@ -84,16 +84,18 @@ COQLIBS=-I .\
 ###################################
 
 VFILES=Basic_type.v\
-  Lucas.v\
-  Pock.v\
-  MkSpec.v\
-  Mod_op.v\
-  W.v\
-  Zn2Z_for_Proof.v\
-  Zn2ZProof.v\
+  GenBase.v\
+  GenAdd.v\
+  GenSub.v\
+  GenMul.v\
+  GenLift.v\
+  GenDivn1.v\
+  GenDiv.v\
+  ZnZ.v\
   Zn2Z.v\
-  ZnZDivn1.v\
-  ZnZ.v
+  W.v\
+  Lucas.v\
+  Pock.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -101,16 +103,18 @@ HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
 all: Basic_type.vo\
-  Lucas.vo\
-  Pock.vo\
-  MkSpec.vo\
-  Mod_op.vo\
-  W.vo\
-  Zn2Z_for_Proof.vo\
-  Zn2ZProof.vo\
+  GenBase.vo\
+  GenAdd.vo\
+  GenSub.vo\
+  GenMul.vo\
+  GenLift.vo\
+  GenDivn1.vo\
+  GenDiv.vo\
+  ZnZ.vo\
   Zn2Z.vo\
-  ZnZDivn1.vo\
-  ZnZ.vo
+  W.vo\
+  Lucas.vo\
+  Pock.vo
 
 spec: $(VIFILES)
 
@@ -160,7 +164,7 @@ all-gal.ps: $(VFILES)
 	$(COQDOC) -html -g $< -o $@
 
 byte:
-	$(MAKE) all "OPT=-byte"
+	$(MAKE) all "OPT="
 
 opt:
 	$(MAKE) all "OPT=-opt"

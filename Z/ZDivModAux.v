@@ -424,3 +424,24 @@ Hint Resolve Zlt_gt Zle_ge: zarith.
   apply Zmult_lt_0_compat;auto with zarith.
  Qed.
 
+ Lemma div_le_0 : forall p x, 0 <= x -> 0 <= x / 2 ^ p.
+ Proof.
+  intros p x Hle;destruct (Z_le_gt_dec 0 p).
+  apply  Zdiv_le_lower_bound;auto with zarith. 
+  replace (2^p) with 0.
+  destruct x;compute;intro;discriminate.
+  destruct p;trivial;discriminate z.
+ Qed.
+ 
+ Lemma div_lt : forall p x y, 0 <= x < y -> x / 2^p < y.
+ Proof.
+  intros p x y H;destruct (Z_le_gt_dec 0 p).
+  apply Zdiv_lt_upper_bound;auto with zarith. 
+  apply Zlt_le_trans with y;auto with zarith.
+  rewrite <- (Zmult_1_r y);apply Zmult_le_compat;auto with zarith.
+  assert (0 < 2^p);auto with zarith.
+  replace (2^p) with 0.
+  destruct x;change (0<y);auto with zarith.
+  destruct p;trivial;discriminate z.
+ Qed.
+ 

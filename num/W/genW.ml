@@ -234,7 +234,8 @@ let w_0 = wt^"_0"
 let w_1 = wt^"_1"
 let w_Bm1 = wt^"_Bm1"
 let w_WW = wt^"_WW"
-let w_CW = wt^"_CW"
+let w_W0 = wt^"_W0"
+let w_0W = wt^"_0W"
 
 let print_basic () =
   let out = start_file "basic" in 
@@ -291,14 +292,21 @@ let print_basic () =
   println  " | _, _ => WW xh xl";
   println "end.";
   println "";
-  
-  print_def w_CW "ch xl";
-  println "Eval compute in";
-  print_match "ch";
-  println (" | C0 xh => C0 ("^w_WW^" xh xl)");
-  println (" | C1 xh => C1 ("^w_WW^" xh xl)");
-  println " end.";
+ 
+  print_def w_W0 "h";
+  print_match "h";
+  print    " | ";print_w 0;println " => W0";
+  print    " | _ => WW h "; print_w 0; println "";
+  println "end.";
   println "";
+
+  print_def w_0W "l";
+  print_match "l";
+  print    " | ";print_w 0;println " => W0";
+  print    " | _ => WW "; print_w 0; println " l";
+  println "end.";
+  println "";
+
   print_notation "[| x |]" w_to_Z "x";
   print_notation "[+| x |]" ("interp_carry 1 "^w_B^" "^w_to_Z) "x";
   print_notation "[-| x |]" ("interp_carry (-1) "^w_B^" "^w_to_Z) "x";
@@ -401,17 +409,33 @@ let print_basic () =
   println " end.";
   end;
   println "";
-    
-  print_lemma w_CW "sign c l" 
-    ("interp_carry sign ("^w_B^"*"^w_B^") (zn2z_to_Z "^w_B^" "^
-     w_to_Z^") ("^w_CW^" c l) = (interp_carry sign "^w_B^" "^w_to_Z^
-      " c)*"^w_B^" + [|l|]");
-  if (!noproof) then print_admitted()
+ 
+  let typ h  = "[||"^w_W0^" "^h^"||] = [|"^h^"|] * "^w_B in
+  print_spec w_W0 "h" (typ "h");
+  if (!noproof) then print_admitted_spec()
   else begin
-  print "intros sign c l;case c;intro h;simpl;fold (";print w_WW;
-  print " h l); rewrite ";print w_WW;print "_spec;";
-  println ("unfold "^w_B^"; ring.");
-  println "Qed.";
+    print_fun "h";
+    print_match_dep "h" (typ "h");
+    print " | ";print_w 0; print " => refl_equal ";printi 0;println "";
+    for i = 1 to base - 1 do
+      print " | ";print_w i;print " => refl_equal ([||";
+      print (w_W0^" ");print_w i;println "||])"
+    done;
+    println " end.";
+  end;
+  println "";
+ 
+  let typ l  = "[||"^w_0W^" "^l^"||] = [|"^l^"|]" in
+  print_spec w_0W "l" (typ "l");
+  if (!noproof) then print_admitted_spec()
+  else begin
+    print_fun "l";
+    print_match_dep "l" (typ "l");
+    for i = 0 to base - 1 do
+      print " | ";print_w i;print " => refl_equal ([||";
+      print (w_0W^" ");print_w i;println "||])"
+    done;
+    println " end.";
   end;
   println "";
       
@@ -420,6 +444,7 @@ let print_basic () =
 (* Comparison *)
 
 let w_compare = wt^"_compare"
+let w_eq0 = wt^"_eq0"
 
 let print_compare () = 
   let out = start_file "compare" in
@@ -429,7 +454,6 @@ let print_compare () =
   
   print_def w_compare "x y";
   print_match "x";
-
   for x = 0 to base - 1 do
     print " | ";print_w x;println " => ";
     print "   ";print_match "y";
@@ -442,6 +466,14 @@ let print_compare () =
   done;
   println " end.";
   println "";
+
+  print_def w_eq0 "x";
+  print_match "x";
+  print   " | ";print_w 0;println " => true";
+  println " | _ => false";
+  println " end.";
+  println "";
+
   end_file out;
   
   let out = start_file "compare_spec" in
@@ -470,6 +502,27 @@ let print_compare () =
   done;
   println " end.";
   end;
+  println "";
+
+  println "Lemma false_true_A : forall A:Prop, false = true -> A.";
+  println " intros A H;  discriminate H.";
+  println "Qed.";
+  println "";
+
+  let concl x = "[|"^x^"|] = 0" in
+  let typ x = w_eq0^" "^x^" = true -> "^(concl x) in
+  print_spec w_eq0 "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
+    print_fun "x";
+    print_match_dep "x" (typ "x");
+    print " | ";print_w 0;println " => fun H => refl_equal 0";
+    for x = 1 to base - 1 do 
+      print " | ";print_w x;println " => fun H => false_true_A (";
+      print (concl (string_w x)); println ") H"  
+    done;
+    println " end.";
+  end;  
   println "";
   end_file out
   
@@ -1433,7 +1486,6 @@ let print_div () =
   
   let out = start_file "div" in
   print_require false "";
-  println "Require Import ZnZDivn1.";
   print "Require Import ";print !basename;println "_compare.";
   print "Require Import ";print !basename;println "_add.";
   print "Require Import ";print !basename;println "_sub.";
@@ -1460,24 +1512,6 @@ let print_div () =
   println ("   end");
   println (" end.");
   println "";
-
-  print_title "Division of n digits by one";
-  print_def w_divn1 "";
-  print " let _gen_divn1 := gen_divn1 ";printi !digits;print " ";
-  print_w 0;print " ";print w_WW;
-  println (" "^w_head0^" "^w_add_mul_div^" "^w_div21^" in");
-  println " fun n x y => _gen_divn1 n ";
-  println ("    (word_of_word_tr "^wt^" n x) y."); 
-  println "";
-
-  print_title "Modulo of n digits by one";
-  print_def w_modn1 "";
-  print " let _gen_modn1 := gen_modn1 ";printi !digits;print " ";
-  print_w 0;print " ";println(" "^w_head0^" "^w_add_mul_div^" "^w_div21^" in");
-  println " fun n x y => _gen_modn1 n ";
-  println ("    (word_of_word_tr "^wt^" n x) y."); 
-  println "";
-   
 
   end_file out;
  
@@ -1692,7 +1726,6 @@ let print_div () =
   print "Require Import ";print !basename;println "_add_mul_div_spec."; 
   print "Require Import ";print !basename;println "_head0_spec."; 
   println "Require Import ZDivModAux.";
-  println "Require Import ZnZDivn1.";
 
   println "Open Local Scope Z_scope."; 
   println ("Lemma "^w_div21^"_spec : forall a1 a2 b,");
@@ -1816,45 +1849,6 @@ let print_div () =
   end;
   println "";
 
-  print_spec w_divn1 "n x y" 
-         ("0<[|y|] ->\n    "^
-          "let (q,r) := "^w_divn1^" n x y in\n    "^
-          "gen_to_Z "^(string_of_int !digits)^" "^w_to_Z^
-          " n (word_of_word_tr "^wt^" n x) =\n      "^
-          "gen_to_Z "^(string_of_int !digits)^" "^w_to_Z^" n q * "^
-          w_to_Z^" y + "^w_to_Z^" r /\\ \n    "^
-           "0 <= [|r|] < [|y|]");
-  if (!noproof) then print_admitted_spec()
-  else begin
-  print_fun "n x y (H:0<[|y|])";
-  print "  @spec_gen_divn1 ";println (wt^" "^(string_of_int !digits));
-  print    "     ";print_w 0;print " ";println w_WW;
-  println (" "^w_head0^" "^w_add_mul_div^" "^w_div21^" "^w_to_Z);
-  println ("     "^w_to_Z^"_spec (refl_equal 0)");
-  println ("     "^w_WW^"_spec "^w_head0^"_spec");
-  println ("     "^w_add_mul_div^"_spec "^w_div21^"_spec");
-  println ("     n (word_of_word_tr "^wt^" n x) y H.");
-  end;
-  println "";
-
-  print_spec w_modn1 "n x y" 
-         ("0 < [|y|] ->\n    "^
-          "[|"^w_modn1^" n x y|] = "^
-          "(gen_to_Z "^(string_of_int !digits)^" "^w_to_Z^
-          " n (word_of_word_tr "^wt^" n x)) mod [|y|]");
-  if (!noproof) then print_admitted_spec()
-  else begin
-  print_fun "n x y (H:0<[|y|])";
-  print "  @spec_gen_modn1 ";println (wt^" "^(string_of_int !digits));
-  print    "     ";print_w 0;print " ";println w_WW;
-  println (" "^w_head0^" "^w_add_mul_div^" "^w_div21^" "^w_to_Z);
-  println ("     "^w_to_Z^"_spec (refl_equal 0)");
-  println ("     "^w_WW^"_spec "^w_head0^"_spec");
-  println ("     "^w_add_mul_div^"_spec "^w_div21^"_spec");
-  println ("     n (word_of_word_tr "^wt^" n x) y H.");
-  end;
-  println "";
-  
   end_file out
 
 let w_pos_mod = wt^"_pos_mod"
@@ -1983,8 +1977,8 @@ let print_op () =
   print    "       ";print w_to_Z; println (" "^w_of_pos^" "^w_head0);
   print    "       ";print_w 0;print " ";print_w 1;print " ";
                                             print_w (base-1);println ""; 
-  println ("       "^w_WW^" "^w_CW);
-  println ("       "^w_compare);
+  println ("       "^w_WW^" "^w_W0^" "^w_0W);
+  println ("       "^w_compare^" "^w_eq0);
   println ("       "^w_opp_c^" "^w_opp^" "^w_opp_carry);
   println ("       "^w_succ_c^" "^w_add_c^" "^w_add_carry_c); 
   println ("       "^w_succ^" "^w_add^" "^w_add_carry); 
@@ -1992,9 +1986,10 @@ let print_op () =
   println ("       "^w_pred^" "^w_sub^" "^w_sub_carry);
   println ("       "^w_mul_c^" "^w_mul^" "^w_square_c);
    
-  println ("       "^w_div21^" "^w_divn1^" "^w_div^" "^w_div);
-  println ("       "^w_modn1^" "^w_mod^" "^w_mod);
-  println ("       "^w_gcd^" "^w_gcd^" "^w_add_mul_div^" "^w_pos_mod^"."); 
+  println ("       "^w_div21^" "^w_div^" "^w_div);
+  println ("       "^w_mod^" "^w_mod);
+  println ("       "^w_gcd^" "^w_gcd);
+  println ("       "^w_add_mul_div^" "^w_pos_mod^"."); 
   println "";
 
   end_file out;
@@ -2026,47 +2021,47 @@ let print_op () =
   println ("Lemma "^w_op^"_spec : znz_spec "^w_op^".");
   if (!noproof) then print_admitted()
   else begin
-  println ("Proof.");
-  println " apply mk_znz_spec.";
-  println (" exact "^w_to_Z^"_spec.");
-  println (" exact "^w_of_pos^"_spec.");
-  println (" exact "^w_0^"_spec.");
-  println (" exact "^w_1^"_spec.");
-  println (" exact "^w_Bm1^"_spec.");
-  println (" exact "^w_WW^"_spec.");
-  println (" exact "^w_CW^"_spec.");
-  println (" exact "^w_compare^"_spec.");
-  println (" exact "^w_opp_c^"_spec.");
-  println (" exact "^w_opp^"_spec.");
-  println (" exact "^w_opp_carry^"_spec.");
-  println (" exact "^w_succ_c^"_spec.");
-  println (" exact "^w_add_c^"_spec.");
-  println (" exact "^w_add_carry_c^"_spec.");
-  println (" exact "^w_succ^"_spec.");
-  println (" exact "^w_add^"_spec.");
-  println (" exact "^w_add_carry^"_spec.");
-  println (" exact "^w_pred_c^"_spec.");
-  println (" exact "^w_sub_c^"_spec.");
-  println (" exact "^w_sub_carry_c^"_spec.");
-  println (" exact "^w_pred^"_spec.");
-  println (" exact "^w_sub^"_spec.");
-  println (" exact "^w_sub_carry^"_spec.");
-  println (" exact "^w_mul_c^"_spec.");
-  println (" exact "^w_mul^"_spec.");
-  println (" exact "^w_square_c^"_spec.");
-  println (" exact "^w_div21^"_spec.");
-  println (" exact "^w_divn1^"_spec.");
-  println (" exact "^w_div^"_gt_spec.");
-  println (" exact "^w_div^"_spec.");
-  println (" exact "^w_modn1^"_spec.");
-  println (" exact "^w_mod^"_gt_spec.");
-  println (" exact "^w_mod^"_spec.");
-  println (" exact "^w_gcd^"_gt_spec.");
-  println (" exact "^w_gcd^"_spec.");
-  println (" exact "^w_head0^"_spec.");
-  println (" exact "^w_add_mul_div^"_spec.");
-  println (" exact "^w_pos_mod^"_spec.");
-  println ("Qed.");
+    println ("Proof.");
+    println " apply mk_znz_spec.";
+    println (" exact "^w_to_Z^"_spec.");
+    println (" exact "^w_of_pos^"_spec.");
+    println (" exact "^w_0^"_spec.");
+    println (" exact "^w_1^"_spec.");
+    println (" exact "^w_Bm1^"_spec.");
+    println (" exact "^w_WW^"_spec.");
+    println (" exact "^w_0W^"_spec.");
+    println (" exact "^w_W0^"_spec.");
+    println (" exact "^w_compare^"_spec.");
+    println (" exact "^w_eq0^"_spec.");
+    println (" exact "^w_opp_c^"_spec.");
+    println (" exact "^w_opp^"_spec.");
+    println (" exact "^w_opp_carry^"_spec.");
+    println (" exact "^w_succ_c^"_spec.");
+    println (" exact "^w_add_c^"_spec.");
+    println (" exact "^w_add_carry_c^"_spec.");
+    println (" exact "^w_succ^"_spec.");
+    println (" exact "^w_add^"_spec.");
+    println (" exact "^w_add_carry^"_spec.");
+    println (" exact "^w_pred_c^"_spec.");
+    println (" exact "^w_sub_c^"_spec.");
+    println (" exact "^w_sub_carry_c^"_spec.");
+    println (" exact "^w_pred^"_spec.");
+    println (" exact "^w_sub^"_spec.");
+    println (" exact "^w_sub_carry^"_spec.");
+    println (" exact "^w_mul_c^"_spec.");
+    println (" exact "^w_mul^"_spec.");
+    println (" exact "^w_square_c^"_spec.");
+    println (" exact "^w_div21^"_spec.");
+    println (" exact "^w_div^"_gt_spec.");
+    println (" exact "^w_div^"_spec.");
+    println (" exact "^w_mod^"_gt_spec.");
+    println (" exact "^w_mod^"_spec.");
+    println (" exact "^w_gcd^"_gt_spec.");
+    println (" exact "^w_gcd^"_spec.");
+    println (" exact "^w_head0^"_spec.");
+    println (" exact "^w_add_mul_div^"_spec.");
+    println (" exact "^w_pos_mod^"_spec.");
+    println ("Qed.");
   end;
   println "";
 

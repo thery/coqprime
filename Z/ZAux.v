@@ -63,6 +63,110 @@ intros a b H1 H2 H3; case (Zle_or_lt b a); auto; intros H4; apply Zmult_lt_reg_r
    contradict H3; apply Zle_not_lt; apply Zle_square_mult; auto.
 Qed.
 
+
+
+
+ Theorem beta_lex: forall a b c d beta, 
+       a * beta + b <= c * beta + d -> 
+       0 <= b < beta -> 0 <= d < beta -> 
+       a <= c.
+Proof.
+  intros a b c d beta H1 (H3, H4) (H5, H6).
+  assert (a - c < 1); auto with zarith.
+  apply Zmult_lt_reg_r with beta; auto with zarith.
+  apply Zle_lt_trans with (d  - b); auto with zarith.
+  rewrite Zmult_minus_distr_r; auto with zarith.
+ Qed.
+
+ Theorem beta_lex_inv: forall a b c d beta,
+      a < c -> 0 <= b < beta ->
+      0 <= d < beta -> 
+      a * beta + b < c * beta  + d. 
+ Proof.
+  intros a b c d beta H1 (H3, H4) (H5, H6).
+  case (Zle_or_lt (c * beta + d) (a * beta + b)); auto with zarith.
+  intros H7; contradict H1;apply Zle_not_lt;apply beta_lex with (1 := H7);auto.
+ Qed.
+
+ Lemma beta_mult : forall h l beta, 
+   0 <= h < beta -> 0 <= l < beta -> 0 <= h*beta+l < beta*beta.
+ Proof.
+  intros h l beta H1 H2;split. auto with zarith.
+  rewrite <- (Zplus_0_r (beta*beta));apply beta_lex_inv;auto with zarith.
+ Qed.
+
+ Lemma Zmult_lt_b : 
+   forall b x y, 0 <= x < b -> 0 <= y < b -> 0 <= x * y <= b*b - 2*b + 1.
+ Proof.
+  intros b x y (Hx1,Hx2) (Hy1,Hy2);split;auto with zarith.
+  apply Zle_trans with ((b-1)*(b-1)).
+  apply Zmult_le_compat;auto with zarith.
+  apply Zeq_le;ring.
+ Qed.
+
+ Lemma sum_mul_carry : forall xh xl yh yl wc cc beta,
+   1 < beta -> 
+   0 <= wc < beta ->
+   0 <= xh < beta ->
+   0 <= xl < beta ->
+   0 <= yh < beta ->
+   0 <= yl < beta ->
+   0 <= cc < beta*beta ->
+   wc*beta*beta + cc = xh*yl + xl*yh -> 
+   0 <= wc <= 1.
+ Proof.
+  intros xh xl yh yl wc cc beta U H1 H2 H3 H4 H5 H6 H7. 
+  assert (H8 := Zmult_lt_b beta xh yl H2 H5).
+  assert (H9 := Zmult_lt_b beta xl yh H3 H4).
+  split;auto with zarith.
+  apply beta_lex with (cc) (beta * beta - 2) (beta*beta); auto with zarith.
+  rewrite Zmult_assoc; auto with zarith.
+ Qed.
+
+ Theorem mult_add_ineq: forall x y cross beta,
+   0 <= x < beta ->
+   0 <= y < beta ->
+   0 <= cross < beta ->
+   0 <= x * y + cross < beta*beta.
+ Proof.
+  intros x y cross beta HH HH1 HH2.
+  split; auto with zarith.
+  apply Zle_lt_trans with  ((beta-1)*(beta-1)+(beta-1)); auto with zarith.
+  apply Zplus_le_compat; auto with zarith.
+  apply Zmult_le_compat; auto with zarith.
+  repeat (rewrite Zmult_minus_distr_l || rewrite Zmult_minus_distr_r); 
+    auto with zarith.
+ Qed.
+
+ Theorem mult_add_ineq2: forall x y c cross beta,
+   0 <= x < beta ->
+   0 <= y < beta ->
+   0 <= c*beta + cross <= 2*beta - 2 ->
+   0 <= x * y + (c*beta + cross) < beta*beta.
+ Proof.
+  intros x y c cross beta HH HH1 HH2.
+  split; auto with zarith.
+  apply Zle_lt_trans with ((beta-1)*(beta-1)+(2*beta-2));auto with zarith.
+  apply Zplus_le_compat; auto with zarith.
+  apply Zmult_le_compat; auto with zarith.
+  repeat (rewrite Zmult_minus_distr_l || rewrite Zmult_minus_distr_r); 
+    auto with zarith.
+ Qed.
+
+Theorem mult_add_ineq3: forall x y c cross beta,
+   0 <= x < beta ->
+   0 <= y < beta ->
+   0 <= cross <= beta - 2 ->
+   0 <= c <= 1 ->
+   0 <= x * y + (c*beta + cross) < beta*beta.
+ Proof.
+  intros x y c cross beta HH HH1 HH2 HH3.
+  apply mult_add_ineq2;auto with zarith.
+  split;auto with zarith.
+  apply Zle_trans with (1*beta+cross);auto with zarith.
+ Qed.
+
+
 (************************************** 
    Properties of Z_nat
  **************************************)
@@ -296,6 +400,7 @@ Theorem Zmod_def_small: forall a n, 0 <= a < n  ->  a mod n = a.
 intros a n [H1 H2]; unfold Zmod.
 generalize (Z_div_mod a n); case (Zdiv_eucl a n).
 intros q r H3; case H3; clear H3; auto with zarith.
+auto with zarith.
 intros H4 [H5 H6].
 case (Zle_or_lt q (- 1)); intros H7.
 contradict H1; apply Zlt_not_le.

@@ -5,7 +5,7 @@ Require Import ZnZ.
 Require Import Zn2Z.
 Require Import W8_op.
 Require Import ZArith.
-Require Import MkSpec.
+
 
 (* ** Type of words ** *)
 
@@ -33,7 +33,7 @@ Fixpoint mk_spec (w : Set) (op : znz_op w) (op_spec : znz_spec op) (n : nat)
   match n return (znz_spec (mk_op op n)) with
   | O => op_spec
   | S n1 =>
-      mk_znz2_karatsuba_spec (word w n1) (mk_op op n1)
+      @mk_znz2_karatsuba_spec (word w n1) (mk_op op n1)
         (mk_spec op_spec n1)
   end.
 
@@ -50,7 +50,7 @@ Qed.
 (* ** Operators ** *)
 Definition w8_1_op := mk_zn2z_op w8_op.           
 Definition w8_2_op := mk_zn2z_op w8_1_op.
-Definition w8_3_op := mk_zn2z_op w8_2_op.
+Definition w8_3_op := mk_zn2z_op_karatsuba w8_2_op.
 Definition w8_4_op := mk_zn2z_op_karatsuba w8_3_op.
 Definition w8_5_op := mk_zn2z_op_karatsuba w8_4_op.
 Definition w8_6_op := mk_zn2z_op_karatsuba w8_5_op.
@@ -110,7 +110,7 @@ assert (S2: znz_spec w8_2_op).
 unfold w8_2_op; apply mk_znz2_spec.
 exact S1.
 assert (S3: znz_spec w8_3_op).
-unfold w8_3_op; apply mk_znz2_spec.
+unfold w8_3_op; apply mk_znz2_karatsuba_spec.
 exact S2.
 assert (S4: znz_spec w8_4_op).
 unfold w8_4_op; apply mk_znz2_karatsuba_spec.

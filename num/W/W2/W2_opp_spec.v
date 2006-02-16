@@ -8,16 +8,31 @@ Require Import W2_opp.
 
 Lemma w2_opp_c_spec : forall x, [-|w2_opp_c x|] = -[|x|].
 Proof
-.
-Admitted.
+fun x =>
+ match x as x return [-|w2_opp_c x|] = -[|x|] with
+ | OO => refl_equal (-0)
+ | OI => refl_equal (-1)
+ | IO => refl_equal (-2)
+ | II => refl_equal (-3)
+ end.
 
 Lemma w2_opp_spec : forall x, [|w2_opp x|] = (-[|x|]) mod w2_B.
 Proof
-.
-Admitted.
+fun x =>
+ match x as x return [|w2_opp x|] = (-[|x|]) mod w2_B with
+ | OO => refl_equal 0
+ | OI => refl_equal 3
+ | IO => refl_equal 2
+ | II => refl_equal 1
+ end.
 
 Lemma w2_opp_carry_spec : forall x, [|w2_opp_carry x|] = w2_B - [|x|] - 1.
 Proof
-.
-Admitted.
+fun x =>
+ match x as x return [|w2_opp_carry x|] = w2_B - [|x|] - 1 with
+ | OO => refl_equal 3
+ | OI => refl_equal 2
+ | IO => refl_equal 1
+ | II => refl_equal 0
+ end.
 
