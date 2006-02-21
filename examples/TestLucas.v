@@ -79,3 +79,65 @@ Time Eval vm_compute in lucas 4253.
 Eval vm_compute in 4423.
 
 Time Eval vm_compute in lucas 4423.
+
+(*
+     = 3
+     = 0
+Finished transaction in 0. secs (0.01u,0.s)
+     = 5
+     = 0
+Finished transaction in 0. secs (0.u,0.s)
+     = 7
+     = 0
+Finished transaction in 0. secs (0.u,0.s)
+     = 13
+     = 0
+Finished transaction in 0. secs (0.u,0.s)
+     = 17
+     = 0
+Finished transaction in 0. secs (0.u,0.s)
+     = 19
+     = 0
+Finished transaction in 0. secs (0.u,0.s)
+     = 31
+     = 0
+Finished transaction in 0. secs (0.u,0.s)
+     = 61
+     = 0
+Finished transaction in 0. secs (0.01u,0.s)
+     = 89
+     = 0
+Finished transaction in 0. secs (0.02u,0.s)
+     = 107
+     = 0
+Finished transaction in 0. secs (0.02u,0.s)
+     = 127
+     = 0
+Finished transaction in 0. secs (0.04u,0.s)
+     = 521
+     = 0
+Finished transaction in 2. secs (1.85u,0.01s)
+     = 607
+     = 0
+Finished transaction in 3. secs (2.78u,0.07s)
+     = 1279
+     = 0
+Finished transaction in 21. secs (20.21u,0.26s)
+     = 2203
+     = 0
+Finished transaction in 94. secs (89.1u,1.05s)
+     = 2281
+     = 0
+Finished transaction in 102. secs (97.59u,1.1s)
+     = 3217
+     = 0
+Finished transaction in 244. secs (237.65u,2.39s)
+     = 4253
+     = 0
+Finished transaction in 506. secs (494.09u,4.65s)
+     = 4423
+     = 0
+Finished transaction in 572. secs (563.27u,5.45s)
+
+
+*)

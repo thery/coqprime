@@ -48,3 +48,6 @@ W8_sub_c_spec.v
 W8_sub_spec.v
 W8_sub.v
 W8_succ_c_spec.v
+W8_sqrt.v
+W8_sqrt_spec.v
+W8_sqrt.v

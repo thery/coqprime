@@ -612,3 +612,9 @@ case H1 with (2 := Hk); auto.
 intros x (Hx1, Hx2); rewrite Hx2; auto.
 Qed.
 
+Lemma Pocklington_refl : 
+  forall c lc, test_Certif (c::lc) = true -> prime (nprim c).
+Proof.
+ intros c lc Heq;apply test_Certif_In_Prime with (c::lc);trivial;simpl;auto.
+Qed.
+

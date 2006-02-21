@@ -13,6 +13,7 @@ GenMul.v
 GenLift.v
 GenDivn1.v
 GenDiv.v
+GenSqrt.v
 ZnZ.v
 Zn2Z.v
 W.v

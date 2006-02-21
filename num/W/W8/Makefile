@@ -123,7 +123,10 @@ VFILES=W8_add_carry_c_spec.v\
   W8_sub_c_spec.v\
   W8_sub_spec.v\
   W8_sub.v\
-  W8_succ_c_spec.v
+  W8_succ_c_spec.v\
+  W8_sqrt.v\
+  W8_sqrt_spec.v\
+  W8_sqrt.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -176,7 +179,10 @@ all: W8_add_carry_c_spec.vo\
   W8_sub_c_spec.vo\
   W8_sub_spec.vo\
   W8_sub.vo\
-  W8_succ_c_spec.vo
+  W8_succ_c_spec.vo\
+  W8_sqrt.vo\
+  W8_sqrt_spec.vo\
+  W8_sqrt.vo
 
 spec: $(VIFILES)
 
@@ -226,7 +232,7 @@ all-gal.ps: $(VFILES)
 	$(COQDOC) -html -g $< -o $@
 
 byte:
-	$(MAKE) all "OPT=-byte"
+	$(MAKE) all "OPT="
 
 opt:
 	$(MAKE) all "OPT=-opt"

@@ -2,7 +2,7 @@ Require Import List.
 Require Import ZArith.
 Require Import ZAux.
 
-Require Import PocklingtonCertificat.
+Require Import Pock.
 
 Open Local Scope positive_scope.
 
