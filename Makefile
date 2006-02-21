@@ -4,6 +4,7 @@ all:
 	cd List; $(MAKE) all
 	cd Z; $(MAKE) all
 	cd PrimalityTest; $(MAKE) all
+	cd num; $(MAKE) GenBase.vo
 	cd num/W; $(MAKE) all
 	cd num/W/W2; $(MAKE) all
 	cd num/W/W8; $(MAKE) all
