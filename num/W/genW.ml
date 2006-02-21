@@ -25,6 +25,9 @@ let usage_div =
 let usage_mod = 
   "  -mod : generate files containing the mod and corresponding proofs\n"
 
+let usage_sqrt = 
+  "  -sqrt : generate files containing the sqrt and corresponding proofs\n"
+
 let usage_lift = 
   "  -lift : generate files containing the lift function and its proofs\n"
 let usage_op = 
@@ -43,6 +46,7 @@ let usage =
   usage_mul ^
   usage_div ^
   usage_mod ^
+  usage_sqrt ^
   usage_lift ^
   usage_op ^
   usage_noproof
@@ -72,6 +76,7 @@ let sub = ref false
 let mul = ref false
 let div = ref false
 let pos_mod = ref false
+let sqrt = ref false
 let lift = ref false
 let op = ref false
 let noproof = ref false
@@ -93,6 +98,7 @@ let _ =
      ("-mul",set_opt mul , "");
      ("-div",set_opt div , "");
      ("-mod",set_opt pos_mod , "");
+     ("-sqrt",set_opt sqrt , "");     
      ("-lift",set_opt lift , "");
      ("-op",set_opt op , "");
      ("-noproof",set_opt1 noproof , "")
@@ -184,6 +190,8 @@ let rec print_pos_s s n =
   end
 
 let print_pos = print_pos_s "xH"
+
+let print_bool b = if b then print "true" else print "false"
 
 let print_notation nota f x =
   print "Notation \"";print nota; print"\" := (";
@@ -1952,6 +1960,117 @@ let print_pos_mod () =
 
   end_file out
 
+  let print_sqrt () =
+  let out = start_file "sqrt" in
+  print_require false "";
+  print_title "Square root";
+  print_def (wt^"_is_even ") "x";
+  print_match "x";
+  for x = 0 to base - 1 do
+    print " | ";print_w x;print " => "; print_bool (0 == (x mod 2));println ""
+  done;
+  println " end.";
+  println "";
+  let sqrt n = int_of_float (Pervasives.sqrt (float_of_int n)) in
+  print_def (wt^"_sqrt2") "x y";
+  print_match "x";
+  for x = 0 to base - 1 do
+    print " | ";print_w x;println " => ";
+    print "   ";print_match "y";
+    for y = 0 to base - 1 do
+      let s = sqrt (base * x + y) in
+      let r = (base * x + y) - s * s in
+      print    "    | ";print_w y; print " => ";
+      print "("; print_w s; print ", "; print_c r; print ")";println "";
+    done;
+    println "    end"
+  done;
+  println  " end.";
+  println "";
+  print_def (wt^"_sqrt") "x";
+  print_match "x";
+  for x = 0 to base - 1 do
+    print " | ";print_w x;print " => "; print_w (sqrt x); println "";
+  done;
+  println  " end.";
+  println "";
+
+  end_file out;
+
+  let out = start_file "sqrt_spec" in
+  print_require false "sqrt";
+  print "Require Import ";print !basename; println "_basic_spec.";
+
+  let typ x = 
+     "((if "^wt ^"_is_even "^x^" then "^
+     " [|"^x^"|] mod 2 = 0 " ^
+     " else [|x|] mod 2 = 1): Prop)" in
+  print_spec (wt ^"_is_even") "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
+  print_fun "x";
+  print_match_dep "x" (typ "x");
+  for x = 0 to base - 1 do
+    print " | ";print_w x;print " => refl_equal ";
+    printi (x mod 2);println ""
+  done;
+  println " end.";
+  end;
+  println "";
+
+  let typ x y = 
+     " "^w_B^"/ 4 <= [|"^x^"|] -> let (s,r) := "^wt ^"_sqrt2 "^x^" "^y^" in "^
+     "[||WW "^x^" "^y^"||] = [|s|] ^ 2 + [+|r|] /\\ "^
+     "[+|r|] <= 2 * [|s|]" in
+  print_spec (wt ^"_sqrt2") "x y" (typ "x" "y");
+  if (!noproof) then print_admitted_spec()
+  else begin
+  print_fun "x y";
+  print_match_dep "x" (typ "x" "y");
+  for x = 0 to base - 1 do
+    print " | ";print_w x;println " => ";
+    print "   ";print_match_dep "y" (typ (string_w x) "y");
+    for y = 0 to base - 1 do
+      let s = sqrt (base * x + y) in
+      let r = (base * x + y) - s * s in
+      print    "    | ";print_w y; print " => ";
+      print "fun _ => conj (refl_equal "; printi (base * x + y); print ") (Zle_bool_imp_le ";
+      printi r; print " "; printi (2 * s); print " (refl_equal true))";println "";
+    done;
+    println "    end"
+  done;
+  println  " end.";
+  end;
+  println "";
+
+
+  let typ x = 
+     "[|"^wt ^"_sqrt "^x^"|] ^2 <= [|"^x^"|] < "^
+     "([|"^wt ^"_sqrt "^x^"|] + 1) ^2" in
+  print_spec (wt ^"_sqrt") "x" (typ "x");
+  if (!noproof) then print_admitted_spec()
+  else begin
+  print_fun "x";
+  print_match_dep "x" (typ "x");
+  for x = 0 to base - 1 do
+    print " | ";print_w x;println " => ";
+   let s = sqrt x in
+   print "conj (Zle_bool_imp_le ";
+   printi (s * s); print " "; printi x; print " (refl_equal true))";
+   print " (Zlt_cases ";
+   printi x; print " "; printi ((s + 1) * (s + 1)); print ")";
+  done;
+  println  " end.";
+  end;
+  println "";
+
+  end_file out
+
+(*
+
+    spec_sqrt : forall x,
+       [|w_sqrt x|] ^ 2 <= [|x|] < ([|w_sqrt x|] + 1) ^ 2
+*)
 
 let w_op = wt^"_op"
 
@@ -1966,6 +2085,7 @@ let print_op () =
   print "Require Export ";print !basename;println "_div.";
   print "Require Export ";print !basename;println "_lift.";
   print "Require Export ";print !basename;println "_pos_mod.";
+  print "Require Export ";print !basename;println "_sqrt.";
   println "Require Import ZnZ.";
   println "";
   println "";
@@ -1989,7 +2109,8 @@ let print_op () =
   println ("       "^w_div21^" "^w_div^" "^w_div);
   println ("       "^w_mod^" "^w_mod);
   println ("       "^w_gcd^" "^w_gcd);
-  println ("       "^w_add_mul_div^" "^w_pos_mod^"."); 
+  println ("       "^w_add_mul_div^" "^w_pos_mod);
+  println ("       "^wt^"_is_even "^wt^"_sqrt2 "^wt^"_sqrt."); 
   println "";
 
   end_file out;
@@ -2016,6 +2137,7 @@ let print_op () =
   print "Require Import ";print !basename;println "_head0_spec."; 
   print "Require Import ";print !basename;println "_add_mul_div_spec."; 
   print "Require Import ";print !basename;println "_pos_mod_spec."; 
+  print "Require Import ";print !basename;println "_sqrt_spec."; 
   println "Require Import ZnZ.";
 
   println ("Lemma "^w_op^"_spec : znz_spec "^w_op^".");
@@ -2061,6 +2183,9 @@ let print_op () =
     println (" exact "^w_head0^"_spec.");
     println (" exact "^w_add_mul_div^"_spec.");
     println (" exact "^w_pos_mod^"_spec.");
+    println (" exact "^wt^"_is_even_spec.");
+    println (" exact "^wt^"_sqrt2_spec.");
+    println (" exact "^wt^"_sqrt_spec.");
     println ("Qed.");
   end;
   println "";
@@ -2080,6 +2205,7 @@ let _ =
      print_mul ();
      print_div ();
      print_pos_mod ();
+     print_sqrt ();
      print_lift ();
      print_op ()
    end
@@ -2092,6 +2218,7 @@ let _ =
      if !mul then print_mul ();
      if !div then print_div ();
      if !pos_mod then print_pos_mod ();
+     if !sqrt then print_sqrt ();
      if !lift then print_lift ();
      if !op then print_op ()
    end

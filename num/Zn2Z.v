@@ -8,6 +8,7 @@ Require Import GenBase.
 Require Import GenAdd.
 Require Import GenSub.
 Require Import GenMul.
+Require Import GenSqrt.
 Require Import GenLift.
 Require Import GenDivn1.
 Require Import GenDiv. 
@@ -20,8 +21,10 @@ Section Zn2Z.
  
  Variable w : Set.
  Variable w_op : znz_op w.
-
  Let w_digits      := w_op.(znz_digits).
+
+ Variable more_than_one_digit: 1 < Zpos w_digits.
+
  Let w_to_Z        := w_op.(znz_to_Z).
  Let w_of_pos      := w_op.(znz_of_pos).
  Let w_head0       := w_op.(znz_head0).
@@ -73,6 +76,10 @@ Section Zn2Z.
  Let w_add_mul_div := w_op.(znz_add_mul_div). 
 
  Let w_pos_mod := w_op.(znz_pos_mod).
+
+ Let w_is_even     := w_op.(znz_is_even).
+ Let w_sqrt2       := w_op.(znz_sqrt2).
+ Let w_sqrt        := w_op.(znz_sqrt).
 
  Let _zn2z := zn2z w.
 
@@ -224,6 +231,19 @@ Section Zn2Z.
  Let pos_mod := 
   Eval lazy beta delta [ww_pos_mod] in ww_pos_mod w_0 w_digits w_WW w_pos_mod.
 
+ Let is_even := ww_is_even w_is_even.
+
+ Let sqrt2 := 
+  Eval lazy beta delta [ww_sqrt2] in
+    ww_sqrt2 w_is_even w_compare w_0 w_1 w_Bm1 w_sub w_square_c
+    w_div21 w_add_mul_div w_digits w_add_c w_sqrt2 pred_c
+    pred add_c add sub_c add_mul_div.
+
+ Let sqrt := 
+  Eval lazy beta delta [ww_sqrt] in
+    ww_sqrt w_0 w_add_mul_div w_digits w_sqrt2 
+    add_mul_div head0 compare.
+
  Let gcd_gt_fix := 
   Eval cbv beta delta [ww_gcd_gt_aux ww_gcd_gt_body] in
   ww_gcd_gt_aux w_digits w_0 w_WW w_compare w_sub_c w_sub w_sub_carry w_gcd_gt
@@ -258,7 +278,10 @@ Section Zn2Z.
     mod_gt mod_
     gcd_gt gcd
     add_mul_div
-    pos_mod.
+    pos_mod
+    is_even
+    sqrt2
+    sqrt.
 
  Definition mk_zn2z_op_karatsuba := 
    mk_znz_op _ww_digits
@@ -276,7 +299,10 @@ Section Zn2Z.
     mod_gt mod_
     gcd_gt gcd
     add_mul_div
-    pos_mod.
+    pos_mod
+    is_even
+    sqrt2
+    sqrt.
 
  (* Proof *)
  Variable op_spec : znz_spec w_op.
@@ -318,9 +344,11 @@ Section Zn2Z.
     (spec_gcd_gt op_spec)
     (spec_gcd op_spec) 
     (spec_head0 op_spec) 
-    (spec_add_mul_div op_spec).
-
-
+    (spec_add_mul_div op_spec)
+    (spec_pos_mod)
+    (spec_is_even)
+    (spec_sqrt2)
+    (spec_sqrt).
 
  Let wwB := base _ww_digits.
 
@@ -638,6 +666,44 @@ Section Zn2Z.
    _ _);auto. exact (spec_compare op_spec).
  Qed.
 
+ Let spec_ww_is_even : forall x,
+      match is_even x with
+         true => [|x|] mod 2 = 0
+      | false => [|x|] mod 2 = 1
+      end.
+ Proof.
+ refine (@spec_ww_is_even w w_is_even w_0 w_1 w_Bm1 w_digits _ _ _); auto.
+ exact (spec_is_even op_spec).
+ Qed.
+
+ Let spec_ww_sqrt2 : forall x y,
+       wwB/ 4 <= [|x|] ->
+       let (s,r) := sqrt2 x y in
+          [[WW x y]] = [|s|] ^ 2 + [+|r|] /\
+          [+|r|] <= 2 * [|s|].
+ Proof.
+ intros x y H.
+ refine (@spec_ww_sqrt2 w w_is_even w_compare w_0 w_1 w_Bm1
+               w_sub w_square_c w_div21 w_add_mul_div w_digits
+               w_add_c w_sqrt2 pred_c pred add_c add sub_c add_mul_div
+                _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _); auto.
+ exact (spec_is_even op_spec).
+ exact (spec_compare op_spec).
+ exact (spec_square_c op_spec).
+ exact (spec_div21 op_spec).
+ exact (spec_ww_add_mul_div).
+ exact (spec_sqrt2 op_spec).
+ Qed.
+
+ Let spec_ww_sqrt : forall x,
+       [|sqrt x|] ^ 2 <= [|x|] < ([|sqrt x|] + 1) ^ 2.
+ Proof.
+ refine (@spec_ww_sqrt w w_0 w_1 w_Bm1 w_add_mul_div w_digits 
+               w_sqrt2 add_mul_div head0 compare
+            _ _ _ _ _ _ _ _ _ _); auto.
+ exact (spec_ww_add_mul_div).
+ exact (spec_sqrt2 op_spec).
+ Qed.
 
  Lemma mk_znz2_spec : znz_spec mk_zn2z_op.
  Proof.

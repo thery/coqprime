@@ -63,8 +63,12 @@ Section ZnZ_Op.
     znz_gcd_gt      : znz -> znz -> znz;
     znz_gcd         : znz -> znz -> znz; 
     znz_add_mul_div : positive -> znz -> znz -> znz;
-    znz_pos_mod     : positive -> znz -> znz				    
-  }.
+    znz_pos_mod     : positive -> znz -> znz;
+
+   (* square root *)
+    znz_is_even     : znz -> bool;
+    znz_sqrt2       : znz -> znz -> znz * carry znz;
+    znz_sqrt        : znz -> znz  }.
 
 End ZnZ_Op.
 
@@ -108,7 +112,7 @@ Section Spec.
 
  Let w_mul_c       := w_op.(znz_mul_c).
  Let w_mul         := w_op.(znz_mul).
- Let w_square_c       := w_op.(znz_square_c).
+ Let w_square_c    := w_op.(znz_square_c).
  
  Let w_div21       := w_op.(znz_div21).
  Let w_div_gt      := w_op.(znz_div_gt).
@@ -122,7 +126,11 @@ Section Spec.
 
  Let w_add_mul_div := w_op.(znz_add_mul_div).
 
- Let w_pos_mod         := w_op.(znz_pos_mod).
+ Let w_pos_mod     := w_op.(znz_pos_mod).
+
+ Let w_is_even     := w_op.(znz_is_even).
+ Let w_sqrt2       := w_op.(znz_sqrt2).
+ Let w_sqrt        := w_op.(znz_sqrt).
 
  Notation "[| x |]" := (w_to_Z x)  (at level 0, x at level 99).
 
@@ -224,7 +232,17 @@ Section Spec.
          ([|x|] * (Zpower 2 (Zpos p)) +
           [|y|] / (Zpower 2 ((Zpos w_digits) - (Zpos p)))) mod wB;
     spec_pos_mod : forall w p,
-       [|w_pos_mod p w|] = [|w|] mod (2 ^ Zpos p)
+       [|w_pos_mod p w|] = [|w|] mod (2 ^ Zpos p);
+    (* sqrt *)
+    spec_is_even : forall x,
+      if w_is_even x then [|x|] mod 2 = 0 else [|x|] mod 2 = 1;
+    spec_sqrt2 : forall x y,
+       wB/ 4 <= [|x|] ->
+       let (s,r) := w_sqrt2 x y in
+          [||WW x y||] = [|s|] ^ 2 + [+|r|] /\
+          [+|r|] <= 2 * [|s|];
+    spec_sqrt : forall x,
+       [|w_sqrt x|] ^ 2 <= [|x|] < ([|w_sqrt x|] + 1) ^ 2
   }.
 
 End Spec.

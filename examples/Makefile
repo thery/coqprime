@@ -87,7 +87,8 @@ COQLIBS=-I .\
 
 VFILES=BasePrimes.v\
   PocklingtonRefl.v\
-  TestLucas.v
+  TestLucas.v\
+  prime216656403549020227250327256032933021325435259861468456540459488823774358486649614451547405419273433458932168893949521787.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -96,7 +97,8 @@ GHTMLFILES=$(VFILES:.v=.g.html)
 
 all: BasePrimes.vo\
   PocklingtonRefl.vo\
-  TestLucas.vo
+  TestLucas.vo\
+  prime216656403549020227250327256032933021325435259861468456540459488823774358486649614451547405419273433458932168893949521787.vo
 
 spec: $(VIFILES)
 
@@ -155,8 +157,8 @@ include .depend
 
 .depend depend:
 	rm -f .depend
-	$(COQDEP) -i $(COQLIBS) *.v *.ml *.mli >.depend
-	$(COQDEP) $(COQLIBS) -suffix .html *.v >>.depend
+	$(COQDEP) -i $(COQLIBS) $(VFILES) *.ml *.mli >.depend
+	$(COQDEP) $(COQLIBS) -suffix .html $(VFILES) >>.depend
 
 install:
 	mkdir -p `$(COQC) -where`/user-contrib

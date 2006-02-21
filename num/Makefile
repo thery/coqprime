@@ -91,6 +91,7 @@ VFILES=Basic_type.v\
   GenLift.v\
   GenDivn1.v\
   GenDiv.v\
+  GenSqrt.v\
   ZnZ.v\
   Zn2Z.v\
   W.v\
@@ -110,6 +111,7 @@ all: Basic_type.vo\
   GenLift.vo\
   GenDivn1.vo\
   GenDiv.vo\
+  GenSqrt.vo\
   ZnZ.vo\
   Zn2Z.vo\
   W.vo\
