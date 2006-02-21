@@ -96,7 +96,8 @@ VFILES=Basic_type.v\
   Zn2Z.v\
   W.v\
   Lucas.v\
-  Pock.v
+  Pock.v\
+  Mod_op.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -116,7 +117,8 @@ all: Basic_type.vo\
   Zn2Z.vo\
   W.vo\
   Lucas.vo\
-  Pock.vo
+  Pock.vo\
+  Mod_op.vo
 
 spec: $(VIFILES)
 
