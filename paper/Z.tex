@@ -1,0 +1,38 @@
+\section{Integer arithmetic \label{Z}}
+Positive integers have the following definition in {\sc Coq}
+\begin{verbatim}
+Inductive positive : Set :=
+    xI : positive -> positive 
+  | xO : positive -> positive 
+  | xH : positive.
+\end{verbatim}
+Positive numbers are represented as linear structures, low bits first.
+The constructor {\tt xI} indicates a one digit, the constructor {\tt xO}
+a zero digit and the constructor {\tt xH} the end of structure and represents
+an implicit one. For example, 17 and 18 are represented as {\tt xI (xO (xO (xO (xH))))} and
+{\tt xO (xI (xO (xO (xH))))} respectively. The choice of the representation
+has clearly some impact on the way operations are implemented. To illustrate this on an example,
+let us consider the comparison function {\tt Pcmp}. It takes two positive numbers
+and returns a comparison value
+\begin{verbatim}
+Inductive comparison: Set :=
+    Eq: comparison | Lt: comparison | Gt: comparison.
+\end{verbatim}
+As the numbers are represented low bits first, an efficient way of doing the
+comparison is to walk down both numbers keeping track of what the current status
+of the comparison is. This is what the auxillary function {\tt Pcompare} does, the main 
+function {\tt Pcomp} just starts the computation with the initial status being equality.
+\begin{verbatim}
+Fixpoint Pcompare (x y: positive) (r: comparison): comparison :=
+  match x, y with
+  |    xH,    xH => r
+  |    xH,    _  => Lt
+  |    _ ,    xH => Gt
+  | xI x', xI y' => Pcompare x' y' r
+  | xO x', xO y' => Pcompare x' y' r
+  | xI x', xO y' => Pcompare x' y' Gt
+  | xO x', xI y' => Pcompare x' y' Lt
+  end.
+  
+Definition Pcmp x y := Pcompare x y Eq.
+\end{verbatim}

@@ -105,7 +105,7 @@ Figure~\ref{fig:TimeComp}.
 \end{center}
 \caption{Some verifications of certificates with the standard and two level approaches}
 \label{fig:TimeComp}
-\end{figure}
+\end{figure} 
 There was still room for improvement. When dealing
 with relatively large numbers (> 1000 digits?) the verification was getting really
 time consuming. This was particularly true when applying the very simple Lehmer test
@@ -115,7 +115,7 @@ Let ($S_n$) be recursively defined by $S_0= 4$ and $S_{n+1} = S_n^2 - 2$,
 for $p > 2$, $2^p-1$ is prime if and only if $(2^p -1) | S_{p-2}$.
 \end{theorem}
 The bottle neck was clearly the default arithmetic provided by {\sc Coq}. If it was 
-reasonable when dealing with small numbers, dealing with larger number was problematic.
+reasonable for small numbers, dealing with larger number was problematic.
 The purpose of this paper is to propose a more adequate arithmetic for safe computations
 with arbitrary large numbers within {\sc Coq}. If we consider the type of computations
 we need, the most cpu-intensive verifications only require modular arithmetic.  
@@ -126,14 +126,13 @@ $$
 Finally an equivalent version of Theorem \ref{lucas} is
 \begin{theorem}
 Let $M_p$ be $2^p-1$ and let  ($S_p$) be recursively defined by $S_0= 4\, \mod\, M_p$ and $S_{n+1} = S_n^2 - 2\, \mod\, M_p$,
-for $p > 2$, $2^p-1$ is prime if and only if $S_{p-2} = 0\, \mod\, M_p $.
+for $p > 2$, $M_p$ is prime if and only if $S_{p-2} = 0\, \mod\, M_p $.
 \end{theorem}
  So we concentrate our effort on providing a library for modular arithmetic. The key idea of our
  library is to implement a representation of numbers that accommodates the divide and
  conquer strategy to speed-up computation. The paper is organised as follows. 
- In Section 2, we present the default arithmetic of {\sc Coq}.
- Our representation of numbers is described in Section 3. In Section 4, we 
+ In Section~\ref{Z}, we present the default arithmetic of {\sc Coq}.
+ Our representation of numbers is described in Section~\ref{Tree}. In Section~\ref{Op}, we 
  give an overview of the functions that have been implemented and proved
  correct in our library. Section 5 presents some tests that validate our approach.
- In Section 6, we detail some further experiments that we have carried out based on
- our library.
+ In Section 6, we detail some further experiments that we have been carrying out.
