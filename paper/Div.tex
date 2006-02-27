@@ -1,5 +1,79 @@
 \subsection{Division}
+The algorithm we have implemented is described in~\cite{RecDiv}.
+The general division algorithm is the usual schoolboy method that
+iterates the division of two words by one word. 
+The key point is implementing this last division efficiently. For this, 
+the idea is first to use a recursive call to guess an approximation of the quotient and 
+then to perform an adjustment in order to get the proper quotient.
 
+In our development, the division two by one on single words takes
+three words and returns a pair composed of the quotient and the remainder.
 \begin{verbatim}
-je m'en charge
+Variable w_div21: w -> w -> w -> w * w
 \end{verbatim}
+and its specification is 
+\begin{verbatim}
+forall a1 a2 b,  [|a1|] < [|b|] -> wB / 2 <= [|b|] -> 
+  let (q, r) := w_div21 a1 a2 b in
+   [|a1|] * wB + [|a2|] = [|q|] * [|b|] + [|r|] /\ 
+    0 <= [|r|] < [|b|].
+\end{verbatim}
+Only the two conditions deserve some explanation.
+The first one ensures that the quotient fits in one word.
+The second one requires the first bit of the divisor to be a 
+one. It ensures that the recursive call computes an approximation 
+of the quotient that is not too far from the correct value.
+
+Before defining the function {\tt ww\_div21} for two-word elements,
+we need to define the intermediate function  {\tt w\_div32}
+that divides three one-word elements by two one-word elements.
+Its specification is
+\begin{verbatim}
+forall a1 a2 a3 b1 b2, 
+  [[WW a1 a2]] < [[WW b1 b2]] -> wB / 2 <= [|b1|] ->
+  let (q, r) := w_div32 a1 a2 a3 b1 b2 in
+  [|a1|] * wB ^ 2 + [|a2|] * wB  + [|a3|] =  
+      [|q|] *  ([|b1|] * wB + [|b2|])  + [[r]] /\ 
+  0 <= [[r]] < [|b1|] * wB + [|b2|].
+\end{verbatim}
+The two conditions play the same rôles than the ones for the specification of {\tt w\_div21}.
+As the code is a bit intricate, we just explain here how the function
+proceeds. It first calls {\tt w\_div21} to divide {\tt a1} and {\tt a2}
+by {\tt b1}. This gives a pair {\tt q} and {\tt r} such that
+$$ [|a_1|] \textit{wB} + [|a_2|] = [|q|] * [|b_1|] + [|r|]$$
+{\tt q} is considered as the approximation of quotient.
+The second condition in the specification ensures that if this approximation
+is not exact, it exceeds the real value of at most two units. So the quotient 
+can only be {\tt q}, {\tt q - 1} or {\tt q - 2}. 
+As we have 
+$$ [|a_1|] \textit{wB}^2  + [|a_2|] \textit{wB} + [|a_3|] = [|q|] * ([|b_1|] \textit{wB}  + [|b_2|]) + ([|r|] \textit{wB} - 
+[|q|] * [|b_2|]) $$
+we know in which situation we are by testing the sign of the candidate
+remainder.
+In our modular arithmetic, it amounts in checking if the substraction   {\tt (WW r wO) - (q * b2)} 
+produces or not a carry.  
+If it is positive (no carry), the quotient is {\tt q}. If it is negative (a carry), we
+have to consider {\tt q - 1} and add in consequence {\tt (WW b1 b2)} to the candidate remainder.
+We test again the sign of this new candidate. If it is positive, the quotient is {\tt q - 1}
+otherwise it is {\tt q - 2}.
+Now the definition of {\tt ww\_div21} is straightforward. Not considering the cases for the {\tt W0}
+constructor, we get
+\begin{verbatim} 
+ Definition ww_div21 a1 a2 b :=
+  match a1, a2, b with
+  ....  
+  | WW a1H a1L, WW a2H a2L, WW bH bL =>
+        let (q1, r) := w_div32 a1H a1L a2H bH bL in
+        match r with
+        | W0 => (WW q1 w_0, W0W a2l)
+        | WW rH rL =>
+          let (q2, s) := w_div32 rH rL a2L b1 b2 in
+          (WW q1 q2, s)
+        end
+  end.
+\end{verbatim}
+Dividing with {\tt w\_div32} the high part of {\tt a1}, the low part of {\tt a1} and the high part of {\tt a2}
+by the high and low parts of {\tt b} gives the high part of the quotient. Dividing again with {\tt w\_div32} 
+the high part of the remainder, the low part of the remainder, the low part of {\tt a2} by the high and 
+low parts of {\tt b} gives  the low part of the quotient and the remainder.
+  
