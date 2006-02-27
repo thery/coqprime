@@ -40,9 +40,8 @@ to 17.  The size of the proof object is then independent of the number to be pro
 prime. Recent progress in the evaluation mechanism~\cite{GreLer} has also made this
 approach attractive from the point of view of efficiency.
 
-The motivation of what is presented in this paper comes from an earlier work 
-presented in~\cite{GreTheWer}. In this work, a more elaborated way of applying 
-the two level approach is proposed to prove primality. It is based on the
+In~\cite{GreTheWer} we have presented a more elaborated way of applying 
+the two level approach for proving primality. It is based on the
 notion of prime certificate and more precisely of {\it Pocklington certificate}.
 A prime certificate is an object that witnesses the primality of a number.
 The Pocklington certificates we have been using are justified by the following
@@ -77,12 +76,10 @@ safe computation) is done inside {\sc Coq}.
 The generation of the certificate is delegated to an external tool.
 This is a direct application of the skeptic approach described in~\cite{BarBar,HarThe}.
                  
-The idea of using Pocklington certificate was not new and originally presented 
-in~\cite{Caprotti_Oostdijk:01pockjsc}.
-What was new was to apply the two level approach for verifying the
-certificates. The improvement in term of size of the
-proof object and in term of time is illustrated on some examples in
-Figure~\ref{fig:TimeComp}.
+With respect to the standard approach for the same problem~\cite{Caprotti_Oostdijk:01pockjsc}, the two level
+approach gives a huge improvement in term of size of the
+proof object and in term of time.  Figure~\ref{fig:TimeComp} illustrates this
+on some small examples.
 \begin{figure}
 \begin{center}
 \begin{tabular}{|l|r|r|r|r|r|r|}
