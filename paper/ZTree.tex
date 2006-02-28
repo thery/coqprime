@@ -1,0 +1,150 @@
+\section{Linear versus tree-like representations of numbers\label{ZTree}}
+
+In the standard library of {\sc Coq}, positive numbers are represented as linear structures, low bits first.
+
+\begin{verbatim}
+Inductive positive : Set :=
+    xI : positive -> positive 
+  | xO : positive -> positive 
+  | xH : positive.
+\end{verbatim}
+The constructor {\tt xI} indicates a one digit, the constructor {\tt xO}
+a zero digit and the constructor {\tt xH} a final one digit.
+For example, 17 and 18 are represented as {\tt xI (xO (xO (xO (xH))))} and
+{\tt xO (xI (xO (xO (xH))))} respectively. The choice of the representation
+has clearly some impact on the way operations are implemented. To illustrate this on an example,
+let us consider the comparison function {\tt Pcmp}. It takes two positive numbers
+and returns a comparison value
+\begin{verbatim}
+Inductive comparison: Set :=
+    Eq: comparison | Lt: comparison | Gt: comparison.
+\end{verbatim}
+For comparing two numbers and as these numbers are represented low bits first,
+one needs to walk down both numbers keeping track of what the current status
+of the comparison is. This is what the auxillary function {\tt Pcompare} does, the main 
+function {\tt Pcomp} starting the computation with the initial status being equality.
+\begin{verbatim}
+Fixpoint Pcompare (x y: positive) (r: comparison): comparison :=
+  match x, y with
+  |    xH,    xH => r
+  |    xH,    _  => Lt
+  |    _ ,    xH => Gt
+  | xI x', xI y' => Pcompare x' y' r
+  | xO x', xO y' => Pcompare x' y' r
+  | xI x', xO y' => Pcompare x' y' Gt
+  | xO x', xI y' => Pcompare x' y' Lt
+  end.
+  
+Definition Pcmp x y := Pcompare x y Eq.
+\end{verbatim}
+This is clearly not optimal but this is the best one can do given the representation
+of numbers. Note that changing to high bits first would lead to an improved
+comparison but would penalize other functions like parity checking. The linear
+nature of the representation makes that recursive calls only skip a single
+bit. This is a real problem. Efficient algorithms for large numbers like Karatsuba 
+multiplication use a divide and conquer strategy which requires to be able to split numbers
+in parts. 
+This motivates our representation based on a tree-like structure. Given an arbitrary word set {\tt w}, we define
+the two-word set {\tt w2 w} as follows 
+\begin{verbatim}
+Inductive w2 (w: Set): Set :=  
+   WW : w -> w -> w2 w.
+\end{verbatim}
+Arbitrarily we have chosen than high bits are given first, low bits
+second. Now using dependent type, we can iterate this process and define
+numbers of height {\tt n} that consits in $2^\texttt{n}$ words.
+\begin{verbatim}
+Fixpoint word (w: Set) (n:nat): Set :=
+ match n with
+ | O => w
+ | S n => w2 (word w n)
+ end.
+\end{verbatim}
+To represent a given number, one has to choose an appropriate height.
+For example, taking the booleans as basic words, a minimum
+height of 2 is necessary for the number 13. With this height, it is represented 
+as {\tt (WW (WW true false) (WW true true))}. This object has type {\tt (word bool 2)}.
+
+Following the methodology proposed in~\cite{GreMa} in a similar setting, 
+the operations are not going to be directly defined on the type {\tt word}.
+Definitions are staggered instead. What is defined is a functor that 
+allows to build a two-word modular arithmetic on top of a single-word modular
+arithmetic. To rephrase it,
+when defining a new function, we just need to explain how to compute the 
+result on two-word values knowing how to compute it on single-word values.
+To illustrate this, let us go back to our comparison function. 
+To mimic the function {\tt Pcompare}, we first suppose the existence
+of the comparison on single words
+\begin{verbatim}
+Variable w_compare: w -> w -> comparison -> comparison.
+\end{verbatim}
+and then define the function for two-word values
+\begin{verbatim}
+Definition ww_compare (x y: w2 w) (r: comparison) :=
+  match x, y with
+     WW xH xL, WW yH yL => w_compare xH yH (w_compare xL yL r) 
+  end.
+\end{verbatim}
+This is not the function that is defined in our library. We can get
+a more efficient implementation taking  advantage of the tree-like 
+structure and comparing first the high bits.  
+\begin{verbatim}
+Variable w_cmp: w -> w -> comparison.
+
+Definition ww_cmp (x y: w2 w) :=
+  match x, y with
+     WW xH xL, WW yH yL => 
+       match w_cmp xH yH with 
+          Eq  => w_cmp xL yL
+       |  cmp => cmp
+       end
+  end. 
+\end{verbatim}
+The capacity of choosing between high and low bits alone is
+not sufficient to justify our choice of representation. What
+is important is that with this representation we get for free
+the possibility to split numbers in two. The next section 
+explains how to take advantage of this property.
+One main drawback of our representation is that we can only manipulate
+complete binary trees. So even choosing
+carefully the appropriate height, half of the numbers of words could be unnecessary 
+to compute the final result. 
+To soften this problem, we have extended the definition of {\tt w2} to include an
+empty word {\tt W0}. 
+\begin{verbatim}
+Inductive w2: Set :=  
+   W0: w2
+|  WW: w -> w -> w2.
+\end{verbatim}
+For example, the number 13 can be represented at height 3 as
+\begin{verbatim}
+ WW W0 (WW (WW true false) (WW true true))
+\end{verbatim}
+With this extension, we loose the unicity of representation. Still, there is a notion
+of canonicity, {\tt W0} should always be prefered to a tree full of zeros. Note that in
+our development all functions have been carefully written in order to preserve canonicity but
+canonicity  is not formally proved since it is not necessary for ensuring safe computations.
+The final version of the comparison function is then
+\begin{verbatim}
+Definition ww_cmp (x y: w2 w) :=
+  match x, y with
+  | W0, W0 => Eq
+  | W0, WW yH yL =>
+    match w_cmp w_0 yH with
+    | Eq => w_cmp w_0 yL
+    | _  => Lt
+    end
+  | WW xh xl, W0 =>
+    match w_cmp xH w_0 with
+    | Eq => w_cmp xL w_0
+    | _  => Gt
+    end
+  | WW xH xL, WW yH yL =>
+    match w_cmp xH yH with
+    | Eq  => w_cmp xL yL
+    | cmp => cmp
+    end
+  end.
+\end{verbatim}
+where {\tt w\_0} represents the zero for single word.
+
