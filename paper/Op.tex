@@ -142,9 +142,9 @@ Performing a multiplication requires four submultiplications.
 Karatsuba multiplication~\cite{Karat} saves one of these submultiplications
 \begin{verbatim}
 [[WW aH aL]] * [[WW bH bL]] =
-  let v1 := [|aH|] * [|bH|] in
-  let v2 := [|aL|] * [|bL|] in
-  v1 + (([|aH|] + [|bL|]) * ([|aL|] + [|bH|]) - v1 - v2) * wB + v2
+  let HH := [|aH|] * [|bH|] in
+  let LL := [|aL|] * [|bL|] in
+  HH + (([|aH|] + [|aL|]) * ([|bH|] + [|bL|]) - HH - LL) * wB + LL
 \end{verbatim}
 Note that Karatsuba multiplication is more effective than the naive one
 only when numbers are getting large enough. This means that our library
@@ -264,7 +264,7 @@ w_div2s: carry w -> w -> w -> carry w * carry w
 with its specification
 \begin{verbatim}
  forall a1 a2 b,
-     wB/2 <= [|b|] -> [+|a1|] <= 2 * [|b|] ->
+     wB / 2 <= [|b|] -> [+|a1|] <= 2 * [|b|] ->
      let (q,r) := w_div2s a1 a2 b in
      [+|a1|] * wB + [|a2|] = [+|q|] *  (2 * [|b|]) + [+|r|] /\ 
      0 <= [+|r|] < 2 * [|b|].
