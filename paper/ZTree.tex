@@ -1,4 +1,4 @@
-\section{Linear versus tree-like representations of numbers\label{ZTree}}
+\section{Linear versus tree representations of numbers\label{ZTree}}
 
 In the standard library of {\sc Coq}, positive numbers are represented as linear structures, low bits first.
 
@@ -42,7 +42,7 @@ of numbers. Note that changing to high bits first would lead to an improved
 comparison but would penalize other functions like parity checking. The linear
 nature of the representation makes that recursive calls only skip a single
 bit. This is a real problem. Efficient algorithms for large numbers like Karatsuba 
-multiplication use a divide and conquer strategy which requires to be able to split numbers
+multiplication~\cite{Karat} use a divide and conquer strategy which requires to be able to split numbers
 in parts. 
 This motivates our representation based on a tree-like structure. Given an arbitrary word set {\tt w}, we define
 the two-word set {\tt w2 w} as follows 
@@ -87,7 +87,7 @@ Definition ww_compare (x y: w2 w) (r: comparison) :=
 \end{verbatim}
 This is not the function that is defined in our library. We can get
 a more efficient implementation taking  advantage of the tree-like 
-structure and comparing first the high bits.  
+structure and comparing the high bits first.  
 \begin{verbatim}
 Variable w_cmp: w -> w -> comparison.
 
@@ -102,12 +102,16 @@ Definition ww_cmp (x y: w2 w) :=
 \end{verbatim}
 The capacity of choosing between high and low bits alone is
 not sufficient to justify our choice of representation. What
-is important is that with this representation we get for free
+is important with this representation is that we get for free
 the possibility to split numbers in two. The next section 
 explains how to take advantage of this property.
+Note also that in term of allocation, having a tree structure
+does not imply any overhead. Building a tree structure or 
+building the equivalent linear list of words require the same number of cells.
+
 One main drawback of our representation is that we can only manipulate
 complete binary trees. So even choosing
-carefully the appropriate height, half of the numbers of words could be unnecessary 
+carefully the appropriate height, half of the words could be unnecessary 
 to compute the final result. 
 To soften this problem, we have extended the definition of {\tt w2} to include an
 empty word {\tt W0}. 
