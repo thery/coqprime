@@ -37,7 +37,7 @@ forall x y,
 
 \subsection{Words and carries}
 
-For some basic functions like addition and substration, their corresponding
+For some basic functions like addition and subtraction, their corresponding
 modular implementation if considered as a function that takes two words and
 returns a word cannot be exact. The result fits in a word plus a carry.  
 To represent carries, the only possibility in a functional language is
@@ -56,20 +56,20 @@ One interprets positively the carry: {\tt [+|C1 x|] = wB + [|x|]} and
 To illustrate how carries are manipulated, let us consider the successor function.
 In our library it is represented by two functions
 \begin{verbatim}
-w_sub: w -> w -> w
-w_sub_c: w -> w -> carry w
+w_succ: w -> w -> w
+w_succ_c: w -> w -> carry w
 \end{verbatim}
 The first function represents the modular version, the second one the exact 
 version. With these two functions, it is possible to define the version
-for two-words element. For example, the definition of the modular one is
+for two-word elements. For example, the definition of the modular one is
 \begin{verbatim}
  Definition ww_succ x :=
   match x with
   | W0 => WW w_0 w_1
-  | WW xh xl =>
-    match w_succ_c xl with
-    | C0 l => WW xh l
-    | C1 l => WW (w_succ xh) w_0
+  | WW xH xL =>
+    match w_succ_c xL with
+    | C0 l => WW xH l
+    | C1 l => WW (w_succ xH) w_0
     end
   end.
 \end{verbatim}
@@ -146,11 +146,11 @@ Karatsuba multiplication~\cite{Karat} saves one of these submultiplications
   let LL := [|aL|] * [|bL|] in
   HH + (([|aH|] + [|aL|]) * ([|bH|] + [|bL|]) - HH - LL) * wB + LL
 \end{verbatim}
-Note that Karatsuba multiplication is more effective than the naive one
-only when numbers are getting large enough. This means that our library
+Note that Karatsuba multiplication is more efficient than the naive one
+only when numbers are getting large enough. So our library
 includes the two implementations. They are used to define two
-different functors. The functor with the naive multiplication to
-build operations for trees of small height.
+different functors. The functor with the naive multiplication is used to
+build operations for trees of small height. 
 
 \subsubsection{Recursive Division}
 The general division algorithm that we have implemented is the usual schoolboy 
@@ -169,10 +169,9 @@ and its specification is
 \begin{verbatim}
 forall a1 a2 b,  [|a1|] < [|b|] -> wB / 2 <= [|b|] -> 
   let (q, r) := w_div21 a1 a2 b in
-   [|a1|] * wB + [|a2|] = [|q|] * [|b|] + [|r|] /\ 
-    0 <= [|r|] < [|b|].
+   [[WW a1 a2]] = [|q|] * [|b|] + [|r|] /\ 0 <= [|r|] < [|b|].
 \end{verbatim}
-Only the two conditions deserve some explanation.
+The two conditions deserve some explanation.
 The first one ensures that the quotient fits in one word.
 The second one requires the first bit of the divisor to be a 
 one. It ensures that the recursive call computes an approximation 
@@ -187,10 +186,9 @@ forall a1 a2 a3 b1 b2,
   [[WW a1 a2]] < [[WW b1 b2]] -> wB / 2 <= [|b1|] ->
   let (q, r) := w_div32 a1 a2 a3 b1 b2 in
   [|a1|] * wB ^ 2 + [|a2|] * wB  + [|a3|] =  
-      [|q|] *  ([|b1|] * wB + [|b2|])  + [[r]] /\ 
-  0 <= [[r]] < [|b1|] * wB + [|b2|].
+      [|q|] *  [[WW b1 b2]] + [[r]] /\ 0 <= [[r]] < [[WW b1 b2]].
 \end{verbatim}
-The two conditions play the same rôles than the ones for the specification of {\tt w\_div21}.
+The two conditions play the same roles than the ones for the specification of {\tt w\_div21}.
 As the code is a bit intricate, we just explain here how the function
 proceeds. It first calls {\tt w\_div21} to divide {\tt a1} and {\tt a2}
 by {\tt b1}. This gives a pair {\tt q} and {\tt r} such that
@@ -204,7 +202,7 @@ can only be {\tt q}, {\tt q - 1} or {\tt q - 2}.
 As we have 
 \begin{verbatim}
  [|a1|] *  wB ^ 2  + [|a2|] * wB + [|a3|] = 
-   [|q|] * ([|b1|] * wB  + [|b2|]) + ([|r|] * wB - [|q|] * [|b2|])
+   [|q|] * [[WW b1 b2]] + ([|r|] * wB - [|q|] * [|b2|])
 \end{verbatim}
 we know in which situation we are by testing the sign of the candidate
 remainder.
@@ -239,7 +237,7 @@ low parts of {\tt b} gives  the low part of the quotient and the remainder.
 
 The algorithm for computing the square root is similar to the one for division.
 It was first described in~\cite{RecSqrt} and has already been formalized in a 
-theorem prover~\cite{BerMagZim02}. It requires the number to be splitted
+theorem prover~\cite{BerMagZim02}. It requires the number to be split
 in four. For this reason it is represented by the following function in our
 library
 \begin{verbatim}
@@ -272,12 +270,12 @@ with its specification
 The idea of the algorithm is given by the following equation
 \begin{verbatim}
   [[WW aH aL]] * wB ^ 2 + [[WW bH bL]] =
-    let (q, r) := w_sqrt aH aL in
-    let (q1, r1) := w_div2s q bH q in
+    let  (q, r)  := w_sqrt aH aL in
+    let (q1, r1) := w_div2s r bH q in
     [[WW q q1]] ^ 2 + [+|r1|] * wB + [|bL|] - [|q1|] ^ 2 
 \end{verbatim}
 It indicates that the element {\tt (WW q q1)} is a possible candidate
 for the square root. As a matter of fact, because of the condition on
 the input, we are sure that the square root is either {\tt (WW q q1)} or
-{\tt (WW q q1) -1}. It is the sign of {\tt [+|r1|] * wB + 
+{\tt (WW q q1) - 1}. It is the sign of {\tt [+|r1|] * wB + 
 [|bL|] - [|q1|] \^{} 2} that indicates in which situation we are. 
