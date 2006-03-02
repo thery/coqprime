@@ -1,1 +1,56 @@
 \section{Evaluating the library \label{bench}}
+
+The complete library with the corresponding contribution for prime number is available at\\
+\url{http://gforge.inria.fr/projects/coqprime/}\\
+\begin{figure}
+\begin{center}
+\begin{tabular}{|l|r| r|r|}
+\hline
+ & ~digits~ & ~postive~ & ~w8~ \\
+\hline
+~1234567891       ~  & 10~  & 0.50s~  & 0.10s~  \\
+~74747474747474747~  & 17~ & 0.56s~  & 0.12s~  \\
+~1111111111111111111~ & 19~ & 0.66s~ & 0.20s~  \\
+~$(2^{148}+1)/17$ ~   & 44~ & 2.77s~  & 0.36s~  \\
+~$P_{150}$   ~       & 150~ & 75.62s~  & 8.44s~  \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Some verifications of certificates with the standard and our modular arithmetics}
+\label{fig:TimeCompW}
+\end{figure} 
+
+   
+\begin{figure}
+\begin{center}
+\begin{tabular}{|r|r|r|r|l|r|r|r|r|r |}
+\hline
+\# & n & digits & years &  discoverer &  positive & w8 & w31 & w64 & Bigint\\
+\hline
+ 8 &   31 &  10 & 1772 & Euler      & 0.01s & 0.01s \\
+ 9 &   61 &  19 & 1883 & Pervushin  & 0.08s & 0.01s \\
+10 &   89 &  27 & 1911 & Powers    & 0.25s & 0.02s \\
+11 &  107 &  33 & 1914 & Powers    &  0.44s & 0.02s\\
+12 &  127 &  39 & 1876 & Lucas     & 0.73s & 0.04s \\
+13 &  521 & 157 & 1952 & Robinson  & 53.00s & 1.85s\\
+14 &  607 & 183 & 1952 & Robinson  & 84.00s & 2.78s\\
+15 & 1279 & 386 & 1952 & Robinson   & 827.00s & 20.21s\\
+16 & 2203 & 664 & 1952 & Robinson  & 4421.00s & 89.1s\\
+17 & 2281 & 687 & 1952 & Robinson  & 4964.00s & 97.59s\\
+18 & 3217 & 969 & 1957 & Riesel    & 14680.00s & 237.65s\\
+19 & 4253 & 1281 & 1961 & Hurwitz & 35198.00s & 494.09s\\
+20 & 4423 & 1332 & 1961 & Hurwitz & 39766.00s & 563.27s \\
+21 & 9689 & 2917  & 1963 & Gillies & \_ & 5304.08s \\	 
+22 & 9941 & 2993  & 1963 & Gillies & \_ & 5650.63s \\	 
+23 & 11213 & 3376 & 1963 & Gillies &  \_ & 7607.00s \\ 
+24 & 19937 & 6002  & 1971 & Tuckerman& \_ & 34653.12s\\
+25 & 21701 & 6533 & 1978 & Noll \& Nickel & \_ &43746.21s\\
+26 & 23209 & 6987 & 1979 & Noll \&	Nickel & \_ &51210.56s\\
+27 & 44497 & 13395 & 1979 & Nelson \& Slowinski & \_ &282784.09s\\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{Time to verify Mersenne numbers}
+\label{fig:Mersenne}
+\end{figure}
