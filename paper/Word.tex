@@ -2,23 +2,20 @@
 
 The last step to complete our library is to define the arithmetic for the base words. 
 Once defined,  we get the modular arithmetic for the desired size by applying an appropriate
-number of times our functors. 
-We have experienced with two possible implementations for base words.
+number of times our functors. In a classical implementation, these base words are the machine ones.
+Unfortunately machine words are not visible in the {\sc Coq} language. 
 
 \subsection{Defined modular arithmetic}
 
-One way to go is to define the arithmetic directly inside {\sc Coq}.
-The main benefit is to get an arithmetic library that is entirely expressed 
-in the logic of {\sc Coq}. The library is portable: no extension of the kernel 
-of the system is needed. To define the base arithmetic inside {\sc Coq}, 
-we use an enumerate type. For example, we have for two-bit words
+For the moment, the only way to have a modular arithmetic for base words inside {\sc Coq}
+is to define base words as a datatytpe. For example, we have for two-bit words
 \begin{verbatim}
-Inductive w2 : Set := OO | OI | IO  | II.
+Inductive word2 : Set := OO | OI | IO  | II.
 \end{verbatim}
 The functions are then defined by simple case analysis. For example,
 the exact successor function is defined as
 \begin{verbatim}
-Definition w2_succ_c x :=
+Definition word2_succ_c x :=
  match x with
  | OO => C0 OI
  | OI => C0 IO
@@ -28,21 +25,25 @@ Definition w2_succ_c x :=
 \end{verbatim}
 We also need to give the proofs that all functions meets their specification.
 These proofs are also done by case analysis. 
-Rather than writing by hand all these definitions and proofs, we have
+
+Rather than writing by hand all the functions and proofs, we have
 written an {\sc Ocaml} program~\cite{ocaml} instead. This program takes the word
 size as argument and generates the desired base arithmetics with all
-its proofs. It is a nice application of meta-proving. Unfortunately, the
-number of elements of an enumerate type in {\sc Coq} is limited to 
-256 elements. This means that the maximum word size of our base arithmetic
-is 8.
+its proofs. It is a nice application of meta-proving. Unfortunately, 
+functions and their corresponding proofs grow quickly with the word size. 
+For example, the addition for {\tt word8} is a pattern matching of 65536 cases. 
+{\tt word8} is actually the largest size {\sc Coq} can handle. 
+
+The main benefit of  this approach is to get an arithmetic library that is entirely expressed 
+in the logic of {\sc Coq}. The library is portable: no extension of the {\sc Coq} kernel 
+is needed. 
 
 \subsection{Native modular arithmetic}
 
-Another way to go is to define the modular arithmetic externally and
-uses a native arithmetic. We have experimented with the 31 bit native
-{\sc Ocaml} arithmetic and a simulated 64 bit arithmetic. The main benefit
-is to have a very fast base arithmetic but integrating the library in the
-system requires a modification of the kernel. Not all the functions that
-we have implemented have their corresponding functions in the native modular
-arithmetic, so some native code had to be developed for these functions.
+To test our library with some machine word arithmetic, we use the extraction
+mechanism. It converts automatically {\sc Coq} functions into {\sc Ocaml} functions.
+It is then possible to run the resulting program with the 31 bit native
+{\sc Ocaml} arithmetic or a simulated 64 bit arithmetic. 
+Not all the functions that we have implemented have their corresponding functions in the 
+native modular arithmetic, so some native code had to be developed for these functions.
 The formal verification of this code has not yet been completed.

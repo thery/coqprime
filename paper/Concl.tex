@@ -1,24 +1,22 @@
 \section{Conclusions}
 
-The main contribution of our work is to present a quite complete library for performing
+The main contribution of our work is to present a certified library for performing
 modular arithmetic. Individual arithmetic functions have already been proved correct,
 see for example~\cite{BerMagZim02}. To our knowledge, it is the first time verification
-has been applied to a complete library  successfully.
-Our motivation was to be able to certify 
-larger prime numbers. Experiments described in Section~\ref{bench}  prove that
-this goal has been reached: we are now capable of manipulating numbers with more than 40000 digits.
+has been applied to a complete library  with non trivial algorithms successfully.
+Our motivation was to be able to certify  larger prime numbers. Figures given in Section~\ref{bench} 
+prove that this goal has been reached: we are now capable of manipulating numbers with more than 40000 digits.
 These tests also show that the library with a native base arithmetic is
-reasonably efficient. Expressing the arithmetic in the logic has a prize: no side effect is possible, 
-also numbers are allocated progressively not in one block.
+reasonably efficient. We hope it will motivate people to integrate machine word arithmetic inside {\sc Coq}.
 
+Expressing the arithmetic in the logic has a prize: no side effect is possible, 
+also numbers are allocated progressively not in one block.
 A natural continuation of our work would be to prove the correctness a library with side effect.
-This would require a much more intensive verification work since in-place computing
-are known to be much harder to verify.
+This would require a much more intensive verification work since inplace computing
+is known to be much harder to verify.
 Note that directly integrating an existing library inside the prover with no verification
-would not be such a good idea.
-Arithmetic libraries are known to be difficult to get right. Libraries like~\cite{bignum}
-have had a relative small number of users. So their correctness has not
-been really experimentally tested.
+would go against the philisophy of {\sc Coq} to keep its trusted computing base as small
+as possible.
 
 From the methodological point of view, the most interesting aspect of this work
 has been the use of the meta-proving technique to generate our base arithmetic. This has proved

@@ -14,7 +14,7 @@ the so-called two-level approach~\cite{boutin}. To illustrate it,
 let us consider the problem of proving the primality of some natural 
 numbers.
 Suppose that we have defined a predicate {\it prime}: a number is prime 
-if it has exactly two divisors: one and itself. 
+if it has exactly two divisors, one and itself. 
 How do we now prove that 17 is prime? The standard approach is to
 directly build a proof object using tactics. Of course, this task can be 
 automated writing an ad-hoc tactic. Still, behind the scene, the system 
@@ -22,7 +22,8 @@ will have to build a proof object and the larger the number to be proved
 prime is, the larger the proof term will be.
 The two-level approach proposes an alternative
 strategy in two steps. In the first step, one defines a function that expresses
-the problem in term of pure computation. In our case, it amounts in writing a 
+the problem in term of pure computation. It can be seen as a semi-decision procedure.
+In our case, it amounts in writing a 
 function {\tt test} from natural number to boolean such that the function
 returns {\tt true} if the number is prime. For example, if the natural number
 is $n$, the function can check that there is no divisor between 2 and $n-1$
@@ -31,6 +32,7 @@ its specification
 $$
 \forall n, \textit{test}\,\, n = \texttt{true} \rightarrow \textit{prime}\,\, n
 $$
+So our decision procedure is correct.
 Now to give a proof that 17 is prime, it is sufficient to prove that the function
 {\tt test} applies to 17 returns {\tt true}. As the function {\it test} directly
 evaluates inside {\sc Coq}, this last proof is simply the reflexivity of equality.
@@ -71,8 +73,8 @@ For a prime number $n$, the list $[a, p_1, \alpha_1, p_2, \alpha_2, \dots, p_k, 
 represents its Pocklington certificate.
 Even if generating a certificate for a given $n$ can be cpu-intensive, verifying
 the conditions 1-5 is an order of magnitude simpler. In fact, only
-the verification of the conditions that is crucial for asserting the primality (so requires
-safe computation) is done inside {\sc Coq}.
+the verification of the conditions 1-5 is crucial for asserting the primality. It requires
+safe computation and is done inside {\sc Coq}.
 The generation of the certificate is delegated to an external tool.
 This is a direct application of the skeptic approach described in~\cite{BarBar,HarThe}.
                  
@@ -117,12 +119,11 @@ computations with arbitrary large numbers. It has been implemented and its corre
 has been proved within the {\sc Coq} system. The arithmetic that is implemented is a modular
 one. This is not a real limitation since most computations with large numbers
 can be rephrased in term of modular arithmetic. This is true in particular for the examples we are
-interested in.
-Condition 4 of Theorem \ref{lehmer} can be expressed as
+interested in. More precisely, Condition 4 of Theorem \ref{lehmer} can be expressed with modulo as
 $$
 \gcd(\prod_{i=1}^{i=k}a^{\frac{n-1}{p_i}} \mod\, n -1,n) = 1
 $$
-Theorem \ref{lucas} can be rephrased as
+and Theorem \ref{lucas} can be rephrased as
 \begin{theorem}
 Let $M_p$ be $2^p-1$ and let  ($S_n$) be recursively defined by $S_0= 4\, \mod\, M_p$ and $S_{n+1} = S_n^2 - 2\, \mod\, M_p$,
 for $p > 2$, $M_p$ is prime if and only if $S_{p-2} = 0\, \mod\, M_p $.
