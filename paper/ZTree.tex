@@ -8,8 +8,8 @@ Inductive positive : Set :=
   | xO : positive -> positive 
   | xH : positive.
 \end{verbatim}
-The constructor {\tt xI} indicates a one digit, the constructor {\tt xO}
-a zero digit and the constructor {\tt xH} the final one digit.
+ {\tt xH} is 1, {\tt (xO p)} is two times the value of {\tt p}
+ and {\tt (xI p)} is two times plus one the value of {\tt p}.
 For example, 17 and 18 are represented as {\tt xI (xO (xO (xO (xH))))} and
 {\tt xO (xI (xO (xO (xH))))} respectively. The choice of the representation
 has some direct impact on the way operations are implemented. To illustrate this on an example,
@@ -51,7 +51,7 @@ Inductive w2 (w: Set): Set :=
 \end{verbatim}
 Arbitrarily we choose that high bits are given first, low bits
 second. Now using dependent type, we iterate this process and define
-numbers of height {\tt n} that contain $2^\texttt{n}$ words.
+the type of the numbers of height {\tt n} as
 \begin{verbatim}
 Fixpoint word (w: Set) (n:nat): Set :=
  match n with
@@ -59,6 +59,8 @@ Fixpoint word (w: Set) (n:nat): Set :=
  | S n => w2 (word w n)
  end.
 \end{verbatim}
+An object of type {\tt (word w n)} is a complete binary tree that
+contains $2^\texttt{n}$ objects of type {\tt w}.
 To represent a given number exactly, one has to choose an appropriate height.
 For example, taking the usal booleans for basic words, a minimum
 height of 2 is necessary to represent the number 13. With this height, 
