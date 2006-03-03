@@ -1,17 +1,17 @@
-\section{Implementing base words \label{word}}
+\section{Implementing base word arithmetic \label{word}}
 
-The last step to complete our library is to define what the base words are. 
-With these words and applying an appropriate number of times our functor
-we get the modular arithmetic for the desired size. We have experimented
-with two possible implementations for base words.
+The last step to complete our library is to define the arithmetic for the base words. 
+Once defined,  we get the modular arithmetic for the desired size by applying an appropriate
+number of times our functors. 
+We have experienced with two possible implementations for base words.
 
-\subsection{Inductively defined modular arithmetic}
+\subsection{Defined modular arithmetic}
 
 One way to go is to define the arithmetic directly inside {\sc Coq}.
-The main benefit is to get an arithmetic library that is expressed entirely
+The main benefit is to get an arithmetic library that is entirely expressed 
 in the logic of {\sc Coq}. The library is portable: no extension of the kernel 
 of the system is needed. To define the base arithmetic inside {\sc Coq}, 
-we first define an enumerate type. For example, we have for two bits words
+we use an enumerate type. For example, we have for two-bit words
 \begin{verbatim}
 Inductive w2 : Set := OO | OI | IO  | II.
 \end{verbatim}
@@ -29,9 +29,9 @@ Definition w2_succ_c x :=
 We also need to give the proofs that all functions meets their specification.
 These proofs are also done by case analysis. 
 Rather than writing by hand all these definitions and proofs, we have
-written an {\sc Ocaml} program~\cite{ocaml}. This program takes the word
+written an {\sc Ocaml} program~\cite{ocaml} instead. This program takes the word
 size as argument and generates the desired base arithmetics with all
-the proof. It is a nice application of meta-proving. Unfortunately, the
+its proofs. It is a nice application of meta-proving. Unfortunately, the
 number of elements of an enumerate type in {\sc Coq} is limited to 
 256 elements. This means that the maximum word size of our base arithmetic
 is 8.

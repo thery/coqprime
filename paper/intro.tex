@@ -10,7 +10,7 @@ Inductive Construction, so the evaluation mechanism is given for free
 by the beta reduction rule. 
 
 A direct application of the primitive status of computation is 
-the so-called two level approach~\cite{boutin}. To illustrate it, 
+the so-called two-level approach~\cite{boutin}. To illustrate it, 
 let us consider the problem of proving the primality of some natural 
 numbers.
 Suppose that we have defined a predicate {\it prime}: a number is prime 
@@ -20,7 +20,7 @@ directly build a proof object using tactics. Of course, this task can be
 automated writing an ad-hoc tactic. Still, behind the scene, the system 
 will have to build a proof object and the larger the number to be proved
 prime is, the larger the proof term will be.
-The two level approach proposes an alternative
+The two-level approach proposes an alternative
 strategy in two steps. In the first step, one defines a function that expresses
 the problem in term of pure computation. In our case, it amounts in writing a 
 function {\tt test} from natural number to boolean such that the function
@@ -33,15 +33,15 @@ $$
 $$
 Now to give a proof that 17 is prime, it is sufficient to prove that the function
 {\tt test} applies to 17 returns {\tt true}. As the function {\it test} directly
-evaluates inside {\sc Coq}, this last proof is simply the reflexivity of the equality.
-Using the two level approach, we have just transfered the problem of building a 
+evaluates inside {\sc Coq}, this last proof is simply the reflexivity of equality.
+Using the two-level approach, we have just transfered the problem of building a 
 large proof object into a conversion problem: showing that $test\,\, 17$ is convertible
 to 17.  The size of the proof object is then independent of the number to be proved
 prime. Recent progress in the evaluation mechanism~\cite{GreLer} has also made this
 approach attractive from the point of view of efficiency.
 
 In~\cite{GreTheWer} we have presented a more elaborated way of applying 
-the two level approach for proving primality. It is based on the
+the two-level approach for proving primality. It is based on the
 notion of prime certificate and more precisely of {\it Pocklington certificate}.
 A prime certificate is an object that witnesses the primality of a number.
 The Pocklington certificates we have been using are justified by the following
@@ -71,12 +71,12 @@ For a prime number $n$, the list $[a, p_1, \alpha_1, p_2, \alpha_2, \dots, p_k, 
 represents its Pocklington certificate.
 Even if generating a certificate for a given $n$ can be cpu-intensive, verifying
 the conditions 1-5 is an order of magnitude simpler. In fact, only
-this last verification that is crucial for asserting the primality (so requires
+the verification of the conditions that is crucial for asserting the primality (so requires
 safe computation) is done inside {\sc Coq}.
 The generation of the certificate is delegated to an external tool.
 This is a direct application of the skeptic approach described in~\cite{BarBar,HarThe}.
                  
-With respect to the standard approach for the same problem~\cite{Caprotti_Oostdijk:01pockjsc}, the two level
+With respect to the standard approach for the same problem~\cite{Caprotti_Oostdijk:01pockjsc}, the two-level
 approach gives a huge improvement in term of size of the
 proof object and in term of time.  Figure~\ref{fig:TimeComp} illustrates this
 on some small examples.
@@ -88,9 +88,9 @@ on some small examples.
                                                \multicolumn{2}{c|}{time} \\
 \hline
 ~prime     ~     & \multicolumn{1}{c|}{~digits~ } & ~standard~  &
-  \multicolumn{1}{c|}{ ~two level~ } &
+  \multicolumn{1}{c|}{ ~two-level~ } &
   \multicolumn{1}{c|}{ ~standard~ } &
-  \multicolumn{1}{c|}{ ~two level~ } \\
+  \multicolumn{1}{c|}{ ~two-level~ } \\
 \hline
 ~1234567891       ~   & 10~ &  94K~ &  ~0.453K~ & 3.98s~  & 0.50s~  \\
 ~74747474747474747~   & 17~ & 145K~ &  0.502K~ &   9.87s~ & 0.56s~ \\
@@ -100,11 +100,11 @@ on some small examples.
 \hline
 \end{tabular}
 \end{center}
-\caption{Some verifications of certificates with the standard and two level approaches}
+\caption{Some verifications of certificates with the standard and two-level approaches}
 \label{fig:TimeComp}
 \end{figure} 
-Applying the two level approach to larger numbers (> 1000 digits) made us realize
-that the algorithmic limitation of the arithmetic provided by {\sc Coq}.
+Applying the two-level approach to larger numbers (> 1000 digits) made us realize
+the algorithmic limitation of the arithmetic provided by {\sc Coq}.
 This was particularly true when applying the Lucas-Lehmer test
 for proving the primality of Mersenne numbers, i.e. numbers that can be written as $2 ^ p -1$.
 \begin{theorem}\label{lucas}
@@ -113,25 +113,24 @@ for $p > 2$, $2^p-1$ is prime if and only if $(2^p -1) | S_{p-2}$.
 \end{theorem}
 The largest Mersenne number we could certify was $2^{4423} - 1$. 
 The purpose of this paper is to propose a more adequate arithmetic for safe 
-computations with arbitrary large numbers. It has been implemented and proved
-correct within the {\sc Coq} system. The arithmetic that is implemented is a modular
-one. This is not really a limitation since most computations with large numbers
-can be rephrased in term of modular arithmetic. This is the case for the examples we are
+computations with arbitrary large numbers. It has been implemented and its correctness
+has been proved within the {\sc Coq} system. The arithmetic that is implemented is a modular
+one. This is not a real limitation since most computations with large numbers
+can be rephrased in term of modular arithmetic. This is true in particular for the examples we are
 interested in.
-Condition 4 of Theorem \ref{lehmer} can also be expressed as
+Condition 4 of Theorem \ref{lehmer} can be expressed as
 $$
 \gcd(\prod_{i=1}^{i=k}a^{\frac{n-1}{p_i}} \mod\, n -1,n) = 1
 $$
 Theorem \ref{lucas} can be rephrased as
 \begin{theorem}
-Let $M_p$ be $2^p-1$ and let  ($S_p$) be recursively defined by $S_0= 4\, \mod\, M_p$ and $S_{n+1} = S_n^2 - 2\, \mod\, M_p$,
+Let $M_p$ be $2^p-1$ and let  ($S_n$) be recursively defined by $S_0= 4\, \mod\, M_p$ and $S_{n+1} = S_n^2 - 2\, \mod\, M_p$,
 for $p > 2$, $M_p$ is prime if and only if $S_{p-2} = 0\, \mod\, M_p $.
 \end{theorem}
 The key idea of our library is to implement a representation of numbers that accommodates the divide and
 conquer strategy to speed up computation. The paper is organised as follows. 
 In Section~\ref{ZTree}, we confront the standard arithmetic of {\sc Coq} with
-our representation of numbers. In Section~\ref{Op}, we give an overview of the functions 
-that have been implemented and proved correct.  
-In Section~\ref{word}, we detail two alternative ways of using our library.
+our representation of numbers. In Section~\ref{Op}, we give an overview of the library.  
+In Section~\ref{word}, we detail two possible instantiations of our library.
 Finally, Section~\ref{bench} presents some tests that validate our approach.
  
