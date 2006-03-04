@@ -51,7 +51,7 @@ Inductive w2 (w: Set): Set :=
 \end{verbatim}
 Arbitrarily we choose that high bits are given first, low bits
 second. Now using dependent type, we iterate this process and define
-the type of the numbers of height {\tt n} as
+the type of numbers of height {\tt n} as
 \begin{verbatim}
 Fixpoint word (w: Set) (n:nat): Set :=
  match n with
@@ -62,10 +62,10 @@ Fixpoint word (w: Set) (n:nat): Set :=
 An object of type {\tt (word w n)} is a complete binary tree that
 contains $2^\texttt{n}$ objects of type {\tt w}.
 To represent a given number exactly, one has to choose an appropriate height.
-For example, taking the usal booleans for basic words, a minimum
+For example, taking the usal booleans for base words, a minimum
 height of 2 is necessary to represent the number 13. With this height, 
-numbers have type {\tt (word bool 2)} and 13 is represented 
-as {\tt (WW (WW true false) (WW true true))}.
+numbers have type {\tt (word bool 2)} and 
+{\tt (WW (WW true true) (WW false true))} denotes the number 13.
 
 Following the methodology proposed in~\cite{GreMa} in a similar setting, 
 the operations are not going to be defined on the type {\tt word} directly.
@@ -105,13 +105,13 @@ not sufficient to justify our choice of representation. What
 is important with this representation is that we get for free
 the possibility to split numbers in two. The next section 
 explains why this property is crucial to implement efficient
-algorithms for functions like multiplication, division, square root.
+algorithms for functions like multiplication, division and square root.
 Note that in term of memory allocation, having a tree structure
-does not imply any overhead. Building a tree structure or 
+does not produce any overhead. Building a tree structure or 
 building the equivalent linear list of words require the same number of cells.
 
 One main drawback of our representation is that we manipulate only complete binary trees. 
-So even if we choose carefully the appropriate height, half of the words could be unnecessary 
+So, even if we choose carefully the appropriate height, half of the words could be unnecessary 
 to compute the final result. 
 To soften this problem, we have extended the definition of {\tt w2} to include an
 empty word {\tt W0}. 
@@ -122,12 +122,12 @@ Inductive w2 (w: Set): Set :=
 \end{verbatim}
 For example, the number 13 can be represented at height 3 as
 \begin{verbatim}
- WW W0 (WW (WW true false) (WW true true))
+ WW W0 (WW (WW true true) (WW false true))
 \end{verbatim}
 With this extension, we loose the unicity of representation. Still, there is a notion
 of canonicity, {\tt W0} should always be preferred to a sub-tree full of zeros. Note that in
-our development all functions have been carefully written in order to preserve canonicity but
-canonicity  is not part of their specificationlabels. since it is not necessary for ensuring safe computations.
+our development every function has been carefully written in order to preserve canonicity but
+canonicity  is not part of their specification since it is not necessary to ensure safe computations.
 The final version of the comparison function is then
 \begin{verbatim}
 Definition ww_cmp (x y: w2 w) :=

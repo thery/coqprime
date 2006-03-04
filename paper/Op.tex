@@ -1,19 +1,19 @@
 \section{The certified library \label{Op}}
-The library we have been developing includes the usual functions:
+Our library includes the usual functions:
 comparison, successor, predecessor, complement, addition, subtraction, 
 multiplication, square, division, square root, gcd, power and modulo.
 Functions work with fixed-size words. It means that we compute modulo
 the word size. For addition and subtration, we also provide an exact version
-that returns also the carry. For multiplication, we also provide an exact version
+that returns a word and a carry. For multiplication, we also provide an exact version
 returning two words. 
 
-Our goal was to provide an arithmetic library that is suitable for the two level
+Our goal was to provide an arithmetic library that is suitable for the two-level
 approach where proofs are replaced by computations of certified semi-decision procedures.
 Obviously, the two-level approach is interesting only if the semi-decision procedures evaluate
 efficiently inside the prover.
 So, we must carefully choose the algorithms we implement.
-The semi-decision procedure must also be certified, so  all the functions of our library must come 
-along with their proof of correctness. 
+The semi-decision procedure must also be certified, so  every function of our library must come 
+along with its proof of correctness. 
 
 Specifications are expressed 
 using predicates over integers. For this, we use two interpretation functions
@@ -21,7 +21,7 @@ using predicates over integers. For this, we use two interpretation functions
 Given a single word element $x$, its corresponding integer value
 is $[|x|]$. Given a two-word element $y$, its corresponding
 integer value is $[[y]]$. The base of the arithmetic, i.e
-the maximum value plus one that fits  one word, is $\wB$. From these definitions, the 
+one plus the maximum value that fits in one word, is $\wB$. From these definitions, the 
 following statement holds
 $$\forall x\, y,\, [[\WW x  y]] = [|x|] * \wB + [|y|]$$
 Once a function is defined, its correctness has to be proved.
@@ -29,26 +29,26 @@ For example for the comparison defined in the previous section,
 one needs to prove that if the function {\tt w\_compare} meets its specification
 $$\begin{array}{l}
 \forall x\, y, \,\, \textit{match {\tt w\_compare} x y with} \\
-\qquad\quad
+\qquad\,\,\,\,
  |\,\, \texttt{Eq}\,\, \rightarrow [|x|] = [|y|]\,\, | \,\,\texttt{Lt}\,\, \rightarrow [|x|] < [|y|] \,\,
 | \,\,\texttt{Gt}\,\, \rightarrow [|x|] > [|y|]\\
-\qquad\quad \textit{end}
+\qquad\,\,\,\, \textit{end}
 \end{array}
 $$
 so does the function {\tt ww\_compare}
 $$\begin{array}{l}
 \forall x\, y, \,\, \textit{match {\tt ww\_compare} x y with} \\
-\qquad\quad
+\qquad\,\,\,\,
  |\,\, \texttt{Eq}\,\, \rightarrow [[x]] = [[y]]\,\, | \,\,\texttt{Lt}\,\, \rightarrow [[x]] < [[y]] \,\,
 | \,\,\texttt{Gt}\,\, \rightarrow [[x]] > [[y]]\\
-\qquad\quad \textit{end}
+\qquad\,\,\,\, \textit{end}
 \end{array}
 $$
 
 \subsection{Words and carries}
 
 Carries are important for operations like addition and subtraction.
-In our functional setting, carries encapsultes words
+In our functional setting, carries encapsulate words
 \begin{verbatim}
 Inductive carry (w: Set): Set :=
   | C0: w -> carry
@@ -84,7 +84,7 @@ a carry allocates a memory cell. So in our implementation
 we avoid as much as possible to create them. When we know in advance 
 that the result always returns (respectively does not return) a carry, we can call the modular function instead. 
 An example of such a situation is a naive implementation of the exact function that adds two to a 
-two-word element by calling twice the successor function.
+one-word element by calling twice the successor function.
 \begin{verbatim}
  Definition w_add2 x :=
   match w_succ_c x with
@@ -94,16 +94,15 @@ two-word element by calling twice the successor function.
 \end{verbatim}
 In the case where the first increments has created a carry, we are sure that the second
 increment cannot raise any carry so we can directly call the {\tt w\_succ} function.
-
-Also we use a combination of partial evaluation and continuation passing style to get
+Also, we use a combination of partial evaluation and continuation passing style to get
 shorter definitions. This has proved to ease considerably the proving phase without
-changing the efficiency of the function.
+changing the efficiency of functions.
 
 \subsection{Shifting bits}
 
 If most of the operations works at word level, some functions like the
-shifting operation requires to work at a lower level: the bit level.
-Surprisingly all the operations we had to perform at bit levels can be built
+shifting operation require to work at a lower level: the bit level.
+Surprisingly, all the operations we had to perform at bit level can be built
 using a single function
 \begin{verbatim}
 w_add_mul_div : positive -> w -> w -> w
@@ -111,13 +110,13 @@ w_add_mul_div : positive -> w -> w -> w
 Evaluating  {\tt (w\_add\_mul\_div p x y)} returns a new word that
 is composed for its last {\tt p} bits by the first bits of {\tt y}
 and for the remaining bits by the last bits of {\tt x}.
-Its specification is the following
+Its specification is 
 $$\begin{array}{l}
 \forall x\, y\, p, \,\, 2 ^ p < \wB  \Rightarrow \\
 \hskip20pt [|\textit{\tt{w\_add\_mul\_div}\, p\, x\, y}|] = ([|x|] * 2 ^ p + ([|y|] * 2 ^ p) / \wB) \,\mod\, \wB
 \end{array}
 $$
-Two degenerated versions of this function are of some direct interest. Calling
+Two degenerated versions of this function are of direct interest. Calling
 {\tt w\_add\_mul\_div} with a zero word as second argument implements
 the shift left. Calling it with a zero word as third argument implements
 the shift right.
@@ -126,7 +125,7 @@ the shift right.
 
 \subsubsection{Karatsuba multiplication}
 Speeding up the multiplication was the main motivation of our 
-tree representation of numbers. The multiplication is represented in our library
+tree representation for numbers. The multiplication is represented in our library
 by the function
 \begin{verbatim}
 w_mul_c: w -> w -> w2 w
@@ -148,7 +147,7 @@ $$\begin{array}{l}
 \hskip20pt {h} * \wB^2 + (([|{a_h}|] + [|{a_l}|]) * ([|{b_h}|] + [|{b_l}|]) - {h} - {l}) * \wB + {l} \qquad\qquad
 \end{array}
 $$
-If the above equation looks simple,  Karatsuba multiplication has been one of the most difficult function 
+If the above equation looks simple,  Karatsuba multiplication has been one of the most difficult functions 
 to implement and prove correct.
 The difficulty is in the computation of the cross
 product $(([|{a_h}|] + [|{a_l}|]) * ([|{b_h}|] + [|{b_l}|]) - {h} - {l})$. 
@@ -158,12 +157,12 @@ so their product fits in two words and a maximum carry of 3.
 Also, we know that the final cross-product is positive and fits in
 two words and a maximum carry of 1. This is useful to optimize the code. For example, 
 if the inner product has no carry, we are sure that the subtractions by $h$ and $l$ cannot 
-generate carry. Respectively, if the inner product has a carry of 3,  we are sure that each 
+generate a carry. Respectively, if the inner product has a carry of 3,  we are sure that each 
 subtraction generates a carry. In both cases, modular subtraction can be used instead of
 the exact one. 
 
 Karatsuba multiplication is more efficient than the naive one
-only when numbers are getting large enough. So our library
+only when numbers are large enough. So our library
 includes both implementations. They are used separately to define two
 different functors. The functor with the naive multiplication is only used 
 for trees of "small" height. 
@@ -209,8 +208,8 @@ As the code is a bit intricate, we just explain here how the function
 proceeds. It first calls {\tt w\_div21} to divide $a_1$ and $a_2$
 by $b_1$. This gives a pair $q$ and $r$ such that
 $$[|a_1|] * \wB + [|a_2|] = [|q|] * [|b_1|] + [|r|]$$
-$q$ is considered as the approximation of quotient.
-The second condition in the specification ensures that if this approximation
+$q$ is considered as the approximation of the final quotient.
+The condition $\wB / 2 \le [|b_1|]$ ensures that if this approximation
 is not exact, it exceeds the real value of at most two units. So the quotient 
 can only be $q$, $q - 1$ or $q - 2$. 
 As we have 
@@ -240,10 +239,9 @@ constructor, we have
         end
   end.
 \end{verbatim}
-These two divisions require the divisor $b$ to be greater than $\wB/2$. This is not restrictive
-because if $b$ is too small we can always find a $n$ such that $b* 2 ^n > \wB/2$ and
-if $a * 2 ^ n  =  q  * (b * 2 ^ n) + r$ then $r$ can be written as $r = 2^n * r'$ so
-$a = q * b + r'$. So to perform the division of numbers of the same size, we first shift
+These two divisions can only be used if the divisor $b$ is greater than $\wB/2$. This is not restrictive
+because if $b$ is too small we can always find a $n$ such that $b* 2 ^n > \wB/2$. If we have $a * 2 ^ n  =  q  * (b * 2 ^ n) + r$ for some $a$ and $r$ then $r$ can be written as $r = 2^n * r'$ so
+$a = q * b + r'$. So to perform the division of two numbers of the same size, we first shift
 divisor and dividend by $n$. The shifted dividend fits in two words and its hight part is smaller
 than the shifted divisor. Then, we use the division of two by one. The resulting
 quotient is correct, we just have to unshift the remainder.
@@ -258,7 +256,7 @@ library
 \begin{verbatim}
 w_sqrt2: w -> w -> w * carry w;
 \end{verbatim}
-it returns the square root and the rest.
+The function returns the square root and the rest.
 Its specification is
 $$\begin{array}{l}
 \forall x\, y,\,\, \textit{let}\,\, s,\, r = \texttt{w\_sqrt2}\, x\, y\,\, \textit{in}\\

@@ -32,7 +32,7 @@ its specification
 $$
 \forall n, \textit{test}\,\, n = \texttt{true} \rightarrow \textit{prime}\,\, n
 $$
-So our decision procedure is correct.
+So our semi-decision procedure is correct.
 Now to give a proof that 17 is prime, it is sufficient to prove that the function
 {\tt test} applies to 17 returns {\tt true}. As the function {\it test} directly
 evaluates inside {\sc Coq}, this last proof is simply the reflexivity of equality.
@@ -73,7 +73,7 @@ For a prime number $n$, the list $[a, p_1, \alpha_1, p_2, \alpha_2, \dots, p_k, 
 represents its Pocklington certificate.
 Even if generating a certificate for a given $n$ can be cpu-intensive, verifying
 the conditions 1-5 is an order of magnitude simpler. In fact, only
-the verification of the conditions 1-5 is crucial for asserting the primality. It requires
+the verification of conditions 1-5 is crucial for asserting the primality. It requires
 safe computation and is done inside {\sc Coq}.
 The generation of the certificate is delegated to an external tool.
 This is a direct application of the skeptic approach described in~\cite{BarBar,HarThe}.
