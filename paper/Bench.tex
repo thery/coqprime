@@ -2,9 +2,9 @@
 
 The complete library with the corresponding contribution for prime numbers is available at \url{http://gforge.inria.fr/projects/coqprime/}. It consits in 9000 lines of hand-written
 definitions and proofs. The automatically generated {\tt word8} arithmetic is much bigger,
-95 Mb: 41 Mb is used to define functions and 54 Mb for the proofs. This is the largest ever
+95 Mb: 41 Mb are used to define functions and 54 Mb for the proofs. This is the largest ever
 contribution that has been verified by {\sc Coq}. With this new library, we have been capable to
-prove $2^{44497} - 1$ was prime using {\sc Coq}. As far as we know, it is the largest 
+prove that $2^{44497} - 1$ was prime using {\sc Coq}. As far as we know, it is the largest 
 prime number  that has been certified by a theorem prover.
 
 Even for small numbers, the {\sc Coq} version of our library is much more efficient than
@@ -62,7 +62,7 @@ Comparing {\tt word8} with the 31 bit {\sc Ocaml} integer {\tt w31} shows all th
 get from having machine words in {\sc Coq}. There is a maximum speed-up of 80 with respect to {\tt word8}. This
 means a speed-up of 7200 with respect to the standard {\sc Coq} library.
 
-The 64 bit {\sc Ocaml} integer {\tt w64} is a simulated arithmetic (our processor has only 32 bit).
+The 64 bit {\sc Ocaml} integer {\tt w64} is a simulated arithmetic (our processor has only 32 bits).
 This is why there is not such a gap between {\tt w31} and {\tt w64}. {\sc Big\_int}~\cite{bignum} is the  
 standard exact library for {\sc Ocaml}. It has a purely functional interface but 
 is written in C. The comparison is not bad. We are only 6 time slower. It is also very interesting
