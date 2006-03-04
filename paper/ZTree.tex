@@ -89,7 +89,7 @@ Definition ww_compare (x y: w2 w) (r: comparison) :=
 This is not the function that is in our library. We can take 
 advantage of the tree-like structure and compare high bits first.  
 \begin{verbatim}
-Variable w_cmp: w -> w -> comparison.left
+Variable w_cmp: w -> w -> comparison.
 
 Definition ww_cmp (x y: w2 w) :=
   match x, y with

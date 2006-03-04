@@ -38,7 +38,7 @@ Now to give a proof that 17 is prime, it is sufficient to prove that the functio
 evaluates inside {\sc Coq}, this last proof is simply the reflexivity of equality.
 Using the two-level approach, we have just transfered the problem of building a 
 large proof object into a conversion problem: showing that $test\,\, 17$ is convertible
-to 17.  The size of the proof object is then independent of the number to be proved
+to {\tt true}.  The size of the proof object is then independent of the number to be proved
 prime. Recent progress in the evaluation mechanism~\cite{GreLer} has also made this
 approach attractive from the point of view of efficiency.
 
@@ -72,7 +72,7 @@ r^2 - 8 s\,\,\mbox{is not a square}\,\,\hbox{or}\,\,s &=& 0
 For a prime number $n$, the list $[a, p_1, \alpha_1, p_2, \alpha_2, \dots, p_k, \alpha_k]$
 represents its Pocklington certificate.
 Even if generating a certificate for a given $n$ can be cpu-intensive, verifying
-the conditions 1-5 is an order of magnitude simpler. In fact, only
+conditions 1-5 is an order of magnitude simpler. In fact, only
 the verification of conditions 1-5 is crucial for asserting the primality. It requires
 safe computation and is done inside {\sc Coq}.
 The generation of the certificate is delegated to an external tool.

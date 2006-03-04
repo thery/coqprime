@@ -60,7 +60,7 @@ $\ICP{\CO x} = [|x|]$.
 The other one interprets it negatively:
 $\ICM{\CI x} = [|x|] - \wB$ and $\ICM{\CO x} = [|x|]$.
 To illustrate how carries are manipulated, let us consider the successor function.
-In our library it is represented by two functions
+In our library, it is represented by two functions
 \begin{verbatim}
 w_succ: w -> w
 w_succ_c: w -> carry w
@@ -147,14 +147,14 @@ $$\begin{array}{l}
 \hskip20pt {h} * \wB^2 + (([|{a_h}|] + [|{a_l}|]) * ([|{b_h}|] + [|{b_l}|]) - {h} - {l}) * \wB + {l} \qquad\qquad
 \end{array}
 $$
-If the above equation looks simple,  Karatsuba multiplication has been one of the most difficult functions 
+If the above equation looks simple,  Karatsuba multiplication has been one the most difficult function 
 to implement and prove correct.
 The difficulty is in the computation of the cross
 product $(([|{a_h}|] + [|{a_l}|]) * ([|{b_h}|] + [|{b_l}|]) - {h} - {l})$. 
 The inner product cannot be directly computed using the word multiplication: 
 both additions $(([|{a_h}|] + [|{a_l}|])$ and $([|{b_h}|] + [|{b_l}|])$ can have a carry, 
 so their product fits in two words and a maximum carry of 3.
-Also, we know that the final cross-product is positive and fits in
+Also, we know that the final cross product is positive and fits in
 two words and a maximum carry of 1. This is useful to optimize the code. For example, 
 if the inner product has no carry, we are sure that the subtractions by $h$ and $l$ cannot 
 generate a carry. Respectively, if the inner product has a carry of 3,  we are sure that each 
@@ -286,8 +286,8 @@ $$\begin{array}{l}
     [[\WW q {q_1}]] ^ 2 + \ICP{r_1} * \wB + [|{b_l}|] - {[|q_1|]} ^ 2 \\
 \end{array}
 $$
-The element {\tt (WW q q1)} is a possible candidate
+The element $(\WW q {q_1}\!)$ is a possible candidate
 for the square root. Because of the condition on
-the input, we are sure that the square root is either {\tt (WW q q1)} or
-{\tt (WW q q1) - 1}. It is the sign of $\ICP{r_1} * \wB + 
+the input, we are sure that the square root is either $(\WW q {q_1}\!)$ or
+$(\WW q {q_1}\!) - 1$. It is the sign of $\ICP{r_1} * \wB + 
 [|{b_l}|] - [|q_1|] ^ 2$ that indicates in which situation we are. 
