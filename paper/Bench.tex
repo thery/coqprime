@@ -1,9 +1,9 @@
 \section{Evaluating the library \label{bench}}
 
-The complete library with the corresponding contribution for prime number is available at \url{http://gforge.inria.fr/projects/coqprime/}. It consits in 9000 lines of hand-written
+The complete library with the corresponding contribution for prime numbers is available at \url{http://gforge.inria.fr/projects/coqprime/}. It consits in 9000 lines of hand-written
 definitions and proofs. The automatically generated {\tt word8} arithmetic is much bigger,
 95 Mb: 41 Mb is used to define functions and 54 Mb for the proofs. This is the largest ever
-contribution that has been verified by {\sc Coq}. In particular, we have been capable to
+contribution that has been verified by {\sc Coq}. With this new library, we have been capable to
 prove $2^{44497} - 1$ was prime using {\sc Coq}. As far as we know, it is the largest 
 prime number  that has been certified by a theorem prover.
 
@@ -49,7 +49,7 @@ really possible to compute with large numbers inside {\sc Coq}.
 24 & 19937 & 6002  & 1971 &  & 34653.12s & 377.24s & 268.09s &  45.75s\\
 25 & 21701 & 6533 & 1978 &  &43746.21s & 463.02s & 338.04s &  58.56s \\
 26 & 23209 & 6987 & 1979  &  &51210.56s & 538.33s & 403.48s &  88.43s\\
-27 & 44497 & 13395 & 1979  &  &282784.09s & 3282.23s & 2208.45s &  476.75 \\
+27 & 44497 & 13395 & 1979  &  &282784.09s & 3282.23s & 2208.45s &  476.75s \\
 \hline
 
 \end{tabular}
@@ -59,17 +59,17 @@ really possible to compute with large numbers inside {\sc Coq}.
 \end{figure}
 
 Comparing {\tt word8} with the 31 bit {\sc Ocaml} integer {\tt w31} shows all the benefit we would
-get of having machine word in {\sc Coq}. There is a maximum speed-up of 80 with {\tt word8} which
+get from having machine words in {\sc Coq}. There is a maximum speed-up of 80 with respect to {\tt word8}. This
 means a speed-up of 7200 with respect to the standard {\sc Coq} library.
 
 The 64 bit {\sc Ocaml} integer {\tt w64} is a simulated arithmetic (our processor has only 32 bit).
-This explains there is not such a gap between {\tt w31} and {\tt w64}. {\sc Big\_int}~\cite{bignum} is the  
-standard exact library for {\sc Ocaml}. It has a purely functional interface but its implementation
+This is why there is not such a gap between {\tt w31} and {\tt w64}. {\sc Big\_int}~\cite{bignum} is the  
+standard exact library for {\sc Ocaml}. It has a purely functional interface but 
 is written in C. The comparison is not bad. We are only 6 time slower. It is also very interesting
 that this gap is getting smaller as numbers get larger. Random tests on addition gives a factor of
 4, multiplications a factor of 10.
 
-We are still far away from what we can get using the {\sc gmp}~\cite{GMP} library. This library is written in
-C and uses inplace computation. This minimizes considerably the number of memory allocations.
-Unfortunately, inplace computation is not compatible with the theory of {\sc Coq}.
+We are still far away from getting the performance of the {\sc gmp}~\cite{GMP} library. This library is written in
+C and uses inplace computation instead. This minimizes considerably the number of memory allocations.
+Unfortunately, inplace computation is not compatible with the logic of {\sc Coq}.
 

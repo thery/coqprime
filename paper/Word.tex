@@ -1,9 +1,9 @@
 \section{Implementing base word arithmetic \label{word}}
 
-The last step to complete our library is to define the arithmetic for the base words. 
+The final step to complete our library is to define the arithmetic for the base words. 
 Once defined,  we get the modular arithmetic for the desired size by applying an appropriate
-number of times our functors. In a classical implementation, these base words are the machine ones.
-Unfortunately machine words are not visible in the {\sc Coq} language. 
+number of times our functors. In a classical implementation, these base words would be the machine ones.
+Unfortunately, machine words are not accessible from the {\sc Coq} language. 
 
 \subsection{Defined modular arithmetic}
 
@@ -23,10 +23,10 @@ Definition word2_succ_c x :=
  | II => C1 OO
  end.
 \end{verbatim}
-We also need to give the proofs that all functions meets their specification.
+We also need to give the proofs that every function meets its specification.
 These proofs are also done by case analysis. 
 
-Rather than writing by hand all the functions and proofs, we have
+Rather than writing by hand functions and proofs, we have
 written an {\sc Ocaml} program~\cite{ocaml} instead. This program takes the word
 size as argument and generates the desired base arithmetics with all
 its proofs. It is a nice application of meta-proving. Unfortunately, 

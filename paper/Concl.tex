@@ -11,7 +11,7 @@ reasonably efficient. We hope it will motivate people to integrate machine word 
 
 Expressing the arithmetic in the logic has a prize: no side effect is possible, 
 also numbers are allocated progressively not in one block.
-A natural continuation of our work would be to prove the correctness a library with side effect.
+A natural continuation of our work would be to prove the correctness of a library with side effect.
 This would require a much more intensive verification work since inplace computing
 is known to be much harder to verify.
 Note that directly integrating an existing library inside the prover with no verification
@@ -22,13 +22,13 @@ From the methodological point of view, the most interesting aspect of this work
 has been the use of the meta-proving technique to generate our base arithmetic. This has proved
 to be a very powerful technique. We have used it in an ad-hoc way: files are generated concatenating
 strings. Developing a more adequate support for meta-proving inside the prover seems a
-very promising future work. Note that meta-proving could also a solution to get more flexibility
+very promising future work. Note that meta-proving could also be a solution to get more flexibility
 in the proof system. Slightly changing our representation, adding for example to  the {\tt w2} type not only {\tt WO}
-but also {\tt W1} and {\tt W-1} would have a devasting effect on our proofs.
-Meta-proving could be a solution for proving the correctness for a familly of data-structures rather than
+but also {\tt W1} and {\tt W-1}, would have a devasting effect on our definitions and proofs.
+Meta-proving could be a solution for having a formal development for a familly of data-structures rather than
 just a single one.
 
-Finally, on December 2005, a new prime Mersenne number has beeen discovered: $2 ^{30402457} - 1$.
+Finally, on December 2005, a new prime Mersenne number has been discovered: $2 ^{30402457} - 1$.
 It took 5 days to  perform its Lucas-Lehmer test on a super computer. The program
 uses a very intriguing algorithm to perform multiplication~\cite{crandall}. Proving the correctness of
 such algorithm seems a very challenging task. 
