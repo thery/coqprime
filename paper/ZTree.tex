@@ -39,7 +39,7 @@ Definition Pcmp x y := Pcompare x y Eq.
 This is clearly not optimal but it is the best one can do with this representation. 
 Changing to a high bits first representation would lead to a more efficient
 comparison but would penalize other functions like parity checking. With this linear
-datastructure, recursive calls only skip a single bit. 
+data-structure, recursive calls only skip a single bit. 
 This is a real limitation. Efficient algorithms for large numbers like Karatsuba 
 multiplication~\cite{Karat} use a divide and conquer strategy. They require to be able to split numbers
 in parts efficiently. 
@@ -62,7 +62,7 @@ Fixpoint word (w: Set) (n:nat): Set :=
 An object of type {\tt (word w n)} is a complete binary tree that
 contains $2^\texttt{n}$ objects of type {\tt w}.
 To represent a given number exactly, one has to choose an appropriate height.
-For example, taking the usal booleans for base words, a minimum
+For example, taking the usual booleans for base words, a minimum
 height of 2 is necessary to represent the number 13. With this height, 
 numbers have type {\tt (word bool 2)} and 
 {\tt (WW (WW true true) (WW false true))} denotes the number 13.
