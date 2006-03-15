@@ -3,7 +3,7 @@ Our library includes the usual functions:
 comparison, successor, predecessor, complement, addition, subtraction, 
 multiplication, square, division, square root, gcd, power and modulo.
 Functions work with fixed-size words. It means that we compute modulo
-the word size. For addition and subtration, we also provide an exact version
+the word size. For addition and subtraction, we also provide an exact version
 that returns a word and a carry. For multiplication, we also provide an exact version
 returning two words. 
 
@@ -249,7 +249,7 @@ quotient is correct, we just have to unshift the remainder.
 \subsubsection{Recursive Square Root}
 
 The algorithm for computing the square root is similar to the one for division.
-It was first described in~\cite{RecSqrt} and has already been formalised in a 
+It was first described in~\cite{RecSqrt} and has already been formalized in a 
 theorem prover~\cite{BerMagZim02}. It requires the number to be split
 in four. For this reason it is represented by the following function in our
 library
