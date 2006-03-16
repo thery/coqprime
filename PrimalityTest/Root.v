@@ -1,10 +1,15 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (***********************************************************************
       Root.v                                                                                       
                                                                                                          
       Proof that a polynomial has at most n roots                                 
-                                                                                                                                              
-                                                                                                         
-                                     Laurent.Thery@inria.fr (2005)                
 ************************************************************************)
 Require Import ZArith.
 Require Import List.

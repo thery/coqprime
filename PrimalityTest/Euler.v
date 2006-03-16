@@ -1,7 +1,14 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (************************************************************************
 
     Definition of the Euler Totient function
-
 
 *************************************************************************)
 Require Import ZArith.

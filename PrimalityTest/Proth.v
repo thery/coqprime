@@ -1,12 +1,18 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (**********************************************************************
     Proth.v                        
                                                                      
     Proth's Test 
                                                                  
     Definition: ProthTest              
-                                                                     
-                                    Laurent.Thery@inria.fr (2005)    
-  **********************************************************************)
+ **********************************************************************)
 Require Import ZArith.
 Require Import ZAux.
 Require Import Pocklington.

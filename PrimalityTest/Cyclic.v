@@ -1,11 +1,16 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (***********************************************************************
       Cyclic.v                                                                                       
                                                                                                          
       Proof that an abelien ring is cyclic                                 
-                                                                                                                                              
-                                                                                                         
-                                     Laurent.Thery@inria.fr (2005)                
-************************************************************************)
+ ************************************************************************)
 Require Import ZAux.
 Require Import List.
 Require Import Root.

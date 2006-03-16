@@ -1,11 +1,17 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (***********************************************************************
       UList.v                                                                                       
                                                                                                          
       Definition of list with distinct elements                                 
                                                                                                          
       Definition: ulist                                                                         
-                                                                                                         
-                                     Laurent.Thery@inria.fr (2003)                
 ************************************************************************)
 Require Import List.
 Require Import Arith.

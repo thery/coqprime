@@ -1,3 +1,11 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (**********************************************************************
     Lagrange.v                        
                                                                      
@@ -5,8 +13,6 @@
       the oder of a subgroup divides the order of a group                         
                                                                      
     Definition: lagrange              
-                                                                     
-                                    Laurent.Thery@inria.fr (2005)    
   **********************************************************************)
 Require Import List.
 Require Import UList.

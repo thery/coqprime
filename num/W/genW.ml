@@ -1,4 +1,19 @@
 
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
+let cp =
+"(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)"
+
 let digits = ref 2
 
 let usage_basename = 
@@ -220,6 +235,7 @@ let end_file out =
   Unix.close fd
 
 let print_require b r = 
+  println cp;
   println "Require Import ZArith.";
   println "Open Local Scope Z_scope.";  
   print "Require Import ";print !basename;println "_basic.";
@@ -2018,23 +2034,25 @@ let print_pos_mod () =
   end;
   println "";
 
-  let typ x y = 
-     " "^w_B^"/ 4 <= [|"^x^"|] -> let (s,r) := "^wt ^"_sqrt2 "^x^" "^y^" in "^
+  let typ1 x y = 
+     "((let (s,r) := "^wt ^"_sqrt2 "^x^" "^y^" in "^
      "[||WW "^x^" "^y^"||] = [|s|] ^ 2 + [+|r|] /\\ "^
-     "[+|r|] <= 2 * [|s|]" in
+     "[+|r|] <= 2 * [|s|]): Prop)" in
+  let typ x y = 
+     " "^w_B^"/ 4 <= [|"^x^"|] -> "^(typ1 x y) in
   print_spec (wt ^"_sqrt2") "x y" (typ "x" "y");
   if (!noproof) then print_admitted_spec()
   else begin
-  print_fun "x y";
-  print_match_dep "x" (typ "x" "y");
+  print_fun "x y _";
+  print_match_dep "x" (typ1 "x" "y");
   for x = 0 to base - 1 do
     print " | ";print_w x;println " => ";
-    print "   ";print_match_dep "y" (typ (string_w x) "y");
+    print "   ";print_match_dep "y" (typ1 (string_w x) "y");
     for y = 0 to base - 1 do
       let s = sqrt (base * x + y) in
       let r = (base * x + y) - s * s in
       print    "    | ";print_w y; print " => ";
-      print "fun _ => conj (refl_equal "; printi (base * x + y); print ") (Zle_bool_imp_le ";
+      print "conj (refl_equal "; printi (base * x + y); print ") (Zle_bool_imp_le ";
       printi r; print " "; printi (2 * s); print " (refl_equal true))";println "";
     done;
     println "    end"

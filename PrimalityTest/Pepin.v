@@ -1,11 +1,17 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (**********************************************************************
     Pepin.v                        
                                                                      
     Pepin's Test for Fermat Number 
                                                                  
     Definition: PepinTest              
-                                                                     
-                                    Laurent.Thery@inria.fr (2005)    
   **********************************************************************)
 Require Import ZArith.
 Require Import ZAux.
