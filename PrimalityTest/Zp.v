@@ -309,6 +309,13 @@ exact 0.
 refine (e_order Z_eq_dec (p mod q) (ZPGroup q _)); auto with zarith.
 Defined.
 
+Theorem Zorder_pos: forall p n, 0 <= Zorder p n.
+intros p n; unfold Zorder.
+case (Z_le_dec n 1); auto with zarith.
+intros n1.
+apply Zlt_le_weak; apply e_order_pos.
+Qed.
+
 Theorem in_mod_ZPGroup
      : forall (n : Z) (n_pos : 1 < n) (p : Z),
        rel_prime p n -> In (p mod n) (s (ZPGroup n n_pos)).
@@ -355,6 +362,7 @@ apply in_mod_ZPGroup; auto.
 apply rel_prime_sym; apply prime_rel_prime; auto.
 Qed.
 
+
 Theorem Zorder_power_is_1:  forall p n, 1 < n -> rel_prime p n -> p ^ (Zorder p n)  mod n = 1.
 intros p n H H1;  unfold Zorder.
 case (Z_le_dec n 1); intros H2.
@@ -371,4 +379,29 @@ intros p n H H1;  unfold Zorder.
 case (Z_le_dec n 1); intros H2.
 contradict H; auto with zarith.
 apply e_order_pos.
+Qed.
+
+Theorem phi_power_is_1:  forall p n, 1 < n -> rel_prime p n -> p ^ (phi n)  mod n = 1.
+intros p n H H1.
+assert (V1:= Zorder_power_pos p n H H1).
+assert (H2: (Zorder p n | phi n)).
+unfold Zorder.
+case (Z_le_dec n 1); intros H2.
+contradict H; auto with zarith.
+match goal with |- context[ZPGroup n ?H] =>
+rewrite phi_is_order  with (n_pos := H)
+end.
+apply e_order_divide_g_order.
+apply in_mod_ZPGroup; auto.
+case H2; clear H2; intros q H2; rewrite H2.
+rewrite Zmult_comm.
+assert (V2 := (phi_pos _ H)).
+assert (V3: 0 <= q).
+rewrite H2 in V2.
+apply Zlt_le_weak; apply Zmult_lt_0_reg_r with (2 := V2); auto with zarith.
+rewrite Zpower_mult; auto with zarith.
+rewrite Zmod_Zpower; auto with zarith.
+rewrite Zorder_power_is_1; auto.
+rewrite Zpower_1; auto with zarith.
+apply Zmod_def_small; auto with zarith.
 Qed.
