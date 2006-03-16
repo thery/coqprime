@@ -1,12 +1,16 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (**********************************************************************
 
 
     ZPowerAux.v      Auxillary functions & Theorems for Zpower 
-
-
-                  Laurent.Thery@inria.fr (2005)                  
-
-  **********************************************************************)
+ **********************************************************************)
 
 Require Export ZArith.
 Require Export Znumtheory.

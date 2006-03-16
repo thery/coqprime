@@ -1,12 +1,16 @@
+
+(*************************************************************)
+(*      This file is distributed under the terms of the      *)
+(*      GNU Lesser General Public License Version 2.1        *)
+(*************************************************************)
+(*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
+(*************************************************************)
+
 (**********************************************************************
     Permutation.v                        
                                                                      
     Defintion and properties of permutations                         
-                                                                     
-    Definition: permutation                                          
-                                                                     
-                                    Laurent.Thery@inria.fr (2003)    
-  **********************************************************************)
+   **********************************************************************)
 Require Export List.
 Require Export ListAux.
  
