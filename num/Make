@@ -25,6 +25,8 @@ Nbasic.v
 NMake.v
 ZMake.v
 Arith.v
-Q.v
+QMake.v
+-custom "ocamlopt -o genN unix.cmxa genN.ml" "genN.ml" genN
+
 
 

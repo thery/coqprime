@@ -103,7 +103,7 @@ VFILES=Basic_type.v\
   NMake.v\
   ZMake.v\
   Arith.v\
-  Q.v
+  QMake.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -130,7 +130,8 @@ all: Basic_type.vo\
   NMake.vo\
   ZMake.vo\
   Arith.vo\
-  Q.vo
+  QMake.vo\
+  genN
 
 spec: $(VIFILES)
 
@@ -147,6 +148,15 @@ all-gal.ps: $(VFILES)
 	$(COQDOC) -ps -g -o $@ `$(COQDEP) -sort -suffix .v $(VFILES)`
 
 
+
+###################
+#                 #
+# Custom targets. #
+#                 #
+###################
+
+genN: genN.ml
+	ocamlopt -o genN unix.cmxa genN.ml
 
 ####################
 #                  #
@@ -204,6 +214,7 @@ Makefile: Make
 clean:
 	rm -f *.cmo *.cmi *.cmx *.o $(VOFILES) $(VIFILES) $(GFILES) *~
 	rm -f all.ps all-gal.ps $(HTMLFILES) $(GHTMLFILES)
+	- rm -f genN
 
 archclean:
 	rm -f *.cmx *.o
