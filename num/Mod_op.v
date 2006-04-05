@@ -113,7 +113,7 @@ Notation "[[ x ]]" :=
  
    Variable m_op : mod_op.
 
-   Record mod_spec : Set := mk_mod_spec {
+   Record mod_spec : Prop := mk_mod_spec {
       succ_mod_spec     : 
                 forall w t, [|w|]= t mod [|b|] ->
                           [|succ_mod m_op w|] = ([|w|] + 1) mod [|b|];
@@ -1044,7 +1044,7 @@ Notation "[[ x ]]" :=
      _pred_mod _sub_mod
      _mmul_mod _msquare_mod _power_mod.
 
-  Definition mmake_mod_spec: mod_spec mmake_mod_op.
+ Definition mmake_mod_spec: mod_spec mmake_mod_op.
   apply mk_mod_spec.
   exact _succ_mod_spec.
   exact _add_mod_spec.

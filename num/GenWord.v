@@ -42,11 +42,13 @@ Module Type Uint.
 
  Parameter div_eucl : uint -> uint -> uint * uint.
  Parameter uint_mod : uint -> uint -> uint.
-
+ Parameter pos_mod : positive -> uint -> uint.
  Parameter head0 : uint -> N.
  Parameter lsl : uint -> positive -> uint.
  Parameter lsr : uint -> positive -> uint.
-
+ Parameter is_even : uint -> bool.
+ Parameter sqrt2   : uint -> uint -> uint * carry uint.
+ Parameter sqrt    : uint -> uint. 
  Parameter eqb ltb leb: uint -> uint -> bool.
  Parameter compare : uint -> uint -> comparison.
 
@@ -56,6 +58,10 @@ Module Type Uint.
  Parameter of_pos : positive -> N * uint.
 
  Notation wB := (base digits).
+
+ Notation "[+| c |]" := (interp_carry 1 wB to_Z c) (at level 0, x at level 99).
+
+ Notation "[|| x ||]" := (zn2z_to_Z wB to_Z x)  (at level 0, x at level 99).
 
  Parameter O_to_Z : [|zero|] = 0.
  Parameter I_to_Z : [|one|] = 1.
@@ -112,11 +118,28 @@ Module Type Uint.
  Parameter head0_spec  : forall x,  0 < [|x|] ->
 	 wB/ 2 <= 2 ^ (Z_of_N (head0 x)) * [|x|] < wB. 
 
+ Parameter pos_mod_spec : forall w p,
+       [|pos_mod p w|] = [|w|] mod (2 ^ Zpos p).
+
  Parameter lsl_spec : forall x p, Zpos p < Zpos digits ->
 	[|lsl x p|] = [|x|]*2^Zpos p.
+
  Parameter lsr_spec : forall x p, Zpos p < Zpos digits ->
         [|lsr x p|] = [|x|]/(2^Zpos p).
  
+ Parameter is_even_spec : forall x,
+      if is_even x then [|x|] mod 2 = 0 else [|x|] mod 2 = 1.
+
+ Parameter sqrt2_spec : forall x y,
+       wB/ 4 <= [|x|] ->
+       let (s,r) := sqrt2 x y in
+          [||WW x y||] = [|s|] ^ 2 + [+|r|] /\
+          [+|r|] <= 2 * [|s|].
+
+ Parameter sqrt_spec : forall x,
+       [|sqrt x|] ^ 2 <= [|x|] < ([|sqrt x|] + 1) ^ 2.
+
+  
 End Uint.
 
 Module MakeUintZnZ (U:Uint).
@@ -220,7 +243,9 @@ Module MakeUintZnZ (U:Uint).
    U.div21 U.div_eucl U.div_eucl
    U.uint_mod U.uint_mod  
    uint_gcd_gt uint_gcd
-   uint_add_mul_div.
+   uint_add_mul_div
+   U.pos_mod
+   U.is_even U.sqrt2 U.sqrt.
 
  Notation "[| x |]" := (U.to_Z x) (at level 0, x at level 99).
  Notation wB := (base U.digits).
@@ -594,6 +619,8 @@ Module MakeUintZnZ (U:Uint).
   exact uint_mod_gt_spec. exact U.mod_spec.
   exact uint_gcd_gt_spec. exact uint_gcd_spec.
   exact U.head0_spec. exact uint_add_mul_div_spec.
+  exact U.pos_mod_spec.
+  exact U.is_even_spec. exact U.sqrt2_spec. exact U.sqrt_spec.
  Qed.
 
  Definition w1_op := mk_zn2z_op uint_op.           

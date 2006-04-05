@@ -171,6 +171,28 @@ Section GenMul.
 
  End GenMulAddn1.
 
+ Section GenMulAddn1_cont.
+  Variable r:Set.
+  Variable w_mul_add_cont : w -> w -> w -> (w -> w -> r) -> r.
+
+  Fixpoint gen_mul_add_n1_cont (n:nat) : 
+	word w n -> w -> w -> (w -> word w n -> r) -> r :=
+   match n return word w n -> w -> w -> (w -> word w n -> r) -> r with 
+   | O => w_mul_add_cont 
+   | S n1 => 
+     fun x y r cont =>
+     match x with
+     | W0 => cont w_0 (extend w_0W n1 r)
+     | WW xh xl =>
+	@gen_mul_add_n1_cont n1 xl y r 
+	  (fun rl l =>
+	    @gen_mul_add_n1_cont n1 xh y rl 
+	      (fun rh h => cont rh (gen_WW w_WW n1 h l)))
+     end
+   end.
+
+ End GenMulAddn1_cont.
+
  Definition w_mul_add x y r :=
   match w_mul_c x y with
   | W0 => (w_0, r)
