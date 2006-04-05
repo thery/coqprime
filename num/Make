@@ -16,7 +16,15 @@ GenDiv.v
 GenSqrt.v
 ZnZ.v
 Zn2Z.v
+GenWord.v
 W.v
 Lucas.v
 Pock.v
 Mod_op.v
+Nbasic.v
+NMake.v
+ZMake.v
+Arith.v
+Q.v
+
+

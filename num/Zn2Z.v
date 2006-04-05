@@ -239,7 +239,8 @@ Section Zn2Z.
  Let pos_mod := 
   Eval lazy beta delta [ww_pos_mod] in ww_pos_mod w_0 w_digits w_WW w_pos_mod.
 
- Let is_even := ww_is_even w_is_even.
+ Let is_even := 
+  Eval lazy beta delta [ww_is_even] in ww_is_even w_is_even.
 
  Let sqrt2 := 
   Eval lazy beta delta [ww_sqrt2] in

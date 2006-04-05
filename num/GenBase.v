@@ -86,9 +86,10 @@ Section GenBase.
   end.
 
  Definition extend (n:nat) (x:w) : word w (S n) :=
-  match w_0W x with
+  let r := w_0W x in
+  match r with
   | W0 => W0
-  | r => extend_aux n r
+  | _ => extend_aux n r
   end.
 
  Definition gen_0 n : word w n :=
@@ -123,7 +124,8 @@ Section GenBase.
   | WW xh xl, WW yh yl =>
     match w_compare xh yh with
     | Eq => w_compare xl yl
-    | cmp => cmp
+    | Lt => Lt
+    | Gt => Gt
     end
   end.
   

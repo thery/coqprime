@@ -94,10 +94,16 @@ VFILES=Basic_type.v\
   GenSqrt.v\
   ZnZ.v\
   Zn2Z.v\
+  GenWord.v\
   W.v\
   Lucas.v\
   Pock.v\
-  Mod_op.v
+  Mod_op.v\
+  Nbasic.v\
+  NMake.v\
+  ZMake.v\
+  Arith.v\
+  Q.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -115,10 +121,16 @@ all: Basic_type.vo\
   GenSqrt.vo\
   ZnZ.vo\
   Zn2Z.vo\
+  GenWord.vo\
   W.vo\
   Lucas.vo\
   Pock.vo\
-  Mod_op.vo
+  Mod_op.vo\
+  Nbasic.vo\
+  NMake.vo\
+  ZMake.vo\
+  Arith.vo\
+  Q.vo
 
 spec: $(VIFILES)
 
