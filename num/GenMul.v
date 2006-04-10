@@ -171,27 +171,29 @@ Section GenMul.
 
  End GenMulAddn1.
 
- Section GenMulAddn1_cont.
-  Variable r:Set.
-  Variable w_mul_add_cont : w -> w -> w -> (w -> w -> r) -> r.
-
-  Fixpoint gen_mul_add_n1_cont (n:nat) : 
-	word w n -> w -> w -> (w -> word w n -> r) -> r :=
-   match n return word w n -> w -> w -> (w -> word w n -> r) -> r with 
-   | O => w_mul_add_cont 
-   | S n1 => 
-     fun x y r cont =>
+ Section GenMulAddmn1.
+  Variable wn: Set.
+  Variable extend_n : w -> wn.
+  Variable wn_0W : wn -> zn2z wn.
+  Variable wn_WW : wn -> wn -> zn2z wn.
+  Variable w_mul_add_n1 : wn -> w -> w -> w*wn.
+  Fixpoint gen_mul_add_mn1 (m:nat) : 
+	word wn m -> w -> w -> w*word wn m :=
+   match m return word wn m -> w -> w -> w*word wn m with 
+   | O => w_mul_add_n1 
+   | S m1 => 
+     let mul_add := gen_mul_add_mn1 m1 in
+     fun x y r =>
      match x with
-     | W0 => cont w_0 (extend w_0W n1 r)
+     | W0 => (w_0,extend wn_0W m1 (extend_n r))
      | WW xh xl =>
-	@gen_mul_add_n1_cont n1 xl y r 
-	  (fun rl l =>
-	    @gen_mul_add_n1_cont n1 xh y rl 
-	      (fun rh h => cont rh (gen_WW w_WW n1 h l)))
+       let (rl,l) := mul_add xl y r in
+       let (rh,h) := mul_add xh y rl in
+       (rh, gen_WW wn_WW m1 h l)
      end
    end.
 
- End GenMulAddn1_cont.
+ End GenMulAddmn1.
 
  Definition w_mul_add x y r :=
   match w_mul_c x y with

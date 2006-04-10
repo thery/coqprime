@@ -11,6 +11,7 @@ Module Type NType.
  Parameter to_Z : t -> Z.
 
  Parameter compare : t -> t -> comparison.
+ Parameter eq_bool : t -> t -> bool.
 
  Parameter succ : t -> t.
  Parameter add  : t -> t -> t.
@@ -74,6 +75,15 @@ Module Make (N:NType).
   match compare x y with
   | Eq => true
   | _ => false
+  end.
+
+ Definition cmp_sign x y :=
+  match x, y with
+  | Pos nx, Neg ny => 
+    if N.eq_bool ny N.zero then Eq else Gt 
+  | Neg nx, Pos ny => 
+    if N.eq_bool nx N.zero then Eq else Lt
+  | _, _ => Eq
   end.
  
  Definition to_N x :=

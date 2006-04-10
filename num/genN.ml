@@ -708,10 +708,10 @@ let print_Make () =
   fprintf fmt "\n";
 
   fprintf fmt " Definition gcd_gt_body a b cont :=\n";
-  fprintf fmt "  match compare zero b with\n";
+  fprintf fmt "  match compare b zero with\n";
   fprintf fmt "  | Gt =>\n";  
   fprintf fmt "    let r := mod_gt a b in\n";
-  fprintf fmt "    match compare zero r with\n";
+  fprintf fmt "    match compare r zero with\n";
   fprintf fmt "    | Gt => cont r (mod_gt b r)\n";
   fprintf fmt "    | _ => b\n";
   fprintf fmt "    end\n";
@@ -754,11 +754,11 @@ let print_Make () =
   for i = 0 to size do
     fprintf fmt "  | ";
     print_S "O" fmt i;
-    fprintf fmt " => %s%i (snd (w%i_op.(znz_of_pos) x))\n" c i i
+    fprintf fmt " => %s%i (snd (w%i_op.(znz_of_pos) x))\n" "reduce_" i i
   done;
   fprintf fmt "  | _ =>\n";
   fprintf fmt "    let n := minus h %i in\n" (size+1);
-  fprintf fmt "    %sn n (snd ((make_op n).(znz_of_pos) x))\n" c;
+  fprintf fmt "    %sn n (snd ((make_op n).(znz_of_pos) x))\n" "reduce_";
   fprintf fmt "  end.\n";
   fprintf fmt "\n";
 
