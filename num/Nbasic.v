@@ -116,7 +116,7 @@ Section CompareRec.
     | WW xh xl => 
       match compare0_mn m xh with
       | Eq => compare0_mn m xl 
-      | r => r
+      | _ => Gt
       end
     end
   end.
@@ -130,7 +130,7 @@ Section CompareRec.
     | WW xh xl => 
       match compare0_mn m xh with
       | Eq => compare_mn_1 m xl y 
-      | r => r
+      | _ => Gt
       end
     end
   end.
