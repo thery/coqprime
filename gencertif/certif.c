@@ -217,7 +217,7 @@ void simplify_certif(pock_certif_t c)
 void simplify_small_certif(pock_certif_t c)
 {
   mpz_t N, F1, R1, pi;
-  int used, i, j;
+  int used, j;
   mpz_ptr * ptr; 
 
 
@@ -227,11 +227,11 @@ void simplify_small_certif(pock_certif_t c)
   mpz_init_set(R1,c->_R1);
   
   used = c->_used;
-  i = 0;
+ 
   ptr = c->_dec;
 
-  while (i <used){
-    mpz_set (pi, ptr[i]);
+  while (0 <used){
+    mpz_set (pi, ptr[0]);
     mpz_tdiv_q (F1, F1, pi);
     mpz_mul (R1, R1, pi);
 
@@ -244,7 +244,7 @@ void simplify_small_certif(pock_certif_t c)
 	c->_used = used;
       }
     else break;
-    i++;
+    
   }
 
 
@@ -342,17 +342,14 @@ void set_sqrt(pock_certif_t c)
 
   mpz_init (s);
   mpz_init (r);
- 
   mpz_init_set (aux, c->_F1);
   mpz_mul_ui(aux, aux, 2);
-  
   mpz_tdiv_qr (s, r, c->_R1, aux);
-  
   if (mpz_cmp_ui (s, 0) != 0) {
     mpz_mul(r, r, r);
     mpz_mul_ui(s, s, 8);
     mpz_sub(aux, r, s);
-    if (mpz_cmp_ui (aux, 0) > 0) mpz_sqrt(c->_sqrt, aux); 
+    if (mpz_cmp_ui (aux, 0) > 0) mpz_sqrt(c->_sqrt, aux);
   }
 
   mpz_clear (s);
