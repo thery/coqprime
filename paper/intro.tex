@@ -24,8 +24,10 @@ The two-level approach proposes an alternative
 strategy in two steps. In the first step, one defines a function that expresses
 the problem in term of pure computation. It can be seen as a semi-decision procedure.
 In our case, it amounts in writing a 
-function {\tt test} from natural number to boolean such that the function
-returns {\tt true} if the number is prime. For example, if the natural number
+function {\tt test} from natural number to boolean such that if the function
+returns {\tt true} then the number is prime (correctness is sufficiant, we do
+not require completness). 
+For example, if the natural number
 is $n$, the function can check that there is no divisor between 2 and $n-1$
 by a simple iteration. In the second step, one proves that the function meets 
 its specification
@@ -81,7 +83,8 @@ This is a direct application of the skeptic approach described in~\cite{BarBar,H
 With respect to the standard approach for the same problem~\cite{Caprotti_Oostdijk:01pockjsc}, the two-level
 approach gives a huge improvement in term of size of the
 proof object and in term of time.  Figure~\ref{fig:TimeComp} illustrates this
-on some small examples.
+on some small examples ($P_{150}$ is a prime number of 150 digits when written
+in base 10 for which we have been able to generate a certificate).
 \begin{figure}
 \begin{center}
 \begin{tabular}{|l|r|r|r|r|r|r|}

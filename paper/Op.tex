@@ -1,10 +1,13 @@
 \section{The certified library \label{Op}}
 Our library includes the usual functions:
-comparison, successor, predecessor, complement, addition, subtraction, 
-multiplication, square, division, square root, gcd, power and modulo.
-Functions work with fixed-size words. It means that we compute modulo
-the word size. For addition and subtraction, we also provide an exact version
-that returns a word and a carry. For multiplication, we also provide an exact version
+comparison, successor, predecessor, opposite, addition, subtraction,
+multiplication, square, euclidien division, integer square root, gcd, 
+power and modulo.
+It is a modular library : it means that we only manipulate tree of the same
+height {\HUGE A REFAIRE}. 
+For addition and subtraction, we also provide an exact version
+that returns a word and a carry.
+For multiplication, we also provide an exact version
 returning two words. 
 
 Our goal was to provide an arithmetic library that is suitable for the two-level
@@ -21,8 +24,7 @@ using predicates over integers. For this, we use two interpretation functions
 Given a single word element $x$, its corresponding integer value
 is $[|x|]$. Given a two-word element $y$, its corresponding
 integer value is $[[y]]$. The base of the arithmetic, i.e
-one plus the maximum value that fits in one word, is $\wB$. From these definitions, the 
-following statement holds
+one plus the maximum value that fits in one word, is $\wB$. From these definitions, the following statement holds
 $$\forall x\, y,\, [[\WW x  y]] = [|x|] * \wB + [|y|]$$
 Once a function is defined, its correctness has to be proved.
 For example for the comparison defined in the previous section,
