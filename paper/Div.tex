@@ -59,8 +59,8 @@ otherwise it is {\tt q - 2}.
 Now the definition of {\tt ww\_div21} is straightforward. Not considering the cases for the {\tt W0}
 constructor, we get
 \begin{verbatim} 
- Definition ww_div21 a1 a2 b :=
-  match a1, a2, b with
+ Definition ww_div21 aa1 aa2 bb :=
+  match aa1, aa2, bb with
   ....  
   | WW a1H a1L, WW a2H a2L, WW bH bL =>
         let (q1, r) := w_div32 a1H a1L a2H bH bL in
