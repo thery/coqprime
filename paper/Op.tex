@@ -3,46 +3,47 @@ Our library includes the usual functions:
 comparison, successor, predecessor, opposite, addition, subtraction,
 multiplication, square, euclidien division, integer square root, gcd, 
 power and modulo.
-It is a modular library : it means that we only manipulate tree of the same
-height {\huge A REFAIRE}. 
+It is a modular library : it means that we only manipulate tree (or word)
+of the same height (of the same size). 
 For addition and subtraction, we also provide an exact version
 that returns a word and a carry.
 For multiplication, we also provide an exact version
 returning two words. 
 
-Our goal was to provide an arithmetic library that is suitable for the two-level
-approach where proofs are replaced by computations of certified semi-decision procedures.
-Obviously, the two-level approach is interesting only if the semi-decision procedures evaluate
-efficiently inside the prover.
-So, we must carefully choose the algorithms we implement.
-The semi-decision procedure must also be certified, so  every function of our library must come 
-along with its proof of correctness. 
+Since we want to use our library in the context of a two-level approach,
+we must carefully choose the algorithms we implement.
+Furthermore, semi-decision procedures must also be certified, 
+so every function of our library must come along with its proof 
+of correctness. 
 
-Specifications are expressed 
-using predicates over integers. For this, we use two interpretation functions
+Specifications are expressed using predicates over integers. For this, 
+we use two interpretation functions
 {$ [|\ |]$} and {$[[\ ]]$}.
-Given a single word element $x$, its corresponding integer value
-is $[|x|]$. Given a two-word element $y$, its corresponding
-integer value is $[[y]]$. The base of the arithmetic, i.e
-one plus the maximum value that fits in one word, is $\wB$. From these definitions, the following statement holds
+Given a single-word element $x$, its corresponding integer value
+is $[|x|]$. Given a two-word element $yy$, its corresponding
+integer value is $[[yy]]$. The base of the arithmetic, i.e.
+one plus the maximum value that fits in a single-word, is $\wB$. 
+We write {\tt w\_0} (resp. {\tt w\_1}) for the word with 
+corresponding integer value 0 (resp. 1).
+From these definitions, the following statement holds
 $$\forall x\, y,\, [[\WW x  y]] = [|x|] * \wB + [|y|]$$
 Once a function is defined, its correctness has to be proved.
 For example for the comparison defined in the previous section,
-one needs to prove that if the function {\tt w\_compare} meets its specification
+one needs to prove that if the function {\tt w\_cmp} meets its specification
 $$\begin{array}{l}
-\forall x\, y, \,\, \textit{match {\tt w\_compare} x y with} \\
+\forall x\, y, \,\, \textit{match {\tt w\_cmp} x y with} \\
 \qquad\,\,\,\,
  |\,\, \texttt{Eq}\,\, \rightarrow [|x|] = [|y|]\,\, | \,\,\texttt{Lt}\,\, \rightarrow [|x|] < [|y|] \,\,
 | \,\,\texttt{Gt}\,\, \rightarrow [|x|] > [|y|]\\
 \qquad\,\,\,\, \textit{end}
 \end{array}
 $$
-so does the function {\tt ww\_compare}
+so does the function {\tt ww\_cmp}
 $$\begin{array}{l}
-\forall x\, y, \,\, \textit{match {\tt ww\_compare} x y with} \\
+\forall xx\, yy, \,\, \textit{match {\tt ww\_cmp} xx yy with} \\
 \qquad\,\,\,\,
- |\,\, \texttt{Eq}\,\, \rightarrow [[x]] = [[y]]\,\, | \,\,\texttt{Lt}\,\, \rightarrow [[x]] < [[y]] \,\,
-| \,\,\texttt{Gt}\,\, \rightarrow [[x]] > [[y]]\\
+ |\,\, \texttt{Eq}\,\, \rightarrow [[xx]] = [[yy]]\,\, | \,\,\texttt{Lt}\,\, \rightarrow [[xx]] < [[yy]] \,\,
+| \,\,\texttt{Gt}\,\, \rightarrow [[xx]] > [[yy]]\\
 \qquad\,\,\,\, \textit{end}
 \end{array}
 $$
@@ -59,7 +60,7 @@ Inductive carry (w: Set): Set :=
 Two interpretation functions are associated with carries.
 One interprets the carry positively: $\ICP{\CI x} = \wB + [|x|]$ and
 $\ICP{\CO x} = [|x|]$. 
-The other one interprets it negatively:
+The other one interprets it negatively (i.e. a borrow):
 $\ICM{\CI x} = [|x|] - \wB$ and $\ICM{\CO x} = [|x|]$.
 To illustrate how carries are manipulated, let us consider the successor function.
 In our library, it is represented by two functions
@@ -71,8 +72,8 @@ The first function represents the modular version, the second one the exact
 version. With these two functions, it is possible to define the version
 for two-word elements. For example, the definition for the modular version is
 \begin{verbatim}
- Definition ww_succ x :=
-  match x with
+ Definition ww_succ xx :=
+  match xx with
   | W0 => WW w_0 w_1
   | WW xH xL =>
     match w_succ_c xL with
@@ -94,7 +95,7 @@ one-word element by calling twice the successor function.
   | C1 y => C1 (w_succ y)
   end.
 \end{verbatim}
-In the case where the first increments has created a carry, we are sure that the second
+In the case where the first increment has created a carry, we are sure that the second
 increment cannot raise any carry so we can directly call the {\tt w\_succ} function.
 Also, we use a combination of partial evaluation and continuation passing style to get
 shorter definitions. This has proved to ease considerably the proving phase without
@@ -102,7 +103,7 @@ changing the efficiency of functions.
 
 \subsection{Shifting bits}
 
-If most of the operations works at word level, some functions like the
+If most of the operations work at word level, some functions like the
 shifting operation require to work at a lower level: the bit level.
 Surprisingly, all the operations we had to perform at bit level can be built
 using a single function
@@ -114,12 +115,13 @@ is composed for its last {\tt p} bits by the first bits of {\tt y}
 and for the remaining bits by the last bits of {\tt x}.
 Its specification is 
 $$\begin{array}{l}
-\forall x\, y\, p, \,\, 2 ^ p < \wB  \Rightarrow \\
-\hskip20pt [|\textit{\tt{w\_add\_mul\_div}\, p\, x\, y}|] = ([|x|] * 2 ^ p + ([|y|] * 2 ^ p) / \wB) \,\mod\, \wB
+\forall p\, x\, y, \,\, 2 ^ p < \wB  \Rightarrow \\
+\hskip20pt [|\textit{\tt{w\_add\_mul\_div}}\, p\, x\, y|] = ([|x|] * 2 ^ p + ([|y|] * 2 ^ p) / \wB) \,\mod\, \wB
 \end{array}
 $$
-Two degenerated versions of this function are of direct interest. Calling
-{\tt w\_add\_mul\_div} with a zero word as second argument implements
+Two degenerated versions of this function are of direct interest. Calling it
+%{\tt w\_add\_mul\_div} 
+with a zero word as second argument implements
 the shift left. Calling it with a zero word as third argument implements
 the shift right.
 
@@ -154,14 +156,16 @@ to implement and prove correct.
 The difficulty is in the computation of the cross
 product $(([|{a_h}|] + [|{a_l}|]) * ([|{b_h}|] + [|{b_l}|]) - {h} - {l})$. 
 The inner product cannot be directly computed using the word multiplication: 
-both additions $(([|{a_h}|] + [|{a_l}|])$ and $([|{b_h}|] + [|{b_l}|])$ can have a carry, 
+both additions $([|{a_h}|] + [|{a_l}|])$ and $([|{b_h}|] + [|{b_l}|])$ can have a carry, 
 so their product fits in two words and a maximum carry of 3.
 Also, we know that the final cross product is positive and fits in
-two words and a maximum carry of 1. This is useful to optimize the code. For example, 
-if the inner product has no carry, we are sure that the subtractions by $h$ and $l$ cannot 
-generate a carry. Respectively, if the inner product has a carry of 3,  we are sure that each 
-subtraction generates a carry. In both cases, modular subtraction can be used instead of
-the exact one. 
+two words and a maximum carry of 1. This is useful to optimize the code.
+For example, 
+if the inner product has no carry, we are sure that the subtractions 
+by $h$ and $l$ cannot generate a borrow. Respectively, 
+if the inner product has a carry of 3,  we are sure that each 
+subtraction generates a borrow. In both cases, modular subtraction can 
+be used instead of the exact one. 
 
 Karatsuba multiplication is more efficient than the naive one
 only when numbers are large enough. So our library
@@ -172,12 +176,12 @@ for trees of "small" height.
 \subsubsection{Recursive Division}
 The general division algorithm that we have implemented is the usual schoolboy 
 method that iterates the division of two words by one word. 
-It is then crucial to perform this division two by one efficiently. 
+It is then crucial to perform this two-by-one division efficiently. 
 The algorithm we have implemented is the one presented in~\cite{RecDiv}.
 The idea is to use the recursive call on high bits to guess an approximation 
 of the quotient and  then to perform an appropriate adjustment to get the exact quotient.
 
-In our development, the division two by one takes
+In our development, the two-by-one division takes
 three words and returns a pair composed of the quotient and the remainder.
 \begin{verbatim}
 Variable w_div21: w -> w -> w -> w * w
@@ -190,8 +194,8 @@ $$\begin{array}{l}
 $$
 The two conditions deserve some explanation.
 The first one ensures that the quotient fits in one word.
-The second one requires the first bit of the divisor to be a 
-one. It ensures that the recursive call computes an approximation 
+The second one %requires the first bit of the divisor to be a one. It 
+ensures that the recursive call computes an approximation 
 of the quotient that is not too far from the correct value.
 
 Before defining the function {\tt ww\_div21} for two-word elements,
@@ -199,10 +203,13 @@ we need to define the intermediate function  {\tt w\_div32}
 that divides three one-word elements by two one-word elements.
 Its specification is
 $$\begin{array}{l}
-\forall a_1\,\, a_2\,\, a_3\,\, b_1\,\, b_2, \,\, \textit{let}\,\, q,\, r = \texttt{w\_div32}\,\, a_1\,\, a_2\,\, a_3\,\, b_1\,\, b_2\,\, \textit{in}\\
- \hskip20pt [[\WW {a_1} {a_2}]] < [[\WW {b_1} {b_2}]] \Rightarrow \wB / 2 \le [|b_1|] \Rightarrow\\
- \hskip30pt [|a_1|] * \wB ^ 2 + [|a_2|] * \wB  + [|a_3|] =   [|q|] *  [[\WW {b_1} {b_2}]] + [[r]] \,\,\land  \\
- \hskip30pt 0 \le [[r]] < [[\WW {b_1} {b_2}]]
+\forall a_1\,\, a_2\,\, a_3\,\, b_1\,\, b_2, \,\, \textit{let}\,\, q,\, rr = 
+\texttt{w\_div32}\,\, a_1\,\, a_2\,\, a_3\,\, b_1\,\, b_2\,\, \textit{in}\\
+ \hskip20pt [[\WW {a_1} {a_2}]] < [[\WW {b_1} {b_2}]] \Rightarrow 
+ \wB / 2 \le [|b_1|] \Rightarrow\\
+ \hskip30pt [|a_1|] * \wB ^ 2 + [|a_2|] * \wB  + [|a_3|] =   [|q|] *  
+ [[\WW {b_1} {b_2}]] + [[rr]] \,\,\land  \\
+ \hskip30pt 0 \le [[rr]] < [[\WW {b_1} {b_2}]]
 \end{array}
 $$
 The two conditions play the same roles than the ones for the specification of {\tt w\_div21}.
@@ -220,16 +227,20 @@ we know in which situation we are by testing the sign of the candidate
 remainder.
 In our modular arithmetic, it amounts in checking if the subtraction of
 $(\texttt{w\_mul\_c}\, q\,\, b_2)$ from $(\WW r {a_3}\!)$
-produces or not a carry.  
-If it is positive (no carry), the quotient is $q$. If it is negative (a carry), we
-have to consider $q - 1$ and add in consequence $(\WW {b_1} {b_2}\!)$ to the candidate remainder.
-We test again the sign of this new candidate. If it is positive, the quotient is $q - 1$
+produces or not a borrow.  
+If it is positive or zero (no borrow), the quotient is $q$. 
+If it is negative (a borrow), 
+we have to consider $q - 1$ and add in consequence $(\WW {b_1} {b_2}\!)$ 
+to the candidate remainder.
+We test again the sign of this new candidate. 
+If it is positive, the quotient is $q - 1$
 otherwise it is $q - 2$.
-Now, the definition of {\tt ww\_div21} is straightforward. Forgetting the {\tt W0}
+Now, the definition of {\tt ww\_div21} is straightforward. 
+Forgetting the {\tt W0}
 constructor, we have
 \begin{verbatim} 
- Definition ww_div21 a1 a2 b :=
-  match a1, a2, b with
+ Definition ww_div21 aa1 aa2 bb :=
+  match aa1, aa2, bb with
   ....  
   | WW a1H a1L, WW a2H a2L, WW bH bL =>
         let (q1, r) := w_div32 a1H a1L a2H bH bL in
@@ -241,12 +252,17 @@ constructor, we have
         end
   end.
 \end{verbatim}
-These two divisions can only be used if the divisor $b$ is greater than $\wB/2$. This is not restrictive
-because if $b$ is too small we can always find a $n$ such that $b* 2 ^n > \wB/2$. If we have $a * 2 ^ n  =  q  * (b * 2 ^ n) + r$ for some $a$ and $r$ then $r$ can be written as $r = 2^n * r'$ so
-$a = q * b + r'$. So to perform the division of two numbers of the same size, we first shift
-divisor and dividend by $n$. The shifted dividend fits in two words and its hight part is smaller
-than the shifted divisor. Then, we use the division of two by one. The resulting
-quotient is correct, we just have to unshift the remainder.
+These two divisions can only be used if the divisor $b$ is greater or equal
+than $\wB/2$.
+This is not restrictive
+because if $b$ is too small we can always find a $n$ such that 
+$b* 2 ^n \ge \wB/2$. If we have $a * 2 ^ n  =  q  * (b * 2 ^ n) + r$ 
+for some $a$ and $r$ then $r$ can be written as $r = 2^n * r'$ so
+$a = q * b + r'$. So to perform the division of two numbers of the same size, 
+we first shift divisor and dividend by $n$. 
+The shifted dividend fits in two words and its high part is smaller
+than the shifted divisor. Then, we use the division of two by one. 
+The resulting quotient is correct, we just have to unshift the remainder.
 
 \subsubsection{Recursive Square Root}
 
@@ -290,6 +306,7 @@ $$\begin{array}{l}
 $$
 The element $(\WW q {q_1}\!)$ is a possible candidate
 for the square root. Because of the condition on
-the input, we are sure that the square root is either $(\WW q {q_1}\!)$ or
+the input, we are sure that the integer square root is either 
+$(\WW q {q_1}\!)$ or
 $(\WW q {q_1}\!) - 1$. It is the sign of $\ICP{r_1} * \wB + 
 [|{b_l}|] - [|q_1|] ^ 2$ that indicates in which situation we are. 

@@ -1,21 +1,15 @@
 \section{Evaluating the library \label{bench}}
 
-The complete library with the corresponding contribution for prime numbers is available at \url{http://gforge.inria.fr/projects/coqprime/}. It consists in 9000 lines of hand-written
-definitions and proofs. The automatically generated {\tt word8} arithmetic is much bigger,
-95 Mb: 41 Mb are used to define functions and 54 Mb for the proofs. This is the largest ever
-contribution that has been verified by {\sc Coq}. 
-
-In order to order to evaluate our library, we are going to use it to prove the
-primality of some large numbers. In fact, this application was our initial motivation 
-to start developing such a library.
-In~\cite{GreTheWer} we have presented an effective way of applying 
+In~\cite{GreTheWer} we have presented a way of applying 
 the two-level approach for proving primality. It is based on the
-notion of prime certificate and more precisely of {\it Pocklington certificate}.
+notion of prime certificate and more 
+precisely of {\it Pocklington certificate}.
 A prime certificate is an object that witnesses the primality of a number.
 The Pocklington certificates we have been using are justified by the following
 theorem given in~\cite{lehmer}:
 \begin{theorem}\label{lehmer}
-Given a number $n$, a witness $a$ and some pairs $(p_1,\alpha_1),\dots,(p_k,\alpha_k)$
+Given a number $n$, a witness $a$ and some pairs 
+$(p_1,\alpha_1),\dots,(p_k,\alpha_k)$
  where all the $p_i$ are prime numbers,
  let
  \begin{itemize}
@@ -35,19 +29,23 @@ a^{n-1} &=& 1 (\mod\ n)\\
 r^2 - 8 s\,\,\mbox{is not a square}\,\,\hbox{or}\,\,s &=& 0
 \end{eqnarray}
 \end{theorem}
-For a prime number $n$, the list $[a, p_1, \alpha_1, p_2, \alpha_2, \dots, p_k, \alpha_k]$
+For a prime number $n$, the list 
+$[a, p_1, \alpha_1, p_2, \alpha_2, \dots, p_k, \alpha_k]$
 represents its Pocklington certificate.
-Even if generating a certificate for a given $n$ can be cpu-intensive, verifying
-conditions 1-5 is an order of magnitude simpler. In fact, only
-the verification of conditions 1-5 is crucial for asserting the primality. It requires
-safe computation and is done inside {\sc Coq}.
+Even if generating a certificate for a given $n$ can be cpu-intensive, 
+verifying conditions 1-5 is an order of magnitude simpler. In fact, only
+the verification of conditions 1-5 is crucial for asserting the primality. 
+It requires safe computation and is done inside {\sc Coq}.
 The generation of the certificate is delegated to an external tool.
-This is a direct application of the skeptic approach described in~\cite{BarBar,HarThe}.
+This is a direct application of the skeptic approach described 
+in~\cite{BarBar,HarThe}.
                  
-With respect to the standard approach for the same problem~\cite{Caprotti_Oostdijk:01pockjsc}, the two-level
+With respect to the standard approach for the same 
+problem~\cite{Caprotti_Oostdijk:01pockjsc}, the two-level
 approach gives a huge improvement in term of size of the
-proof object and in term of time.  Figure~\ref{fig:TimeComp} illustrates this
-on some small examples ($P_{150}$ is a prime number of 150 digits when written
+proof object and in term of time.  
+Figure~\ref{fig:TimeComp} illustrates this on some small examples 
+($P_{150}$ is a prime number of 150 digits when written
 in base 10 for which we have been able to generate a certificate).
 \begin{figure}
 \begin{center}
@@ -72,36 +70,51 @@ in base 10 for which we have been able to generate a certificate).
 \caption{Some verifications of certificates with the standard and two-level approaches}
 \label{fig:TimeComp}
 \end{figure} 
-Applying the two-level approach to larger numbers (> 1000 digits) made us realize
+Applying the two-level approach to larger numbers 
+(> 1000 digits) made us realize
 the algorithmic limitation of the arithmetic provided by {\sc Coq}.
 This was particularly true when applying the Lucas-Lehmer test
-for proving the primality of Mersenne numbers, i.e. numbers that can be written as $2 ^ p -1$.
+for proving the primality of Mersenne numbers, 
+i.e. numbers that can be written as $2 ^ p -1$.
 \begin{theorem}\label{lucas}
 Let ($S_n$) be recursively defined by $S_0= 4$ and $S_{n+1} = S_n^2 - 2$,
 for $p > 2$, $2^p-1$ is prime if and only if $(2^p -1) | S_{p-2}$.
 \end{theorem}
 The largest Mersenne number we could certify was $2^{4423} - 1$. 
-The purpose of this paper is to propose a more adequate arithmetic for safe 
-computations with arbitrary large numbers. It has been implemented and its correctness
-has been proved within the {\sc Coq} system. The arithmetic that is implemented is a modular
-one. This is not a real limitation since most computations with large numbers
-can be rephrased in term of modular arithmetic. This is true in particular for the examples we are
-interested in. More precisely, Condition 4 of Theorem \ref{lehmer} can be expressed with modulo as
+
+The fact that our arithmetic is a modular one is not a real limitation,
+since most computations with large numbers can be rephrased in term of 
+modular arithmetic. 
+This is true in particular for the examples we are
+interested in. 
+More precisely, Condition 4 of Theorem \ref{lehmer} can be expressed 
+with modulo as
 $$
 \gcd(\prod_{i=1}^{i=k}a^{\frac{n-1}{p_i}} \mod\, n -1,n) = 1
 $$
 and Theorem \ref{lucas} can be rephrased as
 \begin{theorem}
-Let $M_p$ be $2^p-1$ and let  ($S_n$) be recursively defined by $S_0= 4\, \mod\, M_p$ and $S_{n+1} = S_n^2 - 2\, \mod\, M_p$,
+Let $M_p$ be $2^p-1$ and let  ($S_n$) be recursively defined by 
+$S_0= 4\, \mod\, M_p$ and $S_{n+1} = S_n^2 - 2\, \mod\, M_p$,
 for $p > 2$, $M_p$ is prime if and only if $S_{p-2} = 0\, \mod\, M_p $.
 \end{theorem}
 
-With this new library, we have been capable to
-prove that $2^{44497} - 1$ was prime using {\sc Coq}. As far as we know, it is the largest 
-prime number  that has been certified by a theorem prover.
-Even for small numbers, the {\sc Coq} version of our library is much more efficient than
-the standard one. This is illustrated by Figure~\ref{fig:TimeCompW} and by the fifth and sixth  
-columns of Figure~\ref{fig:Mersenne}. There is a maximum speed-up of 90. Our library makes it 
+The complete library with the corresponding contribution for prime numbers 
+is available at \url{http://gforge.inria.fr/projects/coqprime/}. 
+It consists in 9000 lines of hand-written definitions and proofs. 
+The automatically generated {\tt word8} arithmetic is much bigger,
+95 Mb: 41 Mb are used to define functions and 54 Mb for the proofs. 
+This is the largest ever contribution that has been verified by {\sc Coq}. 
+With this new library, we have been capable to prove that the Mersenne number
+$2^{44497} - 1$ was prime using {\sc Coq}. 
+As far as we know, it is the largest prime number  that has been certified 
+by a theorem prover.
+
+Even for small numbers, the {\sc Coq} version of our library is much more 
+efficient than the standard one. 
+This is illustrated by Figure~\ref{fig:TimeCompW} and by the fifth and sixth  
+columns of Figure~\ref{fig:Mersenne}. 
+There is a maximum speed-up of 70. Our library makes it 
 really possible to compute with large numbers inside {\sc Coq}.
 \begin{figure}
 \begin{center}
@@ -150,18 +163,25 @@ really possible to compute with large numbers inside {\sc Coq}.
 \label{fig:Mersenne}
 \end{figure}
 
-Comparing {\tt word8} with the 31 bit {\sc Ocaml} integer {\tt w31} shows all the benefit we would
-get from having machine words in {\sc Coq}. There is a maximum speed-up of 80 with respect to {\tt word8}. This
-means a speed-up of 7200 with respect to the standard {\sc Coq} library.
+Comparing {\tt word8} with the 31 bit {\sc Ocaml} integer {\tt w31} shows 
+all the benefit we would get from having machine words in {\sc Coq}. 
+There is a maximum speed-up of 95 with respect to {\tt word8}. This
+means a speed-up of 6650 with respect to the standard {\sc Coq} library.
 
-The 64 bit {\sc Ocaml} integer {\tt w64} is a simulated arithmetic (our processor has only 32 bits).
-This is why there is not such a gap between {\tt w31} and {\tt w64}. {\sc Big\_int}~\cite{bignum} is the  
-standard exact library for {\sc Ocaml}. It has a purely functional interface but 
-is written in C. The comparison is not bad. We are only 6 time slower. It is also very interesting
-that this gap is getting smaller as numbers get larger. Random tests on addition gives a factor of
+The 64 bit {\sc Ocaml} integer {\tt w64} is a simulated arithmetic 
+(our processor has only 32 bits).
+This is why there is not such a gap between {\tt w31} and {\tt w64}. 
+{\sc Big\_int}~\cite{bignum} is the  standard exact library for {\sc Ocaml}. 
+It has a purely functional interface but 
+is written in C. The comparison is not bad. We are only 6 time slower. 
+It is also very interesting
+that this gap is getting smaller as numbers get larger. 
+Random tests on addition gives a factor of
 4, multiplications a factor of 10.
 
-We are still far away from getting the performance of the {\sc gmp}~\cite{GMP} library. This library is written in
-C and uses inplace computation instead. This minimizes considerably the number of memory allocations.
-Unfortunately, inplace computation is not compatible with the logic of {\sc Coq}.
+We are still far away from getting the performance of the {\sc gmp}~\cite{GMP}
+ library. This library is written in C and uses inplace computation instead. 
+This minimizes considerably the number of memory allocations.
+Unfortunately, inplace computation is not compatible with 
+the logic of {\sc Coq}.
 
