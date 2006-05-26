@@ -43,7 +43,10 @@ large proof object into a conversion problem: showing that $test\,\, 17$ is conv
 to {\tt true}.  The size of the proof object is then independent of the number to be proved
 prime. Recent progress in the evaluation mechanism~\cite{GreLer} has also made this
 approach attractive from the point of view of efficiency.
-
+If we want to generalize the use of the two-level approach it is important
+to provide efficient libraries to developer. In particular, efficient libraries
+over numbers.
+ 
 The key idea of our library is to implement a representation of numbers that accommodates the divide and
 conquer strategy to speed up computation. The paper is organized as follows. 
 In Section~\ref{ZTree}, we confront the standard arithmetic of {\sc Coq} with
