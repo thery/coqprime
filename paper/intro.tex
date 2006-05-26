@@ -1,6 +1,6 @@
 
 
-\section{Safe computation and prime numbers}
+\section{Safe computation and theorem proving}
 
 Recent formal developments such as ~\cite{4color,kepler} have shown all the benefits
 one can get from having a formal system where both proving and computing are
@@ -9,7 +9,7 @@ provided by the logic. {\sc Coq} is based on the Calculus of
 Inductive Construction, so the evaluation mechanism is given for free
 by the beta reduction rule. 
 
-A direct application of the primitive status of computation is 
+A direct application of the primitive status of computation in {\sc Coq} is 
 the so-called two-level approach~\cite{boutin}. To illustrate it, 
 let us consider the problem of proving the primality of some natural 
 numbers.
@@ -24,33 +24,47 @@ The two-level approach proposes an alternative
 strategy in two steps. In the first step, one defines a function that expresses
 the problem in term of pure computation. It can be seen as a semi-decision procedure.
 In our case, it amounts in writing a 
-function {\tt test} from natural number to boolean such that if the function
-returns {\tt true} then the number is prime (correctness is sufficiant, we do
-not require completness). 
+function {\it test} from natural number to boolean such that if the function
+returns {\it true} then the number is prime. 
 For example, if the natural number
 is $n$, the function can check that there is no divisor between 2 and $n-1$
-by a simple iteration. In the second step, one proves that the function meets 
-its specification
+by a simple iteration. 
+
+In the second step, one proves that the function meets 
+its specification. This means for our function {\it test} that
 $$
 \forall n, \textit{test}\,\, n = \texttt{true} \rightarrow \textit{prime}\,\, n
 $$
-So our semi-decision procedure is correct.
+Note that correctness is sufficient for the two-level approach, we don't need
+completness. In this particular case, it would not make much sense to use completness.
+A much better algorithm for proving that a number $n$ is not prime is to provide a factor
+$p$ and only check with safe computation that $p$ divides $n$.
+
 Now to give a proof that 17 is prime, it is sufficient to prove that the function
-{\tt test} applies to 17 returns {\tt true}. As the function {\it test} directly
+{\it test} applies to 17 returns {\tt true}. As the function {\it test} directly
 evaluates inside {\sc Coq}, this last proof is simply the reflexivity of equality.
 Using the two-level approach, we have just transfered the problem of building a 
-large proof object into a conversion problem: showing that $test\,\, 17$ is convertible
+large proof object into a conversion problem: showing that $\textit{test}\,\, 17$ is convertible
 to {\tt true}.  The size of the proof object is then independent of the number to be proved
-prime. Recent progress in the evaluation mechanism~\cite{GreLer} has also made this
-approach attractive from the point of view of efficiency.
-If we want to generalize the use of the two-level approach it is important
-to provide efficient libraries to developer. In particular, efficient libraries
-over numbers.
- 
-The key idea of our library is to implement a representation of numbers that accommodates the divide and
-conquer strategy to speed up computation. The paper is organized as follows. 
-In Section~\ref{ZTree}, we confront the standard arithmetic of {\sc Coq} with
-our representation of numbers. In Section~\ref{Op}, we give an overview of the library.  
+prime. 
+
+Recent progress in the evaluation mechanism~\cite{GreLer} has also made the two-level
+approach attractive from the point of view of efficiency. Roughly speaking,
+the evaluation inside Coq is as fast as the bytecode evaluation of
+the {\sc Ocaml} language~\cite{Ocaml}. The only restriction when writing programs
+inside {\sc Coq} is that programs must be purely functional, i.e. no side effects are allowed,
+and they must always terminate. This is the prize to pay to be able to safetly combine proofs
+and computations. Obviously, the two-approach can only be used effectively if 
+the {\sc Coq} system provides efficient functional implementations of the
+usual datastructures: numbers, strings, vectors, hash tables,\dots 
+
+The contribution of this paper is to propose a purely functional library to compute 
+efficiently with large numbers inside {\sc Coq}. The key idea of the library is to 
+implement a representation of numbers that accommodates the divide and conquer strategy 
+to speed up computation. The paper is organized as follows. In Section~\ref{ZTree}, we present 
+the current arithmetic of {\sc Coq} and explain why a new representation of numbers is needed
+in order to deal with large numbers. In Section~\ref{Op}, we give an overview of our new library
+based on this new repesentation.  
 In Section~\ref{word}, we detail two possible instantiations of our library.
-Finally, Section~\ref{bench} presents some tests that validate our approach.
- 
+Finally, Section~\ref{bench} presents an application of our library to the particular
+problem of certifying large prime numbers.
