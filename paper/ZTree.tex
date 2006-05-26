@@ -73,11 +73,11 @@ Following the methodology proposed in~\cite{GreMa} in a similar setting,
 the operations are not going to be defined on the type {\tt word} directly.
 Definitions are staggered instead. What is defined is a functor that 
 allows to build a two-word modular arithmetic on top of a single-word one.
-We will use $x,\ y$ for single-word variables and $xx,\ yy$ for
-two-word variables. 
+In the following, $x,\ y$ are used to denote single-word variables and $xx,\ yy$ 
+to denote two-word variables. 
 When defining a new function $f$, we just explain how to compute the 
 result on two-word values knowing how to compute it on single-word values.
-We will use the notation $w\_f$ for the single-word version of $f$ and 
+We use the notation $w\_f$ for the single-word version of $f$ and 
 $ww\_f$ for the two-word version.
 To illustrate this, let us go back to our comparison function. 
 To mimic the function {\tt Pcompare}, we first suppose the existence
@@ -113,8 +113,8 @@ the possibility to split numbers in two. The next section
 explains why this property is crucial to implement efficient
 algorithms for functions like multiplication, division and square root.
 Note that in term of memory allocation, having a tree structure
-does not produce any overhead. Building a binary tree structure or 
-building the equivalent linear list of words requires the same number of cells.
+does not produce any overhead. In a functional setting, building a binary 
+tree structure or building the equivalent linear list of words requires the same number of cells.
 
 One main drawback of our representation is that we manipulate only complete 
 binary trees. 

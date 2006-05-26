@@ -1,8 +1,5 @@
 \section{Conclusions}
 
-\begin{verbatim}
-METTRE DANS LA CONCLUSION QUE CA NE S'APPLIQUE PAS SEULEMENT A LA PRIMALITE
-\end{verbatim}
 
 The main contribution of our work is to present a certified library for performing
 modular arithmetic. Individual arithmetic functions have already been proved correct,
@@ -13,7 +10,7 @@ prove that this goal has been reached: we are now capable of manipulating number
 These tests also show that the library with a native base arithmetic is
 reasonably efficient. We hope it will motivate people to integrate machine word arithmetic inside {\sc Coq}.
 
-Expressing the arithmetic in the logic has a prize: no side effect is possible, 
+Expressing the arithmetic in the logic has a price: no side effect is possible, 
 also numbers are allocated progressively not in one block.
 A natural continuation of our work would be to prove the correctness of a library with side effect.
 This would require a much more intensive verification work since inplace computing
