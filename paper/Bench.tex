@@ -44,9 +44,9 @@ With respect to the standard approach for the same
 problem~\cite{Caprotti_Oostdijk:01pockjsc}, the two-level
 approach gives a huge improvement in term of size of the
 proof object and in term of time.  
-Figure~\ref{fig:TimeComp} illustrates this on some small examples 
-($P_{150}$ is a prime number of 150 digits when written
-in base 10 for which we have been able to generate a certificate).
+Figure~\ref{fig:TimeComp} illustrates this on some examples 
+($P_{150}$ is a prime number of 150 digits and the millenium prime is
+a prime number of 2000 digits discovered by John B. Cosgrave).
 \begin{figure}
 \begin{center}
 \begin{tabular}{|l|r|r|r|r|r|r|}
@@ -64,41 +64,25 @@ in base 10 for which we have been able to generate a certificate).
 ~1111111111111111111~ & 19~ & 223K~ &  0.664K~ & 17.41s~  & 0.66s~   \\
 ~$(2^{148}+1)/17$ ~   & 44~ & 1.2M~ & 0.798K~ & ~350.63s~  & 2.77s~   \\
 ~$P_{150}$   ~        &150~ &  \_~  & 1.902K~   &  \_~   & 75.62s~  \\
+~$\textit{millenium prime}$~   &2000 & \_~   & \_~      & \_~    & \_~ \\
 \hline
 \end{tabular}
 \end{center}
 \caption{Some verifications of certificates with the standard and two-level approaches}
 \label{fig:TimeComp}
 \end{figure} 
-Applying the two-level approach to larger numbers 
-(> 1000 digits) made us realize
-the algorithmic limitation of the arithmetic provided by {\sc Coq}.
-This was particularly true when applying the Lucas-Lehmer test
+Still we were not capable to apply the two-level approach to larger numbers 
+(> 1000 digits) as the millenium prime.
+This was also true when applying the Lucas-Lehmer test
 for proving the primality of Mersenne numbers, 
 i.e. numbers that can be written as $2 ^ p -1$.
 \begin{theorem}\label{lucas}
 Let ($S_n$) be recursively defined by $S_0= 4$ and $S_{n+1} = S_n^2 - 2$,
 for $p > 2$, $2^p-1$ is prime if and only if $(2^p -1) | S_{p-2}$.
 \end{theorem}
-The largest Mersenne number we could certify was $2^{4423} - 1$. 
+The largest Mersenne number we could certify was $2^{4423} - 1$ that has 1300 digits. 
 
-The fact that our arithmetic is a modular one is not a real limitation,
-since most computations with large numbers can be rephrased in term of 
-modular arithmetic. 
-This is true in particular for the examples we are
-interested in. 
-More precisely, Condition 4 of Theorem \ref{lehmer} can be expressed 
-with modulo as
-$$
-\gcd(\prod_{i=1}^{i=k}a^{\frac{n-1}{p_i}} \mod\, n -1,n) = 1
-$$
-and Theorem \ref{lucas} can be rephrased as
-\begin{theorem}
-Let $M_p$ be $2^p-1$ and let  ($S_n$) be recursively defined by 
-$S_0= 4\, \mod\, M_p$ and $S_{n+1} = S_n^2 - 2\, \mod\, M_p$,
-for $p > 2$, $M_p$ is prime if and only if $S_{p-2} = 0\, \mod\, M_p $.
-\end{theorem}
-
+The idea was then to use our new library.
 The complete library with the corresponding contribution for prime numbers 
 is available at \url{http://gforge.inria.fr/projects/coqprime/}. 
 It consists in 9000 lines of hand-written definitions and proofs. 
@@ -127,6 +111,7 @@ really possible to compute with large numbers inside {\sc Coq}.
 ~1111111111111111111~ & 19~ & 0.66s~ & 0.20s~  \\
 ~$(2^{148}+1)/17$ ~   & 44~ & 2.77s~  & 0.36s~  \\
 ~$P_{150}$   ~       & 150~ & 75.62s~  & 8.44s~  \\
+~$\textit{millenium prime}$~   &2000 & \_~   & 88m~ \\
 \hline
 \end{tabular}
 \end{center}
