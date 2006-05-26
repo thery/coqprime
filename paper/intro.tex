@@ -36,7 +36,8 @@ $$
 \forall n, \textit{test}\,\, n = \texttt{true} \rightarrow \textit{prime}\,\, n
 $$
 Note that correctness is sufficient for the two-level approach, we don't need
-completness. In this particular case, it would not make much sense to use completness.
+completness. Proving the correctness of our function {\it test} would not make much sense
+anyway.
 A much better algorithm for proving that a number $n$ is not prime is to provide a factor
 $p$ and only check with safe computation that $p$ divides $n$.
 
@@ -48,14 +49,14 @@ large proof object into a conversion problem: showing that $\textit{test}\,\, 17
 to {\tt true}.  The size of the proof object is then independent of the number to be proved
 prime. 
 
-Recent progress in the evaluation mechanism~\cite{GreLer} has also made the two-level
+Recent progress in the evaluation mechanism~\cite{GreLer} has made the two-level
 approach attractive from the point of view of efficiency. Roughly speaking,
 the evaluation inside Coq is as fast as the bytecode evaluation of
 the {\sc Ocaml} language~\cite{Ocaml}. The only restriction when writing programs
 inside {\sc Coq} is that programs must be purely functional, i.e. no side effects are allowed,
-and they must always terminate. This is the prize to pay to be able to safetly combine proofs
-and computations. Obviously, the two-approach can only be used effectively if 
-the {\sc Coq} system provides efficient functional implementations of the
+and functions must always terminate. This is the price to pay to be able to safely combine proofs
+and computations. Obviously, for the two-level to be used effectively, 
+the {\sc Coq} system has to provide efficient functional implementations for the
 usual datastructures: numbers, strings, vectors, hash tables,\dots 
 
 The contribution of this paper is to propose a purely functional library to compute 
@@ -63,8 +64,8 @@ efficiently with large numbers inside {\sc Coq}. The key idea of the library is 
 implement a representation of numbers that accommodates the divide and conquer strategy 
 to speed up computation. The paper is organized as follows. In Section~\ref{ZTree}, we present 
 the current arithmetic of {\sc Coq} and explain why a new representation of numbers is needed
-in order to deal with large numbers. In Section~\ref{Op}, we give an overview of our new library
-based on this new repesentation.  
+in order to compute efficiently with large numbers. In Section~\ref{Op}, we give an overview of our new library
+based on this new representation.  
 In Section~\ref{word}, we detail two possible instantiations of our library.
 Finally, Section~\ref{bench} presents an application of our library to the particular
 problem of certifying large prime numbers.

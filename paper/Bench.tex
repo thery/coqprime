@@ -71,9 +71,9 @@ a prime number of 2000 digits discovered by John B. Cosgrave).
 \caption{Some verifications of certificates with the standard and two-level approaches}
 \label{fig:TimeComp}
 \end{figure} 
-Still we were not capable to apply the two-level approach to larger numbers 
+Even with the two-level approach, we were not capable to certify large prime numbers 
 (> 1000 digits) as the millenium prime.
-This was also true when applying the Lucas-Lehmer test
+This was also the case when applying the Lucas-Lehmer test
 for proving the primality of Mersenne numbers, 
 i.e. numbers that can be written as $2 ^ p -1$.
 \begin{theorem}\label{lucas}
@@ -82,7 +82,7 @@ for $p > 2$, $2^p-1$ is prime if and only if $(2^p -1) | S_{p-2}$.
 \end{theorem}
 The largest Mersenne number we could certify was $2^{4423} - 1$ that has 1300 digits. 
 
-The idea was then to use our new library.
+The idea is then to use our new library for certifying large prime numbers.
 The complete library with the corresponding contribution for prime numbers 
 is available at \url{http://gforge.inria.fr/projects/coqprime/}. 
 It consists in 9000 lines of hand-written definitions and proofs. 

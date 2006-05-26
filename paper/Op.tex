@@ -1,7 +1,7 @@
 \section{The certified library \label{Op}}
 Our library includes the usual functions:
 comparison, successor, predecessor, opposite, addition, subtraction,
-multiplication, square, euclidien division, integer square root, gcd, 
+multiplication, square, euclidean division, integer square root, gcd, 
 power and modulo.
 It is a modular library : it means that we only manipulate tree (or word)
 of the same height (of the same size). 
@@ -20,8 +20,8 @@ Specifications are expressed using predicates over integers. For this,
 we use two interpretation functions
 {$ [|\ |]$} and {$[[\ ]]$}.
 Given a single-word element $x$, its corresponding integer value
-is $[|x|]$. Given a two-word element $yy$, its corresponding
-integer value is $[[yy]]$. The base of the arithmetic, i.e.
+is $[|x|]$. Given a two-word element $xx$, its corresponding
+integer value is $[[xx]]$. The base of the arithmetic, i.e.
 one plus the maximum value that fits in a single-word, is $\wB$. 
 We write {\tt w\_0} (resp. {\tt w\_1}) for the word with 
 corresponding integer value 0 (resp. 1).
@@ -138,25 +138,25 @@ and its specification is
 $$\forall x\, y,\, [[\texttt{w\_mul\_c}\, x\, y]] = [|x|] * [|y|]$$
 The naive implementation on two-word elements follows the simple equation
 $$\begin{array}{l}
-[[\WW {a_h} {a_l}]] * [[\WW {b_h} {b_l}]] =\\
-\hskip20pt [|{a_h}|] * [|{b_h}|] * \wB ^ 2 +  ([|{a_h}|] * [|{b_l}|] + [|{a_l}|] * [|{b_h}|]) * \wB + [|{a_l}|] * [|{b_l}|]
+[[\WW {x_h} {x_l}]] * [[\WW {y_h} {y_l}]] =\\
+\hskip20pt [|{x_h}|] * [|{y_h}|] * \wB ^ 2 +  ([|{x_h}|] * [|{y_l}|] + [|{x_l}|] * [|{y_h}|]) * \wB + [|{x_l}|] * [|{y_l}|]
 \end{array}
 $$
 Thus, performing a multiplication requires four submultiplications.
 Karatsuba multiplication~\cite{Karat} saves one of these submultiplications
 $$\begin{array}{l}
-[[\WW {a_h} {a_l}]] * [[\WW {b_h} {b_l}]] = \\
-\hskip20pt \textit{let}\,\, {h}\, = [|{a_h}|] * [|{b_h}|]\,\, \textit{in}\\
-\hskip20pt \textit{let}\,\,\,  {l}\, = [|{a_l}|] * [|{b_l}|]\,\, \textit{in}\\
-\hskip20pt {h} * \wB^2 + (([|{a_h}|] + [|{a_l}|]) * ([|{b_h}|] + [|{b_l}|]) - {h} - {l}) * \wB + {l} \qquad\qquad
+[[\WW {x_h} {x_l}]] * [[\WW {y_h} {y_l}]] = \\
+\hskip20pt \textit{let}\,\, {h}\, = [|{x_h}|] * [|{y_h}|]\,\, \textit{in}\\
+\hskip20pt \textit{let}\,\,\,  {l}\, = [|{x_l}|] * [|{y_l}|]\,\, \textit{in}\\
+\hskip20pt {h} * \wB^2 + (([|{x_h}|] + [|{x_l}|]) * ([|{y_h}|] + [|{y_l}|]) - {h} - {l}) * \wB + {l} \qquad\qquad
 \end{array}
 $$
 If the above equation looks simple,  Karatsuba multiplication has been the most difficult function 
 to implement and prove correct.
 The difficulty is in the computation of the cross
-product $(([|{a_h}|] + [|{a_l}|]) * ([|{b_h}|] + [|{b_l}|]) - {h} - {l})$. 
+product $(([|{x_h}|] + [|{x_l}|]) * ([|{y_h}|] + [|{y_l}|]) - {h} - {l})$. 
 The inner product cannot be directly computed using the word multiplication: 
-both additions $([|{a_h}|] + [|{a_l}|])$ and $([|{b_h}|] + [|{b_l}|])$ can have a carry, 
+both additions $([|{x_h}|] + [|{x_l}|])$ and $([|{y_h}|] + [|{y_l}|])$ can have a carry, 
 so their product fits in two words and a maximum carry of 3.
 Also, we know that the final cross product is positive and fits in
 two words and a maximum carry of 1. This is useful to optimize the code.
@@ -188,8 +188,8 @@ Variable w_div21: w -> w -> w -> w * w
 \end{verbatim}
 and its specification is 
 $$\begin{array}{l}
-\forall a_1\,\, a_2\,\, b,\, \textit{let}\,\, q,\, r = \texttt{w\_div21}\, a_1\,\, a_2\,\, b\,\, \textit{in}\,\, \\
-\hskip10pt [|a_1|] < [|b|] \Rightarrow \wB / 2 \le [|b|] \Rightarrow  [[\WW {a_1} {a_2}]] = [|q|] * [|b|] + [|r|] \land 0 \le [|r|] < [|b|]
+\forall x_1\,\, x_2\,\, y,\, \textit{let}\,\, q,\, r = \texttt{w\_div21}\, x_1\,\, x_2\,\, y\,\, \textit{in}\,\, \\
+\hskip10pt [|x_1|] < [|y|] \Rightarrow \wB / 2 \le [|y|] \Rightarrow  [[\WW {x_1} {x_2}]] = [|q|] * [|y|] + [|r|] \land 0 \le [|r|] < [|y|]
 \end{array}
 $$
 The two conditions deserve some explanation.
@@ -203,34 +203,34 @@ we need to define the intermediate function  {\tt w\_div32}
 that divides three one-word elements by two one-word elements.
 Its specification is
 $$\begin{array}{l}
-\forall a_1\,\, a_2\,\, a_3\,\, b_1\,\, b_2, \,\, \textit{let}\,\, q,\, rr = 
-\texttt{w\_div32}\,\, a_1\,\, a_2\,\, a_3\,\, b_1\,\, b_2\,\, \textit{in}\\
- \hskip20pt [[\WW {a_1} {a_2}]] < [[\WW {b_1} {b_2}]] \Rightarrow 
- \wB / 2 \le [|b_1|] \Rightarrow\\
- \hskip30pt [|a_1|] * \wB ^ 2 + [|a_2|] * \wB  + [|a_3|] =   [|q|] *  
- [[\WW {b_1} {b_2}]] + [[rr]] \,\,\land  \\
- \hskip30pt 0 \le [[rr]] < [[\WW {b_1} {b_2}]]
+\forall x_1\,\, x_2\,\, x_3\,\, y_1\,\, y_2, \,\, \textit{let}\,\, q,\, rr = 
+\texttt{w\_div32}\,\, x_1\,\, x_2\,\, x_3\,\, y_1\,\, y_2\,\, \textit{in}\\
+ \hskip20pt [[\WW {x_1} {x_2}]] < [[\WW {y_1} {y_2}]] \Rightarrow 
+ \wB / 2 \le [|y_1|] \Rightarrow\\
+ \hskip30pt [|x_1|] * \wB ^ 2 + [|x_2|] * \wB  + [|x_3|] =   [|q|] *  
+ [[\WW {y_1} {y_2}]] + [[rr]] \,\,\land  \\
+ \hskip30pt 0 \le [[rr]] < [[\WW {y_1} {y_2}]]
 \end{array}
 $$
 The two conditions play the same roles than the ones for the specification of {\tt w\_div21}.
 As the code is a bit intricate, we just explain here how the function
-proceeds. It first calls {\tt w\_div21} to divide $a_1$ and $a_2$
-by $b_1$. This gives a pair $q$ and $r$ such that
-$$[|a_1|] * \wB + [|a_2|] = [|q|] * [|b_1|] + [|r|]$$
+proceeds. It first calls {\tt w\_div21} to divide $x_1$ and $x_2$
+by $y_1$. This gives a pair $q$ and $r$ such that
+$$[|x_1|] * \wB + [|x_2|] = [|q|] * [|y_1|] + [|r|]$$
 $q$ is considered as the approximation of the final quotient.
-The condition $\wB / 2 \le [|b_1|]$ ensures that if this approximation
+The condition $\wB / 2 \le [|y_1|]$ ensures that if this approximation
 is not exact, it exceeds the real value of at most two units. So the quotient 
 can only be $q$, $q - 1$ or $q - 2$. 
 As we have 
-$$[|a_1|] *  \wB ^ 2  + [|a_2|] * \wB + [|a_3|] = [|q|] * [[\WW {b_1} {b_2}]] + ([[\WW r {a_3}]] - [|q|] * [|b_2|])$$
+$$[|x_1|] *  \wB ^ 2  + [|x_2|] * \wB + [|x_3|] = [|q|] * [[\WW {y_1} {y_2}]] + ([[\WW r {x_3}]] - [|q|] * [|y_2|])$$
 we know in which situation we are by testing the sign of the candidate
 remainder.
 In our modular arithmetic, it amounts in checking if the subtraction of
-$(\texttt{w\_mul\_c}\, q\,\, b_2)$ from $(\WW r {a_3}\!)$
+$(\texttt{w\_mul\_c}\, q\,\, y_2)$ from $(\WW r {x_3}\!)$
 produces or not a borrow.  
 If it is positive or zero (no borrow), the quotient is $q$. 
 If it is negative (a borrow), 
-we have to consider $q - 1$ and add in consequence $(\WW {b_1} {b_2}\!)$ 
+we have to consider $q - 1$ and add in consequence $(\WW {y_1} {y_2}\!)$ 
 to the candidate remainder.
 We test again the sign of this new candidate. 
 If it is positive, the quotient is $q - 1$
@@ -239,26 +239,26 @@ Now, the definition of {\tt ww\_div21} is straightforward.
 Forgetting the {\tt W0}
 constructor, we have
 \begin{verbatim} 
- Definition ww_div21 aa1 aa2 bb :=
-  match aa1, aa2, bb with
+ Definition ww_div21 xx1 xx2 yy :=
+  match xx1, xx2, yy with
   ....  
-  | WW a1H a1L, WW a2H a2L, WW bH bL =>
-        let (q1, r) := w_div32 a1H a1L a2H bH bL in
-        match r with
-        | W0 => (WW q1 w_0, WW w_0 a2L)
+  | WW x1H x1L, WW x2H x2L, WW yH yL =>
+        let (qH, rr) := w_div32 x1H x1L x2H yH yL in
+        match rr with
+        | W0 => (WW qH w_0, WW w_0 x2L)
         | WW rH rL =>
-          let (q2, s) := w_div32 rH rL a2L b1 b2 in
-          (WW q1 q2, s)
+          let (qL, s) := w_div32 rH rL x2L yH yL in
+          (WW qH qL, s)
         end
   end.
 \end{verbatim}
-These two divisions can only be used if the divisor $b$ is greater or equal
+These two divisions can only be used if the divisor $y$ is greater or equal
 than $\wB/2$.
 This is not restrictive
-because if $b$ is too small we can always find a $n$ such that 
-$b* 2 ^n \ge \wB/2$. If we have $a * 2 ^ n  =  q  * (b * 2 ^ n) + r$ 
-for some $a$ and $r$ then $r$ can be written as $r = 2^n * r'$ so
-$a = q * b + r'$. So to perform the division of two numbers of the same size, 
+because if $y$ is too small we can always find a $n$ such that 
+$y* 2 ^n \ge \wB/2$. If we have $x * 2 ^ n  =  q  * (y * 2 ^ n) + r$ 
+for some $x$ and $r$, then $r$ can be written as $r = 2^n * r'$ so
+$x = q * y + r'$. So to perform the division of two numbers of the same size, 
 we first shift divisor and dividend by $n$. 
 The shifted dividend fits in two words and its high part is smaller
 than the shifted divisor. Then, we use the division of two by one. 
@@ -291,22 +291,22 @@ w_div2s: carry w -> w -> w -> carry w * carry w
 \end{verbatim}
 with its specification
 $$\begin{array}{l}
-\forall a_1\,\, a_2\,\, b, \,\, \textit{let}\,\, q,\, r = \texttt{w\_div2s}\,\, a_1\,\, a_2\,\, b\,\, \textit{in}\\
-\hskip20pt \wB / 2 \le [|b|] \Rightarrow \ICP{a_1} \le 2 * [|b|] \Rightarrow\\
-\hskip30pt \ICP{a_1} * \wB + [|a_2|] = \ICP{q} *  (2 * [|b|]) + \ICP{r} \,\, \land\,\, 0 \le \ICP{r} < 2 * [|b|]
+\forall x_1\,\, x_2\,\, y, \,\, \textit{let}\,\, q,\, r = \texttt{w\_div2s}\,\, x_1\,\, x_2\,\, y\,\, \textit{in}\\
+\hskip20pt \wB / 2 \le [|y|] \Rightarrow \ICP{x_1} \le 2 * [|y|] \Rightarrow\\
+\hskip30pt \ICP{x_1} * \wB + [|x_2|] = \ICP{q} *  (2 * [|y|]) + \ICP{r} \,\, \land\,\, 0 \le \ICP{r} < 2 * [|y|]
 \end{array}
 $$
 The idea of the algorithm is summarized by the following equation
 $$\begin{array}{l}
-\textit{let}\,\,\,\, q ,\, r\,\,\, = \texttt{w\_sqrt2}\,\, {a_h}\,\, {a_l}\,\, \textit{in}\\
-\textit{let}\,\, q_1 ,\, r_1 = \texttt{w\_div2s}\,\, r\,\, {b_h}\,\, q\,\, \textit{in}\\
-{[[\WW {a_h} {a_l}]]} * \wB ^ 2 + [[\WW {b_h} {b_l}]] =
-    [[\WW q {q_1}]] ^ 2 + \ICP{r_1} * \wB + [|{b_l}|] - {[|q_1|]} ^ 2 \\
+\textit{let}\,\,\, {q_h} ,\, r\,\, = \texttt{w\_sqrt2}\,\, {x_h}\,\, {x_l}\,\, \textit{in}\\
+\textit{let}\,\,\, {q_l} ,\, r_1 = \texttt{w\_div2s}\,\, r\,\, {y_h}\,\, {q_h}\,\, \textit{in}\\
+{[[\WW {x_h} {x_l}]]} * \wB ^ 2 + [[\WW {y_h} {y_l}]] =
+    [[\WW {q_h} {q_l}]] ^ 2 + \ICP{r_1} * \wB + [|{y_l}|] - {[|q_l|]} ^ 2 \\
 \end{array}
 $$
-The element $(\WW q {q_1}\!)$ is a possible candidate
+The element $(\WW {q_h} {q_l}\!)$ is a possible candidate
 for the square root. Because of the condition on
 the input, we are sure that the integer square root is either 
-$(\WW q {q_1}\!)$ or
-$(\WW q {q_1}\!) - 1$. It is the sign of $\ICP{r_1} * \wB + 
-[|{b_l}|] - [|q_1|] ^ 2$ that indicates in which situation we are. 
+$(\WW {q_h} {q_l}\!)$ or
+$(\WW {q_h} {q_l}\!) - 1$. It is the sign of $\ICP{r_1} * \wB + 
+[|{y_l}|] - [|q_l|] ^ 2$ that indicates in which situation we are. 
