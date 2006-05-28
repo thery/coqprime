@@ -47,7 +47,7 @@ Inductive w2 (w: Set): Set :=  WW : w -> w -> w2 w.
 \end{verbatim}
 So {\tt (WW true false)} is of type {\tt (w2 bool)}.
 Arbitrarily we choose that high bits are the first argument of {\tt WW}, low bits
-the second one. Now we use recursive type definition and define
+the second one. Now we use a recursive type definition and define
 the type of numbers of height {\tt n} as
 \begin{verbatim}
 Fixpoint word (w: Set) (n:nat): Set :=
