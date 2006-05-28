@@ -8,7 +8,7 @@ genW: genW.ml
 
 genfile: genW
 	cd W2; ../genW 2 -noproof
-	cd W8; ../genW 8 -noproof
+	cd W8; ../genW 8 
 	echo ok >> genfile
 
 clean:
