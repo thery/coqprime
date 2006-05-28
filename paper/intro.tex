@@ -2,32 +2,27 @@
 
 \section{Safe computation and theorem proving}
 
-Recent formal developments such as ~\cite{4color,kepler} have shown all the benefits
-one can get from having a formal system where both proving and computing are
+Recent formalisations such as the four colour theorem~\cite{4color} and the Flyspeck project~\cite{kepler} 
+have shown all the benefits one can get from having a formal system where both proving and computing are
 possible. In the {\sc Coq} proof assistant~\cite{Coq}, computation is
-provided by the logic. {\sc Coq} is based on the Calculus of 
-Inductive Construction, so the evaluation mechanism is given for free
-by the beta reduction rule. 
-
-A direct application of the primitive status of computation in {\sc Coq} is 
+provided by the logic. A direct application of having computation inside the logic is 
 the so-called two-level approach~\cite{boutin}. To illustrate it, 
 let us consider the problem of proving the primality of some natural 
 numbers.
 Suppose that we have defined a predicate {\it prime}: a number is prime 
 if it has exactly two divisors, one and itself. 
-How do we now prove that 17 is prime? The standard approach is to
-directly build a proof object using tactics. Of course, this task can be 
+How do we now prove that 17 is prime? The usual approach is to
+interactively build a proof object using tactics. Of course, this task can be 
 automated writing an ad-hoc tactic. Still, behind the scene, the system 
 will have to build a proof object and the larger the number to be proved
 prime is, the larger the proof term will be.
 The two-level approach proposes an alternative
-strategy in two steps. In the first step, one defines a function that expresses
-the problem in term of pure computation. It can be seen as a semi-decision procedure.
-In our case, it amounts in writing a 
-function {\it test} from natural number to boolean such that if the function
+strategy in two steps. In the first step, one writes a semi-decision procedure
+for the problem in the programming language of {\sc Coq}. In our case, it amounts 
+in writing a function {\it test} from natural number to boolean such that if the function
 returns {\it true} then the number is prime. 
 For example, if the natural number
-is $n$, the function can check that there is no divisor between 2 and $n-1$
+is $n$, the function can check that there is no divisor between 2 and $\sqrt{n}$
 by a simple iteration. 
 
 In the second step, one proves that the function meets 
@@ -35,10 +30,9 @@ its specification. This means for our function {\it test} that
 $$
 \forall n, \textit{test}\,\, n = \texttt{true} \rightarrow \textit{prime}\,\, n
 $$
-Note that correctness is sufficient for the two-level approach, we don't need
-completness. Proving the correctness of our function {\it test} would not make much sense
-anyway.
-A much better algorithm for proving that a number $n$ is not prime is to provide a factor
+Note that the implication is sufficient for the two-level approach to work.
+Proving the equivalence for our function {\it test} would not make much sense anyway.
+A much better way of proving that a number $n$ is not prime is to provide a factor
 $p$ and only check with safe computation that $p$ divides $n$.
 
 Now to give a proof that 17 is prime, it is sufficient to prove that the function
@@ -49,14 +43,13 @@ large proof object into a conversion problem: showing that $\textit{test}\,\, 17
 to {\tt true}.  The size of the proof object is then independent of the number to be proved
 prime. 
 
-Recent progress in the evaluation mechanism~\cite{GreLer} has made the two-level
-approach attractive from the point of view of efficiency. Roughly speaking,
-the evaluation inside Coq is as fast as the bytecode evaluation of
+Recent improvment of the evaluation mechanism~\cite{GreLer} has made the two-level
+approach much more attractive.  The evaluation inside Coq is now as fast as the bytecode evaluation of
 the {\sc Ocaml} language~\cite{Ocaml}. The only restriction when writing programs
-inside {\sc Coq} is that programs must be purely functional, i.e. no side effects are allowed,
-and functions must always terminate. This is the price to pay to be able to safely combine proofs
-and computations. Obviously, for the two-level to be used effectively, 
-the {\sc Coq} system has to provide efficient functional implementations for the
+inside {\sc Coq} is that programs must be purely functional, i.e. side effects are not allowed,
+and must always terminate. This is the price to pay to safely combine proofs
+and computations. Obviously, for this approach to be used, 
+the {\sc Coq} system should provide efficient functional implementations for the
 usual datastructures: numbers, strings, vectors, hash tables,\dots 
 
 The contribution of this paper is to propose a purely functional library to compute 

@@ -33,20 +33,23 @@ For a prime number $n$, the list
 $[a, p_1, \alpha_1, p_2, \alpha_2, \dots, p_k, \alpha_k]$
 represents its Pocklington certificate.
 Even if generating a certificate for a given $n$ can be cpu-intensive, 
-verifying conditions 1-5 is an order of magnitude simpler. In fact, only
-the verification of conditions 1-5 is crucial for asserting the primality. 
+verifying conditions (1)-(5) is an order of magnitude simpler (computing $a^m$ requires
+a maximum of $2\textit{log}_2\, m$ multiplications). In fact, only
+the verification of conditions (1)-(5) is crucial for asserting the primality. 
 It requires safe computation and is done inside {\sc Coq}.
 The generation of the certificate is delegated to an external tool.
 This is a direct application of the skeptic approach described 
-in~\cite{BarBar,HarThe}.
+in~\cite{BarBar,HarThe}. Note that this method of certifying prime numbers
+is effective only if the prime number $n$ is such that  $n-1$ can be easily
+partially factorized.
                  
-With respect to the standard approach for the same 
+With respect to the usual approach for the same 
 problem~\cite{Caprotti_Oostdijk:01pockjsc}, the two-level
-approach gives a huge improvement in term of size of the
+approach gives a significant improvement in term of size of the
 proof object and in term of time.  
 Figure~\ref{fig:TimeComp} illustrates this on some examples 
-($P_{150}$ is a prime number of 150 digits and the millenium prime is
-a prime number of 2000 digits discovered by John B. Cosgrave).
+($P_{150}$ is a random prime number with 150 digits and the millenium prime is
+a prime number with 2000 digits discovered by John B. Cosgrave).
 \begin{figure}
 \begin{center}
 \begin{tabular}{|l|r|r|r|r|r|r|}
@@ -72,15 +75,15 @@ a prime number of 2000 digits discovered by John B. Cosgrave).
 \label{fig:TimeComp}
 \end{figure} 
 Even with the two-level approach, we were not capable to certify large prime numbers 
-(> 1000 digits) as the millenium prime.
-This was also the case when applying the Lucas-Lehmer test
+(> 1000 digits) as illustrated by the millenium prime.
+Similarly, when applying the Lucas-Lehmer test
 for proving the primality of Mersenne numbers, 
 i.e. numbers that can be written as $2 ^ p -1$.
 \begin{theorem}\label{lucas}
 Let ($S_n$) be recursively defined by $S_0= 4$ and $S_{n+1} = S_n^2 - 2$,
 for $p > 2$, $2^p-1$ is prime if and only if $(2^p -1) | S_{p-2}$.
 \end{theorem}
-The largest Mersenne number we could certify was $2^{4423} - 1$ that has 1300 digits. 
+the largest Mersenne number we could certify was $2^{4423} - 1$ that has 1300 digits. 
 
 The idea is then to use our new library for certifying large prime numbers.
 The complete library with the corresponding contribution for prime numbers 
@@ -90,16 +93,14 @@ The automatically generated {\tt word8} arithmetic is much bigger,
 95 Mb: 41 Mb are used to define functions and 54 Mb for the proofs. 
 This is the largest ever contribution that has been verified by {\sc Coq}. 
 With this new library, we have been capable to prove that the Mersenne number
-$2^{44497} - 1$ was prime using {\sc Coq}. 
+$2^{44497} - 1$ was prime with the Lucas-Lehmer test using {\sc Coq}. 
 As far as we know, it is the largest prime number  that has been certified 
 by a theorem prover.
 
-Even for small numbers, the {\sc Coq} version of our library is much more 
-efficient than the standard one. 
+Our library is faster even for certifying small numbers. 
 This is illustrated by Figure~\ref{fig:TimeCompW} and by the fifth and sixth  
-columns of Figure~\ref{fig:Mersenne}. 
-There is a maximum speed-up of 70. Our library makes it 
-really possible to compute with large numbers inside {\sc Coq}.
+columns of Figure~\ref{fig:Mersenne}. There is a maximum speed-up of 70. 
+These benchmarks have been done on a Pentium 4 with 1 Gigabytes of RAM.
 \begin{figure}
 \begin{center}
 \begin{tabular}{|l|r| r|r|}
@@ -111,7 +112,7 @@ really possible to compute with large numbers inside {\sc Coq}.
 ~1111111111111111111~ & 19~ & 0.66s~ & 0.20s~  \\
 ~$(2^{148}+1)/17$ ~   & 44~ & 2.77s~  & 0.36s~  \\
 ~$P_{150}$   ~       & 150~ & 75.62s~  & 8.44s~  \\
-~$\textit{millenium prime}$~   &2000 & \_~   & 88m~ \\
+~$\textit{millenium prime}$~   &2000 & \_~   & 5320.05s~ \\
 \hline
 \end{tabular}
 \end{center}
@@ -158,14 +159,13 @@ The 64 bit {\sc Ocaml} integer {\tt w64} is a simulated arithmetic
 This is why there is not such a gap between {\tt w31} and {\tt w64}. 
 {\sc Big\_int}~\cite{bignum} is the  standard exact library for {\sc Ocaml}. 
 It has a purely functional interface but 
-is written in C. The comparison is not bad. We are only 6 time slower. 
-It is also very interesting
-that this gap is getting smaller as numbers get larger. 
-Random tests on addition gives a factor of
-4, multiplications a factor of 10.
+is written in C. The comparison is not bad. For the last Mersenne, the {\tt w64}
+is only 4.6 time slower than {\sc Big\_int}. 
+It is also very interesting that this gap is getting smaller as numbers get larger. 
+On individual functions, random tests on addition give a ratio of 4, on multiplication a ratio of 10.
 
 We are still far away from getting the performance of the {\sc gmp}~\cite{GMP}
- library. This library is written in C and uses inplace computation instead. 
+library. This library is written in C and uses inplace computation instead. 
 This minimizes considerably the number of memory allocations.
 Unfortunately, inplace computation is not compatible with 
 the logic of {\sc Coq}.
