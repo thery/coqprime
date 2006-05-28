@@ -192,9 +192,8 @@ Section Zn2Z.
   ww_mul_c w_0 w_1 w_WW w_W0 w_mul_c add_c add add_carry.
 
  Let karatsuba_c :=
-  Eval lazy beta iota delta [ww_karatsuba_c gen_mul_c kara_prod 
-    kara_prod_carry2 kara_prod_carry1 kara_prod_C0_C1] in
-  ww_karatsuba_c w_0 w_1 w_WW w_W0 w_add_c w_mul_c 
+  Eval lazy beta iota delta [ww_karatsuba_c gen_mul_c kara_prod] in
+  ww_karatsuba_c w_0 w_1 w_WW w_W0 w_compare w_add w_sub w_mul_c 
     add_c add add_carry sub_c sub.
 
  Let mul :=
@@ -537,11 +536,13 @@ Section Zn2Z.
 
  Let spec_ww_karatsuba_c : forall x y, [[karatsuba_c x y ]] = [|x|] * [|y|].
  Proof.
-  refine (spec_ww_karatsuba_c w_0 w_1 w_WW w_W0 w_add_c w_mul_c 
-   add_c add add_carry sub_c sub w_digits w_to_Z _ _ _ _ _ _ _ _ _ _ _ _);
-  auto. exact (spec_WW op_spec).  
-  exact (spec_W0 op_spec). exact (spec_mul_c op_spec).
- Qed.
+ refine (spec_ww_karatsuba_c _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+          _ _ _ _ _ _ _ _ _ _ _ _); auto.
+  exact (spec_WW op_spec).  
+  exact (spec_W0 op_spec). 
+  exact (spec_compare op_spec).
+  exact (spec_mul_c op_spec).
+ Qed. 
 
  Let spec_ww_mul : forall x y, [|mul x y|] = ([|x|] * [|y|]) mod wwB.
  Proof.

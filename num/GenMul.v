@@ -23,9 +23,11 @@ Section GenMul.
  Variable w_WW : w -> w -> zn2z w.
  Variable w_W0 : w -> zn2z w.
  Variable w_0W : w -> zn2z w.
+ Variable w_compare : w -> w -> comparison.
  Variable w_succ : w -> w.
  Variable w_add_c : w -> w -> carry w.
  Variable w_add : w -> w -> w.
+ Variable w_sub: w -> w -> w.
  Variable w_mul_c : w -> w -> zn2z w.
  Variable w_mul : w -> w -> w.
  Variable w_square_c : w -> zn2z w.
@@ -69,56 +71,57 @@ Section GenMul.
       | C1 cc => (w_1, cc)
       end).
 
- Definition kara_prod_carry1 mhh ll :=
-  match ww_sub_c mhh ll with
-  | C0 mhhll => (w_1, mhhll)
-  | C1 mhhll => (w_0, mhhll)
-  end.
+ Definition w_2 := w_add w_1 w_1.
 
- Definition kara_prod_carry2 m hh ll := 
-  match ww_sub_c m hh with
-  | C0 mhh => (w_1,ww_sub mhh ll) (* carry = 2 => -ll a une carry de 1 *)
-  | C1 mhh => kara_prod_carry1 mhh ll
-  end.
+ Definition kara_prod xh xl yh yl hh ll :=
+    match ww_add_c hh ll with 
+      C0 m =>
+         match w_compare xl xh with
+           Eq => (w_0, m)
+         | Lt => 
+           match w_compare yl yh with
+             Eq => (w_0, m)
+           | Lt => (w_0, ww_sub m (w_mul_c (w_sub xh xl) (w_sub yh yl)))
+           | Gt => match ww_add_c m (w_mul_c (w_sub xh xl) (w_sub yl yh)) with
+                      C1 m1 => (w_1, m1) | C0 m1 => (w_0, m1)
+                   end
+           end
+         | Gt => 
+           match w_compare yl yh with
+             Eq => (w_0, m)
+           | Lt => match ww_add_c m (w_mul_c (w_sub xl xh)  (w_sub yh yl)) with
+                      C1 m1 => (w_1, m1) | C0 m1 => (w_0, m1)
+                   end
+           | Gt => (w_0, ww_sub m (w_mul_c (w_sub xl xh)  (w_sub yl yh)))
+           end
+         end
+    | C1 m =>
+         match w_compare xl xh with
+           Eq => (w_1, m)
+         | Lt => 
+           match w_compare yl yh with
+             Eq => (w_1, m)
+           | Lt => match ww_sub_c m (w_mul_c (w_sub xh xl) (w_sub yh yl)) with
+                    C0 m1 => (w_1, m1) | C1 m1 => (w_0, m1)
+                   end 
+           | Gt => match ww_add_c m (w_mul_c (w_sub xh xl) (w_sub yl yh)) with
+                      C1 m1 => (w_2, m1) | C0 m1 => (w_1, m1)
+                   end
+           end
+         | Gt => 
+           match w_compare yl yh with
+             Eq => (w_1, m)
+           | Lt => match ww_add_c m (w_mul_c (w_sub xl xh) (w_sub yh yl)) with
+                      C1 m1 => (w_2, m1) | C0 m1 => (w_1, m1)
+                   end
+           | Gt => match ww_sub_c m (w_mul_c (w_sub xl xh) (w_sub yl yh)) with
+                     C1 m1 => (w_0, m1) | C0 m1 => (w_1, m1)
+                   end
+           end
+         end
+    end.
 
- Definition kara_prod_C0_C1 xhl yhl hh ll := 
-  match ww_add_c (w_mul_c xhl yhl) (w_W0 xhl) with
-  | C0 m => (w_0, ww_sub (ww_sub m hh) ll)
-  | C1 m => (* carry = 1 *)
-    match ww_sub_c m hh with
-    | C0 mhh => kara_prod_carry1 mhh ll
-    | C1 mhh =>  (w_0, ww_sub mhh ll)
-    end
-  end.
-  
- Definition kara_prod cxhl cyhl hh ll :=
-  match cxhl, cyhl with
-  | C0 xhl, C0 yhl => (w_0, ww_sub (ww_sub (w_mul_c xhl yhl) hh) ll)
-  | C0 xhl, C1 yhl => kara_prod_C0_C1 xhl yhl hh ll
-  | C1 xhl, C0 yhl => kara_prod_C0_C1 yhl xhl hh ll
-  | C1 xhl, C1 yhl => (* carry = 1 *)
-    match w_add_c xhl yhl with
-    | C0 suml => (* carry = 1 *)
-      match ww_add_c (w_mul_c xhl yhl) (w_W0 suml) with
-      | C0 m =>  (* carry = 1 *)
-	match ww_sub_c m hh with
-	| C0 mhh => kara_prod_carry1 mhh ll
-        | C1 mhh => (w_0, ww_sub mhh ll)
-        end
-      | C1 m => kara_prod_carry2 m hh ll 
-      end
-    | C1 suml => (* carry = 2 *)
-      match ww_add_c (w_mul_c xhl yhl) (w_W0 suml) with
-      | C0 m => kara_prod_carry2 m hh ll
-      | C1 m => (w_1, ww_sub (ww_sub m hh) ll)
-                (* carry = 3 => les deux soutraction on une carry *)
-      end
-    end
-  end.
-
- Definition ww_karatsuba_c :=
-  gen_mul_c 
-   (fun xh xl yh yl hh ll => kara_prod (w_add_c xh xl) (w_add_c yh yl) hh ll).
+ Definition ww_karatsuba_c :=  gen_mul_c kara_prod.
 
  Definition ww_mul x y :=
   match x, y with
@@ -209,6 +212,7 @@ Section GenMul.
  (*Section GenProof. *)
   Variable w_digits : positive.
   Variable w_to_Z : w -> Z.
+  Variable more_than_one_bit: 1 < Zpos w_digits.
 
   Notation wB  := (base w_digits).
   Notation wwB := (base (ww_digits w_digits)).
@@ -240,14 +244,21 @@ Section GenMul.
   Variable spec_w_WW : forall h l, [[w_WW h l]] = [|h|] * wB + [|l|].
   Variable spec_w_W0 : forall h, [[w_W0 h]] = [|h|] * wB.
   Variable spec_w_0W : forall l, [[w_0W l]] = [|l|].
-
+  Variable spec_w_compare :
+     forall x y,
+       match w_compare x y with
+       | Eq => [|x|] = [|y|]
+       | Lt => [|x|] < [|y|]
+       | Gt => [|x|] > [|y|]
+       end.
   Variable spec_w_succ : forall x, [|w_succ x|] = ([|x|] + 1) mod wB.
   Variable spec_w_add_c  : forall x y, [+|w_add_c x y|] = [|x|] + [|y|].
   Variable spec_w_add : forall x y, [|w_add x y|] = ([|x|] + [|y|]) mod wB.
+  Variable spec_w_sub : forall x y, [|w_sub x y|] = ([|x|] - [|y|]) mod wB.
 
-  Variable spec_mul_c : forall x y, [[ w_mul_c x y ]] = [|x|] * [|y|].
-  Variable spec_mul : forall x y, [|w_mul x y|] = ([|x|] * [|y|]) mod wB.
-  Variable spec_square_c : forall x, [[ w_square_c x]] = [|x|] * [|x|].
+  Variable spec_w_mul_c : forall x y, [[ w_mul_c x y ]] = [|x|] * [|y|].
+  Variable spec_w_mul : forall x y, [|w_mul x y|] = ([|x|] * [|y|]) mod wB.
+  Variable spec_w_square_c : forall x, [[ w_square_c x]] = [|x|] * [|x|].
 
   Variable spec_ww_add_c  : forall x y, [+[ww_add_c x y]] = [[x]] + [[y]].
   Variable spec_ww_add : forall x y, [[ww_add x y]] = ([[x]] + [[y]]) mod wwB.
@@ -352,7 +363,7 @@ Section GenMul.
   Proof.
    intros cross Hcross x y;destruct x as [ |xh xl];simpl;trivial.
    destruct y as [ |yh yl];simpl. rewrite Zmult_0_r;trivial.
-   assert (H1:= spec_mul_c xh yh);assert (H2:= spec_mul_c xl yl).
+   assert (H1:= spec_w_mul_c xh yh);assert (H2:= spec_w_mul_c xl yl).
    generalize (Hcross _ _ _ _ _ _ H1 H2).
    destruct (cross xh xl yh yl (w_mul_c xh yh) (w_mul_c xl yl)) as (wc,cc).
    intros;apply spec_mul_aux;trivial.
@@ -365,27 +376,128 @@ Section GenMul.
    intros xh xl yh yl hh ll H1 H2.
    generalize (spec_ww_add_c (w_mul_c xh yl) (w_mul_c xl yh));
    destruct (ww_add_c (w_mul_c xh yl) (w_mul_c xl yh)) as [c|c];
-   unfold interp_carry;repeat rewrite spec_mul_c;intros H;
+   unfold interp_carry;repeat rewrite spec_w_mul_c;intros H;
    (rewrite spec_w_0 || rewrite spec_w_1);rewrite H;ring.
   Qed.
 
+  Lemma spec_w_2: [|w_2|] = 2.
+  unfold w_2; rewrite spec_w_add; rewrite spec_w_1; simpl.
+  apply Zmod_def_small; split; auto with zarith.
+  rewrite <- (Zpower_exp_1 2); unfold base; apply Zpower_lt_monotone; auto with zarith.
+  Qed.
+
   Lemma kara_prod_aux : forall xh xl yh yl,
-   (xh+xl)*(yh+yl) - xh*yh - xl*yl = xh*yl + xl*yh.
+   xh*yh + xl*yl - (xh-xl)*(yh-yl) = xh*yl + xl*yh.
   Proof. intros;ring. Qed.
-   
-  Lemma spec_kara_prod_carry1 : forall xh xl yh yl mhh ll,
-    wwB+[[mhh]] =(xh+xl)*(yh+yl) - xh*yh ->
-    [[ll]] = xl*yl ->
-    let (wc,cc) := kara_prod_carry1 mhh ll in
-    [|wc|]*wwB + [[cc]] = xh*yl + xl*yh.
+
+  Lemma spec_kara_prod : forall xh xl yh yl hh ll,
+   [[hh]] = [|xh|]*[|yh|] ->
+   [[ll]] = [|xl|]*[|yl|] ->
+   let (wc,cc) := kara_prod xh xl yh yl hh ll in
+   [|wc|]*wwB + [[cc]] = [|xh|]*[|yl|] + [|xl|]*[|yh|].
   Proof.
-   intros xh xl yh yl mhh ll H1 H2.
-   rewrite <- kara_prod_aux;rewrite <- H2;rewrite <- H1.
-   replace (wwB + [[mhh]] - [[ll]]) with (wwB + ([[mhh]] - [[ll]])). 2:ring.
-   unfold kara_prod_carry1. 
-   generalize (spec_ww_sub_c mhh ll);destruct (ww_sub_c mhh ll);
-   unfold interp_carry;intros H;rewrite <- H;
-   (rewrite spec_w_0||rewrite spec_w_1);ring.
+   intros xh xl yh yl hh ll H H0; rewrite <- kara_prod_aux; 
+     rewrite <- H; rewrite <- H0; unfold kara_prod.
+   assert (Hxh := (spec_to_Z xh)); assert (Hxl := (spec_to_Z xl)); 
+     assert (Hyh := (spec_to_Z yh)); assert (Hyl := (spec_to_Z yl)).
+   generalize (spec_ww_add_c hh ll); case (ww_add_c hh ll);
+     intros z Hz; rewrite <- Hz; unfold interp_carry; assert (Hz1 := (spec_ww_to_Z z)).
+   generalize (spec_w_compare xl xh); case (w_compare xl xh); intros Hxlh;
+    try rewrite Hxlh; try rewrite spec_w_0; try (ring; fail).
+   generalize (spec_w_compare yl yh); case (w_compare yl yh); intros Hylh;
+     try rewrite Hylh; try rewrite spec_w_0; try (ring; fail).
+   repeat (rewrite spec_ww_sub || rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   split; auto with zarith.
+   simpl in Hz; rewrite Hz; rewrite H; rewrite H0.
+   rewrite kara_prod_aux; apply Zplus_le_0_compat; apply Zmult_le_0_compat; auto with zarith.
+   apply Zle_lt_trans with ([[z]]-0); auto with zarith.
+   unfold Zminus; apply Zplus_le_compat_l; apply Zle_left_rev; simpl; rewrite Zopp_involutive.
+   apply Zmult_le_0_compat; auto with zarith.
+   match goal with |- context[ww_add_c ?x ?y] =>
+     generalize (spec_ww_add_c x y); case (ww_add_c x y); try rewrite spec_w_0;
+     intros z1 Hz2
+   end.
+   simpl in Hz2; rewrite Hz2; repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   rewrite spec_w_1; unfold interp_carry in Hz2; rewrite Hz2;
+     repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   generalize (spec_w_compare yl yh); case (w_compare yl yh); intros Hylh;
+     try rewrite Hylh; try rewrite spec_w_0; try (ring; fail).
+   match goal with |- context[ww_add_c ?x ?y] =>
+     generalize (spec_ww_add_c x y); case (ww_add_c x y); try rewrite spec_w_0;
+     intros z1 Hz2
+   end.
+   simpl in Hz2; rewrite Hz2; repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   rewrite spec_w_1; unfold interp_carry in Hz2; rewrite Hz2;
+     repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   repeat (rewrite spec_ww_sub || rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   split.
+   match goal with |- context[(?x - ?y) * (?z - ?t)] =>
+     replace ((x - y) * (z - t)) with ((y - x) * (t - z)); [idtac | ring]
+   end.
+   simpl in Hz; rewrite Hz; rewrite H; rewrite H0.
+   rewrite kara_prod_aux; apply Zplus_le_0_compat; apply Zmult_le_0_compat; auto with zarith.
+   apply Zle_lt_trans with ([[z]]-0); auto with zarith.
+   unfold Zminus; apply Zplus_le_compat_l; apply Zle_left_rev; simpl; rewrite Zopp_involutive.
+   apply Zmult_le_0_compat; auto with zarith.
+   (** there is a carry in hh + ll **)
+   rewrite Zmult_1_l.
+   generalize (spec_w_compare xl xh); case (w_compare xl xh); intros Hxlh;
+    try rewrite Hxlh; try rewrite spec_w_1; try (ring; fail).
+   generalize (spec_w_compare yl yh); case (w_compare yl yh); intros Hylh;
+     try rewrite Hylh; try rewrite spec_w_1; try (ring; fail).
+   match goal with |- context[ww_sub_c ?x ?y] =>
+     generalize (spec_ww_sub_c x y); case (ww_sub_c x y); try rewrite spec_w_1;
+     intros z1 Hz2
+   end.
+   simpl in Hz2; rewrite Hz2; repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   rewrite spec_w_0; rewrite Zmult_0_l; rewrite Zplus_0_l.
+   generalize Hz2; clear Hz2; unfold interp_carry.
+   repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   match goal with |- context[ww_add_c ?x ?y] =>
+     generalize (spec_ww_add_c x y); case (ww_add_c x y); try rewrite spec_w_1;
+     intros z1 Hz2
+   end.
+   simpl in Hz2; rewrite Hz2; repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   rewrite spec_w_2; unfold interp_carry in Hz2.
+   apply trans_equal with (wwB + (1 * wwB + [[z1]])).
+   ring.
+   rewrite Hz2; repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   generalize (spec_w_compare yl yh); case (w_compare yl yh); intros Hylh;
+     try rewrite Hylh; try rewrite spec_w_1; try (ring; fail).
+   match goal with |- context[ww_add_c ?x ?y] =>
+     generalize (spec_ww_add_c x y); case (ww_add_c x y); try rewrite spec_w_1;
+     intros z1 Hz2
+   end.
+   simpl in Hz2; rewrite Hz2; repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   rewrite spec_w_2; unfold interp_carry in Hz2.
+   apply trans_equal with (wwB + (1 * wwB + [[z1]])).
+   ring.
+   rewrite Hz2; repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   match goal with |- context[ww_sub_c ?x ?y] =>
+     generalize (spec_ww_sub_c x y); case (ww_sub_c x y); try rewrite spec_w_1;
+     intros z1 Hz2
+   end.
+   simpl in Hz2; rewrite Hz2; repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
+   rewrite spec_w_0; rewrite Zmult_0_l; rewrite Zplus_0_l.
+   match goal with |- context[(?x - ?y) * (?z - ?t)] =>
+     replace ((x - y) * (z - t)) with ((y - x) * (t - z)); [idtac | ring]
+   end.
+   generalize Hz2; clear Hz2; unfold interp_carry.
+   repeat (rewrite spec_w_sub || rewrite spec_w_mul_c).
+   repeat rewrite Zmod_def_small; auto with zarith; try (ring; fail).
   Qed.
 
   Lemma sub_carry : forall xh xl yh yl z, 
@@ -412,147 +524,10 @@ Section GenMul.
    let H := fresh "H" in
    assert (H := Zmult_lt_b _ _ _ (spec_to_Z x) (spec_to_Z y)).
 
-  Lemma spec_kara_prod_carry2 : forall xh xl yh yl m hh ll,
-    2*wwB+[[m]] =([|xh|]+[|xl|])*([|yh|]+[|yl|]) ->
-    [[hh]] = [|xh|]*[|yh|] ->
-    [[ll]] = [|xl|]*[|yl|] ->
-    let (wc,cc) := kara_prod_carry2 m hh ll in
-    [|wc|]*wwB + [[cc]] = [|xh|]*[|yl|] + [|xl|]*[|yh|].
-  Proof.
-   intros xh xl yh yl m hh ll H1 H2 H3; unfold kara_prod_carry2.
-   generalize (spec_ww_sub_c m hh);destruct (ww_sub_c m hh) as [mhh|mhh];
-   unfold interp_carry;intros.
-   generalize (kara_prod_aux [|xh|] [|xl|] [|yh|] [|yl|]).
-   rewrite <- H2;rewrite <- H1;rewrite <- H3.
-   replace (2*wwB+[[m]]-[[hh]]-[[ll]])with(wwB+(wwB+([[m]]-[[hh]]-[[ll]]))). 
-   2:ring. rewrite <- H;rewrite spec_ww_sub;rewrite spec_w_1.
-   intros H0;rewrite <- H0;rewrite Zmult_1_l.
-   replace (([[mhh]] - [[ll]]) mod wwB) with (wwB + ([[mhh]]-[[ll]]));trivial.
-   assert (H4:=lt_0_wwB);apply Zmod_unique with (q:= -1);zarith.
-   assert (0 <= wwB + ([[mhh]] - [[ll]])).
-    Spec_ww_to_Z mhh;Spec_ww_to_Z ll;zarith.
-   split;trivial.
-   apply (sub_carry _ _ _ _ H5 (sym_eq H0)).
-   apply spec_kara_prod_carry1;trivial.
-   rewrite <- H1;rewrite <- H2.
-   unfold Zminus in *;rewrite <- Zplus_assoc;rewrite <- H;ring.
-  Qed.
-
-  Lemma spec_kara_prod_C0_C1 : forall xh xl yh yl xhl yhl hh ll,
-    [[hh]] = [|xh|]*[|yh|] ->
-    [[ll]] = [|xl|]*[|yl|] ->
-    [|xhl|] = [|xh|]+[|xl|] ->
-    wB+[|yhl|] = [|yh|]+[|yl|] ->
-    let (wc,cc) := kara_prod_C0_C1 xhl yhl hh ll in
-    [|wc|]*wwB + [[cc]] = [|xh|]*[|yl|] + [|xl|]*[|yh|].
-  Proof.
-   intros;unfold kara_prod_C0_C1.
-   generalize (kara_prod_aux [|xh|] [|xl|] [|yh|] [|yl|]).
-   rewrite <- H1;rewrite <- H;rewrite <- H0;rewrite <- H2.
-   replace ([|xhl|] * (wB + [|yhl|]) - [[hh]] - [[ll]]) with
-   ([|xhl|]*[|yhl|] + [|xhl|]*wB - [[hh]] - [[ll]]). 2:ring.
-   intros H3;generalize (spec_ww_add_c (w_mul_c xhl yhl) (w_W0 xhl));
-   rewrite spec_mul_c;rewrite spec_w_W0;destruct 
-   (ww_add_c (w_mul_c xhl yhl) (w_W0 xhl)) as [m|m];
-   unfold interp_carry;try rewrite Zmult_1_l;intros.
-   rewrite spec_w_0;simpl;rewrite <- H4 in H3;rewrite <- H3. 
-   repeat rewrite spec_ww_sub. 
-   Zmult_lt_b xh yl;Zmult_lt_b xl yh. 
-   rewrite <- wwB_wBwB in H5;rewrite <- wwB_wBwB in H6.
-   Spec_ww_to_Z m;Spec_ww_to_Z hh;Spec_ww_to_Z ll.
-   rewrite (Zmod_def_small ([[m]]-[[hh]]));zarith.
-   rewrite Zmod_def_small;zarith.
-   generalize (spec_ww_sub_c m hh);destruct (ww_sub_c m hh);
-   unfold interp_carry;intros.
-   apply spec_kara_prod_carry1;trivial.
-   rewrite H5;replace (wwB+([[m]]-[[hh]])) with (wwB+[[m]]-[[hh]]). 2:ring.
-   rewrite H4;rewrite <- H1;rewrite <- H2;rewrite <- H;ring.
-   rewrite spec_w_0;simpl; rewrite <- H4 in H3;rewrite <- H3.
-   generalize H3;clear H3.
-   replace (wwB+[[m]]-[[hh]]-[[ll]]) with (wwB+([[m]]-[[hh]])-[[ll]]). 2:ring.
-   rewrite <- H5. 
-   replace (wwB + (-1 * wwB + [[z]]) - [[ll]]) with ([[z]]-[[ll]]). 2:ring.
-   intros;rewrite spec_ww_sub;rewrite Zmod_def_small;trivial.
-   Zmult_lt_b xh yl;Zmult_lt_b xl yh. 
-   rewrite <- wwB_wBwB in H6;rewrite <- wwB_wBwB in H7.
-   Spec_ww_to_Z z;Spec_ww_to_Z ll;zarith.
-  Qed.
-
-  Lemma spec_kara_prod : forall xh xl yh yl cxhl cyhl hh ll,
-   [[hh]] = [|xh|]*[|yh|] ->
-   [[ll]] = [|xl|]*[|yl|] ->
-   [+|cxhl|] = [|xh|]+[|xl|] ->
-   [+|cyhl|] = [|yh|]+[|yl|] ->
-   let (wc,cc) := kara_prod cxhl cyhl hh ll in
-   [|wc|]*wwB + [[cc]] = [|xh|]*[|yl|] + [|xl|]*[|yh|].
-  Proof.
-   intros xh xl yh yl cxhl cyhl hh ll H H0.
-   destruct cxhl as [xhl|xhl];destruct cyhl as [yhl|yhl];unfold
-   interp_carry;try rewrite Zmult_1_l;intros;simpl.
-   rewrite spec_w_0;generalize (kara_prod_aux [|xh|] [|xl|] [|yh|] [|yl|]).
-   rewrite <- H;rewrite <- H0;rewrite <- H1;rewrite <- H2;simpl.
-   intros H3;rewrite <- H3; Zmult_lt_b xh yl;Zmult_lt_b xl yh. 
-   rewrite <- wwB_wBwB in H4;rewrite <- wwB_wBwB in H5.
-   Spec_ww_to_Z (w_mul_c xhl yhl);Spec_ww_to_Z hh;Spec_ww_to_Z ll.
-   repeat rewrite spec_ww_sub. assert (H9 := spec_mul_c xhl yhl).
-   rewrite (Zmod_def_small ([[w_mul_c xhl yhl]]-[[hh]]));zarith.
-   rewrite Zmod_def_small;zarith.
-   apply spec_kara_prod_C0_C1;trivial.
-   rewrite (Zmult_comm [|xh|]);rewrite (Zmult_comm [|xl|]);rewrite 
-   (Zplus_comm ([|yl|]*[|xh|])); apply spec_kara_prod_C0_C1;trivial.
-   rewrite Zmult_comm;trivial.  rewrite Zmult_comm;trivial.
-   generalize (kara_prod_aux [|xh|] [|xl|] [|yh|] [|yl|]). 
-   rewrite <- H;rewrite <- H0;rewrite <- H1;rewrite <- H2.
-   replace ((wB + [|xhl|]) * (wB + [|yhl|]) - [[hh]] - [[ll]]) with
-   (wB*wB + ([|xhl|]+[|yhl|])*wB+ [|xhl|]*[|yhl|] -[[hh]] - [[ll]]).  2:ring.
-   generalize (spec_w_add_c xhl yhl);destruct (w_add_c xhl yhl) as [suml|suml];
-    unfold interp_carry;try rewrite Zmult_1_l;intros H3;rewrite <- H3.
-   replace (wB * wB + [|suml|] * wB + [|xhl|] * [|yhl|]) with
-    (wB * wB + ([|xhl|] * [|yhl|] + [|suml|] * wB)). 2:ring.
-   generalize (spec_ww_add_c (w_mul_c xhl yhl) (w_W0 suml));rewrite spec_w_W0;
-   rewrite spec_mul_c;intros H4;rewrite <- H4;clear H4.
-   destruct (ww_add_c (w_mul_c xhl yhl) (w_W0 suml)) as [m|m];
-    unfold interp_carry;try rewrite Zmult_1_l.
-   replace (wB * wB + [[m]] - [[hh]]) with (wB*wB+([[m]] - [[hh]])). 2:ring.
-   rewrite <- (spec_ww_sub_c m hh);destruct (ww_sub_c m hh) as [mhh|mhh];
-   unfold interp_carry;try rewrite Zmult_1_l.
-   intros;apply spec_kara_prod_carry1;trivial.
-   rewrite <- kara_prod_aux in H4;rewrite wwB_wBwB;zarith.
-   rewrite spec_w_0;rewrite Zmult_0_l;replace (wB * wB + (-1 * wwB + [[mhh]]))
-   with [[mhh]]. 2:rewrite wwB_wBwB;ring. intros H4;rewrite <- H4.
-   rewrite Zplus_0_l;rewrite spec_ww_sub;rewrite Zmod_def_small;zarith.
-   Zmult_lt_b xh yl;Zmult_lt_b xl yh. 
-   rewrite <- wwB_wBwB in H5;rewrite <- wwB_wBwB in H6.
-   Spec_ww_to_Z mhh;Spec_ww_to_Z ll;zarith.
-   intros;apply spec_kara_prod_carry2;trivial. 
-   rewrite <- kara_prod_aux in H4;rewrite <- wwB_wBwB in H4;zarith.
-   replace (wB * wB + (wB + [|suml|]) * wB + [|xhl|] * [|yhl|]) with
-   (2*wB*wB + ([|xhl|] * [|yhl|] +  [|suml|] * wB)). 2:ring.
-   generalize (spec_ww_add_c (w_mul_c xhl yhl) (w_W0 suml));rewrite spec_w_W0;
-   rewrite spec_mul_c;intros H4;rewrite <- H4;clear H4.
-   destruct (ww_add_c (w_mul_c xhl yhl) (w_W0 suml)) as [m|m];
-   unfold interp_carry;try rewrite Zmult_1_l;intros.
-   apply spec_kara_prod_carry2;trivial.
-   generalize H4;clear H4;rewrite <- kara_prod_aux;rewrite wwB_wBwB.
-   rewrite <- H;rewrite <- H0. rewrite <- Zmult_assoc;zarith.
-   rewrite spec_w_1;rewrite Zmult_1_l;rewrite <- Zmult_assoc in H4.
-   rewrite <- wwB_wBwB in H4.
-   Spec_ww_to_Z m;Spec_ww_to_Z hh;Spec_ww_to_Z ll.
-   assert ((2*wwB + [[m]]) - [[hh]] - [[ll]] < wwB).
-    apply (sub_carry xh xl yh yl);zarith.
-   repeat rewrite spec_ww_sub. 
-   assert (wwB + [[m]] - [[hh]] = ([[m]] - [[hh]]) mod wwB).
-    apply Zmod_unique with (-1);zarith.
-   rewrite <- H9;clear H9.
-   assert (2*wwB+[[m]]-[[hh]]-[[ll]]=(wwB+[[m]]-[[hh]]-[[ll]]) mod wwB).
-    apply Zmod_unique with (-1);zarith.
-   rewrite <- H9;rewrite <- H4;ring.
-  Qed.
-
   Lemma spec_ww_karatsuba_c : forall x y, [||ww_karatsuba_c x y||]=[[x]]*[[y]].
   Proof.
    intros x y; unfold ww_karatsuba_c;apply spec_gen_mul_c.
-   intros xh xl yh yl hh ll H H0;apply spec_kara_prod;trivial.
+   intros; apply spec_kara_prod; auto.
   Qed.
 
   Lemma spec_ww_mul : forall x y, [[ww_mul x y]] = [[x]]*[[y]] mod wwB.
@@ -563,8 +538,8 @@ Section GenMul.
    case y; auto.
    simpl; rewrite Zmult_0_r; rewrite Zmod_def_small; auto with zarith.
    intros yh yl;simpl.
-   repeat (rewrite spec_ww_add || rewrite spec_w_W0 || rewrite spec_mul_c
-    || rewrite spec_w_add || rewrite spec_mul).
+   repeat (rewrite spec_ww_add || rewrite spec_w_W0 || rewrite spec_w_mul_c
+    || rewrite spec_w_add || rewrite spec_w_mul).
    rewrite <- Zmod_plus; auto with zarith.
    repeat (rewrite Zmult_plus_distr_l || rewrite Zmult_plus_distr_r).
    rewrite <- Zmult_mod_distr_r; auto with zarith.
@@ -587,7 +562,7 @@ Section GenMul.
           end;intros wc cc Heq.
    apply (spec_mul_aux xh xl xh xl wc cc);trivial.
    generalize Heq (spec_ww_add_c (w_mul_c xh xl) (w_mul_c xh xl));clear Heq.
-   rewrite spec_mul_c;destruct (ww_add_c (w_mul_c xh xl) (w_mul_c xh xl));
+   rewrite spec_w_mul_c;destruct (ww_add_c (w_mul_c xh xl) (w_mul_c xh xl));
    unfold interp_carry;try rewrite Zmult_1_l;intros Heq Heq';inversion Heq;
    rewrite (Zmult_comm [|xl|]);subst.
    rewrite spec_w_0;rewrite Zmult_0_l;rewrite Zplus_0_l;trivial.
@@ -624,7 +599,7 @@ Section GenMul.
     let (h,l):= w_mul_add x y r in
     [|h|]*wB+[|l|] = [|x|]*[|y|] + [|r|]. 
   Proof.
-   intros x y r;unfold w_mul_add;assert (H:=spec_mul_c x y);
+   intros x y r;unfold w_mul_add;assert (H:=spec_w_mul_c x y);
    destruct (w_mul_c x y) as [ |h l];simpl;rewrite <- H.
    rewrite spec_w_0;trivial.
    assert (U:=spec_w_add_c l r);destruct (w_add_c l r) as [lr|lr];unfold
