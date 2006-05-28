@@ -97,7 +97,7 @@ $2^{44497} - 1$ was prime with the Lucas-Lehmer test using {\sc Coq}.
 As far as we know, it is the largest prime number  that has been certified 
 by a theorem prover.
 
-Our library is faster even for certifying small numbers. 
+The certification with our library is faster even for  small numbers. 
 This is illustrated by Figure~\ref{fig:TimeCompW} and by the fifth and sixth  
 columns of Figure~\ref{fig:Mersenne}. There is a maximum speed-up of 70. 
 These benchmarks have been done on a Pentium 4 with 1 Gigabytes of RAM.
@@ -121,9 +121,9 @@ These benchmarks have been done on a Pentium 4 with 1 Gigabytes of RAM.
 \end{figure} 
 \begin{figure}
 \begin{center}
-\begin{tabular}{|r|r|r|r|r|r|r|r|r |}
+\begin{tabular}{|r|r|r|c|r|r|r|r|r |}
 \hline
-\# & n & digits & years &  positive & word8 & w31 & w64 & Big\_int\\
+\# & n & digits & discovered &  positive & word8 & w31 & w64 & Big\_int\\
 \hline
 12 &  127 &  39 & 1876 &  0.73s & 0.04s & 0.01s & 0.s & 0.s \\
 13 &  521 & 157 & 1952 &  53.00s & 1.85s & 0.02s & 0.02s &  0.s\\

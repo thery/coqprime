@@ -148,25 +148,9 @@ $$\begin{array}{l}
 [[\WW {x_h} {x_l}]] * [[\WW {y_h} {y_l}]] = \\
 \hskip20pt \textit{let}\,\, {h}\, = [|{x_h}|] * [|{y_h}|]\,\, \textit{in}\\
 \hskip20pt \textit{let}\,\,\,  {l}\, = [|{x_l}|] * [|{y_l}|]\,\, \textit{in}\\
-\hskip20pt {h} * \wB^2 + (([|{x_h}|] + [|{x_l}|]) * ([|{y_h}|] + [|{y_l}|]) - {h} - {l}) * \wB + {l} \qquad\qquad
+\hskip20pt {h} * \wB^2 + (({h} + {l}) - ([|{x_h}|] - [|{x_l}|]) * ([|{y_h}|] - [|{y_l}|])) * \wB + {l} \qquad\qquad
 \end{array}
 $$
-If the above equation looks simple,  Karatsuba multiplication has been the most difficult function 
-to implement and prove correct.
-The difficulty is in the computation of the cross
-product $(([|{x_h}|] + [|{x_l}|]) * ([|{y_h}|] + [|{y_l}|]) - {h} - {l})$. 
-The inner product cannot be directly computed using the word multiplication: 
-both additions $([|{x_h}|] + [|{x_l}|])$ and $([|{y_h}|] + [|{y_l}|])$ can have a carry, 
-so their product fits in two words and a maximum carry of 3.
-Also, we know that the final cross product is positive and fits in
-two words and a maximum carry of 1. This is useful to optimize the code.
-For example, 
-if the inner product has no carry, we are sure that the subtractions 
-by $h$ and $l$ cannot generate a borrow. Respectively, 
-if the inner product has a carry of 3,  we are sure that each 
-subtraction generates a borrow. In both cases, modular subtraction can 
-be used instead of the exact one. 
-
 Karatsuba multiplication is more efficient than the naive one
 only when numbers are large enough. So our library
 includes both implementations. They are used separately to define two
@@ -274,7 +258,7 @@ library
 \begin{verbatim}
 w_sqrt2: w -> w -> w * carry w;
 \end{verbatim}
-The function returns the square root and the rest.
+The function returns the integer square root and the rest.
 Its specification is
 $$\begin{array}{l}
 \forall x\, y,\,\, \textit{let}\,\, s,\, r = \texttt{w\_sqrt2}\,\, x\,\, y\,\, \textit{in}\\
@@ -304,9 +288,9 @@ $$\begin{array}{l}
     [[\WW {q_h} {q_l}]] ^ 2 + (\ICP{r_1} * \wB + [|{y_l}|] - {[|q_l|]} ^ 2) \\
 \end{array}
 $$
-The element $(\WW {q_h} {q_l}\!)$ is a possible candidate
-for the square root. Because of the condition on
+$(\WW {q_h} {q_l}\!)$ is a candidate
+for the square root of {\tt (WW (WW $x_h$ $x_l$) (WW $y_h$ $y_l$))}. Because of the condition on
 the input, we are sure that the integer square root is either 
 $(\WW {q_h} {q_l}\!)$ or
 $(\WW {q_h} {q_l}\!) - 1$. It is the sign of $\ICP{r_1} * \wB + 
-[|{y_l}|] - [|q_l|] ^ 2$ that indicates in which situation we are. 
+[|{y_l}|] - [|q_l|] ^ 2$ that indicates which one to choose. 

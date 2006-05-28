@@ -26,16 +26,16 @@ is $n$, the function can check that there is no divisor between 2 and $\sqrt{n}$
 by a simple iteration. 
 
 In the second step, one proves that the function meets 
-its specification. This means for our function {\it test} that
+its specification. This means proving for our function {\it test} that
 $$
 \forall n, \textit{test}\,\, n = \texttt{true} \rightarrow \textit{prime}\,\, n
 $$
 Note that the implication is sufficient for the two-level approach to work.
-Proving the equivalence for our function {\it test} would not make much sense anyway.
-A much better way of proving that a number $n$ is not prime is to provide a factor
-$p$ and only check with safe computation that $p$ divides $n$.
+Proving the equivalence for our function {\it test} would not be of much use.
+A better way of proving that a number $n$ is not prime is to find externally a factor
+$p$ of $n$ and only check with safe computation that $p$ divides $n$.
 
-Now to give a proof that 17 is prime, it is sufficient to prove that the function
+Once the second step completed, to certify that 17 is prime, it is sufficient to prove that the function
 {\it test} applies to 17 returns {\tt true}. As the function {\it test} directly
 evaluates inside {\sc Coq}, this last proof is simply the reflexivity of equality.
 Using the two-level approach, we have just transfered the problem of building a 
