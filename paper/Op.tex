@@ -3,14 +3,14 @@ Our library includes the usual functions:
 comparison, successor, predecessor, opposite, addition, subtraction,
 multiplication, square, euclidean division, integer square root, gcd, 
 power and modulo.
-It is a modular library : it means that we only manipulate tree (or word)
+It is a modular library : we manipulate trees (or words)
 of the same height (of the same size). 
 For addition and subtraction, we also provide an exact version
 that returns a word and a carry.
 For multiplication, we also provide an exact version
 returning two words. 
 
-Since we want to use our library in the context of a two-level approach,
+Since we want to use our library in the context of the two-level approach,
 we must carefully choose the algorithms we implement.
 Furthermore, semi-decision procedures must also be certified, 
 so every function of our library must come along with its proof 
@@ -174,7 +174,7 @@ different functors. The functor with the naive multiplication is only used
 for trees of "small" height. 
 
 \subsubsection{Recursive Division}
-The general division algorithm that we have implemented is the usual schoolboy 
+The general euclidean division algorithm that we have implemented is the usual schoolboy 
 method that iterates the division of two words by one word. 
 It is then crucial to perform this two-by-one division efficiently. 
 The algorithm we have implemented is the one presented in~\cite{RecDiv}.
@@ -266,7 +266,7 @@ The resulting quotient is correct, we just have to unshift the remainder.
 
 \subsubsection{Recursive Square Root}
 
-The algorithm for computing the square root is similar to the one for division.
+The algorithm for computing the integer square root is similar to the one for division.
 It was first described in~\cite{RecSqrt} and has already been formalized in a 
 theorem prover~\cite{BerMagZim02}. It requires the number to be split
 in four. For this reason it is represented by the following function in our
@@ -277,7 +277,7 @@ w_sqrt2: w -> w -> w * carry w;
 The function returns the square root and the rest.
 Its specification is
 $$\begin{array}{l}
-\forall x\, y,\,\, \textit{let}\,\, s,\, r = \texttt{w\_sqrt2}\, x\, y\,\, \textit{in}\\
+\forall x\, y,\,\, \textit{let}\,\, s,\, r = \texttt{w\_sqrt2}\,\, x\,\, y\,\, \textit{in}\\
 \hskip10pt \wB / 4 \le [|x|] \Rightarrow [[\WW x y]] = {[|s|]} ^ 2 + \ICP{r} \land \ICP{r} \le 2 * [|s|]
 \end{array}
 $$
@@ -298,10 +298,10 @@ $$\begin{array}{l}
 $$
 The idea of the algorithm is summarized by the following equation
 $$\begin{array}{l}
-\textit{let}\,\,\, {q_h} ,\, r\,\, = \texttt{w\_sqrt2}\,\, {x_h}\,\, {x_l}\,\, \textit{in}\\
+\textit{let}\,\,\, {q_h} ,\, r\, = \texttt{w\_sqrt2}\,\, {x_h}\,\, {x_l}\quad\, \textit{in}\\
 \textit{let}\,\,\, {q_l} ,\, r_1 = \texttt{w\_div2s}\,\, r\,\, {y_h}\,\, {q_h}\,\, \textit{in}\\
 {[[\WW {x_h} {x_l}]]} * \wB ^ 2 + [[\WW {y_h} {y_l}]] =
-    [[\WW {q_h} {q_l}]] ^ 2 + \ICP{r_1} * \wB + [|{y_l}|] - {[|q_l|]} ^ 2 \\
+    [[\WW {q_h} {q_l}]] ^ 2 + (\ICP{r_1} * \wB + [|{y_l}|] - {[|q_l|]} ^ 2) \\
 \end{array}
 $$
 The element $(\WW {q_h} {q_l}\!)$ is a possible candidate
