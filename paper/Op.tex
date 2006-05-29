@@ -1,10 +1,10 @@
 \section{The certified library \label{Op}}
 Our library includes the usual functions:
 comparison, successor, predecessor, opposite, addition, subtraction,
-multiplication, square, euclidean division, integer square root, gcd, 
-power and modulo.
-It is a modular library : we manipulate trees (or words)
-of the same height (of the same size). 
+multiplication, square, euclidean division, modulo, integer square root, gcd, 
+and power.
+It is a modular library: we manipulate trees (or words)
+of the same height (resp. of the same size). 
 For addition and subtraction, we also provide an exact version
 that returns a word and a carry.
 For multiplication, we also provide an exact version
@@ -20,15 +20,15 @@ Specifications are expressed using predicates over integers. For this,
 we use two interpretation functions
 {$ [|\ |]$} and {$[[\ ]]$}.
 Given a single-word element $x$, its corresponding integer value
-is $[|x|]$. Given a two-word element $xx$, its corresponding
-integer value is $[[xx]]$. The base of the arithmetic, i.e.
+is $[|x|]$. Given a two-word element $\textit{xx}$, its corresponding
+integer value is $[[\textit{xx}]]$. The base of the arithmetic, i.e.
 one plus the maximum value that fits in a single-word, is $\wB$. 
 We write {\tt w\_0} (resp. {\tt w\_1}) for the word with 
 corresponding integer value 0 (resp. 1).
 From these definitions, the following statement holds
 $$\forall x\, y,\, [[\WW x  y]] = [|x|] * \wB + [|y|]$$
 Once a function is defined, its correctness has to be proved.
-For example for the comparison defined in the previous section,
+For example, for the comparison defined in the previous section,
 one needs to prove that if the function {\tt w\_cmp} meets its specification
 $$\begin{array}{l}
 \forall x\, y, \,\, \textit{match {\tt w\_cmp} x y with} \\
@@ -40,10 +40,10 @@ $$\begin{array}{l}
 $$
 so does the function {\tt ww\_cmp}
 $$\begin{array}{l}
-\forall xx\, yy, \,\, \textit{match {\tt ww\_cmp} xx yy with} \\
+\forall \textit{xx}\, \textit{yy}, \,\, \textit{match {\tt ww\_cmp} \textit{xx} \textit{yy} with} \\
 \qquad\,\,\,\,
- |\,\, \texttt{Eq}\,\, \rightarrow [[xx]] = [[yy]]\,\, | \,\,\texttt{Lt}\,\, \rightarrow [[xx]] < [[yy]] \,\,
-| \,\,\texttt{Gt}\,\, \rightarrow [[xx]] > [[yy]]\\
+ |\,\, \texttt{Eq}\,\, \rightarrow [[\textit{xx}\, ]] = [[\textit{yy}\, ]]\,\, | \,\,\texttt{Lt}\,\, \rightarrow [[\textit{xx}\, ]] < [[\textit{yy}\, ]] \,\,
+| \,\,\texttt{Gt}\,\, \rightarrow [[\textit{xx}\, ]] > [[\textit{yy}\, ]]\\
 \qquad\,\,\,\, \textit{end}
 \end{array}
 $$
@@ -121,8 +121,8 @@ $$\begin{array}{l}
 $$
 Two degenerated versions of this function are of direct interest. Calling it
 %{\tt w\_add\_mul\_div} 
-with a zero word as second argument implements
-the shift left. Calling it with a zero word as third argument implements
+with {\tt w\_0} as second argument implements
+the shift left. Calling it with {\tt w\_0} as first argument implements
 the shift right.
 
 \subsection{Divide and conquer algorithms}
@@ -153,9 +153,9 @@ $$\begin{array}{l}
 $$
 Karatsuba multiplication is more efficient than the naive one
 only when numbers are large enough. So our library
-includes both implementations. They are used separately to define two
+includes both implementations for multiplication. They are used separately to define two
 different functors. The functor with the naive multiplication is only used 
-for trees of "small" height. 
+for trees of ''small'' height. 
 
 \subsubsection{Recursive Division}
 The general euclidean division algorithm that we have implemented is the usual schoolboy 
@@ -210,7 +210,7 @@ $$[|x_1|] *  \wB ^ 2  + [|x_2|] * \wB + [|x_3|] = [|q|] * [[\WW {y_1} {y_2}]] + 
 we know in which situation we are by testing the sign of the candidate
 remainder.
 In our modular arithmetic, it amounts in checking if the subtraction of
-$(\texttt{w\_mul\_c}\, q\,\, y_2)$ from $(\WW r {x_3}\!)$
+$(\texttt{w\_mul\_c}\,\, q\,\, y_2)$ from $(\WW r {x_3}\!)$
 produces or not a borrow.  
 If it is positive or zero (no borrow), the quotient is $q$. 
 If it is negative (a borrow), 

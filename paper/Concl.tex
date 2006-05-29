@@ -13,7 +13,7 @@ to integrate machine word arithmetic inside {\sc Coq}.
 Expressing the arithmetic in the logic has a price: no side effect is possible, 
 also numbers are allocated progressively, not in one block.
 A natural continuation of our work would be to prove the correctness of a library with side effect.
-This would require a much more intensive verification work since inplace computing
+This would require a much more intensive verification work since in-place computing
 is known to be much harder to verify.
 Note that directly integrating an existing library inside the prover with no verification
 would go against the philosophy of {\sc Coq} to keep its trusted computing base as small
