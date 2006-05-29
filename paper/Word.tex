@@ -31,7 +31,7 @@ We also need to give the proofs that every function meets its specification.
 These proofs are also done by case analysis. 
 
 Rather than writing by hand functions and proofs, we have
-written an {\sc Ocaml} program~\cite{Ocaml} instead.
+written an {\sc Ocaml}~\cite{Ocaml} program instead.
 This program takes the word size as argument and generates the 
 desired base arithmetic with all its proofs. 
 It is a nice application of meta-proving. Unfortunately, 
@@ -46,14 +46,13 @@ no extension of the {\sc Coq} kernel is needed.
 \subsection{Native modular arithmetic}
 
 To test our library with some machine word arithmetic, we use the extraction
-mechanism. 
-It converts automatically {\sc Coq} functions into {\sc Ocaml} functions.
+mechanism that converts automatically {\sc Coq} functions into {\sc Ocaml} functions.
 It is then possible to run the resulting program with the 31-bit native
-{\sc Ocaml} arithmetic or a simulated 64 bit arithmetic. 
+{\sc Ocaml} arithmetic or a simulated 64-bit arithmetic. 
 Not all the functions that we have implemented have their corresponding 
 functions in the native modular arithmetic, 
 so some native code had to be developed for these functions.
-The formal verification of this code is also possible, we did it for some of these
+The formal verification of this code is also possible and we did it for some of these
 functions. Running the extracted library with machine word arithmetic
-gives an idea of the speed-up we could get if we had a native arithmetic in Coq.
+gives an idea of the speed-up we could get if we had a native arithmetic in {\sc Coq}.
 
