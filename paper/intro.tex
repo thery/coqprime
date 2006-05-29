@@ -30,27 +30,27 @@ its specification. This means proving for our function {\it test} that
 $$
 \forall n, \textit{test}\,\, n = \texttt{true} \rightarrow \textit{prime}\,\, n
 $$
-Note that the implication is sufficient for the two-level approach to work.
-Proving the equivalence for our function {\it test} would not be of much use.
+Note that implication is sufficient for the two-level approach to work.
+Proving equivalence would not be of much interest here.
 A better way of proving that a number $n$ is not prime is to find externally a factor
-$p$ of $n$ and only check with safe computation that $p$ divides $n$.
+$p$ of $n$ and only check internally that $p$ divides $n$.
 
-Once the second step completed, to certify that 17 is prime, it is sufficient to prove that the function
-{\it test} applies to 17 returns {\tt true}. As the function {\it test} directly
+Once the second step completed, for 17 to be certified prime, it is sufficient to prove that the function
+{\it test} applied to 17 returns {\tt true}. As the function {\it test} directly
 evaluates inside {\sc Coq}, this last proof is simply the reflexivity of equality.
 Using the two-level approach, we have just transfered the problem of building a 
 large proof object into a conversion problem: showing that $\textit{test}\,\, 17$ is convertible
 to {\tt true}.  The size of the proof object is then independent of the number to be proved
 prime. 
 
-Recent improvment of the evaluation mechanism~\cite{GreLer} has made the two-level
+Recent improvement of the evaluation mechanism~\cite{GreLer} has made the two-level
 approach much more attractive.  The evaluation inside Coq is now as fast as the bytecode evaluation of
 the {\sc Ocaml} language~\cite{Ocaml}. The only restriction when writing programs
 inside {\sc Coq} is that programs must be purely functional, i.e. side effects are not allowed,
 and must always terminate. This is the price to pay to safely combine proofs
 and computations. Obviously, for this approach to be used, 
 the {\sc Coq} system should provide efficient functional implementations for the
-usual datastructures: numbers, strings, vectors, hash tables,\dots 
+usual datastructures: numbers, strings, vectors, hash tables, \dots 
 
 The contribution of this paper is to propose a purely functional library to compute 
 efficiently with large numbers inside {\sc Coq}. The key idea of the library is to 
@@ -59,6 +59,6 @@ to speed up computation. The paper is organized as follows. In Section~\ref{ZTre
 the current arithmetic of {\sc Coq} and explain why a new representation of numbers is needed
 in order to compute efficiently with large numbers. In Section~\ref{Op}, we give an overview of our new library
 based on this new representation.  
-In Section~\ref{word}, we detail two possible instantiations of our library.
-Finally, Section~\ref{bench} presents an application of our library to the particular
+In Section~\ref{word}, we detail two possible instantiations of the library.
+Finally, Section~\ref{bench} presents an application of the library to the particular
 problem of certifying large prime numbers.

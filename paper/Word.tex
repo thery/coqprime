@@ -3,7 +3,7 @@
 The final step to complete our library is to define the arithmetic for the 
 base words. 
 Once defined,  we get the modular arithmetic for the desired size by 
-applying an appropriate number of times our functors. 
+applying an appropriate number of times our functors on top of this base arithmetic. 
 In a classical implementation, these base words would be machine words.
 Unfortunately, machine words are not yet accessible from the {\sc Coq} 
 language. 
@@ -33,7 +33,7 @@ These proofs are also done by case analysis.
 Rather than writing by hand functions and proofs, we have
 written an {\sc Ocaml} program~\cite{Ocaml} instead.
 This program takes the word size as argument and generates the 
-desired base arithmetics with all its proofs. 
+desired base arithmetic with all its proofs. 
 It is a nice application of meta-proving. Unfortunately, 
 functions and their corresponding proofs grow quickly with the word size. 
 For example, the addition for {\tt word8} is a pattern matching of 
