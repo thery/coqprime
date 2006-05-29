@@ -57,7 +57,7 @@ Inductive carry (w: Set): Set :=
   | C0: w -> carry
   | C1: w -> carry.
 \end{verbatim}
-Two interpretation functions are associated with carries.
+Two interpretation functions  $\ICP{\ }$ and $\ICM{\ }$ are associated with carries.
 One interprets the carry positively: $\ICP{\CI x} = \wB + [|x|]$ and
 $\ICP{\CO x} = [|x|]$. 
 The other interprets it negatively (i.e. a borrow):
@@ -86,7 +86,7 @@ Note that, unlike what happens in imperative languages, returning
 a carry allocates a memory cell. So in our implementation
 we avoid as much as possible to create them. When we know in advance 
 that the result always returns (resp. does not return) a carry, we can call the modular function instead. 
-An example of such a situation is a naive implementation of the exact function that 2 two to a 
+An example of such a situation is a naive implementation of the exact function that adds 2 to a 
 one-word element by calling twice the successor function:
 \begin{verbatim}
  Definition w_add2 x :=
