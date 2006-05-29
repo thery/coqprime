@@ -32,8 +32,9 @@ For a prime number $n$, the list
 $[a, p_1, \alpha_1, p_2, \alpha_2, \dots, p_k, \alpha_k]$
 represents its Pocklington certificate.
 Even if generating a certificate for a given $n$ can be cpu-intensive, 
-verifying conditions (1)-(5) is an order of magnitude simpler (computing $a^m$ requires
-a maximum of $2\textit{log}_2\, m$ multiplications). In fact, only
+verifying conditions (1)-(5) is an order of magnitude simpler than evaluating
+$(\textit{test}\,\, n)$ (computing $a^{n-1} (\textit{mod}\ n)$ requires
+a maximum of $2\textit{log}_2\, n$ modular multiplications). In fact, only
 the verification of conditions (1)-(5) is crucial for asserting primality. 
 This requires safe computation and is done inside {\sc Coq}.
 The generation of the certificate is delegated to an external tool.
@@ -76,7 +77,7 @@ by a theorem prover.
 The certification with our library is faster even for  small numbers. 
 This is illustrated in Figure~\ref{fig:TimeCompW} and the fifth and sixth  
 columns of Figure~\ref{fig:Mersenne}. There is a maximum speed-up of 70. 
-These benchmarks have been run on a Pentium 4 with 1 Gigabytes of RAM.
+These benchmarks have been run on a Pentium 4 with 1 Gigabyte of RAM.
 
 Comparing {\tt word8} with the 31-bit {\sc Ocaml} integer {\tt w31} shows 
 all the benefit we could get from having machine words in {\sc Coq}. 

@@ -68,7 +68,7 @@ Arithmetic operations are not going to be defined on the type {\tt word} directl
 We use a technique similar to the one in~\cite{GreMa}. A functor is first defined that 
 allows to build a two-word modular arithmetic on top of a single-word one.
 The functor is then applied iteratively to get the final implementation.
-In the following, $x,\ y$ are used to denote single-word variables and $\textit{xx},\ \textit{yy}$ 
+In the following, $x,\ y$ are used to denote one-word variables and $\textit{xx},\ \textit{yy}$ 
 to denote two-word variables. 
 When defining a new function $f$, we just need to explain how to compute the 
 result on two-word values knowing how to compute it on one-word values.
