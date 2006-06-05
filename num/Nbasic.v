@@ -98,6 +98,12 @@ Section ReduceRec.
 
 End ReduceRec.
 
+Definition opp_compare cmp :=
+  match cmp with
+  | Lt => Gt
+  | Eq => Eq
+  | Gt => Lt
+  end.
 
 Section CompareRec.
 
@@ -116,7 +122,7 @@ Section CompareRec.
     | WW xh xl => 
       match compare0_mn m xh with
       | Eq => compare0_mn m xl 
-      | _ => Gt
+      | r  => Lt
       end
     end
   end.
@@ -130,18 +136,12 @@ Section CompareRec.
     | WW xh xl => 
       match compare0_mn m xh with
       | Eq => compare_mn_1 m xl y 
-      | _ => Gt
+      | r  => Gt
       end
     end
   end.
 
 End CompareRec.
 
-Definition opp_compare cmp :=
-  match cmp with
-  | Lt => Gt
-  | Eq => Eq
-  | Gt => Lt
-  end.
 
 

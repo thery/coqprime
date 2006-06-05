@@ -404,33 +404,68 @@ Module Q.
   | Qq nx dx, Qq ny dy => Qq (Z.mul nx ny) (N.mul dx dy)
   end.
 
- Definition mul_norm x y := 
-  match x, y with
-  | Qz zx, Qz zy => Qz (Z.mul zx zy)
-  | Qz zx, Qq ny dy => norm (Z.mul zx ny) dy
-  | Qq nx dx, Qz zy => norm (Z.mul nx zy) dx
-  | Qq nx dx, Qq ny dy => norm (Z.mul nx ny) (N.mul dx dy)
-  end.
+Definition mul_norm x y := 
+ match x, y with
+ | Qz zx, Qz zy => Qz (Z.mul zx zy)
+ | Qz zx, Qq ny dy =>
+   if Z.eq_bool zx Z.zero then zero
+   else	
+     let d := N.succ dy in
+     let gcd := N.gcd (Z.to_N zx) d in
+     if N.eq_bool gcd N.one then Qq (Z.mul zx ny) dy
+     else 
+       let zx := Z.div zx (Z.Pos gcd) in
+       let d := N.div d gcd in
+       if N.eq_bool d N.one then Qz (Z.mul zx ny)
+       else Qq (Z.mul zx ny) (N.pred d)
+ | Qq nx dx, Qz zy =>   
+   if Z.eq_bool zy Z.zero then zero
+   else	
+     let d := N.succ dx in
+     let gcd := N.gcd (Z.to_N zy) d in
+     if N.eq_bool gcd N.one then Qq (Z.mul zy nx) dx
+     else 
+       let zy := Z.div zy (Z.Pos gcd) in
+       let d := N.div d gcd in
+       if N.eq_bool d N.one then Qz (Z.mul zy nx)
+       else Qq (Z.mul zy nx) (N.pred d)
+ | Qq nx dx, Qq ny dy => 
+     let dx := N.succ dx in
+     let dy := N.succ dy in
+     let (nx, dy) := 
+       let gcd := N.gcd (Z.to_N nx) dy in
+       if N.eq_bool gcd N.one then (nx, dy)
+       else (Z.div nx (Z.Pos gcd), N.div dy gcd) in
+     let (ny, dx) := 
+       let gcd := N.gcd (Z.to_N ny) dx in
+       if N.eq_bool gcd N.one then (ny, dx)
+       else (Z.div ny (Z.Pos gcd), N.div dx gcd) in
+     let d := (N.mul dx dy) in
+     if N.eq_bool d N.one then Qz (Z.mul ny nx) 
+     else Qq (Z.mul ny nx) (N.pred d)
+ end.
 
- Definition inv x := 
-  match x with
-  | Qz (Z.Pos n) => Qq Z.one n
-  | Qz (Z.Neg n) => Qq Z.minus_one n
-  | Qq (Z.Pos n) d => Qq (Z.Pos d) n
-  | Qq (Z.Neg n) d => Qq (Z.Neg d) n
-  end.
 
- Definition inv_norm x := 
-  match x with
-  | Qz (Z.Pos n) => 
-    if N.eq_bool n N.zero then zero else Qq Z.one n
-  | Qz (Z.Neg n) => 
-    if N.eq_bool n N.zero then zero else Qq Z.minus_one n
-  | Qq (Z.Pos n) d => 
-    if N.eq_bool n N.zero then zero else Qq (Z.Pos d) n
-  | Qq (Z.Neg n) d => 
-    if N.eq_bool n N.zero then zero else Qq (Z.Neg d) n
-  end.
+Definition inv x := 
+ match x with
+ | Qz (Z.Pos n) => Qq Z.one (N.pred n)
+ | Qz (Z.Neg n) => Qq Z.minus_one (N.pred n)
+ | Qq (Z.Pos n) d => Qq (Z.Pos (N.succ d)) (N.pred n)
+ | Qq (Z.Neg n) d => Qq (Z.Neg (N.succ d)) (N.pred n)
+ end.
+
+
+Definition inv_norm x := 
+ match x with
+ | Qz (Z.Pos n) => if N.eq_bool n N.one then x else Qq Z.one (N.pred n)
+ | Qz (Z.Neg n) => if N.eq_bool n N.one then x else Qq Z.minus_one n
+ | Qq (Z.Pos n) d => let d := N.succ d in 
+                  if N.eq_bool n N.one then Qz (Z.Pos d) 
+                     else Qq (Z.Pos d) (N.pred n)
+ | Qq (Z.Neg n) d => let d := N.succ d in 
+                  if N.eq_bool n N.one then Qz (Z.Neg d) 
+                     else Qq (Z.Pos d) (N.pred n)
+ end.
 
  Definition square x :=
   match x with

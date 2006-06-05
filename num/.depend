@@ -40,8 +40,8 @@ ZMake.vo: ZMake.v
 ZMake.vi: ZMake.v
 Arith.vo: Arith.v W/W8/W8_op.vo W/W8/W8_op_spec.vo NMake.vo ZMake.vo
 Arith.vi: Arith.v W/W8/W8_op.vo W/W8/W8_op_spec.vo NMake.vo ZMake.vo
-Q.vo: Q.v Arith.vo
-Q.vi: Q.v Arith.vo
+QMake.vo: QMake.v Arith.vo
+QMake.vi: QMake.v Arith.vo
 Basic_type.html: Basic_type.v ../Z/ZDivModAux.html ../Z/ZPowerAux.html
 GenBase.html: GenBase.v ../Z/ZAux.html ../Z/ZDivModAux.html ../Z/ZPowerAux.html Basic_type.html
 GenAdd.html: GenAdd.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html GenBase.html
@@ -62,4 +62,4 @@ Nbasic.html: Nbasic.v Basic_type.html
 NMake.html: NMake.v Basic_type.html ZnZ.html Zn2Z.html Nbasic.html GenMul.html GenDivn1.html Lucas.html
 ZMake.html: ZMake.v
 Arith.html: Arith.v W/W8/W8_op.html W/W8/W8_op_spec.html NMake.html ZMake.html
-Q.html: Q.v Arith.html
+QMake.html: QMake.v Arith.html
