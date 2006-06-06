@@ -8,6 +8,7 @@
 Basic_type.v
 GenBase.v
 GenAdd.v
+GenAddn1.v
 GenSub.v
 GenMul.v
 GenLift.v
@@ -25,7 +26,7 @@ Nbasic.v
 NMake.v
 ZMake.v
 Arith.v
-QMake.v
+Q.v
 -custom "ocamlopt -o genN unix.cmxa genN.ml" "genN.ml" genN
 
 

@@ -152,14 +152,40 @@ let print_Make () =
     fprintf fmt " Definition w%i_eq0 := w%i_op.(znz_eq0).\n" i i
   done;
   fprintf fmt "\n";
+ 
+  for i = 0 to size do
+    fprintf fmt " Definition w%i_0W := w%i_op.(znz_0W).\n" i i
+  done;
+  fprintf fmt "\n";
+  fprintf fmt " Definition w0_WW := w0_op.(znz_WW).\n";
+  fprintf fmt "\n";
 
   (* Addition *)
-  fprintf fmt "\n";
   for i = 0 to size do
     fprintf fmt " Definition w%i_add_c := w%i_op.(znz_add_c).\n" i i 
   done;
   fprintf fmt "\n";
+(*
+  fprintf fmt " Definition add_c_1_0 x y :=\n";
+  fprintf fmt "  match x with\n";
+  fprintf fmt "  | W0 => C0 (w0_0W y)\n";
+  fprintf fmt "  | WW xh xl => 
+  fprintf fmt "    match w1_add_c xl y with\n";
+  fprintf fmt "    | C0 rl => C0 (WW xh rl)\n";
+  fprintf fmt "    | C1 rl =>\n";
+  fprintf fmt "      match  w1_succ_c xh with\n";
+  fprintf fmt "      | C0 rh => C0 (WW rh rl)\n";
+  fprintf fmt "      | C1 rh => C1 (w0_WW rh rl)\n";
+  fprintf fmt "      end\n";
+  fprintf fmt "    end\n";
+  fprintf fmt "  end.\n";
+  fprintf fmt "\n";
 
+  for i = 1 to size do
+    fprintf fmt " Definition add_c_n_%i :=\n" i;
+    fprintf fmt "  add_c_smn1 w%i
+*)                  
+             
   for i = 0 to size do 
     fprintf fmt " Definition w%i_add x y :=\n" i;
     fprintf fmt "  match w%i_add_c x y with\n" i;
@@ -407,7 +433,7 @@ let print_Make () =
     let s0 = if i = 0 then "w_0" else "W0" in
     fprintf fmt " Definition w%i_mul_add_n1 :=\n" i;
     fprintf fmt 
-     "  %sgen_mul_add_n1 w%i %s w%i_op.(znz_WW) w%i_op.(znz_0W) w%i_mul_add.\n"
+     "  %sgen_mul_add_n1 w%i %s w%i_op.(znz_WW) w%i_0W w%i_mul_add.\n"
         "@"                i s0   i               i               i
   done;
   fprintf fmt "\n";
@@ -585,7 +611,7 @@ let print_Make () =
 	  j (i-j) i j
       else begin (* i < j *)
 	fprintf fmt 
-	  "\n    let wx':= GenBase.extend w%i_op.(znz_0W) %i wx in\n" 
+	  "\n    let wx':= GenBase.extend w%i_0W %i wx in\n" 
 	  i (j-i-1);
 	fprintf fmt "    let (q, r):= w%i_div_gt wx' wy in\n" j; 
 	fprintf fmt "    (reduce_%i q, reduce_%i r)\n" j j;
@@ -593,7 +619,7 @@ let print_Make () =
     done;
     fprintf fmt "  | %s%i wx, %sn n wy =>\n" c i c;
     fprintf fmt
-      "    let wx':= extend n w%i (GenBase.extend w%i_op.(znz_0W) %i wx) in\n"
+      "    let wx':= extend n w%i (GenBase.extend w%i_0W %i wx) in\n"
 	  size i (size-i);
     fprintf fmt "    let (q, r):= (make_op n).(znz_div_gt) wx' wy in\n"; 
     fprintf fmt "    (reduce_n n q, reduce_n n r)\n";
@@ -601,7 +627,7 @@ let print_Make () =
   for j = 0 to size do
     fprintf fmt "  | %sn n wx, %s%i wy =>\n" c c j;
     if j < size then
-      fprintf fmt "    let wy':= GenBase.extend w%i_op.(znz_0W) %i wy in\n"
+      fprintf fmt "    let wy':= GenBase.extend w%i_0W %i wy in\n"
 	j (size-j-1)
     else 
       fprintf fmt "    let wy':= wy in\n";
@@ -659,21 +685,21 @@ let print_Make () =
 	  " reduce_%i (w%i_modn1 %i wx wy)\n" j j (i-j)
       else begin (* i < j *)
         fprintf fmt 
-	  "\n    let wx':= GenBase.extend w%i_op.(znz_0W) %i wx in\n"
+	  "\n    let wx':= GenBase.extend w%i_0W %i wx in\n"
 	  i (j-i-1);
 	fprintf fmt "    reduce_%i (w%i_mod_gt wx' wy)\n" j j; 
       end
     done;
     fprintf fmt "  | %s%i wx, %sn n wy =>\n" c i c;
     fprintf fmt 
-      "    let wx':= extend n w%i (GenBase.extend w%i_op.(znz_0W) %i wx) in\n"
+      "    let wx':= extend n w%i (GenBase.extend w%i_0W %i wx) in\n"
       size i (size-i);
     fprintf fmt "    reduce_n n ((make_op n).(znz_mod_gt) wx' wy)\n"; 
   done;
   for j = 0 to size do
     fprintf fmt "  | %sn n wx, %s%i wy =>\n" c c j;
     if j < size then
-      fprintf fmt "    let wy':= GenBase.extend w%i_op.(znz_0W) %i wy in\n"
+      fprintf fmt "    let wy':= GenBase.extend w%i_0W %i wy in\n"
 	j (size-j-1)
     else 
       fprintf fmt "    let wy':= wy in\n";

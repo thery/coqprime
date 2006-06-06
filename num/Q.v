@@ -181,10 +181,30 @@ Definition power_pos x p :=
  
 Definition inv x :=
  match x with
- | Qz (Z.Pos nx) => if N.eq_bool nx N.zero then zero else Qq Z.one nx
- | Qz (Z.Neg nx) => if N.eq_bool nx N.zero then zero else Qq Z.minus_one nx
- | Qq (Z.Pos nx) dy => if N.eq_bool nx N.zero then zero else Qq (Z.Pos dy) nx
- | Qq (Z.Neg nx) dy => if N.eq_bool nx N.zero then zero else Qq (Z.Neg dy) nx
+ | Qz (Z.Pos nx) => 
+   match N.compare nx N.one with
+   | Lt => zero
+   | Eq => x
+   | Gt => Qq Z.one nx
+   end
+ | Qz (Z.Neg nx) => 
+   match N.compare nx N.one with
+   | Lt => zero
+   | Eq => x 
+   | Gt => Qq Z.minus_one nx
+   end
+ | Qq (Z.Pos nx) dx => 
+   match N.compare nx N.one with
+   | Lt => zero
+   | Eq => Qz (Z.Pos dx)
+   | Gt => Qq (Z.Pos dx) nx
+   end
+ | Qq (Z.Neg nx) dx => 
+   match N.compare nx N.one with
+   | Lt => zero
+   | Eq => Qz (Z.Neg dx)
+   | Gt => Qq (Z.Neg dx) nx
+   end
  end.
 
 Definition compare x y :=
@@ -198,7 +218,7 @@ Definition compare x y :=
    | Eq => Z.compare (Z.mul zx (Z.Pos dy)) ny
    end
  | Qq nx dx, Qz zy =>
-   if N.eq_bool dx N.one then Z.compare Z.zero zy
+   if N.eq_bool dx N.zero then Z.compare Z.zero zy
    else match Z.cmp_sign nx zy with
    | Lt => Lt
    | Gt => Gt
