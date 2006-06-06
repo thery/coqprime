@@ -95,3 +95,6 @@ Time Eval vm_compute in  print (sum2 2).
 
 Time Eval vm_compute in  print (sum1 3).
 Time Eval vm_compute in  print (sum2 3).
+
+Time Eval vm_compute in  print (sum1 4).
+Time Eval vm_compute in  print (sum2 4).
