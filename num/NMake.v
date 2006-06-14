@@ -5,7 +5,17 @@ Require Import Zn2Z.
 Require Import Nbasic.
 Require Import GenMul.
 Require Import GenDivn1.
-Require Import Lucas.
+
+
+
+Fixpoint plength (p: positive) : positive :=
+  match p with 
+    xH => xH
+  | xO p1 => Psucc (plength p1)
+  | xI p1 => Psucc (plength p1)
+  end.
+
+Definition pheight p := plength (Ppred (plength (Ppred p))).
 
 Module Type W0Type.
  Parameter w : Set.

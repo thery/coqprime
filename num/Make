@@ -4,11 +4,11 @@
 -I ../PrimalityTest
 -I ../List
 -I W/W8
+-I W/W2
 
 Basic_type.v
 GenBase.v
 GenAdd.v
-GenAddn1.v
 GenSub.v
 GenMul.v
 GenLift.v
@@ -27,7 +27,6 @@ NMake.v
 ZMake.v
 Arith.v
 Q.v
+Qexamples.v
 -custom "ocamlopt -o genN unix.cmxa genN.ml" "genN.ml" genN
-
-
 

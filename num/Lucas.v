@@ -200,7 +200,6 @@ Qed.
 
 Definition pheight p := plength (Ppred (plength (Ppred p))).
 
-
 Theorem pheight_correct: forall p, (Zpos p <= 2 ^ (2 ^ (Zpos (pheight p))))%Z.
 intros p; apply Zle_trans with (1 := (plength_pred_correct p)).
 apply ZPowerAux.Zpower_le_monotone; auto with zarith.

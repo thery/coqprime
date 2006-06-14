@@ -141,6 +141,23 @@ Module Qp.
     if N.eq_bool n N.zero then zero else Qq (Z.Neg (N.succ d)) (N.pred n)
   end.
 
+Definition inv_norm x := 
+ match x with
+ | Qz (Z.Pos n) => 
+      if N.eq_bool n N.zero then zero else
+      if N.eq_bool n N.one then x else Qq Z.one (N.pred n)
+ | Qz (Z.Neg n) => 
+      if N.eq_bool n N.zero then zero  else
+      if N.eq_bool n N.one then x else Qq Z.minus_one n
+ | Qq (Z.Pos n) d => let d := N.succ d in 
+                  if N.eq_bool n N.one then Qz (Z.Pos d) 
+                     else Qq (Z.Pos d) (N.pred n)
+ | Qq (Z.Neg n) d => let d := N.succ d in 
+                  if N.eq_bool n N.one then Qz (Z.Neg d) 
+                     else Qq (Z.Pos d) (N.pred n)
+ end.
+
+
  Definition square x :=
   match x with
   | Qz zx => Qz (Z.square zx)
@@ -726,7 +743,31 @@ Module Qbi.
   | Qq nx dx => Qq (Z.opp nx) dx
   end.
 
+
+ Definition do_norm_n n := 
+  match n with
+  | N.N0 _ => false
+  | N.N1 _ => false
+  | N.N2 _ => false
+  | N.N3 _ => false
+  | N.N4 _ => false
+  | N.N5 _ => false
+  | N.N6 _ => false
+  | N.N7 _ => false
+  | N.N8 _ => false
+  | N.N9 _ => true 
+  | N.N10 _ => true
+  | N.N11 _ => true
+  | N.N12 _ => true
+  | N.Nn n _ => true
+  end.
  
+ Definition do_norm_z z :=
+  match z with
+  | Z.Pos n => do_norm_n n
+  | Z.Neg n => do_norm_n n
+  end.
+
 (* Je pense que cette fonction normalise bien ... *)
  Definition norm n d :=
   if andb (do_norm_z n) (do_norm_n d) then
@@ -851,7 +892,7 @@ Module Qbi.
   | Qq nx dx => Qq (Z.power_pos nx p) (N.power_pos dx p)
   end.
 
-End Qif.
+End Qbi.
 
 
 

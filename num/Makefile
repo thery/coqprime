@@ -68,14 +68,16 @@ OCAMLLIBS=-I .\
   -I ../Z\
   -I ../PrimalityTest\
   -I ../List\
-  -I W/W8
+  -I W/W8\
+  -I W/W2
 COQLIBS=-I .\
   -I ../Tactic\
   -I ../N\
   -I ../Z\
   -I ../PrimalityTest\
   -I ../List\
-  -I W/W8
+  -I W/W8\
+  -I W/W2
 
 ###################################
 #                                 #
@@ -86,7 +88,6 @@ COQLIBS=-I .\
 VFILES=Basic_type.v\
   GenBase.v\
   GenAdd.v\
-  GenAddn1.v\
   GenSub.v\
   GenMul.v\
   GenLift.v\
@@ -104,7 +105,8 @@ VFILES=Basic_type.v\
   NMake.v\
   ZMake.v\
   Arith.v\
-  Q.v
+  Q.v\
+  Qexamples.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -114,7 +116,6 @@ GHTMLFILES=$(VFILES:.v=.g.html)
 all: Basic_type.vo\
   GenBase.vo\
   GenAdd.vo\
-  GenAddn1.vo\
   GenSub.vo\
   GenMul.vo\
   GenLift.vo\
@@ -133,6 +134,7 @@ all: Basic_type.vo\
   ZMake.vo\
   Arith.vo\
   Q.vo\
+  Qexamples.vo\
   genN
 
 spec: $(VIFILES)
@@ -216,6 +218,7 @@ Makefile: Make
 clean:
 	rm -f *.cmo *.cmi *.cmx *.o $(VOFILES) $(VIFILES) $(GFILES) *~
 	rm -f all.ps all-gal.ps $(HTMLFILES) $(GHTMLFILES)
+	- rm -f genN
 
 archclean:
 	rm -f *.cmx *.o
