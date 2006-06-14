@@ -1,7 +1,7 @@
 open Format
 
-let size = 12
-let sizeaux = 3 
+let size = 3
+let sizeaux = 1
 
 let t = "t"
 let c = "N"

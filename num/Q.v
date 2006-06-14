@@ -207,6 +207,18 @@ Definition inv x :=
    end
  end.
 
+Definition inv_norm x := 
+ match x with
+ | Qz (Z.Pos n) => if N.eq_bool n N.one then x else Qq Z.one (N.pred n)
+ | Qz (Z.Neg n) => if N.eq_bool n N.one then x else Qq Z.minus_one n
+ | Qq (Z.Pos n) d => let d := N.succ d in 
+                  if N.eq_bool n N.one then Qz (Z.Pos d) 
+                     else Qq (Z.Pos d) (N.pred n)
+ | Qq (Z.Neg n) d => let d := N.succ d in 
+                  if N.eq_bool n N.one then Qz (Z.Neg d) 
+                     else Qq (Z.Pos d) (N.pred n)
+ end.
+
 Definition compare x y :=
  match x, y with
  | Qz zx, Qz zy => Z.compare zx zy
