@@ -1,0 +1,92 @@
+basic_type.cmo: zpower.cmi binPos.cmi binInt.cmi basic_type.cmi 
+basic_type.cmx: zpower.cmx binPos.cmx binInt.cmx basic_type.cmi 
+binInt.cmo: datatypes.cmi binPos.cmi binNat.cmi binInt.cmi 
+binInt.cmx: datatypes.cmx binPos.cmx binNat.cmx binInt.cmi 
+binNat.cmo: datatypes.cmi binPos.cmi binNat.cmi 
+binNat.cmx: datatypes.cmx binPos.cmx binNat.cmi 
+binPos.cmo: peano.cmi datatypes.cmi binPos.cmi 
+binPos.cmx: peano.cmx datatypes.cmx binPos.cmi 
+datatypes.cmo: datatypes.cmi 
+datatypes.cmx: datatypes.cmi 
+genBase.cmo: datatypes.cmi binPos.cmi binInt.cmi basic_type.cmi genBase.cmi 
+genBase.cmx: datatypes.cmx binPos.cmx binInt.cmx basic_type.cmx genBase.cmi 
+genDivn1.cmo: genBase.cmi datatypes.cmi binPos.cmi binNat.cmi basic_type.cmi \
+    genDivn1.cmi 
+genDivn1.cmx: genBase.cmx datatypes.cmx binPos.cmx binNat.cmx basic_type.cmx \
+    genDivn1.cmi 
+genLift.cmo: datatypes.cmi binPos.cmi binNat.cmi basic_type.cmi genLift.cmi 
+genLift.cmx: datatypes.cmx binPos.cmx binNat.cmx basic_type.cmx genLift.cmi 
+genSqrt.cmo: genBase.cmi datatypes.cmi binPos.cmi binNat.cmi basic_type.cmi \
+    genSqrt.cmi 
+genSqrt.cmx: genBase.cmx datatypes.cmx binPos.cmx binNat.cmx basic_type.cmx \
+    genSqrt.cmi 
+genWord.cmo: znZ.cmi zn2Z.cmi datatypes.cmi binPos.cmi binNat.cmi binInt.cmi \
+    basic_type.cmi genWord.cmi 
+genWord.cmx: znZ.cmx zn2Z.cmx datatypes.cmx binPos.cmx binNat.cmx binInt.cmx \
+    basic_type.cmx genWord.cmi 
+logic.cmo: logic.cmi 
+logic.cmx: logic.cmi 
+lucas.cmo: zpower.cmi znZ.cmi zmisc.cmi mod_op.cmi datatypes.cmi binPos.cmi \
+    binInt.cmi lucas.cmi 
+lucas.cmx: zpower.cmx znZ.cmx zmisc.cmx mod_op.cmx datatypes.cmx binPos.cmx \
+    binInt.cmx lucas.cmi 
+mod_op.cmo: znZ.cmi genLift.cmi datatypes.cmi binPos.cmi binNat.cmi \
+    basic_type.cmi mod_op.cmi 
+mod_op.cmx: znZ.cmx genLift.cmx datatypes.cmx binPos.cmx binNat.cmx \
+    basic_type.cmx mod_op.cmi 
+peano.cmo: datatypes.cmi peano.cmi 
+peano.cmx: datatypes.cmx peano.cmi 
+testlucas.cmo: zpower.cmi znZ.cmi zn2Z.cmi zmisc.cmi w64C.cmo w31C.cmo \
+    mod_op.cmi datatypes.cmi binPos.cmi binNat.cmi binInt.cmi basic_type.cmi 
+testlucas.cmx: zpower.cmx znZ.cmx zn2Z.cmx zmisc.cmx w64C.cmx w31C.cmx \
+    mod_op.cmx datatypes.cmx binPos.cmx binNat.cmx binInt.cmx basic_type.cmx 
+w31C.cmo: zpower.cmi znZ.cmi zn2Z.cmi zmisc.cmi mod_op.cmi datatypes.cmi \
+    binPos.cmi binNat.cmi binInt.cmi basic_type.cmi 
+w31C.cmx: zpower.cmx znZ.cmx zn2Z.cmx zmisc.cmx mod_op.cmx datatypes.cmx \
+    binPos.cmx binNat.cmx binInt.cmx basic_type.cmx 
+w31.cmo: zpower.cmi znZ.cmi zmisc.cmi mod_op.cmi genWord.cmi datatypes.cmi \
+    binPos.cmi binNat.cmi binInt.cmi basic_type.cmi 
+w31.cmx: zpower.cmx znZ.cmx zmisc.cmx mod_op.cmx genWord.cmx datatypes.cmx \
+    binPos.cmx binNat.cmx binInt.cmx basic_type.cmx 
+w64C.cmo: zpower.cmi znZ.cmi zn2Z.cmi zmisc.cmi mod_op.cmi datatypes.cmi \
+    binPos.cmi binNat.cmi binInt.cmi basic_type.cmi 
+w64C.cmx: zpower.cmx znZ.cmx zn2Z.cmx zmisc.cmx mod_op.cmx datatypes.cmx \
+    binPos.cmx binNat.cmx binInt.cmx basic_type.cmx 
+w64.cmo: zpower.cmi znZ.cmi zn2Z.cmi zmisc.cmi mod_op.cmi genWord.cmi \
+    datatypes.cmi binPos.cmi binNat.cmi binInt.cmi basic_type.cmi 
+w64.cmx: zpower.cmx znZ.cmx zn2Z.cmx zmisc.cmx mod_op.cmx genWord.cmx \
+    datatypes.cmx binPos.cmx binNat.cmx binInt.cmx basic_type.cmx 
+zmisc.cmo: datatypes.cmi binPos.cmi binInt.cmi zmisc.cmi 
+zmisc.cmx: datatypes.cmx binPos.cmx binInt.cmx zmisc.cmi 
+zn2Z.cmo: znZ.cmi genSqrt.cmi genDivn1.cmi genBase.cmi datatypes.cmi \
+    binPos.cmi binNat.cmi basic_type.cmi zn2Z.cmi 
+zn2Z.cmx: znZ.cmx genSqrt.cmx genDivn1.cmx genBase.cmx datatypes.cmx \
+    binPos.cmx binNat.cmx basic_type.cmx zn2Z.cmi 
+znZ.cmo: datatypes.cmi binPos.cmi binNat.cmi binInt.cmi basic_type.cmi \
+    znZ.cmi 
+znZ.cmx: datatypes.cmx binPos.cmx binNat.cmx binInt.cmx basic_type.cmx \
+    znZ.cmi 
+zpower.cmo: zmisc.cmi logic.cmi datatypes.cmi binPos.cmi binInt.cmi \
+    zpower.cmi 
+zpower.cmx: zmisc.cmx logic.cmx datatypes.cmx binPos.cmx binInt.cmx \
+    zpower.cmi 
+basic_type.cmi: zpower.cmi binPos.cmi binInt.cmi 
+binInt.cmi: datatypes.cmi binPos.cmi binNat.cmi 
+binNat.cmi: datatypes.cmi binPos.cmi 
+binPos.cmi: peano.cmi datatypes.cmi 
+genBase.cmi: datatypes.cmi binPos.cmi binInt.cmi basic_type.cmi 
+genDivn1.cmi: genBase.cmi datatypes.cmi binPos.cmi binNat.cmi basic_type.cmi 
+genLift.cmi: datatypes.cmi binPos.cmi binNat.cmi basic_type.cmi 
+genSqrt.cmi: genBase.cmi datatypes.cmi binPos.cmi binNat.cmi basic_type.cmi 
+genWord.cmi: znZ.cmi zn2Z.cmi datatypes.cmi binPos.cmi binNat.cmi binInt.cmi \
+    basic_type.cmi 
+lucas.cmi: zpower.cmi znZ.cmi zmisc.cmi mod_op.cmi datatypes.cmi binPos.cmi \
+    binInt.cmi 
+mod_op.cmi: znZ.cmi genLift.cmi datatypes.cmi binPos.cmi binNat.cmi \
+    basic_type.cmi 
+peano.cmi: datatypes.cmi 
+zmisc.cmi: datatypes.cmi binPos.cmi binInt.cmi 
+zn2Z.cmi: znZ.cmi genSqrt.cmi genDivn1.cmi genBase.cmi datatypes.cmi \
+    binPos.cmi binNat.cmi basic_type.cmi 
+znZ.cmi: datatypes.cmi binPos.cmi binNat.cmi binInt.cmi basic_type.cmi 
+zpower.cmi: zmisc.cmi logic.cmi datatypes.cmi binPos.cmi binInt.cmi 
