@@ -1331,7 +1331,7 @@ Qed.
 Theorem nat_of_P_xI: 
   forall p,  nat_of_P (xI p) =  (2 * nat_of_P p + 1)%nat.
 intros p; unfold nat_of_P; simpl; rewrite Pmult_nat_2_mult_2_permute; auto with arith.
-rewrite S_to_plus_one;  ring.
+ring.
 Qed.
 
 Theorem nat_of_P_xH: nat_of_P xH = 1%nat.

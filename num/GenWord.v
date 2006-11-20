@@ -584,7 +584,7 @@ Module MakeUintZnZ (U:Uint).
   intros a b;unfold uint_gcd.
   generalize (U.compare_spec a b);destruct (U.compare a b);intros.
   rewrite H. apply Zis_gcd_for_euclid with 1.
-  ring([|b|] - 1 * [|b|]);zarith. 
+  ring_simplify ([|b|] - 1 * [|b|]);zarith. 
   apply Zis_gcd_sym. apply uint_gcd_gt_spec;zarith.
   apply uint_gcd_gt_spec;zarith.
  Qed.

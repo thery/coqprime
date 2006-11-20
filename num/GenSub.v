@@ -312,7 +312,7 @@ Section GenSub.
   Lemma spec_ww_sub : forall x y, [[ww_sub x y]] = ([[x]] - [[y]]) mod wwB.
   Proof.
    destruct y as [ |yh yl];simpl.
-   ring ([[x]] - 0);rewrite Zmod_def_small;trivial. apply spec_ww_to_Z;trivial.
+   ring_simplify ([[x]] - 0);rewrite Zmod_def_small;trivial. apply spec_ww_to_Z;trivial.
    destruct x as [ |xh xl];simpl. exact (spec_ww_opp (WW yh yl)).
    replace ([|xh|] * wB + [|xl|] - ([|yh|] * wB + [|yl|])) 
    with (([|xh|] - [|yh|]) * wB + ([|xl|] - [|yl|])). 2:ring.
@@ -328,7 +328,7 @@ Section GenSub.
 	 forall x y, [[ww_sub_carry x y]] = ([[x]] - [[y]] - 1) mod wwB.
   Proof.
    destruct y as [ |yh yl];simpl.
-   ring ([[x]] - 0);exact (spec_ww_pred x).
+   ring_simplify ([[x]] - 0);exact (spec_ww_pred x).
    destruct x as [ |xh xl];simpl.
    apply Zmod_unique with (-1). apply lt_0_wwB.
    apply spec_ww_to_Z;trivial.

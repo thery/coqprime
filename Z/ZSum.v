@@ -34,7 +34,7 @@ replace ((1 + n) - n) with 1; auto with zarith.
 simpl; ring.
 Qed.
 
-Theorem permutation_rev: forall A (l : list A),  permutation (rev l) l.
+Theorem permutation_rev: forall (A:Set) (l : list A),  permutation (rev l) l.
 intros a l; elim l; simpl; auto.
 intros a1 l1 Hl1.
 apply permutation_trans with (cons a1 (rev l1)); auto.

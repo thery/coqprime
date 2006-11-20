@@ -334,9 +334,10 @@ Section GenMul.
    assert ([|wc|]*wB + [|cch|] <= 2*wB - 3).
     destruct (Z_le_gt_dec ([|wc|]*wB + [|cch|]) (2*wB - 3));trivial.
     assert ([|xh|] * [|yl|] + [|xl|] * [|yh|] <= (2*wB - 4)*wB + 2).
-     ring ((2*wB - 4)*wB + 2).
+     ring_simplify ((2*wB - 4)*wB + 2).
      assert (H4 := Zmult_lt_b _ _ _ (spec_to_Z xh) (spec_to_Z yl)).
-     assert (H5 := Zmult_lt_b _ _ _ (spec_to_Z xl) (spec_to_Z yh));omega.
+     assert (H5 := Zmult_lt_b _ _ _ (spec_to_Z xl) (spec_to_Z yh)).
+     rewrite <- Zmult_assoc; omega.
     generalize H3;clear H3;rewrite <- H1.
     rewrite Zplus_assoc;rewrite <- Zmult_plus_distr_l.
     assert (((2 * wB - 4) + 2)*wB <= ([|wc|] * wB + [|cch|])*wB).

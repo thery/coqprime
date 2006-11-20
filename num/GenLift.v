@@ -140,7 +140,7 @@ Section GenLift.
    rewrite <- (Zplus_0_r (2^(Zpos w_digits - p)*wB));apply beta_lex_inv;zarith.
    apply Zmult_lt_reg_r with (2 ^ p); zarith.
    rewrite <- Zpower_exp;zarith. 
-   rewrite Zmult_comm;ring (Zpos w_digits - p + p);fold wB;zarith.
+   rewrite Zmult_comm;ring_simplify (Zpos w_digits - p + p);fold wB;zarith.
    assert (H1 := spec_to_Z xh);zarith.
   Qed.
 
@@ -209,7 +209,7 @@ Section GenLift.
    unfold ww_digits;rewrite Zpos_xO;zarith. apply Z_mod_lt;zarith.
    split;zarith. apply Zdiv_lt_upper_bound;zarith.
    rewrite <- Zpower_exp;zarith.
-   ring (Zpos p + (Zpos w_digits - Zpos p));fold wB;zarith.
+   ring_simplify (Zpos p + (Zpos w_digits - Zpos p));fold wB;zarith.
    pattern wB at 5;replace wB with 
     (2^(Zpos (p - w_digits) + (Zpos w_digits - Zpos (p - w_digits)))).
    rewrite Zpower_exp;zarith. rewrite Zmult_assoc.
@@ -234,14 +234,14 @@ Section GenLift.
    unfold base;rewrite <- Zmod_shift_r;zarith. fold base;apply Z_mod_lt;zarith.
    split;zarith. apply Zdiv_lt_upper_bound;zarith.
    rewrite <- Zpower_exp;zarith. 
-   ring (Zpos (p - w_digits) + (Zpos w_digits - Zpos (p - w_digits))); fold 
+   ring_simplify (Zpos (p - w_digits) + (Zpos w_digits - Zpos (p - w_digits))); fold 
    wB;zarith. unfold ww_digits;rewrite Zpos_xO;zarith.
    unfold base;rewrite <- Zmod_shift_r;zarith. fold base;apply Z_mod_lt;zarith.
    split;zarith. apply Zdiv_lt_upper_bound;zarith.
    rewrite <- Zpower_exp;zarith. 
-   ring (Zpos (p - w_digits) + (Zpos w_digits - Zpos (p - w_digits))); fold 
+   ring_simplify (Zpos (p - w_digits) + (Zpos w_digits - Zpos (p - w_digits))); fold 
    wB;zarith. 
-   ring (Zpos (p - w_digits) + (Zpos w_digits - Zpos (p - w_digits))); fold 
+   ring_simplify (Zpos (p - w_digits) + (Zpos w_digits - Zpos (p - w_digits))); fold 
    wB;trivial.
   Qed.
 
