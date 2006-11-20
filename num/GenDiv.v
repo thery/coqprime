@@ -809,7 +809,7 @@ Section GenDivGt.
    split. apply Zdiv_le_lower_bound;zarith.
    apply Zdiv_lt_upper_bound;zarith.
    rewrite <- Zpower_exp;zarith.
-   ring (Zpos p + (Zpos w_digits - Zpos p)); unfold base in HH;zarith.
+   ring_simplify (Zpos p + (Zpos w_digits - Zpos p)); unfold base in HH;zarith.
   Qed.
   Hint Resolve to_Z_div_minus_p : zarith.
 
@@ -904,7 +904,7 @@ Section GenDivGt.
    apply Zlt_le_trans with wB;zarith.
    unfold base;apply Zpower_le_monotone;zarith.
    pattern 2 at 2;replace 2 with (2^1);trivial.
-   rewrite <- Zpower_exp;zarith. ring (Zpos (w_digits) - 1 + 1);trivial.
+   rewrite <- Zpower_exp;zarith. ring_simplify (Zpos (w_digits) - 1 + 1);trivial.
    change [[WW w_0 q]] with ([|w_0|]*wB+[|q|]);rewrite spec_w_0;rewrite
    Zmult_0_l;rewrite Zplus_0_l;rewrite spec_ww_digits_.
    replace [[ww_add_mul_div (xO (w_digits) - p) W0 r]] with ([[r]]/2^Zpos p).
@@ -916,7 +916,7 @@ Section GenDivGt.
    rewrite spec_ww_add_mul_div;rewrite Zpos_minus.
    change (Zpos (xO (w_digits))) with (2*Zpos (w_digits));zarith.
    simpl ww_to_Z;rewrite Zmult_0_l;rewrite Zplus_0_l.
-   ring (2*Zpos (w_digits)-(2*Zpos (w_digits) - Zpos p));trivial.
+   ring_simplify (2*Zpos (w_digits)-(2*Zpos (w_digits) - Zpos p));trivial.
    rewrite Zmod_def_small;zarith.
    split;[apply Zdiv_le_lower_bound| apply Zdiv_lt_upper_bound];zarith.
    Spec_ww_to_Z r.
@@ -1077,7 +1077,7 @@ Section GenDivGt.
   Proof.
    intros a b d H H1; apply Zis_gcd_for_euclid with (a/b).
    pattern a at 1;rewrite (Z_div_mod_eq a b).
-   ring (b * (a / b) + a mod b - a / b * b);trivial. zarith.
+   ring_simplify (b * (a / b) + a mod b - a / b * b);trivial. zarith.
   Qed.
 
   Lemma spec_ww_gcd_gt_aux_body : 
@@ -1233,7 +1233,7 @@ Section GenDivGt.
    apply Zpower_le_monotone2;zarith. 
    apply spec_ww_gcd_gt_aux_body with (n := n+1);trivial.
    rewrite Zplus_comm;trivial.
-   ring (n + 1 - 1);trivial.
+   ring_simplify (n + 1 - 1);trivial.
   Qed.
 
 End GenDivGt.
@@ -1427,7 +1427,7 @@ Section GenDiv.
    assert (Hcmp := spec_ww_compare a b);destruct (ww_compare a b).
    Spec_ww_to_Z b;rewrite Hcmp.
    apply Zis_gcd_for_euclid with 1;zarith.
-   ring ([[b]] - 1 * [[b]]). apply Zis_gcd_0;zarith.
+   ring_simplify ([[b]] - 1 * [[b]]). apply Zis_gcd_0;zarith.
    apply Zis_gcd_sym;apply spec_ww_gcd_gt;zarith.
    apply spec_ww_gcd_gt;zarith.
   Qed.

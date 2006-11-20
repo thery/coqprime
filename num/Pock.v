@@ -312,7 +312,6 @@ Definition test_pock N a dec sqrt :=
     end      
   else false.
 
-Set Printing All.
 Lemma test_pock_correct : forall N a dec sqrt,
    (forall k, In k dec -> prime (Zpos (fst k))) ->
    test_pock N a dec sqrt = true ->
@@ -441,7 +440,8 @@ apply mod_unique with (2 * mkProd dec);auto with zarith.
 apply Z_mod_lt; auto with zarith.
 rewrite <- Z_div_mod_eq; auto with zarith.
 rewrite H3.
-simpl;ring.
+rewrite (Zpos_xO (mkProd dec)).
+simpl Z_of_N; ring.
 case HH; clear HH; intros HH1 HH2.
 apply PocklingtonExtra with (F1:=mkProd dec) (R1:=R1) (m:=1);
   auto with zmisc zarith.

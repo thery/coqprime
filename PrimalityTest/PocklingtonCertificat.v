@@ -570,8 +570,10 @@ Proof.
  rewrite H1;auto.
  intros (y,Heq).
  generalize H1 Heq;mauto.
- unfold Z_of_N;ring (r * r - (s + s + (s + s) + (s + s + (s + s))))
-    (r * r - (1 + 1 + (1 + 1) + (1 + 1 + (1 + 1)))* s).
+ unfold Z_of_N.
+ match goal with |- ?x = _ -> ?y = _ -> _ =>
+   replace x with y; try ring
+ end.
  intros Heq1;rewrite Heq1;intros Heq2.
  destruct y;discriminate Heq2.
 Qed.
@@ -687,7 +689,7 @@ Proof with mauto.
      with (b := (p, q)); auto with zarith
  end.
  rewrite <- Heqr.
- generalizeclear H0; ring
+ generalizeclear H0; ring_simplify
     (((mkProd dec + mkProd dec + r + 1) * mkProd dec + r) * mkProd dec + 1)
     ((1 * mkProd dec + 1) * (2 * mkProd dec * mkProd dec + (r - 1) * mkProd dec + 1))...
  rewrite <- H15;rewrite <- Heqr.

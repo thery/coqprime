@@ -278,7 +278,7 @@ match goal with
   H: (?X, ?Y) = (?Z, ?T) |- _ =>
    assert (H1: X = Z); assert (H2: Y = T); try (injection H; simpl; auto; fail); clear H
 end.
-eq_tac; ring.
+eq_tac.
 generalize (f_equal (fun x => x mod m) H1).
 repeat rewrite <- Zmult_assoc.
 repeat (rewrite (fun x  => Zmod_plus (t1 * x))); auto.

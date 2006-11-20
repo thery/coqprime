@@ -510,7 +510,7 @@ Section GenSqrt.
  rewrite Hw1.
  pattern [|w2|] at 1; rewrite (Z_div_mod_eq [|w2|] 2);
   auto with zarith.
- rewrite H1; ring.
+ rewrite H1.
  repeat rewrite C0_id.
  rewrite add_mult_div_2_plus_1; unfold base.
  match goal with |- context[_ ^ ?X] =>

@@ -165,10 +165,10 @@ Fixpoint times (x y : positive) {struct y} : positive :=
 Infix "*" := times : P_scope.
 
 Lemma times_Zmult : forall p q, Zpos (p * q)%P = (p * q)%Z.
-Proof with autorewrite with zmisc;ring.
+Proof.
  intros p q;generalize q p;clear p q.
- induction q;destruct p; unfold times; try fold (times p q) ...
- rewrite IHq ...  rewrite IHq ...  rewrite IHq ...  rewrite IHq ...
+ induction q;destruct p; unfold times; try fold (times p q);
+   autorewrite with zmisc; try rewrite IHq; ring.
 Qed.
 
 Fixpoint square (x:positive) : positive :=
@@ -179,7 +179,7 @@ Fixpoint square (x:positive) : positive :=
  end.
 
 Lemma square_Zmult : forall x, Zpos (square x) = (x * x) %Z.
-Proof with autorewrite with zmisc;ring.
- induction x as [x IHx|x IHx |];unfold square;try (fold (square x))...
- rewrite IHx ... rewrite IHx ...
+Proof.
+ induction x as [x IHx|x IHx |];unfold square;try (fold (square x));
+   autorewrite with zmisc; try rewrite IHx; ring.
 Qed.
