@@ -218,7 +218,8 @@ Section GenSub.
    rewrite spec_w_0;rewrite Zplus_0_r;rewrite wwB_wBwB.
    assert ([|l|] = 0).
     assert (H1:= spec_to_Z l);assert (H2 := spec_to_Z xl);omega.
-   rewrite H0;rewrite Zplus_0_r;rewrite Zmult_mod_distr_r;try apply lt_0_wB.
+   rewrite H0;rewrite Zplus_0_r; rewrite Zpower_2;
+    rewrite Zmult_mod_distr_r;try apply lt_0_wB.
    rewrite spec_opp;trivial.
    apply Zmod_unique with (q:= -1). apply lt_0_wwB.
    exact (spec_ww_to_Z w_digits w_to_Z spec_to_Z (WW (w_opp_carry xh) l)).

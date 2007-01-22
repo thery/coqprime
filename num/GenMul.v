@@ -271,28 +271,28 @@ Section GenMul.
   Lemma spec_ww_to_Z : forall x, 0 <= [[x]] < wwB.
   Proof. intros x;apply spec_ww_to_Z;auto. Qed.
 
-  Lemma spec_ww_to_Z_wBwB : forall x, 0 <= [[x]] < wB*wB.
+  Lemma spec_ww_to_Z_wBwB : forall x, 0 <= [[x]] < wB^2.
   Proof. rewrite <- wwB_wBwB;apply spec_ww_to_Z. Qed.
 
   Hint Resolve spec_ww_to_Z spec_ww_to_Z_wBwB : mult.
   Ltac zarith := auto with zarith mult.
 
   Lemma wBwB_lex: forall a b c d,
-      a * (wB * wB) + [[b]] <= c * (wB * wB) + [[d]] -> 
+      a * wB^2 + [[b]] <= c * wB^2 + [[d]] -> 
       a <= c.
   Proof.   
-   intros a b c d H; apply beta_lex with [[b]] [[d]] (wB * wB);zarith.
+   intros a b c d H; apply beta_lex with [[b]] [[d]] (wB^2);zarith.
   Qed.
 
   Lemma wBwB_lex_inv: forall a b c d, 
       a < c -> 
-      a * (wB * wB) + [[b]] < c * (wB * wB) + [[d]]. 
+      a * wB^2 + [[b]] < c * wB^2 + [[d]]. 
   Proof.
    intros a b c d H; apply beta_lex_inv; zarith.
   Qed.
 
   Lemma sum_mul_carry : forall xh xl yh yl wc cc,
-   [|wc|]*wB*wB + [[cc]] = [|xh|] * [|yl|] + [|xl|] * [|yh|] -> 
+   [|wc|]*wB^2 + [[cc]] = [|xh|] * [|yl|] + [|xl|] * [|yh|] -> 
    0 <= [|wc|] <= 1.
   Proof.
    intros.
@@ -311,7 +311,7 @@ Section GenMul.
   Lemma spec_mul_aux : forall xh xl yh yl wc (cc:zn2z w) hh ll,
    [[hh]] = [|xh|] * [|yh|] ->
    [[ll]] = [|xl|] * [|yl|] ->
-   [|wc|]*wB*wB + [[cc]] = [|xh|] * [|yl|] + [|xl|] * [|yh|] ->
+   [|wc|]*wB^2 + [[cc]] = [|xh|] * [|yl|] + [|xl|] * [|yh|] ->
     [||match cc with
       | W0 => WW (ww_add hh (w_W0 wc)) ll
       | WW cch ccl =>
@@ -323,29 +323,31 @@ Section GenMul.
   Proof.
    intros;assert (U1 := wB_pos w_digits).
    replace (([|xh|] * wB + [|xl|]) * ([|yh|] * wB + [|yl|])) with 
-   ([|xh|]*[|yh|]*wB*wB + ([|xh|]*[|yl|] + [|xl|]*[|yh|])*wB + [|xl|]*[|yl|]).
+   ([|xh|]*[|yh|]*wB^2 + ([|xh|]*[|yl|] + [|xl|]*[|yh|])*wB + [|xl|]*[|yl|]).
    2:ring. rewrite <- H1;rewrite <- H;rewrite <- H0.  
    assert (H2 := sum_mul_carry _ _ _ _ _ _ H1).
-   destruct cc as [ | cch ccl];simpl.
+   destruct cc as [ | cch ccl]; simpl zn2z_to_Z; simpl ww_to_Z.
    rewrite spec_ww_add;rewrite spec_w_W0;rewrite Zmod_def_small;
     rewrite wwB_wBwB. ring.
    rewrite <- (Zplus_0_r ([|wc|]*wB));rewrite H;apply mult_add_ineq3;zarith.
-   simpl in H1. assert (U:=spec_to_Z cch).
+   simpl ww_to_Z in H1. assert (U:=spec_to_Z cch).
    assert ([|wc|]*wB + [|cch|] <= 2*wB - 3).
     destruct (Z_le_gt_dec ([|wc|]*wB + [|cch|]) (2*wB - 3));trivial.
     assert ([|xh|] * [|yl|] + [|xl|] * [|yh|] <= (2*wB - 4)*wB + 2).
      ring_simplify ((2*wB - 4)*wB + 2).
      assert (H4 := Zmult_lt_b _ _ _ (spec_to_Z xh) (spec_to_Z yl)).
      assert (H5 := Zmult_lt_b _ _ _ (spec_to_Z xl) (spec_to_Z yh)).
-     rewrite <- Zmult_assoc; omega.
-    generalize H3;clear H3;rewrite <- H1.
-    rewrite Zplus_assoc;rewrite <- Zmult_plus_distr_l.
+     omega.
+   generalize H3;clear H3;rewrite <- H1.
+   rewrite Zplus_assoc; rewrite Zpower_2; rewrite Zmult_assoc;
+     rewrite <- Zmult_plus_distr_l.
     assert (((2 * wB - 4) + 2)*wB <= ([|wc|] * wB + [|cch|])*wB).
      apply Zmult_le_compat;zarith.
     rewrite Zmult_plus_distr_l in H3. 
     intros. assert (U2 := spec_to_Z ccl);omega.
    generalize (spec_ww_add_c (w_W0 ccl) ll);destruct (ww_add_c (w_W0 ccl) ll)
-   as [l|l];unfold interp_carry;rewrite spec_w_W0;try rewrite Zmult_1_l;simpl;
+   as [l|l];unfold interp_carry;rewrite spec_w_W0;try rewrite Zmult_1_l;
+   simpl zn2z_to_Z;
    try rewrite spec_ww_add;try rewrite spec_ww_add_carry;rewrite spec_w_WW;
    rewrite Zmod_def_small;rewrite wwB_wBwB;intros.
    rewrite H4;ring. rewrite H;apply mult_add_ineq2;zarith.
@@ -368,7 +370,7 @@ Section GenMul.
    generalize (Hcross _ _ _ _ _ _ H1 H2).
    destruct (cross xh xl yh yl (w_mul_c xh yh) (w_mul_c xl yl)) as (wc,cc).
    intros;apply spec_mul_aux;trivial.
-   rewrite <- Zmult_assoc;rewrite <- wwB_wBwB;trivial.
+   rewrite <- wwB_wBwB;trivial.
   Qed.
 
   Lemma spec_ww_mul_c : forall x y, [||ww_mul_c x y||] = [[x]] * [[y]]. 
@@ -513,7 +515,7 @@ Section GenMul.
    rewrite <- wwB_wBwB;intros H1 H2.
    assert (H3 := wB_pos w_digits).
    assert (2*wB <= wwB). 
-    rewrite wwB_wBwB;apply Zmult_le_compat;zarith.
+    rewrite wwB_wBwB; rewrite Zpower_2; apply Zmult_le_compat;zarith.
    omega.
   Qed.
 
@@ -544,7 +546,7 @@ Section GenMul.
    rewrite <- Zmod_plus; auto with zarith.
    repeat (rewrite Zmult_plus_distr_l || rewrite Zmult_plus_distr_r).
    rewrite <- Zmult_mod_distr_r; auto with zarith.
-   rewrite <- wwB_wBwB; auto with zarith.
+   rewrite <- Zpower_2; rewrite <- wwB_wBwB; auto with zarith.
    rewrite Zmod_plus; auto with zarith.
    rewrite Zmod_mod; auto with zarith.
    rewrite <- Zmod_plus; auto with zarith.
@@ -611,7 +613,7 @@ Section GenMul.
    rewrite <- H in H1.
    assert (H2:=spec_to_Z h);split;zarith.
    case H1;clear H1;intro H1;clear H1.
-   replace (wB * wB - 2 * wB) with ((wB - 2)*wB). 2:ring.
+   replace (wB ^ 2 - 2 * wB) with ((wB - 2)*wB). 2:ring.
    intros H0;assert (U1:= wB_pos w_digits).
    assert (H1 := beta_lex _ _ _ _ _ H0 (spec_to_Z l));zarith.
   Qed.

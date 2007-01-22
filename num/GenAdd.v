@@ -201,12 +201,12 @@ Section GenAdd.
     intros H;unfold interp_carry in H;rewrite <- H.
    generalize (spec_w_add_c xh yh);destruct (w_add_c xh yh) as [h|h];
     intros H1;unfold interp_carry in *;rewrite <- H1. trivial.
-   repeat rewrite Zmult_1_l;rewrite spec_w_WW;rewrite wwB_wBwB;simpl;ring.
+   repeat rewrite Zmult_1_l;rewrite spec_w_WW;rewrite wwB_wBwB; ring.
    rewrite Zplus_assoc;rewrite <- Zmult_plus_distr_l.
    generalize (spec_w_add_carry_c xh yh);destruct (w_add_carry_c xh yh)
     as [h|h]; intros H1;unfold interp_carry in *;rewrite <- H1.
    simpl;ring.
-   repeat rewrite Zmult_1_l;rewrite wwB_wBwB;rewrite spec_w_WW;simpl;ring.
+   repeat rewrite Zmult_1_l;rewrite wwB_wBwB;rewrite spec_w_WW;ring.
   Qed.
 
   Section Cont.
@@ -227,14 +227,14 @@ Section GenAdd.
      intros H1;unfold interp_carry in *. 
     apply spec_f0. simpl;rewrite H;rewrite H1;ring.
     apply spec_f1. simpl;rewrite spec_w_WW;rewrite H.
-    rewrite Zplus_assoc;rewrite wwB_wBwB. rewrite <- Zmult_plus_distr_l.
+    rewrite Zplus_assoc;rewrite wwB_wBwB. rewrite Zpower_2; rewrite <- Zmult_plus_distr_l.
     rewrite Zmult_1_l in H1;rewrite H1;ring.
     generalize (spec_w_add_carry_c xh yh);destruct (w_add_carry_c xh yh)
      as [h|h]; intros H1;unfold interp_carry in *.
     apply spec_f0;simpl;rewrite H1. rewrite Zmult_plus_distr_l.
     rewrite <- Zplus_assoc;rewrite H;ring.
     apply spec_f1.  simpl;rewrite spec_w_WW;rewrite wwB_wBwB. 
-    rewrite Zplus_assoc;rewrite <- Zmult_plus_distr_l. 
+    rewrite Zplus_assoc; rewrite Zpower_2; rewrite <- Zmult_plus_distr_l. 
     rewrite Zmult_1_l in H1;rewrite H1. rewrite Zmult_plus_distr_l.
     rewrite <- Zplus_assoc;rewrite H;ring.
    Qed.
@@ -274,7 +274,7 @@ Section GenAdd.
    assert ([|l|] = 0). clear spec_ww_1 spec_w_1 spec_w_0.
     assert (H1:= spec_to_Z l); assert (H2:= spec_to_Z xl); omega.
    rewrite H0;rewrite Zplus_0_r;rewrite <- Zmult_plus_distr_l;rewrite wwB_wBwB.
-   rewrite Zmult_mod_distr_r;try apply lt_0_wB.
+   rewrite Zpower_2; rewrite Zmult_mod_distr_r;try apply lt_0_wB.
    rewrite spec_w_W0;rewrite spec_w_succ;trivial.
   Qed.
 

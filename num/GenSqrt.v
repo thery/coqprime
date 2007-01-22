@@ -660,7 +660,7 @@ Section GenSqrt.
 
  Theorem mult_wwB: forall x y, [|x|] * [|y|] < wwB.
  Proof.
-  intros x y; rewrite wwB_wBwB.
+  intros x y; rewrite wwB_wBwB; rewrite Zpower_2.
   generalize (spec_to_Z x); intros U.
   generalize (spec_to_Z y); intros U1.
   apply Zle_lt_trans with ((wB -1 ) * (wB - 1)); auto with zarith.
@@ -683,7 +683,7 @@ Section GenSqrt.
  assert (U: wB/4 <= [|w2|]).
  case (Zle_or_lt (wB / 4) [|w2|]); auto; intros H1.
  contradict H; apply Zlt_not_le.
- rewrite wwB_wBwB.
+ rewrite wwB_wBwB; rewrite Zpower_2.
  pattern wB at 1; rewrite <- wB_div_4; rewrite <- Zmult_assoc;
    rewrite Zmult_comm.
  rewrite Z_div_mult; auto with zarith.
@@ -825,7 +825,7 @@ Section GenSqrt.
  split; auto with zarith.
  assert (wwB <= 2 * [[WW w4 w5]]); auto with zarith.
  apply Zle_trans with (2 * ([|w4|] * wB)).
- rewrite wwB_wBwB.
+ rewrite wwB_wBwB; rewrite Zpower_2.
  rewrite Zmult_assoc; apply Zmult_le_compat_r; auto with zarith.
  rewrite <- wB_div_2; auto with zarith.
  assert (V2 := spec_to_Z w5);auto with zarith.
@@ -851,7 +851,7 @@ Section GenSqrt.
  assert (VV3 := spec_to_Z w5);auto with zarith.
  assert (VV3: wwB <= 2 * [[WW w4 w5]]); auto with zarith.
  apply Zle_trans with (2 * ([|w4|] * wB)).
- rewrite wwB_wBwB.
+ rewrite wwB_wBwB; rewrite Zpower_2.
  rewrite Zmult_assoc; apply Zmult_le_compat_r; auto with zarith.
  rewrite <- wB_div_2; auto with zarith.
  case (spec_to_Z w5);auto with zarith.
@@ -929,7 +929,7 @@ Section GenSqrt.
  simpl ww_to_Z.
  rewrite H5.
  simpl ww_to_Z.
- rewrite wwB_wBwB.
+ rewrite wwB_wBwB; rewrite Zpower_2.
  match goal with |- ?X * ?Y + (?Z * ?Y + ?T - ?U) <= _ =>
   apply Zle_trans with (X * Y + (Z * Y + T - 0));
   auto with zarith
@@ -979,7 +979,7 @@ Section GenSqrt.
  repeat rewrite Zsquare_mult; ring.
  rewrite V.
  simpl ww_to_Z.
- rewrite wwB_wBwB.
+ rewrite wwB_wBwB; rewrite Zpower_2.
  match goal with |- (?Z * ?Y + ?T - ?U) + ?X * ?Y <= _ =>
   apply Zle_trans with ((Z * Y + T - 0) + X * Y);
   auto with zarith
@@ -1063,7 +1063,7 @@ Section GenSqrt.
  simpl ww_to_Z; unfold ww_to_Z.
  rewrite spec_w_Bm1; auto with zarith.
  split.
- rewrite wwB_wBwB.
+ rewrite wwB_wBwB; rewrite Zpower_2.
  match goal with |- _ <= -?X + (2 * (?Z * ?T + ?U) + ?V) =>
   assert (X <= 2 * Z * T); auto with zarith
  end.
@@ -1076,7 +1076,7 @@ Section GenSqrt.
  end.
  assert (2 * ([|w4|] + 1) * wB <= 2 * wwB); auto with zarith.
  rewrite <- Zmult_assoc; apply Zmult_le_compat_l; auto with zarith.
- rewrite wwB_wBwB.
+ rewrite wwB_wBwB; rewrite Zpower_2.
  apply Zmult_le_compat_r; auto with zarith.
  case (spec_to_Z w4);auto with zarith.
  Qed.
@@ -1101,7 +1101,7 @@ Section GenSqrt.
   Qed.
   
   Lemma wwB_4_2: 2 * (wwB / 4) = wwB/ 2. 
-  pattern wwB at 1; rewrite wwB_wBwB.
+  pattern wwB at 1; rewrite wwB_wBwB; rewrite Zpower_2.
   rewrite <- wB_div_2.
   match goal with |- context[(2 * ?X) * (2 * ?Z)] =>
     replace ((2 * X) * (2 * Z)) with ((X * Z) * 4); try ring
