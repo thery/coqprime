@@ -258,7 +258,7 @@ Section GenDiv32.
    intros a1 a2 a3 b1 b2 Hle Hlt.
    assert (U:= lt_0_wB w_digits); assert (U1:= lt_0_wwB w_digits).
    Spec_w_to_Z a1;Spec_w_to_Z a2;Spec_w_to_Z a3;Spec_w_to_Z b1;Spec_w_to_Z b2.
-   rewrite wwB_wBwB;rewrite Zmult_assoc;rewrite <- Zmult_plus_distr_l.
+   rewrite wwB_wBwB; rewrite Zpower_2; rewrite Zmult_assoc;rewrite <- Zmult_plus_distr_l.
    change (w_div32 a1 a2 a3 b1 b2) with
     match w_compare a1 b1 with
     | Lt =>
@@ -303,10 +303,10 @@ Section GenDiv32.
    Spec_ww_to_Z r;split;zarith.
    rewrite H1.
    assert (H12:= wB_div2 Hle). assert (wwB <= 2 * [|b1|] * wB).
-   rewrite wwB_wBwB;zarith.
+   rewrite wwB_wBwB; rewrite Zpower_2; zarith.
    assert (-wwB < ([|a2|] - [|b2|]) * wB + [|a3|] < 0).
    split. apply Zlt_le_trans with (([|a2|] - [|b2|]) * wB);zarith.
-   rewrite wwB_wBwB;replace (-(wB*wB)) with (-wB*wB);[zarith | ring].
+   rewrite wwB_wBwB;replace (-(wB^2)) with (-wB*wB);[zarith | ring].
    apply Zmult_lt_compat_r;zarith.
    apply Zle_lt_trans with (([|a2|] - [|b2|]) * wB + (wB -1));zarith.
    replace ( ([|a2|] - [|b2|]) * wB + (wB - 1)) with
@@ -386,7 +386,7 @@ Section GenDiv32.
        < wwB). split;try omega.
    replace (2*([|b1|]*wB+[|b2|])) with ((2*[|b1|])*wB+2*[|b2|]). 2:ring.
    assert (H12:= wB_div2 Hle). assert (wwB <= 2 * [|b1|] * wB).
-   rewrite wwB_wBwB;zarith. omega.
+   rewrite wwB_wBwB; rewrite Zpower_2; zarith. omega.
    rewrite <- (Zmod_unique 
             ([[r2]] + ([|b1|] * wB + [|b2|]))
             wwB
@@ -492,7 +492,7 @@ Section GenDiv21.
   Theorem wwB_div: wwB  = 2 * (wwB / 2).
   Proof.
    rewrite wwB_div_2; rewrite  Zmult_assoc; rewrite  wB_div_2; auto.
-   apply wwB_wBwB.
+   rewrite <- Zpower_2; apply wwB_wBwB.
   Qed.
 
   Ltac Spec_w_to_Z x :=
@@ -535,20 +535,22 @@ Section GenDiv21.
    | generalize (H0 Eq1 Hlt);clear H0;destruct r as [ |r1 r2];simpl;
      try rewrite spec_w_0; try rewrite spec_w_0W;repeat rewrite Zplus_0_r;
      intros (H1,H2) ]).
-   split;[rewrite wwB_wBwB | trivial].
+   split;[rewrite wwB_wBwB; rewrite Zpower_2 | trivial].
    rewrite Zmult_assoc;rewrite Zmult_plus_distr_l;rewrite <- Zmult_assoc;
-   rewrite <- wwB_wBwB;rewrite H1;ring.
+   rewrite <- Zpower_2; rewrite <- wwB_wBwB;rewrite H1;ring.
    destruct H2 as (H2,H3);match goal with |-context [w_div32 ?X ?Y ?Z ?T ?U] =>
      generalize (@spec_w_div32 X Y Z T U); case (w_div32 X Y Z T U);
      intros q r H0;generalize (H0 Eq1 H3);clear H0;intros (H4,H5) end.
    split;[rewrite wwB_wBwB | trivial].
+   rewrite Zpower_2.
    rewrite Zmult_assoc;rewrite Zmult_plus_distr_l;rewrite <- Zmult_assoc;
+   rewrite <- Zpower_2.
    rewrite <- wwB_wBwB;rewrite H1.
    rewrite spec_w_0 in H4;rewrite Zplus_0_r in H4.
    repeat rewrite Zmult_plus_distr_l. rewrite <- (Zmult_assoc [|r1|]).
-   rewrite <- wwB_wBwB;rewrite H4;simpl;ring. 
+   rewrite <- Zpower_2; rewrite <- wwB_wBwB;rewrite H4;simpl;ring. 
    split;[rewrite wwB_wBwB | split;zarith].
-   replace (([|a1h|] * wB + [|a1l|]) * (wB * wB) + ([|a3|] * wB + [|a4|])) 
+   replace (([|a1h|] * wB + [|a1l|]) * wB^2 + ([|a3|] * wB + [|a4|])) 
    with (([|a1h|] * wwB + [|a1l|] * wB + [|a3|])*wB+ [|a4|]). 
    rewrite H1;ring. rewrite wwB_wBwB;ring.
    change [|a4|] with (0*wB+[|a4|]);apply beta_lex_inv;zarith.
@@ -838,7 +840,7 @@ Section GenDivGt.
    simpl Zpower in Hh;rewrite Zmult_1_l in Hh;destruct Hh.
    assert (wwB <= 2*[[WW bh bl]]).
     apply Zle_trans with (2*[|bh|]*wB).
-    rewrite wwB_wBwB; apply Zmult_le_compat_r; zarith.
+    rewrite wwB_wBwB; rewrite Zpower_2; apply Zmult_le_compat_r; zarith.
     rewrite <- wB_div_2; apply Zmult_le_compat_l; zarith.
     simpl ww_to_Z;rewrite Zmult_plus_distr_r;rewrite Zmult_assoc.
     Spec_w_to_Z bl;zarith.
@@ -887,9 +889,9 @@ Section GenDivGt.
    unfold base;rewrite <- shift_unshift_mod;zarith. fold wB.
    replace ([|bh|] * 2 ^ Zpos p * wB + [|bl|] * 2 ^ Zpos p) with
     ([[WW bh bl]] * 2^Zpos p). 2:simpl;ring.
-   fold wwB. rewrite wwB_wBwB. rewrite U1;rewrite U2;rewrite U3.
+   fold wwB. rewrite wwB_wBwB. rewrite Zpower_2. rewrite U1;rewrite U2;rewrite U3.
    rewrite Zmult_assoc. rewrite Zmult_plus_distr_l. 
-   rewrite (Zplus_assoc ([|ah|] / 2^(Zpos(w_digits) - Zpos p)*wB*wB)).
+   rewrite (Zplus_assoc ([|ah|] / 2^(Zpos(w_digits) - Zpos p)*wB * wB)).
    rewrite <- Zmult_plus_distr_l.  rewrite <- Zplus_assoc. 
    unfold base;repeat rewrite <- shift_unshift_mod;zarith. fold wB.
    replace ([|ah|] * 2 ^ Zpos p * wB + [|al|] * 2 ^ Zpos p) with

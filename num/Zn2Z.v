@@ -386,7 +386,7 @@ Section Zn2Z.
   rewrite H;unfold fst, snd,Z_of_N, w_WW, to_Z.
   rewrite (spec_WW op_spec). replace wwB with (wB*wB).
   unfold wB,w_digits;clear H;destruct n;ring.
-  symmetry. exact (wwB_wBwB w_digits).
+  symmetry. rewrite <- Zpower_2; exact (wwB_wBwB w_digits).
  Qed.
 
  Let spec_ww_0 : [|W0|] = 0.
@@ -402,21 +402,21 @@ Section Zn2Z.
  Proof. 
   intros h l. replace wwB with (wB*wB). destruct h;simpl.
   destruct l;simpl;ring. ring.
-  symmetry. exact (wwB_wBwB w_digits).
+  symmetry. rewrite <- Zpower_2; exact (wwB_wBwB w_digits).
  Qed.
 
  Let spec_ww_0W  : forall l, [[ww_0W l]] = [|l|].
  Proof. 
   intros l. replace wwB with (wB*wB). 
   destruct l;simpl;ring. 
-  symmetry. exact (wwB_wBwB w_digits).
+  symmetry. ring_simplify; exact (wwB_wBwB w_digits).
  Qed.
 
  Let spec_ww_W0  : forall h, [[ww_W0 h]] = [|h|]*wwB.
  Proof.
   intros h. replace wwB with (wB*wB). 
   destruct h;simpl;ring. 
-  symmetry. exact (wwB_wBwB w_digits).
+  symmetry. ring_simplify; exact (wwB_wBwB w_digits).
  Qed.
 
  Let spec_ww_compare : 

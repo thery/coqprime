@@ -105,19 +105,19 @@ Section GenLift.
 	 wwB/ 2 <= 2 ^ (Z_of_N (ww_head0 x)) * [[x]] < wwB.
   Proof.
    rewrite wwB_div_2;rewrite Zmult_comm;rewrite wwB_wBwB.
-   assert (U:= lt_0_wB w_digits); destruct x as [ |xh xl];simpl;intros H.
+   assert (U:= lt_0_wB w_digits); destruct x as [ |xh xl];simpl ww_to_Z;intros H.
    unfold Zlt in H;discriminate H.
    assert (H0 := spec_compare w_0 xh);rewrite spec_w_0 in H0.
-   destruct (w_compare w_0 xh).
-   rewrite <- H0;simpl. rewrite <- H0 in H;simpl in H.
+   simpl Z_of_N; destruct (w_compare w_0 xh).
+   rewrite <- H0. simpl Zplus. rewrite <- H0 in H;simpl in H.
    generalize (spec_w_head0 H);destruct (w_head0 xl) as [ |q].
    intros H1;simpl Zpower in H1;rewrite Zmult_1_l in H1.
    change (2 ^ Z_of_N (Npos w_digits)) with wB;split;zarith.
-   apply Zmult_lt_compat_l;zarith.
+   rewrite Zpower_2; apply Zmult_lt_compat_l;zarith.
    unfold Z_of_N;intros.
    change (Zpos(w_digits + q))with (Zpos w_digits + Zpos q);rewrite Zpower_exp.
    fold wB;rewrite <- Zmult_assoc;split;zarith.
-   apply Zmult_lt_compat_l;zarith.
+   rewrite Zpower_2; apply Zmult_lt_compat_l;zarith.
    intro H2;discriminate H2. intro H2;discriminate H2.
    assert (H1 := spec_w_head0 H0).
    split.
@@ -135,6 +135,7 @@ Section GenLift.
     destruct (Zle_or_lt (Zpos w_digits) p);trivial;contradict  Eq1.
    apply Zle_not_lt;unfold base;apply Zpower_le_monotone;zarith.
    assert (Zpos w_digits = p + (Zpos w_digits - p)). ring.
+   rewrite Zpower_2.
    unfold base at 2;rewrite H3;rewrite Zpower_exp;zarith.
    rewrite <- Zmult_assoc; apply Zmult_lt_compat_l; zarith.
    rewrite <- (Zplus_0_r (2^(Zpos w_digits - p)*wB));apply beta_lex_inv;zarith.
@@ -195,6 +196,7 @@ Section GenLift.
     | _ => idtac
     end;simpl ww_to_Z;w_rewrite;zarith.
    rewrite Zmult_plus_distr_l;rewrite <- Zmult_assoc;rewrite <- Zplus_assoc.
+   rewrite <- Zpower_2.
    rewrite <- wwB_wBwB;apply Zmod_unique with [|xh|]. apply lt_0_wwB. 
    exact (spec_ww_to_Z w_digits w_to_Z spec_to_Z (WW xl yh)). ring.
    rewrite Zmult_plus_distr_l.
@@ -205,7 +207,7 @@ Section GenLift.
    unfold base at 5;rewrite <- Zmod_shift_r;zarith.
    unfold base;rewrite Zmod_shift_r with (b:= Zpos (ww_digits w_digits));
    fold wB;fold wwB;zarith.
-   rewrite wwB_wBwB;rewrite  Zmult_mod_distr_r;zarith.
+   rewrite wwB_wBwB;rewrite Zpower_2; rewrite  Zmult_mod_distr_r;zarith.
    unfold ww_digits;rewrite Zpos_xO;zarith. apply Z_mod_lt;zarith.
    split;zarith. apply Zdiv_lt_upper_bound;zarith.
    rewrite <- Zpower_exp;zarith.
@@ -224,7 +226,7 @@ Section GenLift.
    fold wB;fold wwB;zarith.
    unfold base;rewrite Zmod_shift_r with (a:= Zpos w_digits) 
    (b:= Zpos w_digits);fold wB;fold wwB;zarith.
-   rewrite wwB_wBwB;rewrite  Zmult_mod_distr_r;zarith.
+   rewrite wwB_wBwB; rewrite Zpower_2; rewrite  Zmult_mod_distr_r;zarith.
    rewrite Zmult_plus_distr_l.
    replace ([|xh|] * wB * 2 ^ Zpos (p - w_digits)) with 
      ([|xh|]*2^Zpos(p - w_digits)*wB). 2:ring.

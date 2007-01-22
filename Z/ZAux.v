@@ -11,6 +11,8 @@
                                                                                                           
      Auxillary functions & Theorems                                              
  **********************************************************************)
+
+Require Import ArithRing.
 Require Export ZArith.
 Require Export Znumtheory.
 Require Export Tactic.
@@ -69,7 +71,9 @@ intros a b H1 H2 H3; case (Zle_or_lt b a); auto; intros H4; apply Zmult_lt_reg_r
 Qed.
 
 
-
+Theorem Zpower_2: forall x, x^2 = x * x.
+intros; ring.
+Qed.
 
  Theorem beta_lex: forall a b c d beta, 
        a * beta + b <= c * beta + d -> 
@@ -94,14 +98,15 @@ Proof.
  Qed.
 
  Lemma beta_mult : forall h l beta, 
-   0 <= h < beta -> 0 <= l < beta -> 0 <= h*beta+l < beta*beta.
+   0 <= h < beta -> 0 <= l < beta -> 0 <= h*beta+l < beta^2.
  Proof.
   intros h l beta H1 H2;split. auto with zarith.
-  rewrite <- (Zplus_0_r (beta*beta));apply beta_lex_inv;auto with zarith.
+  rewrite <- (Zplus_0_r (beta^2)); rewrite Zpower_2;
+   apply beta_lex_inv;auto with zarith.
  Qed.
 
  Lemma Zmult_lt_b : 
-   forall b x y, 0 <= x < b -> 0 <= y < b -> 0 <= x * y <= b*b - 2*b + 1.
+   forall b x y, 0 <= x < b -> 0 <= y < b -> 0 <= x * y <= b^2 - 2*b + 1.
  Proof.
   intros b x y (Hx1,Hx2) (Hy1,Hy2);split;auto with zarith.
   apply Zle_trans with ((b-1)*(b-1)).
@@ -116,23 +121,22 @@ Proof.
    0 <= xl < beta ->
    0 <= yh < beta ->
    0 <= yl < beta ->
-   0 <= cc < beta*beta ->
-   wc*beta*beta + cc = xh*yl + xl*yh -> 
+   0 <= cc < beta^2 ->
+   wc*beta^2 + cc = xh*yl + xl*yh -> 
    0 <= wc <= 1.
  Proof.
   intros xh xl yh yl wc cc beta U H1 H2 H3 H4 H5 H6 H7. 
   assert (H8 := Zmult_lt_b beta xh yl H2 H5).
   assert (H9 := Zmult_lt_b beta xl yh H3 H4).
   split;auto with zarith.
-  apply beta_lex with (cc) (beta * beta - 2) (beta*beta); auto with zarith.
-  rewrite Zmult_assoc; auto with zarith.
+  apply beta_lex with (cc) (beta^2 - 2) (beta^2); auto with zarith.
  Qed.
 
  Theorem mult_add_ineq: forall x y cross beta,
    0 <= x < beta ->
    0 <= y < beta ->
    0 <= cross < beta ->
-   0 <= x * y + cross < beta*beta.
+   0 <= x * y + cross < beta^2.
  Proof.
   intros x y cross beta HH HH1 HH2.
   split; auto with zarith.
@@ -140,14 +144,14 @@ Proof.
   apply Zplus_le_compat; auto with zarith.
   apply Zmult_le_compat; auto with zarith.
   repeat (rewrite Zmult_minus_distr_l || rewrite Zmult_minus_distr_r); 
-    auto with zarith.
+  rewrite Zpower_2; auto with zarith.
  Qed.
 
  Theorem mult_add_ineq2: forall x y c cross beta,
    0 <= x < beta ->
    0 <= y < beta ->
    0 <= c*beta + cross <= 2*beta - 2 ->
-   0 <= x * y + (c*beta + cross) < beta*beta.
+   0 <= x * y + (c*beta + cross) < beta^2.
  Proof.
   intros x y c cross beta HH HH1 HH2.
   split; auto with zarith.
@@ -155,7 +159,7 @@ Proof.
   apply Zplus_le_compat; auto with zarith.
   apply Zmult_le_compat; auto with zarith.
   repeat (rewrite Zmult_minus_distr_l || rewrite Zmult_minus_distr_r); 
-    auto with zarith.
+   rewrite Zpower_2; auto with zarith.
  Qed.
 
 Theorem mult_add_ineq3: forall x y c cross beta,
@@ -163,7 +167,7 @@ Theorem mult_add_ineq3: forall x y c cross beta,
    0 <= y < beta ->
    0 <= cross <= beta - 2 ->
    0 <= c <= 1 ->
-   0 <= x * y + (c*beta + cross) < beta*beta.
+   0 <= x * y + (c*beta + cross) < beta^2.
  Proof.
   intros x y c cross beta HH HH1 HH2 HH3.
   apply mult_add_ineq2;auto with zarith.
@@ -1068,6 +1072,19 @@ apply Zdivide_factor_l.
 apply rel_prime_sym; apply rel_prime_Zpower_r; auto.
 apply prime_rel_prime; auto.
 contradict Hpp1; apply prime_divide_prime_eq; auto.
+Qed.
+
+Theorem divide_prime_divide: 
+  forall a n m, 0 < a -> (n | m) -> (a | m) ->
+  (forall p, prime p -> (p | a) -> ~(n | (m/p))) ->
+  (a | n).
+intros a n m Ha Hnm Ham Hp.
+apply Zdivide_Zpower; auto.
+intros p i H1 H2 H3.
+apply prime_divide_Zpower_Zdiv with m; auto with zarith.
+apply Hp; auto; apply Zdivide_trans with (2 := H3); auto.
+apply Zpower_divide; auto.
+apply Zdivide_trans with (1 := H3); auto.
 Qed.
 
 Theorem prime_div_induction: 

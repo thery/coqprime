@@ -153,9 +153,9 @@ Section GenBase.
        | Gt => [|x|] > [|y|]
        end.
 
-  Lemma wwB_wBwB : wwB = wB * wB.
+  Lemma wwB_wBwB : wwB = wB^2.
   Proof.
-   unfold base, ww_digits;rewrite (Zpos_xO w_digits).
+   unfold base, ww_digits;rewrite Zpower_2; rewrite (Zpos_xO w_digits).
    replace (2 * Zpos w_digits) with (Zpos w_digits + Zpos w_digits).
    apply Zpower_exp; unfold Zge;simpl;intros;discriminate.
    ring.
@@ -174,7 +174,7 @@ Section GenBase.
   Qed.
 
   Lemma lt_0_wwB : 0 < wwB.
-  Proof. rewrite wwB_wBwB;apply Zmult_lt_0_compat;apply lt_0_wB. Qed.
+  Proof. rewrite wwB_wBwB; rewrite Zpower_2; apply Zmult_lt_0_compat;apply lt_0_wB. Qed.
 
   Lemma wB_pos: 1 < wB.
   Proof. 
@@ -188,6 +188,7 @@ Section GenBase.
   Lemma wwB_pos: 1 < wwB. 
   Proof.
    assert (H:= wB_pos);rewrite wwB_wBwB;rewrite <-(Zmult_1_r 1).
+   rewrite Zpower_2.
    apply Zmult_lt_compat;(split;[unfold Zlt;reflexivity|trivial]).
    apply Zlt_le_weak;trivial. 
   Qed.
@@ -209,7 +210,7 @@ Section GenBase.
   Proof.
    clear spec_w_0 w_0 spec_w_1 w_1 spec_w_Bm1 w_Bm1 spec_w_WW spec_w_0W 
     spec_to_Z.
-   rewrite wwB_wBwB.
+   rewrite wwB_wBwB; rewrite Zpower_2.
    pattern wB at 1; rewrite <- wB_div_2; auto.
    rewrite <- Zmult_assoc.
    repeat (rewrite (Zmult_comm 2); rewrite Z_div_mult); auto with zarith.
@@ -220,14 +221,14 @@ Section GenBase.
   Proof.
    intros z x.
    rewrite Zmod_plus. 2:apply lt_0_wwB.
-   pattern wwB at 1;rewrite wwB_wBwB.
+   pattern wwB at 1;rewrite wwB_wBwB; rewrite Zpower_2.
    rewrite Zmult_mod_distr_r;try apply lt_0_wB.
    rewrite (Zmod_def_small [|x|]).
    apply Zmod_def_small;rewrite wwB_wBwB;apply beta_mult;try apply spec_to_Z.
    apply Z_mod_lt;apply Zlt_gt;apply lt_0_wB.
    destruct (spec_to_Z x);split;trivial.
    change [|x|] with (0*wB+[|x|]). rewrite wwB_wBwB.
-   rewrite <- (Zplus_0_r (wB*wB));apply beta_lex_inv.
+   rewrite Zpower_2;rewrite <- (Zplus_0_r (wB*wB));apply beta_lex_inv.
    apply lt_0_wB. apply spec_to_Z. split;[apply Zle_refl | apply lt_0_wB].
   Qed.
 
@@ -269,7 +270,7 @@ Section GenBase.
    split;[apply Zle_refl|apply lt_0_wwB].
    assert (H:=spec_to_Z h);assert (L:=spec_to_Z l);split.
    apply Zplus_le_0_compat;auto with zarith.
-   rewrite <- (Zplus_0_r wwB);rewrite wwB_wBwB;
+   rewrite <- (Zplus_0_r wwB);rewrite wwB_wBwB; rewrite Zpower_2;
     apply beta_lex_inv;auto with zarith.
   Qed.
 
