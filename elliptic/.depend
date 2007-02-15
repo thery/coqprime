@@ -1,0 +1,15 @@
+NEll.vo: NEll.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../num/Basic_type.vo ../num/ZnZ.vo ../num/W.vo ../num/Mod_op.vo ZEll.vo ../Z/Zmod.vo
+NEll.vi: NEll.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../num/Basic_type.vo ../num/ZnZ.vo ../num/W.vo ../num/Mod_op.vo ZEll.vo ../Z/Zmod.vo
+SMain.vo: SMain.v ../PrimalityTest/FGroup.vo ../List/UList.vo
+SMain.vi: SMain.v ../PrimalityTest/FGroup.vo ../List/UList.vo
+ZEll.vo: ZEll.v ../Z/ZAux.vo ../Z/Ppow.vo GZnZ.vo ../PrimalityTest/EGroup.vo SMain.vo ../Z/Zmod.vo
+ZEll.vi: ZEll.v ../Z/ZAux.vo ../Z/Ppow.vo GZnZ.vo ../PrimalityTest/EGroup.vo SMain.vo ../Z/Zmod.vo
+GZnZ.vo: GZnZ.v ../Z/ZAux.vo ../List/UList.vo ../Z/Pmod.vo
+GZnZ.vi: GZnZ.v ../Z/ZAux.vo ../List/UList.vo ../Z/Pmod.vo
+Test.vo: Test.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../num/Basic_type.vo ../num/ZnZ.vo ../num/W.vo ../num/Mod_op.vo NEll.vo
+Test.vi: Test.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../num/Basic_type.vo ../num/ZnZ.vo ../num/W.vo ../num/Mod_op.vo NEll.vo
+NEll.html: NEll.v ../Z/ZAux.html ../Z/ZDivModAux.html ../num/Basic_type.html ../num/ZnZ.html ../num/W.html ../num/Mod_op.html ZEll.html ../Z/Zmod.html
+SMain.html: SMain.v ../PrimalityTest/FGroup.html ../List/UList.html
+ZEll.html: ZEll.v ../Z/ZAux.html ../Z/Ppow.html GZnZ.html ../PrimalityTest/EGroup.html SMain.html ../Z/Zmod.html
+GZnZ.html: GZnZ.v ../Z/ZAux.html ../List/UList.html ../Z/Pmod.html
+Test.html: Test.v ../Z/ZAux.html ../Z/ZDivModAux.html ../num/Basic_type.html ../num/ZnZ.html ../num/W.html ../num/Mod_op.html NEll.html

@@ -556,3 +556,40 @@ rewrite gpow_e_order_is_e; auto with zarith.
 apply gpow_e; auto.
 apply Zlt_le_weak; apply e_order_pos.
 Qed.
+
+Theorem order_div: forall (A : Set) (A_dec: forall (a b: A), {a = b} + {a <>b}) (op : A -> A -> A) (a: A) (G : FGroup op) m,
+ 0 < m -> (forall p, prime p -> (p | m) -> gpow a G (m / p) <> G.(e)) ->
+ In a G.(s) -> gpow a G m = G.(e) -> e_order A_dec a G = m.
+intros A Adec op a G m Hm H H1 H2.
+assert (F1: 0 <= m); auto with zarith.
+case (e_order_divide_gpow A Adec op a G H1 m F1 H2); intros q Hq.
+assert (F2: 1 <= q).
+  case (Zle_or_lt 0 q); intros HH.
+    case (Zle_lt_or_eq _ _ HH); auto with zarith.
+    intros HH1; generalize Hm; rewrite Hq; rewrite <- HH1; 
+      auto with zarith.
+  assert (F2: 0 <= (- q) * e_order Adec a G); auto with zarith.
+    apply Zmult_le_0_compat; auto with zarith. 
+    apply Zlt_le_weak; apply e_order_pos.
+  generalize F2; rewrite Zopp_mult_distr_l_reverse;
+      rewrite <- Hq; auto with zarith.
+case (Zle_lt_or_eq _ _ F2); intros H3; subst; auto with zarith.
+case (prime_dec q); intros Hq.
+  case (H q); auto with zarith.
+    rewrite Zmult_comm; rewrite Z_div_mult; auto with zarith.
+  apply gpow_e_order_is_e; auto.
+case (Zdivide_div_prime_le_square _ H3 Hq); intros r (Hr1, (Hr2, Hr3)).
+case (H _ Hr1); auto.
+  apply Zdivide_trans with (1 := Hr2).
+  apply Zdivide_factor_r.
+case Hr2; intros q1 Hq1; subst.
+assert (F3: 0 < r).
+  generalize (prime_le_2 _ Hr1); auto with zarith.
+rewrite <- Zmult_assoc; rewrite Zmult_comm; rewrite <- Zmult_assoc;
+  rewrite Zmult_comm; rewrite Z_div_mult; auto with zarith.
+rewrite gpow_gpow; auto with zarith.
+  rewrite gpow_e_order_is_e; try rewrite gpow_e; auto.
+  apply Zmult_le_reg_r with r; auto with zarith.
+  apply Zlt_le_weak; apply e_order_pos.
+apply Zmult_le_reg_r with r; auto with zarith.
+Qed.
