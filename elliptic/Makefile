@@ -64,10 +64,22 @@ PP=-pp "camlp4o -I . -I $(COQTOP)/parsing $(CAMLP4EXTEND) $(GRAMMARS) -impl"
 
 OCAMLLIBS=-I .\
   -I ../Tactic\
-  -I ../List
+  -I ../N\
+  -I ../Z\
+  -I ../PrimalityTest\
+  -I ../List\
+  -I ../num/W/W8\
+  -I ../num/W/W2\
+  -I ../num
 COQLIBS=-I .\
   -I ../Tactic\
-  -I ../List
+  -I ../N\
+  -I ../Z\
+  -I ../PrimalityTest\
+  -I ../List\
+  -I ../num/W/W8\
+  -I ../num/W/W2\
+  -I ../num
 
 ###################################
 #                                 #
@@ -75,28 +87,22 @@ COQLIBS=-I .\
 #                                 #
 ###################################
 
-VFILES=Pmod.v\
-  ZAux.v\
-  ZDivModAux.v\
-  Zmisc.v\
-  ZPowerAux.v\
-  ZSum.v\
-  Ppow.v\
-  Zmod.v
+VFILES=NEll.v\
+  SMain.v\
+  ZEll.v\
+  GZnZ.v\
+  Test.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
 HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
-all: Pmod.vo\
-  ZAux.vo\
-  ZDivModAux.vo\
-  Zmisc.vo\
-  ZPowerAux.vo\
-  ZSum.vo\
-  Ppow.vo\
-  Zmod.vo
+all: NEll.vo\
+  SMain.vo\
+  ZEll.vo\
+  GZnZ.vo\
+  Test.vo
 
 spec: $(VIFILES)
 

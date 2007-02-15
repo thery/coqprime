@@ -184,6 +184,75 @@ Fixpoint gcd_log2 (a b c:positive) {struct c}: option positive :=
    end
  end.
 
+Fixpoint egcd_log2 (a b c:positive) {struct c}: 
+    option (Z * Z * positive) :=
+ match a/b with
+ |    (_, N0)  => Some (0, 1, b)
+ | (q, Npos r) =>
+   match b/r, c with
+   | (_, N0), _ => Some (1, -q, r)
+   | (q', Npos r'), xH    => None
+   | (q', Npos r'), xO c' => 
+        match egcd_log2 r r' c' with
+          None => None
+        | Some (u', v', w') =>
+               let u := u' - v' * q' in
+               Some (u, v' - q * u, w')
+        end
+   | (q', Npos r'), xI c' => 
+        match egcd_log2 r r' c' with
+          None => None
+        | Some (u', v', w') =>
+               let u := u' - v' * q' in
+               Some (u, v' - q * u, w')
+        end
+   end
+ end.
+
+Lemma egcd_gcd_log2: forall c a b, 
+  match egcd_log2 a b c, gcd_log2 a b c with
+    None, None => True
+  | Some (u,v,r), Some r' => r = r'
+  | _, _ => False
+  end.
+induction c; simpl; auto; try 
+ (intros a b; generalize (Pmod_div_eucl a b); case (a/b); simpl;
+  intros q r1 H; subst; case (a mod b); auto;
+  intros r; generalize (Pmod_div_eucl b r); case (b/r); simpl;
+  intros q' r1 H; subst; case (b mod r); auto;
+  intros r'; generalize (IHc r r'); case egcd_log2; auto;
+  intros ((p1,p2),p3); case gcd_log2; auto).
+Qed.
+
+Ltac rw l := 
+  match l with
+   | (?r, ?r1) =>
+       match type of r with
+         True => rewrite <- r1
+      |  _ => rw r; rw r1
+      end 
+  | ?r => rewrite r
+  end. 
+
+Lemma egcd_log2_ok: forall c a b, 
+  match egcd_log2 a b c with
+    None => True
+  | Some (u,v,r) => u * a + v * b = r
+  end.
+induction c; simpl; auto;
+ intros a b; generalize (div_eucl_spec a b); case (a/b); 
+  simpl fst; simpl snd; intros q r1; case r1; try (intros; ring);
+  simpl; intros r (Hr1, Hr2); clear r1;
+  generalize (div_eucl_spec b r); case (b/r); 
+  simpl fst; simpl snd; intros q' r1; case r1; 
+    try (intros; rewrite Hr1; ring);
+  simpl; intros r' (Hr'1, Hr'2); clear r1; auto;
+  generalize (IHc r r'); case egcd_log2; auto;
+  intros ((u',v'),w'); case gcd_log2; auto; intros;
+  rw ((I, H), Hr1, Hr'1); ring.
+Qed.
+
+
 Fixpoint log2 (a:positive) : positive := 
  match a with 
  | xH => xH
@@ -339,16 +408,24 @@ Proof.
  apply log2_Zle. trivial.
 Qed.
 
+Lemma egcd_log2_x0 : forall a b, egcd_log2 a b (xO b) <> None.
+Proof.
+intros a b H; generalize (egcd_gcd_log2 (xO b) a b) (gcd_log2_x0 a b);
+  rw H; case gcd_log2; auto.
+Qed.
+
 Definition gcd a b :=
   match gcd_log2 a b (xO b) with
   | Some p => p 
-  | None => (* can not appear *)
-      match  gcd_log2 a b (xO b) as p return p <> None -> positive with
-      | Some q => fun (H:Some q<>None) => q
-      | None   => 
-        fun (H:None<>None) => False_rec positive (H (refl_equal None))
-      end (gcd_log2_x0 a b)
+  | None => (* can not appear *) 1%positive
   end.
+
+Definition egcd a b :=
+  match egcd_log2 a b (xO b) with
+  | Some p => p 
+  | None => (* can not appear *) (1,1,1%positive)
+  end.
+
 
 Lemma gcd_mod0 : forall a b, (a mod b)%P = N0 -> gcd a b = b.
 Proof.
@@ -372,13 +449,13 @@ Proof.
  rewrite (lt_mod _ _ z) in H;inversion H.
  assert  (r <= b). omega. 
  generalize (gcd_log2_None _ _ H2).
- destruct (gcd_log2 b r r);intros;trivial. elim H4;trivial.
+ destruct (gcd_log2 b r r);intros;trivial. 
  assert (log2 b <= log2 (xO b)). simpl;zsimpl;omega.
  pattern (gcd_log2 a b (xO b)) at 1; rewrite gcd_log2_Zle_log;auto with zarith.
  pattern (gcd_log2 a b b) at 1;rewrite (gcd_log2_mod _ _ z _ H).
  assert  (r <= b). omega. 
  generalize (gcd_log2_None _ _ H3).
- destruct (gcd_log2 b r r);intros;trivial. elim H4;trivial.
+ destruct (gcd_log2 b r r);intros;trivial. 
 Qed.
 
 Require Import ZArith.
@@ -405,6 +482,20 @@ Proof with mauto.
  apply Zis_gcd_sym;auto.
 Qed.
 
+Lemma egcd_Zis_gcd : forall a b:positive, 
+   let (uv,w) := egcd a b in 
+   let  (u,v) := uv in 
+     u * a + v * b = w /\ (Zis_gcd b a w).
+Proof with mauto.
+ intros a b; unfold egcd.
+ generalize (egcd_log2_ok (xO b) a b) (egcd_gcd_log2 (xO b) a b) 
+            (egcd_log2_x0 a b) (gcd_Zis_gcd b a); unfold egcd, gcd.
+ case egcd_log2; try (intros ((u,v),w)); case gcd_log2;
+ try (intros; match goal with H: False |- _ => case H end);
+ try (intros _ _ H1; case H1; auto; fail).
+ intros; subst; split; try apply Zis_gcd_sym; auto.
+Qed.
+
 Definition Zgcd a b := 
   match a, b with
   | Z0, _ => b
@@ -414,6 +505,7 @@ Definition Zgcd a b :=
   | Zpos a, Zpos b => Zpos (gcd a b)
   | Zneg a, Zneg b => Zpos (gcd a b)
   end.
+
 
 Lemma Zgcd_is_gcd : forall x y, Zis_gcd x y (Zgcd x y).
 Proof.
@@ -427,4 +519,47 @@ Proof.
  apply Zis_gcd_0.
  apply Zis_gcd_minus;simpl;apply Zis_gcd_sym;apply gcd_Zis_gcd.
  apply Zis_gcd_minus;apply Zis_gcd_minus;simpl;apply gcd_Zis_gcd.
+Qed.
+
+Definition Zegcd a b := 
+  match a, b with
+  | Z0, Z0 => (0,0,0)
+  | Zpos _, Z0 => (1,0,a)
+  | Zneg _, Z0 => (-1,0,-a)
+  | Z0, Zpos _ => (0,1,b)
+  | Z0, Zneg _ => (0,-1,-b)
+  | Zpos a, Zneg b => 
+     match egcd a b with (u,v,w) => (u,-v, Zpos w) end
+  | Zneg a, Zpos b =>
+     match egcd a b with (u,v,w) => (-u,v, Zpos w) end
+  | Zpos a, Zpos b => 
+     match egcd a b with (u,v,w) => (u,v, Zpos w) end
+  | Zneg a, Zneg b => 
+     match egcd a b with (u,v,w) => (-u,-v, Zpos w) end
+  end.
+
+Lemma Zegcd_is_egcd : forall x y, 
+  match Zegcd x y with
+   (u,v,w) => u * x + v * y = w /\ Zis_gcd x y w /\ 0 <= w
+  end.
+Proof.
+ assert (zx0: forall x, Zneg x = -x).
+    simpl; auto.
+ assert (zx1: forall x, -(-x) = x).
+   intro x; case x; simpl; auto.
+ destruct x;destruct y;simpl; try (split; [idtac|split]);
+  auto; try (red; simpl; intros; discriminate);
+ try (rewrite zx0; apply Zis_gcd_minus; try rewrite zx1; auto;
+       apply Zis_gcd_minus; try rewrite zx1; simpl; auto);
+ try apply Zis_gcd_0; try (apply Zis_gcd_sym;apply Zis_gcd_0);
+ generalize (egcd_Zis_gcd p p0); case egcd; intros (u,v,w) (H1, H2); 
+ split; repeat rewrite zx0; try (rewrite <- H1; ring); auto;
+ (split; [idtac | red; intros; discriminate]).
+ apply Zis_gcd_sym; auto.
+ apply Zis_gcd_sym; apply Zis_gcd_minus; rw zx1; 
+    apply Zis_gcd_sym; auto.
+ apply Zis_gcd_minus; rw zx1; auto.
+ apply Zis_gcd_minus; rw zx1; auto.
+ apply Zis_gcd_minus; rw zx1; auto.
+ apply Zis_gcd_sym; auto.
 Qed.

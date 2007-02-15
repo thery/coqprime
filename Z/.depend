@@ -10,9 +10,15 @@ ZPowerAux.vo: ZPowerAux.v ../Tactic/Tactic.vo
 ZPowerAux.vi: ZPowerAux.v ../Tactic/Tactic.vo
 ZSum.vo: ZSum.v ../List/ListAux.vo ZAux.vo ../List/Iterator.vo ../List/ZProgression.vo
 ZSum.vi: ZSum.v ../List/ListAux.vo ZAux.vo ../List/Iterator.vo ../List/ZProgression.vo
+Ppow.vo: Ppow.v ZAux.vo
+Ppow.vi: Ppow.v ZAux.vo
+Zmod.vo: Zmod.v ZAux.vo
+Zmod.vi: Zmod.v ZAux.vo
 Pmod.html: Pmod.v Zmisc.html
 ZAux.html: ZAux.v ../Tactic/Tactic.html
 ZDivModAux.html: ZDivModAux.v ../Tactic/Tactic.html ZAux.html ZPowerAux.html
 Zmisc.html: Zmisc.v
 ZPowerAux.html: ZPowerAux.v ../Tactic/Tactic.html
 ZSum.html: ZSum.v ../List/ListAux.html ZAux.html ../List/Iterator.html ../List/ZProgression.html
+Ppow.html: Ppow.v ZAux.html
+Zmod.html: Zmod.v ZAux.html
