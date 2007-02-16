@@ -207,42 +207,6 @@ split; auto with zarith.
 unfold pheight; apply plength_pred_correct.
 Qed.
 
-Section znz_of_pos.
- 
- Variable w : Set.
- Variable w_op : znz_op w.
- Variable op_spec : znz_spec w_op.
-
- Notation "[| x |]" := (znz_to_Z w_op x)  (at level 0, x at level 99).
- 
- Theorem znz_of_pos_correct:
-   forall p, Zpos p < base (znz_digits w_op) -> [|(snd (znz_of_pos w_op p))|] = Zpos p.
- intros p Hp.
- generalize (spec_of_pos op_spec p).
- case (znz_of_pos w_op p); intros n w1; simpl.
- case n; simpl Npos; auto with zarith.
- intros p1 Hp1; contradict Hp; apply Zle_not_lt.
- rewrite Hp1; auto with zarith.
- match goal with |- _ <= ?X + ?Y =>
-  apply Zle_trans with X; auto with zarith
- end.
- match goal with |- ?X <= _ =>
-  pattern X at 1; rewrite <- (Zmult_1_l); 
-  apply Zmult_le_compat_r; auto with zarith
- end.
- case p1; simpl; intros; red; simpl; intros; discriminate.
- unfold base; auto with zarith.
- case (spec_to_Z op_spec w1); auto with zarith.
- Qed.
-
- Theorem znz_of_Z_correct:
-   forall p, 0 <= p < base (znz_digits w_op) -> [|znz_of_Z w_op p|] = p.
- intros p; case p; simpl; try rewrite spec_0; auto.
- intros; rewrite znz_of_pos_correct; auto with zarith.
- intros p1 (H1, _); contradict H1; apply Zlt_not_le; red; simpl; auto.
- Qed.
-End znz_of_pos.
-
 Theorem lucas_prime:
  forall p, 2 < Zpos p -> lucas p = 0 -> prime (2 ^ Zpos p - 1).
 unfold lucas; intros p Hp H.

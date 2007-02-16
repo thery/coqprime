@@ -67,19 +67,13 @@ OCAMLLIBS=-I .\
   -I ../N\
   -I ../Z\
   -I ../PrimalityTest\
-  -I ../List\
-  -I ../num/W/W8\
-  -I ../num/W/W2\
-  -I ../num
+  -I ../List
 COQLIBS=-I .\
   -I ../Tactic\
   -I ../N\
   -I ../Z\
   -I ../PrimalityTest\
-  -I ../List\
-  -I ../num/W/W8\
-  -I ../num/W/W2\
-  -I ../num
+  -I ../List
 
 ###################################
 #                                 #
@@ -87,22 +81,18 @@ COQLIBS=-I .\
 #                                 #
 ###################################
 
-VFILES=NEll.v\
-  SMain.v\
+VFILES=SMain.v\
   ZEll.v\
-  GZnZ.v\
-  Test.v
+  GZnZ.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
 HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
-all: NEll.vo\
-  SMain.vo\
+all: SMain.vo\
   ZEll.vo\
-  GZnZ.vo\
-  Test.vo
+  GZnZ.vo
 
 spec: $(VIFILES)
 

@@ -46,7 +46,7 @@ OPT=
 COQFLAGS=-q $(OPT) $(COQLIBS) $(OTHERFLAGS) $(COQ_XML)
 COQC=$(COQBIN)coqc
 GALLINA=gallina
-COQDOC=coqdoc
+COQDOC=$(COQBIN)coqdoc
 CAMLC=ocamlc -c
 CAMLOPTC=ocamlopt -c
 CAMLLINK=ocamlc
@@ -68,6 +68,7 @@ OCAMLLIBS=-I .\
   -I ../Z\
   -I ../PrimalityTest\
   -I ../List\
+  -I ../elliptic\
   -I W/W8\
   -I W/W2
 COQLIBS=-I .\
@@ -76,6 +77,7 @@ COQLIBS=-I .\
   -I ../Z\
   -I ../PrimalityTest\
   -I ../List\
+  -I ../elliptic\
   -I W/W8\
   -I W/W2
 
@@ -105,8 +107,7 @@ VFILES=Basic_type.v\
   NMake.v\
   ZMake.v\
   Arith.v\
-  Q.v\
-  Qexamples.v
+  NEll.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -133,8 +134,7 @@ all: Basic_type.vo\
   NMake.vo\
   ZMake.vo\
   Arith.vo\
-  Q.vo\
-  Qexamples.vo\
+  NEll.vo\
   genN
 
 spec: $(VIFILES)
