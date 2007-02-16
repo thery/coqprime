@@ -3,6 +3,7 @@
 -I ../Z
 -I ../PrimalityTest
 -I ../List
+-I ../elliptic
 -I W/W8
 -I W/W2
 
@@ -26,7 +27,6 @@ Nbasic.v
 NMake.v
 ZMake.v
 Arith.v
-Q.v
-Qexamples.v
+NEll.v
 -custom "ocamlopt -o genN unix.cmxa genN.ml" "genN.ml" genN
 

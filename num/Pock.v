@@ -19,6 +19,8 @@ Require Import Mod_op.
 Require Import W.
 Require Import Lucas.
 Require Export PocklingtonCertificat.
+Require Import NEll.
+
 
 Open Scope Z_scope. 
 
@@ -547,7 +549,6 @@ rewrite <- HH1; rewrite <- HH2.
 apply check_s_r_correct with sqrt; auto.
 Qed.
 
-
 Fixpoint test_Certif (lc : Certif) : bool :=
   match lc with
   | nil => true
@@ -574,6 +575,10 @@ Fixpoint test_Certif (lc : Certif) : bool :=
   | (Pock_certif n a dec sqrt) :: lc =>
     if test_pock n a dec sqrt then 
      if all_in lc dec then test_Certif lc else false
+    else false
+  | (Ell_certif n ss l a b x y) :: lc =>
+    if ell_test n ss l a b x y then 
+     if all_in lc l then test_Certif lc else false
     else false
   end.
 
@@ -618,6 +623,17 @@ apply H2; auto.
 intros k Hk.
 case H1 with (2 := Hk); auto.
 intros x (Hx1, Hx2); rewrite Hx2; auto.
+intros N S l A B x y l1.
+generalize (all_in_In l1 l).
+generalize (ell_test_correct N S l A B x y).
+case ell_test.
+case all_in; auto.
+intros H1 H2 H3 H4 c [H5 | H5]; try subst c; simpl; auto.
+apply H1.
+intros p Hp; case (H2 (refl_equal true) p); auto.
+intros x1 (Hx1, Hx2); rewrite Hx2; auto.
+intros; discriminate.
+intros; discriminate.
 Qed.
 
 Lemma Pocklington_refl : 

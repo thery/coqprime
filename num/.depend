@@ -1,5 +1,77 @@
+basic_type.cmo: basic_type.ml basic_type.cmi binInt.cmi binPos.cmi zpower.cmi
+basic_type.cmx: basic_type.ml basic_type.cmi binInt.cmx binPos.cmx zpower.cmx
+binInt.cmo: binInt.ml binInt.cmi binNat.cmi binPos.cmi datatypes.cmi
+binInt.cmx: binInt.ml binInt.cmi binNat.cmx binPos.cmx datatypes.cmx
+binNat.cmo: binNat.ml binNat.cmi binPos.cmi datatypes.cmi
+binNat.cmx: binNat.ml binNat.cmi binPos.cmx datatypes.cmx
+binPos.cmo: binPos.ml binPos.cmi datatypes.cmi peano.cmi
+binPos.cmx: binPos.ml binPos.cmi datatypes.cmx peano.cmx
+datatypes.cmo: datatypes.ml datatypes.cmi
+datatypes.cmx: datatypes.ml datatypes.cmi
 genN.cmo: genN.ml
 genN.cmx: genN.ml
+logic.cmo: logic.ml logic.cmi
+logic.cmx: logic.ml logic.cmi
+peano.cmo: peano.ml peano.cmi datatypes.cmi
+peano.cmx: peano.ml peano.cmi datatypes.cmx
+w2_add.cmo: w2_add.ml w2_add.cmi basic_type.cmi w2_basic.cmi
+w2_add.cmx: w2_add.ml w2_add.cmi basic_type.cmx w2_basic.cmx
+w2_basic.cmo: w2_basic.ml w2_basic.cmi basic_type.cmi binInt.cmi binNat.cmi binPos.cmi datatypes.cmi
+w2_basic.cmx: w2_basic.ml w2_basic.cmi basic_type.cmx binInt.cmx binNat.cmx binPos.cmx datatypes.cmx
+w2_compare.cmo: w2_compare.ml w2_compare.cmi datatypes.cmi w2_basic.cmi
+w2_compare.cmx: w2_compare.ml w2_compare.cmi datatypes.cmx w2_basic.cmx
+w2_div_aux.cmo: w2_div_aux.ml w2_div_aux.cmi datatypes.cmi w2_basic.cmi
+w2_div_aux.cmx: w2_div_aux.ml w2_div_aux.cmi datatypes.cmx w2_basic.cmx
+w2_div.cmo: w2_div.ml w2_div.cmi basic_type.cmi datatypes.cmi w2_add.cmi w2_basic.cmi w2_compare.cmi w2_div_aux.cmi w2_sub.cmi
+w2_div.cmx: w2_div.ml w2_div.cmi basic_type.cmx datatypes.cmx w2_add.cmx w2_basic.cmx w2_compare.cmx w2_div_aux.cmx w2_sub.cmx
+w2_lift.cmo: w2_lift.ml w2_lift.cmi binNat.cmi binPos.cmi w2_basic.cmi
+w2_lift.cmx: w2_lift.ml w2_lift.cmi binNat.cmx binPos.cmx w2_basic.cmx
+w2_mul.cmo: w2_mul.ml w2_mul.cmi basic_type.cmi w2_basic.cmi
+w2_mul.cmx: w2_mul.ml w2_mul.cmi basic_type.cmx w2_basic.cmx
+w2_op.cmo: w2_op.ml w2_op.cmi binPos.cmi w2_add.cmi w2_basic.cmi w2_compare.cmi w2_div.cmi w2_div_aux.cmi w2_lift.cmi w2_mul.cmi w2_opp.cmi w2_pos_mod.cmi w2_sqrt.cmi w2_sub.cmi znZ.cmi
+w2_op.cmx: w2_op.ml w2_op.cmi binPos.cmx w2_add.cmx w2_basic.cmx w2_compare.cmx w2_div.cmx w2_div_aux.cmx w2_lift.cmx w2_mul.cmx w2_opp.cmx w2_pos_mod.cmx w2_sqrt.cmx w2_sub.cmx znZ.cmx
+w2_opp.cmo: w2_opp.ml w2_opp.cmi basic_type.cmi w2_basic.cmi
+w2_opp.cmx: w2_opp.ml w2_opp.cmi basic_type.cmx w2_basic.cmx
+w2_op_spec.cmo: w2_op_spec.ml w2_op_spec.cmi w2_basic.cmi znZ.cmi
+w2_op_spec.cmx: w2_op_spec.ml w2_op_spec.cmi w2_basic.cmx znZ.cmx
+w2_pos_mod.cmo: w2_pos_mod.ml w2_pos_mod.cmi binPos.cmi w2_basic.cmi
+w2_pos_mod.cmx: w2_pos_mod.ml w2_pos_mod.cmi binPos.cmx w2_basic.cmx
+w2_sqrt.cmo: w2_sqrt.ml w2_sqrt.cmi basic_type.cmi datatypes.cmi w2_basic.cmi
+w2_sqrt.cmx: w2_sqrt.ml w2_sqrt.cmi basic_type.cmx datatypes.cmx w2_basic.cmx
+w2_sub.cmo: w2_sub.ml w2_sub.cmi basic_type.cmi w2_basic.cmi
+w2_sub.cmx: w2_sub.ml w2_sub.cmi basic_type.cmx w2_basic.cmx
+zArith.cmo: zArith.ml zArith.cmi
+zArith.cmx: zArith.ml zArith.cmi
+zmisc.cmo: zmisc.ml zmisc.cmi binInt.cmi binPos.cmi datatypes.cmi
+zmisc.cmx: zmisc.ml zmisc.cmi binInt.cmx binPos.cmx datatypes.cmx
+znZ.cmo: znZ.ml znZ.cmi basic_type.cmi binInt.cmi binNat.cmi binPos.cmi datatypes.cmi
+znZ.cmx: znZ.ml znZ.cmi basic_type.cmx binInt.cmx binNat.cmx binPos.cmx datatypes.cmx
+zpower.cmo: zpower.ml zpower.cmi binInt.cmi binPos.cmi datatypes.cmi logic.cmi zmisc.cmi
+zpower.cmx: zpower.ml zpower.cmi binInt.cmx binPos.cmx datatypes.cmx logic.cmx zmisc.cmx
+basic_type.cmi: basic_type.mli binInt.cmi binPos.cmi zpower.cmi
+binInt.cmi: binInt.mli binNat.cmi binPos.cmi datatypes.cmi
+binNat.cmi: binNat.mli binPos.cmi datatypes.cmi
+binPos.cmi: binPos.mli datatypes.cmi peano.cmi
+datatypes.cmi: datatypes.mli
+logic.cmi: logic.mli
+peano.cmi: peano.mli datatypes.cmi
+w2_add.cmi: w2_add.mli basic_type.cmi w2_basic.cmi
+w2_basic.cmi: w2_basic.mli basic_type.cmi binInt.cmi binNat.cmi binPos.cmi datatypes.cmi
+w2_compare.cmi: w2_compare.mli datatypes.cmi w2_basic.cmi
+w2_div_aux.cmi: w2_div_aux.mli datatypes.cmi w2_basic.cmi
+w2_div.cmi: w2_div.mli basic_type.cmi datatypes.cmi w2_add.cmi w2_basic.cmi w2_compare.cmi w2_div_aux.cmi w2_sub.cmi
+w2_lift.cmi: w2_lift.mli binNat.cmi binPos.cmi w2_basic.cmi
+w2_mul.cmi: w2_mul.mli basic_type.cmi w2_basic.cmi
+w2_op.cmi: w2_op.mli binPos.cmi w2_add.cmi w2_basic.cmi w2_compare.cmi w2_div.cmi w2_div_aux.cmi w2_lift.cmi w2_mul.cmi w2_opp.cmi w2_pos_mod.cmi w2_sqrt.cmi w2_sub.cmi znZ.cmi
+w2_opp.cmi: w2_opp.mli basic_type.cmi w2_basic.cmi
+w2_op_spec.cmi: w2_op_spec.mli w2_basic.cmi znZ.cmi
+w2_pos_mod.cmi: w2_pos_mod.mli binPos.cmi w2_basic.cmi
+w2_sqrt.cmi: w2_sqrt.mli basic_type.cmi datatypes.cmi w2_basic.cmi
+w2_sub.cmi: w2_sub.mli basic_type.cmi w2_basic.cmi
+zArith.cmi: zArith.mli
+zmisc.cmi: zmisc.mli binInt.cmi binPos.cmi datatypes.cmi
+znZ.cmi: znZ.mli basic_type.cmi binInt.cmi binNat.cmi binPos.cmi datatypes.cmi
+zpower.cmi: zpower.mli binInt.cmi binPos.cmi datatypes.cmi logic.cmi zmisc.cmi
 Basic_type.vo: Basic_type.v ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo
 Basic_type.vi: Basic_type.v ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo
 GenBase.vo: GenBase.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo Basic_type.vo
@@ -18,8 +90,8 @@ GenDiv.vo: GenDiv.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo Basic_type
 GenDiv.vi: GenDiv.v ../Z/ZAux.vo ../Z/ZDivModAux.vo ../Z/ZPowerAux.vo Basic_type.vo GenBase.vo GenDivn1.vo GenAdd.vo GenSub.vo
 GenSqrt.vo: GenSqrt.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo GenBase.vo
 GenSqrt.vi: GenSqrt.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo GenBase.vo
-ZnZ.vo: ZnZ.v Basic_type.vo GenBase.vo
-ZnZ.vi: ZnZ.v Basic_type.vo GenBase.vo
+ZnZ.vo: ZnZ.v ../Tactic/Tactic.vo Basic_type.vo GenBase.vo
+ZnZ.vi: ZnZ.v ../Tactic/Tactic.vo Basic_type.vo GenBase.vo
 Zn2Z.vo: Zn2Z.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo GenBase.vo GenAdd.vo GenSub.vo GenMul.vo GenSqrt.vo GenLift.vo GenDivn1.vo GenDiv.vo ZnZ.vo
 Zn2Z.vi: Zn2Z.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo GenBase.vo GenAdd.vo GenSub.vo GenMul.vo GenSqrt.vo GenLift.vo GenDivn1.vo GenDiv.vo ZnZ.vo
 GenWord.vo: GenWord.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo GenBase.vo GenAdd.vo GenSub.vo GenMul.vo GenLift.vo GenDivn1.vo GenDiv.vo ZnZ.vo Zn2Z.vo
@@ -28,24 +100,20 @@ W.vo: W.v Basic_type.vo ZnZ.vo Zn2Z.vo W/W8/W8_op.vo W/W8/W8_op_spec.vo
 W.vi: W.v Basic_type.vo ZnZ.vo Zn2Z.vo W/W8/W8_op.vo W/W8/W8_op_spec.vo
 Lucas.vo: Lucas.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo W.vo Mod_op.vo ../PrimalityTest/LucasLehmer.vo
 Lucas.vi: Lucas.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo W.vo Mod_op.vo ../PrimalityTest/LucasLehmer.vo
-Pock.vo: Pock.v ../Z/ZAux.vo ../PrimalityTest/LucasLehmer.vo ../PrimalityTest/Pocklington.vo ZnZ.vo ../Z/Zmisc.vo ../Z/Pmod.vo Mod_op.vo W.vo Lucas.vo ../PrimalityTest/PocklingtonCertificat.vo
-Pock.vi: Pock.v ../Z/ZAux.vo ../PrimalityTest/LucasLehmer.vo ../PrimalityTest/Pocklington.vo ZnZ.vo ../Z/Zmisc.vo ../Z/Pmod.vo Mod_op.vo W.vo Lucas.vo ../PrimalityTest/PocklingtonCertificat.vo
+Pock.vo: Pock.v ../Z/ZAux.vo ../PrimalityTest/LucasLehmer.vo ../PrimalityTest/Pocklington.vo ZnZ.vo ../Z/Zmisc.vo ../Z/Pmod.vo Mod_op.vo W.vo Lucas.vo ../PrimalityTest/PocklingtonCertificat.vo NEll.vo
+Pock.vi: Pock.v ../Z/ZAux.vo ../PrimalityTest/LucasLehmer.vo ../PrimalityTest/Pocklington.vo ZnZ.vo ../Z/Zmisc.vo ../Z/Pmod.vo Mod_op.vo W.vo Lucas.vo ../PrimalityTest/PocklingtonCertificat.vo NEll.vo
 Mod_op.vo: Mod_op.v ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo Zn2Z.vo GenBase.vo GenLift.vo
 Mod_op.vi: Mod_op.v ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo Zn2Z.vo GenBase.vo GenLift.vo
 Nbasic.vo: Nbasic.v Basic_type.vo
 Nbasic.vi: Nbasic.v Basic_type.vo
-NMake.vo: NMake.v Basic_type.vo ZnZ.vo Zn2Z.vo Nbasic.vo GenMul.vo GenDivn1.vo Lucas.vo
-NMake.vi: NMake.v Basic_type.vo ZnZ.vo Zn2Z.vo Nbasic.vo GenMul.vo GenDivn1.vo Lucas.vo
+NMake.vo: NMake.v Basic_type.vo ZnZ.vo Zn2Z.vo Nbasic.vo GenMul.vo GenDivn1.vo
+NMake.vi: NMake.v Basic_type.vo ZnZ.vo Zn2Z.vo Nbasic.vo GenMul.vo GenDivn1.vo
 ZMake.vo: ZMake.v
 ZMake.vi: ZMake.v
-Arith.vo: Arith.v W/W2/W2_op.vo W/W2/W2_op_spec.vo NMake.vo ZMake.vo
-Arith.vi: Arith.v W/W2/W2_op.vo W/W2/W2_op_spec.vo NMake.vo ZMake.vo
-QMake.vo: QMake.v Arith.vo
-QMake.vi: QMake.v Arith.vo
-Q.vo: Q.v Arith.vo
-Q.vi: Q.v Arith.vo
-Q.vo: Q.v Arith.vo
-Q.vi: Q.v Arith.vo
+Arith.vo: Arith.v W/W8/W8_op.vo W/W8/W8_op_spec.vo NMake.vo ZMake.vo
+Arith.vi: Arith.v W/W8/W8_op.vo W/W8/W8_op_spec.vo NMake.vo ZMake.vo
+NEll.vo: NEll.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo W.vo Mod_op.vo ../elliptic/ZEll.vo ../Z/Zmod.vo
+NEll.vi: NEll.v ../Z/ZAux.vo ../Z/ZDivModAux.vo Basic_type.vo ZnZ.vo W.vo Mod_op.vo ../elliptic/ZEll.vo ../Z/Zmod.vo
 Basic_type.html: Basic_type.v ../Z/ZDivModAux.html ../Z/ZPowerAux.html
 GenBase.html: GenBase.v ../Z/ZAux.html ../Z/ZDivModAux.html ../Z/ZPowerAux.html Basic_type.html
 GenAdd.html: GenAdd.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html GenBase.html
@@ -55,17 +123,15 @@ GenLift.html: GenLift.v ../Z/ZAux.html ../Z/ZPowerAux.html ../Z/ZDivModAux.html 
 GenDivn1.html: GenDivn1.v ../Z/ZDivModAux.html ../Z/ZPowerAux.html Basic_type.html GenBase.html
 GenDiv.html: GenDiv.v ../Z/ZAux.html ../Z/ZDivModAux.html ../Z/ZPowerAux.html Basic_type.html GenBase.html GenDivn1.html GenAdd.html GenSub.html
 GenSqrt.html: GenSqrt.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html GenBase.html
-ZnZ.html: ZnZ.v Basic_type.html GenBase.html
+ZnZ.html: ZnZ.v ../Tactic/Tactic.html Basic_type.html GenBase.html
 Zn2Z.html: Zn2Z.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html GenBase.html GenAdd.html GenSub.html GenMul.html GenSqrt.html GenLift.html GenDivn1.html GenDiv.html ZnZ.html
 GenWord.html: GenWord.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html GenBase.html GenAdd.html GenSub.html GenMul.html GenLift.html GenDivn1.html GenDiv.html ZnZ.html Zn2Z.html
 W.html: W.v Basic_type.html ZnZ.html Zn2Z.html W/W8/W8_op.html W/W8/W8_op_spec.html
 Lucas.html: Lucas.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html ZnZ.html W.html Mod_op.html ../PrimalityTest/LucasLehmer.html
-Pock.html: Pock.v ../Z/ZAux.html ../PrimalityTest/LucasLehmer.html ../PrimalityTest/Pocklington.html ZnZ.html ../Z/Zmisc.html ../Z/Pmod.html Mod_op.html W.html Lucas.html ../PrimalityTest/PocklingtonCertificat.html
+Pock.html: Pock.v ../Z/ZAux.html ../PrimalityTest/LucasLehmer.html ../PrimalityTest/Pocklington.html ZnZ.html ../Z/Zmisc.html ../Z/Pmod.html Mod_op.html W.html Lucas.html ../PrimalityTest/PocklingtonCertificat.html NEll.html
 Mod_op.html: Mod_op.v ../Z/ZDivModAux.html Basic_type.html ZnZ.html Zn2Z.html GenBase.html GenLift.html
 Nbasic.html: Nbasic.v Basic_type.html
-NMake.html: NMake.v Basic_type.html ZnZ.html Zn2Z.html Nbasic.html GenMul.html GenDivn1.html Lucas.html
+NMake.html: NMake.v Basic_type.html ZnZ.html Zn2Z.html Nbasic.html GenMul.html GenDivn1.html
 ZMake.html: ZMake.v
-Arith.html: Arith.v W/W2/W2_op.html W/W2/W2_op_spec.html NMake.html ZMake.html
-QMake.html: QMake.v Arith.html
-Q.html: Q.v Arith.html
-Q.html: Q.v Arith.html
+Arith.html: Arith.v W/W8/W8_op.html W/W8/W8_op_spec.html NMake.html ZMake.html
+NEll.html: NEll.v ../Z/ZAux.html ../Z/ZDivModAux.html Basic_type.html ZnZ.html W.html Mod_op.html ../elliptic/ZEll.html ../Z/Zmod.html
