@@ -209,9 +209,5 @@ apply (Pocklington_refl
          (Proof_certif 19 prime19) ::
          (Proof_certif 2 prime2) ::
           nil)).
- exact_no_check (refl_equal true).
-Qed.
-
-
 exact_no_check (refl_equal true).
 Time Qed.
