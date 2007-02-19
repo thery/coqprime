@@ -1,0 +1,19 @@
+-I ..
+-I ../../Tactic
+-I ../../N
+-I ../../Z
+-I ../../PrimalityTest
+-I ../../List
+-I ../../elliptic
+-I ../../num
+-I ../../num/W/W8
+
+prime1.v
+prime2.v
+prime3.v
+prime4.v
+prime5.v
+prime6.v
+prime7.v
+prime8.v
+prime9.v

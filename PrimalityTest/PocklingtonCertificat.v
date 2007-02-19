@@ -23,6 +23,7 @@ Inductive singleCertif : Set :=
  | Proof_certif : forall N:positive, prime N -> singleCertif
  | Lucas_certif : forall (n:positive) (p: Z), singleCertif
  | Pock_certif : forall N a : positive, dec_prime -> positive -> singleCertif
+ | SPock_certif : forall N a : positive, dec_prime -> singleCertif
  | Ell_certif: forall (N S: positive) (l: list (positive * positive))
                       (A B x y: Z), singleCertif.
 
@@ -33,6 +34,7 @@ Definition nprim sc :=
  | Proof_certif n _ => n
  | Lucas_certif n _ => n
  | Pock_certif n _ _ _ => n
+ | SPock_certif n _ _ => n
  | Ell_certif n _ _ _ _ _ _ => n
  
  end.
@@ -226,6 +228,8 @@ Fixpoint test_Certif (lc : Certif) : bool :=
     if test_pock n a dec sqrt then 
      if all_in lc dec then test_Certif lc else false
     else false
+(* Shoudl be done later to do it with Z *)
+  | (SPock_certif n a dec) :: lc => false
   | (Ell_certif _ _ _ _ _ _ _):: lc => false
   end.
 
@@ -741,7 +745,9 @@ apply (test_pock_correct N a d p); mauto.
  intros k Hin;destruct (all_in_In _ _ H1 _ Hin) as (c,(H2,H3)).
  rewrite H3;auto.
 discriminate.
+discriminate.
  destruct a;elimif;auto.
+discriminate.
 discriminate.
 Qed.
 

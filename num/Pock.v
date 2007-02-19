@@ -549,6 +549,243 @@ rewrite <- HH1; rewrite <- HH2.
 apply check_s_r_correct with sqrt; auto.
 Qed.
 
+(* Simple version of pocklington for primo *)
+Definition test_spock N a dec := 
+  if (2 ?< N) then
+    let Nm1 := Ppred N in
+    let F1 := mkProd dec in
+    match (Nm1 / F1)%P with
+    | (Npos R1, N0) =>
+          if (1 ?< a) then
+            if (a ?< N) then
+              if (N ?< F1 * F1) then
+              let op := cmk_op (nat_of_P (pheight (N + 1)) - 3) in
+              let wN := znz_of_Z op (Zpos N) in
+              let wa := znz_of_Z op (Zpos a) in
+              let w1 := znz_of_Z op 1 in
+              let mod_op := make_mod_op op wN in
+              let pow := mod_op.(power_mod) in
+              let ttimes := mod_op.(mul_mod) in 
+              let pred:= mod_op.(pred_mod) in
+              let gcd:= op.(znz_gcd) in
+              let A := pow_mod_pred _ mod_op (pow wa R1) dec in
+              match all_pow_mod _ mod_op w1 A dec with
+              | (p, aNm1) =>
+                match znz_to_Z op aNm1 with 
+                  (Zpos xH) => 
+                   match znz_to_Z op (gcd p wN) with 
+                   (Zpos xH) => true
+                   | _ => false
+                   end
+                 | _ => false
+                end             
+              end else false
+           else false
+         else false
+    | _=> false
+    end      
+  else false.
+
+Lemma test_spock_correct : forall N a dec,
+   (forall k, In k dec -> prime (Zpos (fst k))) ->
+   test_spock N a dec = true ->
+   prime N.
+unfold test_spock;intros N a dec H.
+match goal with |- context[if ?x then _ else _] =>
+  case_eq x; intros If1; auto
+end.
+2: intros; discriminate.
+match goal with H: (?X ?< ?Y) = true |- _ =>
+  generalize (is_lt_spec X Y); rewrite H; clear H; intros H
+end.
+generalize (div_eucl_spec (Ppred N) (mkProd dec));
+ destruct ((Ppred N) / (mkProd dec))%P as (R1,n).
+simpl fst; simpl snd; intros (H1, H2).
+destruct R1 as [|R1].
+intros; discriminate.
+destruct n.
+2: intros; discriminate.
+match goal with |- context[if ?x then _ else _] =>
+  case_eq x; intros If2; auto
+end.
+match goal with H: (?X ?< ?Y) = true |- _ =>
+  generalize (is_lt_spec X Y); rewrite H; clear H; intros H
+end.
+2: intros; discriminate.
+set (bb := (nat_of_P (pheight (N + 1)) - 3)%nat).
+set (w_op := cmk_op bb).
+assert (op_spec: znz_spec w_op).
+unfold bb, w_op; apply cmk_spec; auto.
+match goal with |- context[if ?x then _ else _] =>
+  case_eq x; intros If3; auto
+end.
+match goal with H: (?X ?< ?Y) = true |- _ =>
+  generalize (is_lt_spec X Y); rewrite H; clear H; intros H
+end.
+match goal with |- context[if ?x then _ else _] =>
+  case_eq x; intros If4; auto
+end.
+match goal with H: (?X ?< ?Y) = true |- _ =>
+  generalize (is_lt_spec X Y); rewrite H; clear H; intros H
+end.
+assert (F0: N < Basic_type.base (znz_digits w_op)).
+unfold w_op, bb, Basic_type.base; rewrite cmk_op_digits; 
+  auto with zarith.
+apply Zlt_le_trans with (N + 1)%positive; auto with zarith.
+rewrite Zpos_plus; auto with zarith.
+apply Zle_trans with (1 := (pheight_correct (N + 1)%positive)).
+apply Zpower_le_monotone; auto with zarith.
+split; auto with zarith.
+apply Zpower_le_monotone; auto with zarith.
+split; auto with zarith.
+case (le_or_lt 3 (nat_of_P (pheight (N + 1)))); intros A2.
+rewrite inj_minus1; simpl; auto with arith zarith.
+rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+rewrite inj_minus2; simpl; auto with zarith.
+generalize (inj_le (nat_of_P (pheight (N + 1))) 3); simpl; auto with zarith.
+rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+assert (F1: znz_to_Z w_op (znz_of_Z w_op N) = N).
+rewrite znz_of_Z_correct; auto with zarith.
+assert (F2: 1 < znz_to_Z w_op (znz_of_Z w_op N)).
+rewrite F1; auto with zarith.
+assert (F3: 0 < znz_to_Z w_op (znz_of_Z w_op N)); auto with zarith.
+assert (F4: znz_to_Z w_op (znz_of_Z w_op a) = a).
+rewrite znz_of_Z_correct; auto with zarith.
+assert (F5: znz_to_Z w_op (znz_of_Z w_op 1) = 1).
+rewrite znz_of_Z_correct; auto with zarith.
+assert (F6: N - 1 = (R1 * mkProd_pred dec)%positive * mkProd' dec).
+rewrite Zpos_mult.
+rewrite <- Zmult_assoc; rewrite mkProd_pred_mkProd; auto with zarith.
+simpl in H1; rewrite Zpos_mult in H1; rewrite <- H1; rewrite Ppred_Zminus;
+  auto with zarith.
+assert (m_spec: mod_spec w_op (znz_of_Z w_op N) 
+                  (make_mod_op w_op (znz_of_Z w_op N))).
+apply make_mod_spec; auto with zarith.
+match goal with |- context[all_pow_mod ?x ?y ?z ?t ?u] =>
+  generalize (fst_all_pow_mod x w_op op_spec _ F3 _ m_spec 
+               u (znz_of_Z w_op a) (R1*mkProd_pred dec) z t);
+  generalize (snd_all_pow_mod x w_op op_spec _ F3 _ m_spec u z t);
+  fold bb w_op;
+  case (all_pow_mod x y z t u); simpl fst; simpl snd 
+end.
+2: intros; discriminate.
+intros prod aNm1; intros H5 H6.
+case_eq (znz_to_Z w_op aNm1).
+intros; discriminate.
+2: intros; discriminate.
+intros p; case p; clear p.
+intros; discriminate.
+intros; discriminate.
+intros If5.
+case_eq (znz_to_Z w_op (znz_gcd w_op prod (znz_of_Z w_op N))).
+intros; discriminate.
+2: intros; discriminate.
+intros p; case p; clear p.
+intros; discriminate.
+intros; discriminate.
+intros If6 _.
+assert (U1: N - 1 = mkProd dec * R1).
+rewrite <- Ppred_Zminus in H1; auto with zarith.
+rewrite H1; simpl.
+repeat rewrite Zpos_mult; auto with zarith.
+apply PocklingtonCorollary1 with (F1:=mkProd dec) (R1:=R1);
+  auto with zmisc zarith.
+case (Zle_lt_or_eq 1 (mkProd dec)); auto with zarith.
+simpl in H2; auto with zarith.
+intros HH; contradict If4; rewrite Zpos_mult_morphism;
+  rewrite <- HH.
+apply Zle_not_lt; auto with zarith.
+intros p; case p; clear p.
+intros HH; contradict HH.
+apply not_prime_0.
+2: intros p (V1, _); contradict V1; apply Zle_not_lt; red; simpl; intros;
+     discriminate.
+intros p Hprime Hdec; exists (Zpos a);repeat split; auto with zarith.
+apply trans_equal with (2 := If5).
+rewrite H5.
+rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
+rewrite F1.
+rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
+rewrite F1; rewrite F4.
+rewrite <- Zmod_Zpower; auto with zarith.
+rewrite <- Zpower_mult; auto with zarith.
+rewrite mkProd_pred_mkProd; auto with zarith.
+rewrite U1; rewrite Zmult_comm.
+rewrite Zpower_mult; auto with zarith.
+rewrite <- Zmod_Zpower; auto with zarith.
+rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_def_small; auto with zarith.
+rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
+match goal with |- context[?X mod ?Y] =>
+  case (Z_mod_lt X Y); auto with zarith
+end.
+rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
+rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
+match goal with |- context[?X mod ?Y] =>
+  case (Z_mod_lt X Y); auto with zarith
+end.
+rewrite Zmod_def_small; auto with zarith.
+rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
+match goal with |- context[?X mod ?Y] =>
+  case (Z_mod_lt X Y); auto with zarith
+end.
+rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
+match type of H6 with _ -> _ -> ?X =>
+  assert (tmp: X); [apply H6 | clear H6; rename tmp into H6];
+  auto with zarith
+end.
+rewrite F1.
+rewrite F5; rewrite Zmod_def_small; auto with zarith.
+rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
+repeat (rewrite F1 || rewrite F4).
+rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
+repeat (rewrite F1 || rewrite F4).
+rewrite Zpos_mult; rewrite <- Zmod_Zpower; auto with zarith.
+rewrite Zpower_mult; auto with zarith.
+repeat (rewrite F1 || rewrite F4).
+rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_def_small; auto with zarith.
+rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
+match goal with |- context[?X mod ?Y] =>
+  case (Z_mod_lt X Y); auto with zarith
+end.
+repeat (rewrite F1 || rewrite F4).
+rewrite Zmod_def_small; auto with zarith.
+rewrite F5 in H6; rewrite F1 in H6; rewrite F4 in H6.
+case in_mkProd_prime_div_in with (3 := Hdec); auto.
+intros p1 Hp1.
+rewrite <- F6 in H6.
+apply Zis_gcd_gcd; auto with zarith.
+change (rel_prime (a ^ ((N - 1) / p) - 1) N).
+match type of H6 with _ = ?X mod _ =>
+  apply rel_prime_div with (p := X); auto with zarith
+end.
+apply rel_prime_mod_rev; auto with zarith.
+red.
+pattern 1 at 4; rewrite <- If6; rewrite <- H6.
+pattern N at 2; rewrite <- F1.
+apply spec_gcd; auto with zarith.
+assert (foldtmp: forall (A B: Set) (f: A -> B -> A) (P: A -> Prop) l a b,
+  In b l -> (forall x, P (f x b)) ->
+  (forall x y, P x -> P (f x y)) ->
+  P (fold_left f l a)).
+assert (foldtmp0: forall (A B: Set) (f: A -> B -> A) (P: A -> Prop) l a,
+  P a ->
+  (forall x y, P x -> P (f x y)) ->
+  P (fold_left f l a)).
+intros A B f P l; elim l; simpl; auto.
+intros A B f P l; elim l; simpl; auto.
+intros a1 b HH; case HH.
+intros a1 l1 Rec a2 b [V|V] V1 V2; subst; auto.
+apply foldtmp0; auto.
+apply Rec with (b := b); auto with zarith.
+match goal with |- context [fold_left ?f _ _] =>
+ apply (foldtmp _ _ f (fun k => (a ^ ((N - 1) / p) - 1 | k))) 
+   with (b := (p, p1)); auto with zarith
+end.
+intros; discriminate.
+Qed.
+
 Fixpoint test_Certif (lc : Certif) : bool :=
   match lc with
   | nil => true
@@ -574,6 +811,10 @@ Fixpoint test_Certif (lc : Certif) : bool :=
     else false
   | (Pock_certif n a dec sqrt) :: lc =>
     if test_pock n a dec sqrt then 
+     if all_in lc dec then test_Certif lc else false
+    else false
+  | (SPock_certif n a dec) :: lc =>
+    if test_spock n a dec then 
      if all_in lc dec then test_Certif lc else false
     else false
   | (Ell_certif n ss l a b x y) :: lc =>
@@ -614,6 +855,18 @@ case (lucas p); try (intros; discriminate; fail); auto.
 intros N a d p l H.
 generalize (test_pock_correct N a d p).
 case (test_pock N a d p); auto.
+2: intros; discriminate.
+generalize (all_in_In l d).
+case (all_in l d).
+2: intros; discriminate.
+intros H1 H2 H3 c [H4 | H4]; subst; simpl; auto.
+apply H2; auto.
+intros k Hk.
+case H1 with (2 := Hk); auto.
+intros x (Hx1, Hx2); rewrite Hx2; auto.
+intros N a d l H.
+generalize (test_spock_correct N a d).
+case test_spock; auto.
 2: intros; discriminate.
 generalize (all_in_In l d).
 case (all_in l d).
