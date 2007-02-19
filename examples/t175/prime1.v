@@ -190,17 +190,15 @@ apply (Pocklington_refl
 71778143606084754970357243
 2
 ((17114483454002087498893, 1)::nil))
-Type = 2
-Type = 2
-::
-(Ell_certif
-35879420238998087
-1470375
-((24401543731,1)::nil)
-35879419481414183
-8234810772496
-0
-2869636)
-:: (Proof_certif 24401543731 prime24401543731) :: nil)).
+::         (Pock_certif 17114483454002087498893 2 ((1596169, 1)::(3, 1)::(2,2)::nil) 23361245)
+        ::(Pock_certif 1596169 17 ((7, 1)::(3, 1)::(2,3)::nil) 91) ::
+         (Proof_certif 7 prime7) ::
+         (Proof_certif 3 prime3) ::
+         (Proof_certif 2 prime2) ::
+          nil)).
+ exact_no_check (refl_equal true).
+Qed.
+
+
 exact_no_check (refl_equal true).
 Time Qed.
