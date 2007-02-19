@@ -305,6 +305,9 @@ apply (Pocklington_refl
 78608
 17
 289)
-:: (Proof_certif 9163169557 prime9163169557) :: nil)).
+::         (Pock_certif 9163169557 2 ((563, 1)::(2,2)::nil) 1788)
+        ::(Proof_certif 563 prime563) ::
+         (Proof_certif 2 prime2) ::
+          nil)).
 exact_no_check (refl_equal true).
 Time Qed.
