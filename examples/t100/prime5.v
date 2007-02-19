@@ -100,4 +100,3 @@ apply (Pocklington_refl
           nil)).
 exact_no_check (refl_equal true).
 Time Qed.
-;
