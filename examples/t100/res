@@ -1,0 +1,4 @@
+Error while reading ./prime1.v :
+File "./prime1.v", line 35, characters 19-20
+Error: The term "3" has type "positive" while it is expected to have type
+ "dec_prime"

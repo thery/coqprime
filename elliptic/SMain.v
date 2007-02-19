@@ -928,8 +928,14 @@ case (@aux1 x1 y1 x2 y2); auto.
 generalize (Keq_minus_eq_inv Hy3); rewrite Hl; 
   rewrite H; rewrite H0; clear Hy3; intros Hy3.
 field_simplify_eq in Hy3; auto.
+assert (HH: 2 * y2 * (x2 - x1) = 0).
+  rewrite <- Hy3; ring.
+clear Hy3; rename HH into Hy3.
+case (Kmult_integral Hy3); auto; clear Hy3; intros Hy3.
 case (Kmult_integral Hy3); auto; clear Hy3; intros Hy3.
 case Kdiff_2_0; auto.
+case Hd.
+symmetry; apply Keq_minus_eq; auto.
 rewrite <- Hl; rewrite <- Hx3; auto.
 Qed.
 
