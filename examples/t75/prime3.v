@@ -1,6 +1,19 @@
 Require Import PocklingtonRefl.
+
 Set Virtual Machine.
 Open Local Scope positive_scope.
+
+Lemma prime2364816956681 : prime 2364816956681.
+Proof.
+ apply (Pocklington_refl
+         (Pock_certif 2364816956681 3 ((137, 1)::(71, 1)::(2,3)::nil) 41614)
+        ((Proof_certif 137 prime137) ::
+         (Proof_certif 71 prime71) ::
+         (Proof_certif 2 prime2) ::
+          nil)).
+ exact_no_check (refl_equal true).
+Qed.
+
 Lemma prime345678901234567890123456789012345678901234567890123456789012345678901234867: prime  345678901234567890123456789012345678901234567890123456789012345678901234867.
 apply (Pocklington_refl 
 
@@ -65,14 +78,21 @@ apply (Pocklington_refl
 0
 61440
 16
-256)::
-  (Pock_certif 126315396468405112769531077 2 ((3499279132987235387, 1)::(
-2,2)::nil) 1)
-        ::(Pock_certif 3499279132987235387 2 ((11335459870643, 1)::(2,1)::nil) 1)
- ::
-         (Pock_certif 11335459870643 2 ((17099, 1)::(2,1)::nil) 18561) ::
-         (Proof_certif 17099 prime17099) ::
-         (Proof_certif 2 prime2) ::
-          nil)).
+256)
+::
+(Ell_certif
+126315396468405112769531077
+1502431642
+((84073972443922913,1)::nil)
+63157698234202556384765579
+0
+18
+81)
+::
+(SPock_certif 
+84073972443922913
+2
+((2364816956681, 1)::nil))
+:: (Proof_certif 2364816956681 prime2364816956681) :: nil)).
 exact_no_check (refl_equal true).
 Time Qed.
