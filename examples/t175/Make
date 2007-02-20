@@ -17,3 +17,5 @@ prime6.v
 prime7.v
 prime8.v
 prime9.v
+-custom "make clean; make -s all > res " "" res
+

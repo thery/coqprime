@@ -89,30 +89,30 @@ COQLIBS=-I .\
 #                                 #
 ###################################
 
-VFILES=prime1234567890123456789012353.v\
-  prime2345678901234567890123567.v\
-  prime3456789012345678901234573.v\
-  prime4567890123456789012345689.v\
-  prime5678901234567890123456797.v\
-  prime6789012345678901234567903.v\
-  prime7890123456789012345678973.v\
-  prime8901234567890123456789017.v\
-  prime9012345678901234567890149.v
+VFILES=prime1.v\
+  prime2.v\
+  prime3.v\
+  prime4.v\
+  prime5.v\
+  prime6.v\
+  prime7.v\
+  prime8.v\
+  prime9.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
 HTMLFILES=$(VFILES:.v=.html)
 GHTMLFILES=$(VFILES:.v=.g.html)
 
-all: prime1234567890123456789012353.vo\
-  prime2345678901234567890123567.vo\
-  prime3456789012345678901234573.vo\
-  prime4567890123456789012345689.vo\
-  prime5678901234567890123456797.vo\
-  prime6789012345678901234567903.vo\
-  prime7890123456789012345678973.vo\
-  prime8901234567890123456789017.vo\
-  prime9012345678901234567890149.vo
+all: prime1.vo\
+  prime2.vo\
+  prime3.vo\
+  prime4.vo\
+  prime5.vo\
+  prime6.vo\
+  prime7.vo\
+  prime8.vo\
+  prime9.vo
 
 spec: $(VIFILES)
 
