@@ -19,17 +19,22 @@ first: $(OFIRSTPRIMES)
 nextprime: nextprime.c nextprime.o
 	$(CC) -g -O2  -o nextprime nextprime.o  $(ECMDIR)libecm.a -lgmp -lm 
 
-all: 
+all:   
 	make pock
 	make first
+	make nextprime
+	make o2v
 
 clean:
-	rm -f *~ *.o pocklington firstprimes
+	rm -f *~ *.o pocklington firstprimes nextprime o2v
 
 
 .SUFFIXES: .v .vo .c .o
 
 .c.o:
 	$(CC) -I$(GMPDIR) -I$(ECMDIR) -Wall -pedantic -c $<
+
+o2v: parser.ml
+	ocamlc -o o2v nums.cma str.cma parser.ml
 
 
