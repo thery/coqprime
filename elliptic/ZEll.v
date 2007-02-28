@@ -444,9 +444,11 @@ Section Nell.
 
   Let p_pos:= GZnZ.p_pos _ p_prime.
 
-  Let to_p x := mkznz _ _ (modz _  p_pos x).
-
   Definition pK := (znz p).
+
+  Let to_p x:pK := mkznz _ _ (modz _  p_pos x).
+
+  Notation "x :%p" := (to_p x) (at level 30).
 
   Definition pkO: pK := (zero _ p_pos). 
  
@@ -472,23 +474,26 @@ Section Nell.
                       pkdiv pkinv (@eq pK)
                := (FZpZ _ p_prime).
 
-  Infix "+" := pkplus.
-  Infix "*" := pkmul.
-  Infix "-" := pksub.
+  (* K notations *)
+  Notation "x + y" := (pkplus x y).  Notation "x * y " := (pkmul x y). 
+  Notation "x - y " := (pksub x y). Notation "- x" := (pkopp x).
+  Notation "/ x" := (pkinv x). Notation "x / y" := (pkdiv x y).
+  Notation "0" := pkO.
   Notation "1" := pkI.
-
+  Notation "2" := (1+1).
+  Notation "3" := (1+1 +1).
   (* Non singularity *)
-  Notation "4" := ((1 + 1) * (1 + 1)).
-  Notation "27" := ((1 + 1 + 1) * (1 + 1 + 1) * (1 + 1 + 1)).
+  Notation "4" := (2 * 2).
+  Notation "27" := (3 * 3 * 3).
+ 
+  Add Field KFth : pKfth.
 
 
-  Add Field KFth : pKfth. 
-
-
-  Lemma pNonSingular: 4 * pA * pA * pA  + 27 * pB * pB <> pkO.
+  Lemma pNonSingular: 4 * pA * pA * pA  + 27 * pB * pB <> 0.
   Proof.
   assert (F1 := p_pos).
-  intros H; generalize (znz_inj _ _ _ H); simpl val.
+  intros H; generalize (znz_inj _ _ _ H).
+  unfold pkO,pkI,pA, pB, to_p, zero, one, pkplus, GZnZ.add, pkmul, mul, val.
   repeat match goal with |- ?t = 0 mod p -> _ =>
    rmod t; auto
   end.
@@ -504,14 +509,14 @@ Section Nell.
 
   (* Characteristic greater than 3 *)
 
-  Lemma pone_not_zero: 1 <> pkO.
+  Lemma pone_not_zero: 1 <> 0.
   Proof.
   intros H; generalize (znz_inj _ _ _ H); simpl val.
   repeat (rewrite Zmod_def_small); generalize (prime_le_2 _ p_prime); 
     auto with zarith.
   Qed.
  
-  Lemma ptwo_not_zero: (1 + 1) <> pkO.
+  Lemma ptwo_not_zero: 2 <> 0.
   Proof.
   intros H; generalize (znz_inj _ _ _ H); simpl val.
   repeat (rewrite Zmod_def_small); generalize (prime_le_2 _ p_prime); 
@@ -526,7 +531,7 @@ Section Nell.
     intros; exact false.
   Defined.
  
-  Lemma pis_zero_correct: forall k, pis_zero k = true <-> k = pkO.
+  Lemma pis_zero_correct: forall k: pK, pis_zero k = true <-> k = 0.
   Proof.
   assert (F0 := p_pos).
   intros (k, Hk); generalize Hk; case k; simpl.
@@ -576,7 +581,7 @@ Section Nell.
   intros _ H1 H2; assert (H3:= H1 H2); discriminate.
   Qed.
 
-  Lemma inversible_is_not_k0: forall x, [x] -> to_p x <> pkO.
+  Lemma inversible_is_not_k0: forall x, [x] -> x :%p  <> 0.
   Proof.
   intros x1 (k, Hk) H1.
   assert (F2: 2 < p).
@@ -595,7 +600,7 @@ Section Nell.
   Qed.
 
   Lemma inversible_is_zero: forall x, 
-    [x] -> pis_zero (to_p x) = false.
+    [x] -> pis_zero (x :%p) = false.
   Proof.
   intros x1 H1.
   case (pis_zero_correct (to_p x1)); case pis_zero; auto.
@@ -604,12 +609,11 @@ Section Nell.
   case (@inversible_is_not_k0 x1); auto.
   Qed.
 
-  Lemma to_p_nmul: forall x y,
-    to_p (x ** y) =  to_p x * to_p y.
+  Lemma to_p_nmul: forall x y, (x ** y):%p =  x:%p * y:%p.
   Proof.
   intros x y.
   unfold nmul, to_p, pkmul, mul.
-  apply zirr; simpl.
+  unfold pK; apply zirr; simpl.
   assert (F1:= p_pos).
   rewrite <- Zmod_div_mod; auto.
   rewrite Zmod_mult; auto.
@@ -617,7 +621,7 @@ Section Nell.
   Qed.
 
   Lemma to_p_pow: forall x n,
-    to_p (x ^ (Z_of_nat n)) =  pow pkI pkmul (to_p x) n.
+     (x ^ (Z_of_nat n)):%p  =  pow pkI pkmul (x:%p) n.
   Proof.
   intros x n; elim n; clear n.
     simpl Z_of_nat; simpl pow; rewrite Zpower_exp_0; auto.
@@ -627,48 +631,47 @@ Section Nell.
   rewrite tmp; clear tmp.
   rewrite <- Hrec; rewrite <- to_p_nmul.
   rewrite Zpower_exp_1; rewrite Zmult_comm.
-  unfold to_p, nmul, pkmul; apply zirr; simpl.
+  unfold to_p, nmul, pkmul, pK; apply zirr; simpl.
   assert (F1:= p_pos).
   rewrite <- Zmod_div_mod; auto with zarith.
   Qed.
 
-  Lemma to_p_nplus: forall x y,
-    to_p (x ++ y) = to_p x + to_p y.
+  Lemma to_p_nplus: forall x y, (x ++ y):%p = x:%p + y:%p.
   Proof.
   intros x y.
   unfold nplus, to_p, pkplus, GZnZ.add.
-  apply zirr; simpl.
+  unfold pK; apply zirr; simpl.
   assert (F1:= p_pos).
   rewrite <- Zmod_div_mod; auto.
   rewrite Zmod_plus; auto.
   generalize N_lt_2; auto with zarith.
   Qed.
 
-  Lemma to_p_nsub: forall x y,
-    to_p (x -- y) = to_p x - to_p y.
+  Lemma to_p_nsub: forall x y, (x -- y):%p = x:%p - y:%p.
   Proof.
   intros x y.
   unfold nsub, to_p, pksub, GZnZ.sub.
-  apply zirr; simpl.
+  unfold pK; apply zirr; simpl.
   assert (F1:= p_pos).
   rewrite <- Zmod_div_mod; auto.
   rewrite Zmod_minus; auto.
   generalize N_lt_2; auto with zarith.
   Qed.
 
-  Lemma to_p_2: to_p 2 = 1 + 1.
+  Lemma to_p_2: 2:%p = 2.
   Proof.
-  unfold to_p, pkplus, pkI, GZnZ.add; apply zirr; simpl.
+  unfold to_p, pkplus, pkI, GZnZ.add, pK; apply zirr; simpl.
   assert (F1:= p_pos).
   rewrite <- Zmod_plus; auto.
   Qed.
 
-  Lemma to_p_3: to_p 3 = 1 + (1 + 1).
+  Lemma to_p_3: 3:%p = 3.
   Proof.
-  unfold to_p, pkplus, pkI, GZnZ.add; apply zirr; simpl.
+  unfold to_p, pkplus, pkI, GZnZ.add, pK; apply zirr; simpl.
   assert (F1:= p_pos).
-  rewrite <- (fun x => Zmod_plus x 1); auto.
-  rewrite <- Zmod_plus; auto.
+  repeat match goal with |- _ = ?t =>
+   rmod t; auto
+  end.
   Qed.
 
   Ltac to_p_tac :=  repeat (rewrite to_p_nmul || rewrite to_p_nplus ||
@@ -676,7 +679,7 @@ Section Nell.
          rewrite to_p_3); auto.
 
   Lemma inversible_kO: forall z1 z2,
-     z2 = pkO -> to_p z1 = z2 -> [z1] -> False.
+     z2 = 0 -> z1:%p = z2 -> [z1] -> False.
   Proof.
   intros z1 z2 H1 H2 H3.
   generalize (inversible_is_not_k0 H3).
@@ -694,8 +697,8 @@ Section Nell.
   Inductive equiv: nelt -> elt -> Prop :=
      z_equiv:equiv nzero inf_elt
   |  n_equiv: forall x y z x1 y1 H,
-      pkdiv (to_p x) (to_p z) = x1 -> 
-      pkdiv (to_p y) (to_p z) = y1 -> 
+      x:%p / z:%p = x1 -> 
+      y:%p / z:%p  = y1 -> 
       equiv (ntriple x y z) (@curve_elt x1 y1 H).
 
   Infix "=~=" := equiv (at level 40, no associativity).
@@ -776,7 +779,7 @@ Section Nell.
   end; repeat case Kdec; auto.
   intros; constructor.
   intros n e K1 K2 K3 U1; subst y.
-   match type of K2 with ?X = 0 =>
+   match type of K2 with ?X = 0%Z =>
      cut ((to_p X) = pkO); [idtac | rewrite K2; auto];
      to_p_tac; clear K2; intros K2
    end.
@@ -787,7 +790,7 @@ Section Nell.
   intros n K1 K2 K3 U1.
    case n; subst x1 x2.
     field_simplify_eq; auto.
-    match type of K3 with ?X = 0 =>
+    match type of K3 with ?X = 0%Z =>
        cut ((to_p X) = pkO); [idtac | rewrite K3; auto];
        to_p_tac; clear K3; intros K3
     end.
@@ -796,7 +799,7 @@ Section Nell.
     end.
     rewrite <- K3; ring.
    intros K1 K2 K3 K4 _ U1; subst y1 y2.
-   match type of K4 with ?X = 0 =>
+   match type of K4 with ?X = 0%Z =>
      cut ((to_p X) = pkO); [idtac | rewrite K4; auto];
      to_p_tac; clear K4; intros K4
    end.
@@ -829,7 +832,7 @@ Section Nell.
      apply ptwo_not_zero.
    intros n K1 K2 K3; case n; subst x1 x2.
      field_simplify_eq; auto.
-     match type of K3 with ?X = 0 =>
+     match type of K3 with ?X = 0%Z =>
        cut ((to_p X) = pkO); [idtac | rewrite K3; auto];
        to_p_tac; clear K3; intros K3
      end.
@@ -854,7 +857,7 @@ Section Nell.
      change (znz p) with pK; ring [HH1].
    intros n K1 K2 K3.
      case n; subst x1 x2; field_simplify_eq; auto.
-     match type of K2 with ?X = 0 =>
+     match type of K2 with ?X = 0%Z =>
        cut ((to_p X) = pkO); [idtac | rewrite K2; auto];
        to_p_tac; clear K2; intros K2
      end.
@@ -942,7 +945,7 @@ Section Nell.
     apply (FELLK_in pell_theory _ (in_all_znz _ p_pos)).
  intros l; elim l; auto; clear l.
  intros sc a1 p1 H H1.
- change (Zmull List.nil) with 1%positive.
+ change (Zmull List.nil) with (1%positive).
  rewrite gpow_1; auto.
  intros a l Hrec sc a1 p1 H1 H2.
  rewrite Zmull_cons.

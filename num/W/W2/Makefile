@@ -46,7 +46,7 @@ OPT=
 COQFLAGS=-q $(OPT) $(COQLIBS) $(OTHERFLAGS) $(COQ_XML)
 COQC=$(COQBIN)coqc
 GALLINA=gallina
-COQDOC=coqdoc
+COQDOC=$(COQBIN)coqdoc
 CAMLC=ocamlc -c
 CAMLOPTC=ocamlopt -c
 CAMLLINK=ocamlc
@@ -112,7 +112,8 @@ VFILES=W2_add_carry_c_spec.v\
   W2_sub_spec.v\
   W2_sub.v\
   W2_succ_c_spec.v\
-  W2_sqrt.v
+  W2_sqrt.v\
+  W2_sqrt_spec.v
 VOFILES=$(VFILES:.v=.vo)
 VIFILES=$(VFILES:.v=.vi)
 GFILES=$(VFILES:.v=.g)
@@ -154,7 +155,8 @@ all: W2_add_carry_c_spec.vo\
   W2_sub_spec.vo\
   W2_sub.vo\
   W2_succ_c_spec.vo\
-  W2_sqrt.vo
+  W2_sqrt.vo\
+  W2_sqrt_spec.vo
 
 spec: $(VIFILES)
 
