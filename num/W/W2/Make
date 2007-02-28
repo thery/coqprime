@@ -37,3 +37,4 @@ W2_sub_spec.v
 W2_sub.v
 W2_succ_c_spec.v
 W2_sqrt.v
+W2_sqrt_spec.v

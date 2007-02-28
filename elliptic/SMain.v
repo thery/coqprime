@@ -18,32 +18,31 @@ Section ELLIPTIC.
  (* Test to zero *)
  Variable is_zero: K -> bool.
 
- Infix "+" := kplus.
- Infix "*" := kmul.
+(* K notations *)
+ Notation "x + y" := (kplus x y).  Notation "x * y " := (kmul x y). 
+ Notation "x - y " := (ksub x y). Notation "- x" := (kopp x).
+ Notation "/ x" := (kinv x). Notation "x / y" := (kdiv x y).
+ Notation "0" := kO.
  Notation "1" := kI.
+ Notation "2" := (1+1).
+ Notation "3" := (1+1 +1).
 
 
  (* Non singularity *)
- Notation "4" := ((1 + 1) * (1 + 1)).
- Notation "27" := ((1 + 1 + 1) * (1 + 1 + 1) * (1 + 1 + 1)).
+ Notation "4" := (2 * 2).
+ Notation "27" := (3 * 3 * 3).
  
  Record ell_theory: Prop := mk_ell_theory {
 
  (* field properties *)
     Kfth :  field_theory kO kI kplus kmul ksub kopp kdiv kinv (@eq K);
-    NonSingular: 4 * A * A * A  + 27 * B * B <> kO;
+    NonSingular: 4 * A * A * A  + 27 * B * B <> 0;
  (* Characteristic greater than 2 *)
-    one_not_zero: 1 <> kO;
-    two_not_zero: (1 + 1) <> kO;
-    is_zero_correct: forall k, is_zero k = true <-> k = kO
+    one_not_zero: 1 <> 0;
+    two_not_zero: 2 <> 0;
+    is_zero_correct: forall k, is_zero k = true <-> k = 0
   }.
 
-(* K notations *)
-Notation "0" := kO. Notation "1" := kI.
-Notation "x + y" := (kplus x y).  Notation "x * y " := (kmul x y).
-Notation "x - y " := (ksub x y). Notation "- x" := (kopp x).
-Notation "/ x" := (kinv x). Notation "x / y" := (kdiv x y).
-Notation "2" := (1 + 1).
 
 Variable Eth: ell_theory.
 
@@ -327,11 +326,6 @@ left; apply curve_elt_irr; auto.
 right; unfold opp; apply curve_elt_irr; auto.
 apply Keq_minus_eq; rewrite <- H4; ring.
 Qed.
-
-Notation "2" := (1 + 1).
-Notation "3" := (1 + (1 + 1)).
-Notation "4" := (1 + (1 + (1 + 1))).
-Notation "64" := (2 * (2 * (2 * (2 * (2 * 2))))).
 
 Lemma add_lem1: forall x1 y1,
  y1 <> 0 ->
