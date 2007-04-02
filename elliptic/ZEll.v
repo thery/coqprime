@@ -23,21 +23,23 @@ Section Nell.
  Hypothesis NonSingular: rel_prime N (4 * A * A * A  + 27 * B * B).
 
  Inductive nelt: Set :=
-   nzero | ntriple: Z -> Z -> Z  -> nelt | nstop.
+   nzero | ntriple: Z -> Z -> Z  -> nelt.
 
  Definition nplus x y := (Zmod (x + y) N).
  Definition nmul x y := (Zmod (x * y) N).
  Definition nsub x y := (Zmod (x - y) N).
+ Definition ninv x := (Zmod (-x) N).
 
  Notation "x ++ y " := (nplus x y) (at level 50, left associativity).
  Notation "x -- y" := (nsub x y) (at level 50, left associativity).
  Notation "x ** y" := (nmul x y) (at level 40, left associativity).
+ Notation "-- x" := (ninv x) (at level 40, left associativity).
+
  Notation "x ?= y" := (Zeq_bool x y).
 
  Definition ndouble := fun (sc: Z) (p1: nelt) =>
  match p1 with
   nzero => (p1, sc)
- | nstop => (nstop, sc)
  | (ntriple x1 y1 z1) =>
     if (y1 ?= 0) then (nzero, z1 ** sc) else
      (* we do 2p *)
@@ -57,8 +59,6 @@ Section Nell.
  match p1, p2 with
   nzero, _ => (p2, sc)
  | _ , nzero => (p1, sc)
- | nstop, _ => (nstop, sc)
- | _, nstop => (nstop, sc)
  | (ntriple x1 y1 z1), (ntriple x2 y2 z2) =>
   let d1 := x2 ** z1 in
   let d2 := x1 ** z2 in
@@ -100,7 +100,14 @@ Section Nell.
    apply Zmod_def_small; split; auto with zarith.
  Qed. 
 
+
  Notation "[ x ]" := (inversible N x).
+
+ Lemma inversible_0: ~[0].
+ Proof.
+ intros HH; inversion_clear HH as [xz H1]. 
+ rewrite Zmod_def_small in H1; auto with zarith.
+ Qed.
 
  Lemma inversible_mult_inv: forall x y, [x ** y] -> [x] /\ [y].
  Proof.
@@ -160,7 +167,6 @@ Section Nell.
    repeat split; auto; try constructor; auto; repeat itac.
  intros H; inversion_clear H; auto.
  repeat split; auto; try constructor; repeat itac; auto.
- intros H; inversion H.
  Qed.
 
  Lemma nInversible_add: forall sc x y,
@@ -187,76 +193,95 @@ Section Nell.
  repeat split; auto; try constructor; repeat itac.
  intros H; inversion_clear H; auto.
  repeat split; auto; try constructor; repeat itac.
- intros H; inversion_clear H; auto.
- case y; intros; inversion H.
  Qed.
 
 
- Fixpoint npow (sc: Z) (a: nelt) (p: positive) {struct p}:
+ Definition nopp p := 
+   match p with nzero => p | (ntriple x1 y1 z1) => (ntriple x1 (-- y1) z1) end.
+
+ Fixpoint scalb (sc: Z) (b:bool) (a: nelt) (p: positive) {struct p}:
    nelt * Z :=
    match p with
-     xH => (a, sc)
-   | xO p1 => let (a1, sc1) := npow sc a p1 in
-              ndouble sc1 a1
-   | xI p1 => let (a1, sc1) := npow sc a p1 in
-              let (a2, sc2) := ndouble sc1 a1 in
-              nadd sc2 a a2
+     xH => if b then ndouble sc a else (a,sc)
+   | xO p1 => let (a1, sc1) := scalb sc false a p1 in
+              if b then 
+                let (a2, sc2) := ndouble sc1 a1 in
+                nadd sc2 a a2
+              else ndouble sc1 a1
+   | xI p1 => let (a1, sc1) := scalb sc true a p1 in
+              if b then  ndouble sc1 a1
+              else
+              let (a2, sc2) := ndouble sc1 a1 in 
+              nadd sc2 (nopp a) a2
    end.
 
- Lemma nInversible_npow: forall sc a1 p1,
-  [[npow sc a1 p1]] -> [[(a1,1%Z)]] /\ [sc].
+ Definition scal sc a p := scalb sc false a p.
+
+ Lemma nInversible_scalb: forall b sc a1 p1,
+  [[scalb sc b a1 p1]] -> [[(a1,1%Z)]] /\ [sc].
  Proof.
  assert (F1 := N_lt_2).
  assert (F2: [1]).
    apply inversible_1; auto with zarith.
- intros sc a p0; generalize sc a; elim p0; simpl; auto;
-    clear sc a p0. 
- intros p0 Hrec sc a.
-   generalize (Hrec sc a).
-   case npow.
-   intros a1 sc1 H.
-   generalize (nInversible_double sc1 a1).
-   case ndouble.
-   intros a2 sc2 H1 H2.
-   case (nInversible_add sc2 a a2 H2); intros H3 (H4, H5).
-   split; auto; case H; auto; case H1; auto.
-   inversion_clear H4; try constructor; repeat itac; auto.
-   intros H6 H7; inversion_clear H6; try constructor; 
-      repeat itac; auto.
- intros p0 Hrec sc a.
-   generalize (Hrec sc a).
-   case npow.
-   intros a1 sc1 H.
-   generalize (nInversible_double sc1 a1).
-   case ndouble.
-   intros a2 sc2 H1 H2.
-   apply H.
-   case H1; auto; intros H3 H4.
-   inversion_clear H3; try constructor; auto; repeat itac.
-  intros sc a HH; inversion HH; split; auto; 
-    try constructor; repeat itac; auto.
- Qed.  
+ intros b sc a p0; generalize sc b a; elim p0; simpl; auto;
+    clear sc b a p0. 
+ intros p0 Hrec sc b a.
+   generalize (Hrec sc true a).
+   case scalb.
+   intros a1 sc1 H; case b; intros H1; try apply H; clear b H.
+     case (nInversible_double sc1 a1 H1); auto; clear H1.
+     intros H2 H3; inversion_clear H2; try constructor;
+       repeat itac; auto.
+     generalize H1 (nInversible_double sc1 a1); case ndouble.
+     intros a2 sc2 H2 H3; case H3.
+       generalize (nInversible_add sc2 (nopp a) a2 H2).
+        intros H4; case H4; intros _ [H5 H6].
+        inversion_clear H5; constructor; repeat itac; auto.
+        intros H4; inversion_clear H4; constructor; repeat itac; auto.
+ intros p0 Hrec sc b a.
+   generalize (Hrec sc false a).
+   case scalb.
+   intros a1 sc1 H; case b; intros H1; try apply H; clear b H.
+     generalize H1 (nInversible_double sc1 a1); case ndouble.
+     intros a2 sc2 H2 H3; case H3.
+       generalize (nInversible_add sc2 a a2 H2).
+        intros H4; case H4; intros _ [H5 H6].
+        inversion_clear H5; constructor; repeat itac; auto.
+        intros H4; inversion_clear H4; constructor; repeat itac; auto.
+     case (nInversible_double sc1 a1 H1); auto; clear H1.
+     intros H2 H3; inversion_clear H2; try constructor;
+       repeat itac; auto.
+ intros sc b a; case b; intros H.
+   case (nInversible_double _ _ H); auto; clear H.
+ inversion_clear H; split; try constructor; repeat itac; auto.
+ Qed.
 
-  Definition npowl sc a l :=
+ Lemma nInversible_scal: forall sc a1 p1,
+  [[scal sc a1 p1]] -> [[(a1,1%Z)]] /\ [sc].
+ Proof.
+ exact (nInversible_scalb false).
+ Qed.
+
+  Definition scal_list sc a l :=
    List.fold_left 
-  (fun (asc: nelt * Z) p1 => let (a,sc) := asc in npow sc a p1) l (a,sc).
+  (fun (asc: nelt * Z) p1 => let (a,sc) := asc in scal sc a p1) l (a,sc).
 
- Lemma nInversible_npowl: forall sc a l,
-  [[npowl sc a l]] -> [[(a,1%Z)]] /\ [sc].
+ Lemma nInversible_scal_list: forall sc a l,
+  [[scal_list sc a l]] -> [[(a,1%Z)]] /\ [sc].
  Proof.
  assert (F1 := N_lt_2).
  assert (F2: [1]).
    apply inversible_1; auto with zarith.
- intros sc a l; generalize sc a; unfold npow; 
+ intros sc a l; generalize sc a; unfold scal; 
    elim l; simpl; auto;
     clear sc a l. 
-  intros sc a; unfold npowl; simpl.
+  intros sc a; unfold scal_list; simpl.
     intros HH; inversion_clear HH; split; auto;
       try constructor; repeat itac; auto.
  intros n1 l1 Hrec sc a.
- unfold npowl; simpl.
-   generalize (nInversible_npow sc a n1).
-   case npow.
+ unfold scal_list; simpl.
+   generalize (nInversible_scal sc a n1).
+   case scal.
    intros n z H1 H2.
    case (Hrec _ _ H2).
    intros H3 H4; apply H1; auto.
@@ -275,21 +300,20 @@ Section Nell.
  repeat rewrite List.fold_symmetric; simpl; auto.
  Qed.
 
- Fixpoint npowl1 (sc:Z) (a: nelt) (l: List.list positive) {struct l}: (nelt * Z) :=
+ Fixpoint scalL (sc:Z) (a: nelt) (l: List.list positive) {struct l}: (nelt * Z) :=
    match l with
      List.nil => (a,sc)
    | List.cons n l1 =>
-        let (a1, sc1) := npow sc a n in
-        let (a2, sc2) := npowl sc1 a l1 in
+        let (a1, sc1) := scal sc a n in
+        let (a2, sc2) := scal_list sc1 a l1 in
           match a2 with
-             nzero => (nstop, 0)
-          |  nstop => (nstop, 0)
-          |  ntriple _ _ z => npowl1 (sc2 ** z) a1 l1
+             nzero => (nzero, 0)
+          |  ntriple _ _ z => scalL (sc2 ** z) a1 l1
           end
    end.
 
- Lemma nInversible_npowl1: forall sc a l,
-  [[npowl1 sc a l]] -> [[(a,1%Z)]] /\ [sc].
+ Lemma nInversible_scalL: forall sc a l,
+  [[scalL sc a l]] -> [[(a,1%Z)]] /\ [sc].
  Proof.
  assert (F1 := N_lt_2).
  assert (F2: [1]).
@@ -297,17 +321,18 @@ Section Nell.
  intros sc a l; generalize sc a; 
    elim l; simpl; auto;
     clear sc a l. 
-  intros sc a; unfold npowl; simpl.
+  intros sc a; unfold scal_list; simpl.
     intros HH; inversion_clear HH; split; auto;
       try constructor; repeat itac; auto.
  intros n1 l1 Hrec sc a.
-   generalize (nInversible_npow sc a n1).
-   case npow.
+   generalize (nInversible_scal sc a n1).
+   case scal.
  intros n z H.
-   generalize (nInversible_npowl z a l1).
-   case npowl.
+   generalize (nInversible_scal_list z a l1).
+   case scal_list.
  intros m z1; case m.
-   intros _ HH; inversion HH.
+   intros _ HH; inversion_clear HH.
+   case inversible_0; auto.
  intros x2 y2 z2 H1 H2.
  case (Hrec _ _ H2).
  intros H3 H4.
@@ -317,7 +342,6 @@ Section Nell.
  case H; auto.
  inversion_clear H3; auto; constructor; auto.
  repeat itac.
- intros _ HH; inversion HH.
  Qed.
 
  Lemma Zmull_div: forall a l, List.In a l ->
@@ -705,6 +729,7 @@ Section Nell.
 
   Let pe2e := pe2e pell_theory.
   Let add := add pell_theory.
+  Let opp := opp pell_theory.
   Let pow := pow pkI pkmul.
 
   Lemma nedouble_correct: forall sc n1 p1,
@@ -887,58 +912,139 @@ Section Nell.
      to_p_tac.
   Qed.
 
-
- Lemma npow_correct: forall p sc a1 p1,
-   a1 =~= p1 ->  [[npow sc a1 p]] -> 
-     fst (npow sc a1 p) =~= EGroup.gpow p1 pG p.
+ Lemma nopp_correct: forall a1 p1,
+   a1 =~= p1 -> [[(a1,1%Z)]] -> nopp a1 =~= opp p1.
+ Proof.
+ assert (F0: 0 < p); auto with zarith.
+ intros a1 p1 H; inversion_clear H; simpl; constructor; auto.
+ rewrite <- H2.
+ field_simplify_eq; auto.
+ unfold ninv, pkopp, GZnZ.opp, to_p, pK; apply zirr.
+ simpl; rewrite <- Zmod_div_mod; auto with zarith.
+ pattern y at 1; rewrite (Z_div_mod_eq y p); auto with zarith.
+ rewrite Zopp_plus_distr.
+ rewrite Zopp_mult_distr_r.
+ rewrite Zmult_comm; rewrite Zplus_comm; 
+   rewrite Z_mod_plus; auto with zarith.
+ inversion_clear H.
+ case (inversible_mult_inv _ _ H3); intros _ H4.
+ intros H5; apply (@inversible_kO z 0); auto.
+ Qed.
+  
+ Lemma scalb_correct: forall p sc b a1 p1,
+   a1 =~= p1 ->  [[scalb sc b a1 p]] -> 
+     fst (scalb sc b a1 p) =~= 
+     EGroup.gpow p1 pG (if b then (Psucc p) else p).
  Proof.
  assert (F0: forall p1, List.In p1 (FGroup.s pG)).
     intros p1.
     apply (FELLK_in pell_theory _ (in_all_znz _ p_pos)).
- intros p0; unfold npow; elim p0; clear p0; fold npow.
- intros p0 Hrec sc a1 p1 H1.
- replace (Zpos (xI p0)) with (1 + (Zpos p0 + Zpos p0))%Z.
- repeat rewrite gpow_add; auto with zarith.
- case_eq (npow sc a1 p0); intros a2 sc1 Ha2.
- case_eq (ndouble sc1 a2); intros a3 sc2 Ha3.
- intros H2.
- case (nInversible_add _ _ _ H2).
- intros V1 (V2, V3).
- assert (F1: nInversible (a3, sc2)).
-   inversion_clear V2; constructor; repeat itac; auto.
- rewrite <- Ha3 in F1. 
- case (nInversible_double _ _ F1).
- intros V4 V5.
- assert (F2: nInversible (a2, sc1)).
-   inversion_clear V4; constructor; auto.
-   repeat itac; auto.
- rewrite <- Ha2 in F2. 
- apply neadd_correct; auto.
- rewrite gpow_1; auto.
- change a3 with (fst (a3, sc2)).
- rewrite <- Ha3; apply nedouble_correct; auto.
- change a2 with (fst (a2, sc1)).
- rewrite <- Ha2; apply Hrec; auto.
- rewrite Zpos_xI; ring.
- intros p0 Hrec sc a1 p1 H1.
- replace (Zpos (xO p0)) with (Zpos p0 + Zpos p0)%Z.
- repeat rewrite gpow_add; auto with zarith.
- case_eq (npow sc a1 p0); intros a2 sc1 Ha2.
- intros H2; apply nedouble_correct; auto.
- change a2 with (fst (a2, sc1)).
- rewrite <- Ha2; apply Hrec; auto.
- case (nInversible_double _ _ H2).
- intros V1 V2; rewrite Ha2.
- inversion_clear V1; constructor; auto.
- repeat itac; auto.
- rewrite Zpos_xO; ring.
- intros; rewrite gpow_1; auto.
+ intros p0; unfold scalb; elim p0; clear p0; fold scalb.
+   intros p0 Hrec sc b a1 p1; case b; clear b; intros H1.
+     generalize (Hrec sc true a1 p1 H1)
+                (nInversible_scalb true sc a1 p0); case scalb.
+     intros a2 sc2 H2 H3.
+     generalize (@nedouble_correct sc2 a2)
+                (nInversible_double sc2 a2); case ndouble.
+     intros a3 sc3 H4 H5 H6.
+     case (H5 H6); clear H5; intros H5 H7.
+     simpl Psucc.
+     rewrite Zmisc.Zpos_xO_add.
+     repeat rewrite gpow_add; auto with zarith.
+     apply H4; auto.
+     apply H2.
+     inversion_clear H5; try constructor; repeat itac;
+       auto.
+     generalize (Hrec sc true a1 p1 H1)
+                (nInversible_scalb true sc a1 p0); case scalb.
+     intros a2 sc2 H2 H3.
+     generalize (@nedouble_correct sc2 a2)
+                (nInversible_double sc2 a2); case ndouble.
+     intros a3 sc3 H4 H5.
+     generalize (fun p1 p2 => (@neadd_correct sc3 (nopp a1) p1 a3 p2))
+                (nInversible_add sc3 (nopp a1) a3); case nadd.
+     intros a4 sc4 H6 H7 H8.
+     case (H7 H8); clear H7; intros H7 [H9 H10].
+     case H5; clear H5.
+        inversion_clear H9; try constructor; repeat itac; auto.
+     intros H11 H12.
+     case H3; clear H3.
+        inversion_clear H11; try constructor; repeat itac; auto.
+     intros H13 H14.
+     rewrite Zmisc.Zpos_xI_add.
+     replace (gpow p1 pG (p0 + p0 + 1)) with
+             (add (opp p1) (gpow p1 pG ((Psucc p0) + (Psucc p0)))).
+     apply H6; auto.
+       apply nopp_correct; auto.
+     rewrite gpow_add; auto with zarith.
+     apply H4; auto.
+     apply H2; auto.
+     inversion_clear H11; try constructor; repeat itac; auto.
+     inversion_clear H9; try constructor; repeat itac; auto.
+     rewrite Zmisc.Psucc_Zplus.
+     repeat rewrite gpow_add; auto with zarith.
+     repeat rewrite gpow_1; auto with zarith.
+     unfold add.
+     repeat rewrite add_assoc.
+     apply f_equal2 with (f := SMain.add pell_theory); auto.
+     rewrite add_comm with (p2 := p1).
+     repeat rewrite add_assoc.
+     unfold opp; rewrite add_opp; simpl; auto.
+   intros p0 Hrec sc b a1 p1; case b; clear b; intros H1.
+     generalize (Hrec sc false a1 p1 H1)
+                (nInversible_scalb false sc a1 p0); case scalb.
+     intros a2 sc2 H2 H3.
+     generalize (@nedouble_correct sc2 a2)
+                (nInversible_double sc2 a2); case ndouble.
+     intros a3 sc3 H4 H5.
+     generalize (fun p1 p2 => (@neadd_correct sc3 a1 p1 a3 p2))
+                (nInversible_add sc3 a1 a3); case nadd.
+     intros a4 sc4 H6 H7 H8.
+     case (H7 H8); clear H7; intros H7 [H9 H10].
+     case H5; clear H5.
+        inversion_clear H9; try constructor; repeat itac; auto.
+     intros H11 H12.
+     case H3; clear H3.
+        inversion_clear H11; try constructor; repeat itac; auto.
+     intros H13 H14.
+     simpl Psucc.
+     rewrite Zmisc.Zpos_xI_add.
+     replace (p0 + p0 + 1)%Z with
+             (1 + (p0 + p0))%Z; auto with zarith.
+     repeat rewrite gpow_add; auto with zarith.
+     repeat rewrite gpow_1; auto with zarith.
+     apply H6; auto.
+     apply H4; auto.
+     apply H2; auto.
+     inversion_clear H11; try constructor; repeat itac; auto.
+     inversion_clear H9; try constructor; repeat itac; auto.
+     generalize (Hrec sc false a1 p1 H1)
+                (nInversible_scalb false sc a1 p0); case scalb.
+     intros a2 sc2 H2 H3.
+     generalize (@nedouble_correct sc2 a2)
+                (nInversible_double sc2 a2); case ndouble.
+     intros a3 sc3 H4 H5 H6.
+     case (H5 H6); clear H5; intros H5 H7.
+     rewrite Zmisc.Zpos_xO_add.
+     repeat rewrite gpow_add; auto with zarith.
+     apply H4; auto.
+     apply H2; auto.
+     inversion_clear H5; try constructor; repeat itac; auto.
+  intros sc b a1 p1 H1; case b; intros H2; simpl gpow;
+    rewrite add_0_r; auto.
+  apply nedouble_correct; auto.
+  Qed.
+
+ Lemma scal_correct: forall p sc a1 p1,
+   a1 =~= p1 ->  [[scal sc a1 p]] -> 
+     fst (scal sc a1 p) =~= EGroup.gpow p1 pG p.
+ Proof.
+ intros p1 sc; exact (scalb_correct p1 sc false).
  Qed.
 
-
- Lemma npowl_correct: forall l sc a1 p1,
-   a1 =~= p1 ->  [[npowl sc a1 l]] -> 
-     fst (npowl sc a1 l) =~= EGroup.gpow p1 pG (Zmull l).
+ Lemma scal_list_correct: forall l sc a1 p1,
+   a1 =~= p1 ->  [[scal_list sc a1 l]] -> 
+     fst (scal_list sc a1 l) =~= EGroup.gpow p1 pG (Zmull l).
  Proof.
  assert (F0: forall p1, List.In p1 (FGroup.s pG)).
     intros p1.
@@ -951,23 +1057,23 @@ Section Nell.
  rewrite Zmull_cons.
  rewrite Zmisc.Zpos_mult.
  rewrite gpow_gpow; auto with zarith.
- unfold npowl; simpl List.fold_left.
- case_eq (npow sc a1 a); intros a2 sc2 Ha2.
- change (equiv (fst (npowl sc2 a2 l)) (gpow (gpow p1 pG a) pG (Zmull l))).
+ unfold scal_list; simpl List.fold_left.
+ case_eq (scal sc a1 a); intros a2 sc2 Ha2.
+ change (equiv (fst (scal_list sc2 a2 l)) (gpow (gpow p1 pG a) pG (Zmull l))).
  apply Hrec.
    change a2 with (fst (a2, sc2)).
    rewrite <- Ha2.
-   apply npow_correct; auto.
-   case (nInversible_npowl sc2 a2 l); auto.
-     unfold npowl; simpl; rewrite <- Ha2; auto.
+   apply scal_correct; auto.
+   case (nInversible_scal_list sc2 a2 l); auto.
+     unfold scal_list; simpl; rewrite <- Ha2; auto.
      intros; rewrite Ha2.
      inversion_clear H; constructor; repeat itac; auto.
-   unfold npowl; simpl; rewrite <- Ha2; auto.
+   unfold scal_list; simpl; rewrite <- Ha2; auto.
  Qed.
 
 
- Lemma npowl1_not_1: forall l sc a p1 n,
-    a =~= p1 -> [[npowl1 sc a l]] ->  List.In n l -> 
+ Lemma scalL_not_1: forall l sc a p1 n,
+    a =~= p1 -> [[scalL sc a l]] ->  List.In n l -> 
     gpow p1  pG (Zmull l / n) <> pG.(FGroup.e).
  Proof. 
  assert (F0: forall p1, List.In p1 (FGroup.s pG)).
@@ -976,51 +1082,50 @@ Section Nell.
  intros l; elim l; auto; clear l.
  simpl (List.In).
  intros a l Hrec sc a1 p1 n H H1 [H2 | H2]; subst.
- case (nInversible_npowl1 _ _ _ H1); intros H3 H4.
+ case (nInversible_scalL _ _ _ H1); intros H3 H4.
  rewrite Zmull_cons.
  repeat rewrite Zmisc.Zpos_mult.
  rewrite (Zmult_comm n).
  repeat rewrite Z_div_mult; auto.
- generalize H1; simpl npowl1.
- case npow.
+ generalize H1; simpl scalL.
+ case scal.
  intros n1 sc1.
- generalize (@npowl_correct l sc1 a1 p1 H).
- case npowl.
+ generalize (@scal_list_correct l sc1 a1 p1 H).
+ case scal_list.
  intros n2; case n2; clear n2.
- intros z2 _ HH; inversion HH.
+ intros z2 _ HH; inversion HH; case inversible_0; auto.
  intros x1 y1 z1 sc2 H5 H6 H7.
  rewrite H7 in H5.
  simpl fst in H5.
- case (nInversible_npowl1 _ _ _ H6); intros H8 H9.
+ case (nInversible_scalL _ _ _ H6); intros H8 H9.
  absurd (ntriple x1 y1 z1 =~= FGroup.e pG).
    intros HH; inversion HH.
  apply H5; constructor; auto.
- intros sc2 _ HH; inversion HH.
  red; simpl; auto.
  rewrite Zmull_cons; auto.
  repeat rewrite Zmisc.Zpos_mult.
- case (nInversible_npowl1 _ _ _ H1); intros U1 U2.
+ case (nInversible_scalL _ _ _ H1); intros U1 U2.
  rewrite (Zmull_div n); auto.
  rewrite Zmult_assoc.
  rewrite Z_div_mult; auto.
  rewrite gpow_gpow; auto.
- case (nInversible_npowl1 _ _ _ H1); auto.
+ case (nInversible_scalL _ _ _ H1); auto.
  intros H3 H4.
  generalize H1; simpl nInversible.
-   case_eq (npow sc a1 a).
+   case_eq (scal sc a1 a).
    intros n1 sc1 Hn1.
-   case_eq (npowl sc1 a1 l).
+   case_eq (scal_list sc1 a1 l).
    intros n2 sc2; case n2.
      intros _ HH; inversion HH.
-     2: intros _ HH; inversion HH.
+     case inversible_0; auto.
  intros x1 y1 z1 Hn2 H5.
  apply (@Hrec (sc2 ** z1)%Z n1); auto.
    change n1 with (fst (n1, sc1)).
    rewrite <- Hn1.
-   apply npow_correct; auto.
-   case (nInversible_npowl1 _ _ _ H5).
+   apply scal_correct; auto.
+   case (nInversible_scalL _ _ _ H5).
    intros H6 H7.
-   case (nInversible_npowl sc1 a1 l).
+   case (nInversible_scal_list sc1 a1 l).
      rewrite Hn2; constructor; auto.
    intros H8 H9.
    rewrite Hn1; inversion H6; constructor; auto;
@@ -1032,15 +1137,15 @@ Section Nell.
  Qed.
 
 
- Lemma  npowl1_1: forall l sc a p1,
-  a =~= p1 -> [[npowl1 sc a l]] -> 
-  fst (npowl1 sc a l) =~= gpow p1  pG (Zmull l).
+ Lemma  scalL_1: forall l sc a p1,
+  a =~= p1 -> [[scalL sc a l]] -> 
+  fst (scalL sc a l) =~= gpow p1  pG (Zmull l).
  Proof.
  assert (F0: forall p1, List.In p1 (FGroup.s pG)).
     intros p1.
     apply (FELLK_in pell_theory _ (in_all_znz _ p_pos)).
  intros l; elim l; auto; clear l.
-   simpl npowl1; simpl fst; simpl Zmull.
+   simpl scalL; simpl fst; simpl Zmull.
      unfold Zmull; simpl List.fold_left.
      intros; rewrite gpow_1; auto.
  intros a l Hrec sc a1 p1 H1 H2.
@@ -1049,21 +1154,21 @@ Section Nell.
  rewrite gpow_gpow; auto.
    2: red;simpl; auto; intros HH; discriminate.
   2: red;simpl; auto; intros HH; discriminate.
- generalize H2; simpl nInversible; simpl npowl1.
-   case_eq (npow sc a1 a).
+ generalize H2; simpl nInversible; simpl scalL.
+   case_eq (scal sc a1 a).
    intros n1 sc1 Hn1.
-   case_eq (npowl sc1 a1 l).
+   case_eq (scal_list sc1 a1 l).
    intros n2 sc2; case n2.
      intros _ HH; inversion HH.
-     2: intros _ HH; inversion HH.
+     case inversible_0; auto.
  intros x1 y1 z1 Hn2 H5.
  apply Hrec; auto.
  change n1 with (fst (n1, sc1)).
  rewrite <- Hn1.
- apply npow_correct; auto.
- case (nInversible_npowl1 _ _ _ H5).
+ apply scal_correct; auto.
+ case (nInversible_scalL _ _ _ H5).
  intros H6 H7.
- case (nInversible_npowl sc1 a1 l).
+ case (nInversible_scal_list sc1 a1 l).
  rewrite Hn2; constructor; auto.
  intros H8 H9.
  rewrite Hn1; inversion H6; constructor; auto; repeat itac.
@@ -1102,13 +1207,13 @@ Section pell.
 
  Let z2p x := match x with Zpos p => p | Zneg p => p | Z0 => xH end.
 
- Lemma  npowl1_prime: 
+ Lemma  scalL_prime: 
   let a := ntriple x y 1 in
   let isc := 4 ** A ** A ** A  ++ 27 ** B ** B in
-  let (a1, sc1) := npow N A isc a F in
+  let (a1, sc1) := scal N A isc a F in
   let (S1,R1) := psplit lR in
-  let (a2, sc2) := npow N A sc1 a1 S1 in
-  let (a3, sc3) := npowl1 N A sc2 a2 R1 in
+  let (a2, sc2) := scal N A sc1 a1 S1 in
+  let (a3, sc3) := scalL N A sc2 a2 R1 in
     match a3 with
      nzero => if (Zeq_bool (Zgcd sc3 N) 1) then prime N
               else True
@@ -1117,10 +1222,10 @@ Section pell.
   Proof.
   assert (F0: 0 < N); try auto with zarith.
   intros a isc.
-  case_eq (npow N A isc a F); intros a1 sc1 Ha1.
+  case_eq (scal N A isc a F); intros a1 sc1 Ha1.
   case_eq (psplit lR); intros S1 R1 HS1.
-  case_eq (npow N A sc1 a1 S1); intros a2 sc2 Ha2.
-  case_eq (npowl1 N A sc2 a2 R1); intros a3.
+  case_eq (scal N A sc1 a1 S1); intros a2 sc2 Ha2.
+  case_eq (scalL N A sc2 a2 R1); intros a3.
   case a3; auto.
   intros sc3 Hsc3.
   generalize (Zeqb_ok (Zgcd sc3 N) 1); case Zeq_bool; intros Hz; auto.
@@ -1129,7 +1234,7 @@ Section pell.
   intros p (Hp, (Hp1, Hp2)).
   pose (p_pos:= GZnZ.p_pos _ Hp).
   pose (to_p := fun x =>  mkznz _ _ (modz _  p_pos x)).
-  assert (Ni1: nInversible N (npowl1 N A sc2 a2 R1)).
+  assert (Ni1: nInversible N (scalL N A sc2 a2 R1)).
     rewrite Hsc3; constructor.
     assert (tmp: Bezout sc3 N 1).
       apply Zis_gcd_bezout.
@@ -1139,17 +1244,17 @@ Section pell.
    rewrite Zmult_comm.
    rewrite <- Z_mod_plus with (b := v); auto with zarith.
    rewrite Huv; rewrite Zmod_def_small; auto with zarith.
-  case nInversible_npowl1 with (2 := Ni1); auto with zarith.
+  case nInversible_scalL with (2 := Ni1); auto with zarith.
   intros Nt1 Nt2.
-  assert (Ni2: nInversible N (npow N A sc1 a1 S1)).
+  assert (Ni2: nInversible N (scal N A sc1 a1 S1)).
     rewrite Ha2.
     inversion_clear Nt1; constructor; auto; repeat itac.
-  case nInversible_npow with (2 := Ni2); auto with zarith.
+  case nInversible_scal with (2 := Ni2); auto with zarith.
   clear Nt1 Nt2; intros Nt1 Nt2.
-  assert (Ni3: nInversible N (npow N A isc a F)).
+  assert (Ni3: nInversible N (scal N A isc a F)).
     rewrite Ha1.
     inversion_clear Nt1; constructor; auto; repeat itac.
-  case nInversible_npow with (2 := Ni3); auto with zarith.
+  case nInversible_scal with (2 := Ni3); auto with zarith.
   clear Nt1 Nt2; intros Ni4 Ni5.
   assert (Rp: rel_prime N (4 * A * A * A  + 27 * B * B)).
     case Ni5; intros z1 Hz1.
@@ -1218,22 +1323,22 @@ Section pell.
     rewrite (FZpZ _ Hp).(F_R).(Rmul_comm).
     rewrite (FZpZ _ Hp).(F_R).(Rmul_1_l); auto.
     apply (FZpZ _ Hp).(F_1_neq_0).
-    assert(T1 := npow_correct N_lt_2 N_not_div_2 Rp Hp1 _ _ E1 Ni3).
+    assert(T1 := scal_correct N_lt_2 N_not_div_2 Rp Hp1 _ _ E1 Ni3).
     rewrite Ha1 in T1; simpl fst in T1.
     match type of T1 with equiv _ ?X => 
       set (p1 := X); fold p1 in T1
     end.
-    assert(T2 := npow_correct N_lt_2 N_not_div_2 Rp Hp1 _ _ T1 Ni2).
+    assert(T2 := scal_correct N_lt_2 N_not_div_2 Rp Hp1 _ _ T1 Ni2).
     rewrite Ha2 in T2; simpl fst in T2.
     pose (ppG := pG A B N_not_div_2 Rp Hp Hp1).
     assert (F1: forall p1, List.In p1 (FGroup.s ppG)).
       intros p2.
       apply (FELLK_in pell _ (in_all_znz _ p_pos)).
     assert (F2 := fun u =>
-        @npowl1_not_1 N A B N_lt_2 N_not_div_2 Rp _ Hp Hp1 R1 sc2 _ _ u T2 Ni1).
+        @scalL_not_1 N A B N_lt_2 N_not_div_2 Rp _ Hp Hp1 R1 sc2 _ _ u T2 Ni1).
     fold ppG in F2.
     assert (F3 := 
-        @npowl1_1 N A B N_lt_2 N_not_div_2 Rp _ Hp Hp1 R1 sc2 _ _ T2 Ni1).
+        @scalL_1 N A B N_lt_2 N_not_div_2 Rp _ Hp Hp1 R1 sc2 _ _ T2 Ni1).
     fold ppG in F3.
     rewrite <- psplit_correct in lR_big.
     rewrite HS1 in lR_big; simpl fst in lR_big; simpl snd in lR_big.

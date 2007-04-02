@@ -79,7 +79,7 @@ Definition c1 := Z2z 1.
 Definition c0 := Z2z 0.
 
 Inductive nelt: Set :=
-  nzero | ntriple: zZ -> zZ -> zZ  -> nelt | nstop.
+  nzero | ntriple: zZ -> zZ -> zZ  -> nelt.
 
 Definition pp := ntriple xx yy c1.
 
@@ -96,7 +96,6 @@ Notation "x ?= y" := (neq x y).
 Definition ndouble: zZ -> nelt -> (nelt * zZ):= fun (sc: zZ) (p1: nelt) =>
  match p1 with
   nzero => (p1, sc)
- | nstop => (nstop, sc)
  | (ntriple x1 y1 z1) =>
     if (y1 ?= c0) then (nzero, z1 ** sc) else
      (* we do 2p *)
@@ -117,8 +116,6 @@ Definition nadd := fun (sc: zZ) (p1 p2: nelt) =>
  match p1, p2 with
   nzero, _ => (p2, sc)
  | _ , nzero => (p1, sc)
- | nstop, _ => (nstop, sc)
- | _, nstop => (nstop, sc)
  | (ntriple x1 y1 z1), (ntriple x2 y2 z2) =>
   let d1 := x2 ** z1 in
   let d2 := x1 ** z2 in
@@ -151,42 +148,52 @@ Definition nadd := fun (sc: zZ) (p1 p2: nelt) =>
              (z1 ** z2 ** l3), sc)
   end.
 
- Fixpoint npow (sc: zZ) (a: nelt) (p: positive) {struct p}:
-   nelt * zZ :=
-   match p with
-     xH => (a, sc)
-   | xO p1 => let (a1, sc1) := npow sc a p1 in
-              ndouble sc1 a1
-   | xI p1 => let (a1, sc1) := npow sc a p1 in
-              let (a2, sc2) := ndouble sc1 a1 in
-              nadd sc2 a a2
-   end.
 
- Definition npowl sc a l :=
+Definition nopp p := 
+  match p with nzero => p | (ntriple x1 y1 z1) => (ntriple x1 (c0 -- y1) z1) end.
+
+Fixpoint scalb (sc: zZ) (b:bool) (a: nelt) (p: positive) {struct p}:
+ nelt * zZ :=
+ match p with
+   xH => if b then ndouble sc a else (a,sc)
+ | xO p1 => let (a1, sc1) := scalb sc false a p1 in
+              if b then 
+                let (a2, sc2) := ndouble sc1 a1 in
+                nadd sc2 a a2
+              else ndouble sc1 a1
+ | xI p1 => let (a1, sc1) := scalb sc true a p1 in
+              if b then  ndouble sc1 a1
+              else
+              let (a2, sc2) := ndouble sc1 a1 in 
+              nadd sc2 (nopp a) a2
+ end.
+
+Definition scal sc a p := scalb sc false a p.
+
+
+Definition scal_list sc a l :=
   List.fold_left 
-  (fun (asc: nelt * zZ) p1 => let (a,sc) := asc in npow sc a p1) l (a,sc).
+  (fun (asc: nelt * zZ) p1 => let (a,sc) := asc in scal sc a p1) l (a,sc).
 
- Fixpoint npowl1 (sc:zZ) (a: nelt) (l: List.list positive) {struct l}: (nelt * zZ) :=
+Fixpoint scalL (sc:zZ) (a: nelt) (l: List.list positive) {struct l}: (nelt * zZ) :=
    match l with
      List.nil => (a,sc)
    | List.cons n l1 =>
-        let (a1, sc1) := npow sc a n in
-        let (a2, sc2) := npowl sc1 a l1 in
+        let (a1, sc1) := scal sc a n in
+        let (a2, sc2) := scal_list sc1 a l1 in
           match a2 with
-             nzero => (nstop, c0)
-          |  nstop => (nstop, c0)
-          |  ntriple _ _ z => npowl1 (sc2 ** z) a1 l1
+             nzero => (nzero, c0)
+          |  ntriple _ _ z => scalL (sc2 ** z) a1 l1
           end
    end.
 
 Definition zpow sc p n :=
-  let (p,sc') := npow sc p n in
+  let (p,sc') := scal sc p n in
   (p, op.(znz_to_Z) (op.(znz_gcd) sc' zN)).
 
 Definition e2E n := 
   match n with 
     nzero => ZEll.nzero
-  | nstop => ZEll.nstop
   | ntriple x1 y1 z1 => ZEll.ntriple (z2Z x1) (z2Z y1) (z2Z z1)
   end.
 
@@ -364,7 +371,6 @@ intros x1 y1 z1 y; case y; clear; auto.
   intros x2 y2 z2 sc (wfx1,(wfy1, wfz1)) (wfx2,(wfy2, wfz2)) wfsc; 
     simpl; auto.
   repeat (case neq; repeat split; simpl; nw; auto).
-intros y sc; case y; auto.
 Qed.
 
  Lemma ztest: forall x y,
@@ -440,7 +446,6 @@ intros x1 y1 z1 y; case y; clear; auto.
   simpl; split; auto.
   repeat ((rewrite nmulz || rewrite nplusz || rewrite nsubz ||
            rewrite c2ww || rewrite c3ww || rewrite Aww); try nw; auto).
-  intros y; case y; auto.
   Qed.
 
 
@@ -470,97 +475,210 @@ intros x; case x; clear; auto.
            rewrite c2ww || rewrite c3ww || rewrite Aww); try nw; auto).
   Qed.
 
- Lemma npow_wf: forall n x sc,
-  wfe x -> wft sc ->
-  wfe (fst (npow sc x n)) /\  wft (snd (npow sc x n)).
+Lemma nopp_wf: forall x, wfe x -> wfe (nopp x).
 Proof.
-intros n; elim n; unfold npow; fold npow; auto.
-intros n1 Hrec x sc H H1; case (Hrec x sc H H1).
-case npow; auto.
-simpl; intros a1 sc1 H2 H3.
-case (ndouble_wf _ H2 H3); auto;
-case ndouble; auto.
-intros a2 sc2 H4 H5;apply nadd_wf; auto.
-intros n1 Hrec x sc H H1; case (Hrec x sc H H1).
-simpl; intros H2 H3.
-case (ndouble_wf _ H2 H3); auto; case npow; auto.
+intros x; case x; simpl nopp; auto.
+intros x1 y1 z1 [H1 [H2 H3]]; repeat split; auto.
 Qed.
 
-Lemma npow_correct: forall n x sc,
+Lemma scalb_wf: forall n b x sc,
   wfe x -> wft sc ->
-  e2E (fst (npow sc x n)) = fst (ZEll.npow exx.(vN) exx.(vA) (z2Z sc) (e2E x) n)/\
-  z2Z (snd (npow sc x n)) = snd (ZEll.npow exx.(vN) exx.(vA) (z2Z sc) (e2E x) n).
+  wfe (fst (scalb sc b x n)) /\  wft (snd (scalb sc b x n)).
 Proof.
-intros n; elim n; clear; simpl; auto.
-intros n1 Hrec a1 sc1 H1 H2.
-generalize (npow_wf n1 _ H1 H2); generalize (Hrec _ _ H1 H2); case npow; simpl.
-case ZEll.npow; intros r1 rc1; simpl.
-intros a2 sc2 (H3, H4) (H5, H6); subst r1 rc1.
-generalize (ndouble_wf _ H5 H6); generalize (ndouble_correct _ H5 H6); case ndouble; simpl.
-case ZEll.ndouble; intros r1 rc1; simpl.
-intros a3 sc3 (H7,H8) (H9,H10); subst r1 rc1.
-apply nadd_correct; auto.
-intros n1 Hrec a1 sc1 H1 H2.
-generalize (npow_wf n1 _ H1 H2); generalize (Hrec _ _ H1 H2); case npow; simpl.
-case ZEll.npow; intros r1 rc1; simpl.
-intros a2 sc2 (H3, H4) (H5, H6); subst r1 rc1.
+intros n; elim n; unfold scalb; fold scalb; auto.
+  intros n1 Hrec b x sc H H1.
+    case (Hrec true x sc H H1).
+    case scalb; simpl fst; simpl snd.
+    intros a1 sc1 H2 H3.
+    case (ndouble_wf _ H2 H3); auto;
+    case ndouble; simpl fst; simpl snd; intros x2 sc2 H4 H5.
+    case b; auto.
+    case (nadd_wf _ _ (nopp_wf _ H) H4 H5); auto;
+    case ndouble; simpl fst; simpl snd; intros x2 sc2 H4 H5.
+  intros n1 Hrec b x sc H H1.
+    case (Hrec false x sc H H1).
+    case scalb; simpl fst; simpl snd.
+    intros a1 sc1 H2 H3.
+    case (ndouble_wf _ H2 H3); auto;
+    case ndouble; simpl fst; simpl snd; intros x2 sc2 H4 H5.
+    case b; auto.
+    case (nadd_wf _ _ H H4 H5); auto;
+    case ndouble; simpl fst; simpl snd; intros x2 sc2 H4 H5.
+intros b x sc H H1; case b; auto.
+case (ndouble_wf _ H H1); auto.
+Qed.
+
+
+Lemma scal_wf: forall n x sc,
+  wfe x -> wft sc ->
+  wfe (fst (scal sc x n)) /\  wft (snd (scal sc x n)).
+Proof.
+intros n; exact (scalb_wf n false).
+Qed.
+
+Lemma nopp_correct: forall x,
+  wfe x -> e2E x = ZEll.nopp exx.(vN) (e2E (nopp x)).
+Proof.
+intros x; case x; simpl; auto.
+intros x1 y1 z1 [H1 [H2 H3]]; apply f_equal3 with (f := ZEll.ntriple); auto.
+rewrite nsubz; auto.
+rewrite zc0.
+unfold ZEll.nsub, ninv; simpl.
+apply sym_equal.
+rewrite <- (Z_mod_plus) with (b := -(-z2Z y1 /exx.(vN))); auto with zarith.
+rewrite <- Zopp_mult_distr_l.
+rewrite <- Zopp_plus_distr.
+rewrite Zmult_comm; rewrite Zplus_comm.
+rewrite <- Z_div_mod_eq; auto with zarith.
+rewrite Zopp_involutive; rewrite <- z2ZN.
+apply sym_equal; auto.
+Qed.
+
+Lemma scalb_correct: forall n b x sc,
+  wfe x -> wft sc ->
+  e2E (fst (scalb sc b x n)) = fst (ZEll.scalb exx.(vN) exx.(vA) (z2Z sc) b (e2E x) n)/\
+  z2Z (snd (scalb sc b x n)) = snd (ZEll.scalb exx.(vN) exx.(vA) (z2Z sc) b (e2E x) n).
+Proof.
+intros n; elim n; clear; auto.
+intros p Hrec b x sc H1 H2.
+  case b; unfold scalb; fold scalb.
+    generalize (scalb_wf p true x H1 H2);
+    generalize (Hrec true _ _ H1 H2); case scalb; simpl.
+    case ZEll.scalb; intros r1 rc1; simpl.
+    intros a2 sc2 (H3, H4) (H5, H6); subst r1 rc1.
+    apply ndouble_correct; auto.
+    generalize (scalb_wf p true x H1 H2);
+    generalize (Hrec true _ _ H1 H2); case scalb; simpl.
+    case ZEll.scalb; intros r1 rc1; simpl.
+    intros a2 sc2 (H3, H4) (H5, H6); subst r1 rc1.
+    generalize (ndouble_wf _ H5 H6); 
+      generalize (ndouble_correct _ H5 H6); case ndouble; simpl.
+    case ZEll.ndouble; intros r1 rc1; simpl.
+    intros a3 sc3 (H7,H8) (H9,H10); subst r1 rc1.
+    replace (ZEll.nopp (vN exx) (e2E x)) with
+      (e2E (nopp x)).
+    apply nadd_correct; auto. 
+    generalize H1; case x; auto.
+    intros x1 y1 z1 [HH1 [HH2 HH3]]; split; auto.
+    rewrite nopp_correct; auto.
+    apply f_equal2 with (f := ZEll.nopp); auto.
+    generalize H1; case x; simpl; auto; clear x H1.
+    intros x1 y1 z1 [HH1 [HH2 HH3]]; 
+      apply f_equal3 with (f := ZEll.ntriple); auto.
+    repeat rewrite nsubz; auto.
+    rewrite zc0.
+    unfold ZEll.nsub; simpl.
+    rewrite <- (Z_mod_plus) with (b := -(-z2Z y1 /exx.(vN))); auto with zarith.
+    rewrite <- Zopp_mult_distr_l.
+    rewrite <- Zopp_plus_distr.
+    rewrite Zmult_comm; rewrite Zplus_comm.
+    rewrite <- Z_div_mod_eq; auto with zarith.
+    rewrite Zopp_involutive; rewrite <- z2ZN.
+    apply sym_equal; auto.
+    generalize H1; case x; auto.
+    intros x1 y1 z1 [HH1 [HH2 HH3]]; split; auto.
+intros p Hrec b x sc H1 H2.
+  case b; unfold scalb; fold scalb.
+    generalize (scalb_wf p false x H1 H2);
+    generalize (Hrec false _ _ H1 H2); case scalb; simpl.
+    case ZEll.scalb; intros r1 rc1; simpl.
+    intros a2 sc2 (H3, H4) (H5, H6); subst r1 rc1.
+    generalize (ndouble_wf _ H5 H6); 
+      generalize (ndouble_correct _ H5 H6); case ndouble; simpl.
+    case ZEll.ndouble; intros r1 rc1; simpl.
+    intros a3 sc3 (H7,H8) (H9,H10); subst r1 rc1.
+    replace (ZEll.nopp (vN exx) (e2E x)) with
+      (e2E (nopp x)).
+    apply nadd_correct; auto.
+    rewrite nopp_correct; auto.
+    apply f_equal2 with (f := ZEll.nopp); auto.
+    generalize H1; case x; simpl; auto; clear x H1.
+    intros x1 y1 z1 [HH1 [HH2 HH3]]; 
+      apply f_equal3 with (f := ZEll.ntriple); auto.
+    repeat rewrite nsubz; auto.
+    rewrite zc0.
+    unfold ZEll.nsub; simpl.
+    rewrite <- (Z_mod_plus) with (b := -(-z2Z y1 /exx.(vN))); auto with zarith.
+    rewrite <- Zopp_mult_distr_l.
+    rewrite <- Zopp_plus_distr.
+    rewrite Zmult_comm; rewrite Zplus_comm.
+    rewrite <- Z_div_mod_eq; auto with zarith.
+    rewrite Zopp_involutive; rewrite <- z2ZN.
+    apply sym_equal; auto.
+    generalize H1; case x; auto.
+    intros x1 y1 z1 [HH1 [HH2 HH3]]; split; auto.
+    generalize (scalb_wf p false x H1 H2);
+    generalize (Hrec false _ _ H1 H2); case scalb; simpl.
+    case ZEll.scalb; intros r1 rc1; simpl.
+    intros a2 sc2 (H3, H4) (H5, H6); subst r1 rc1.
+    apply ndouble_correct; auto.
+intros b x sc H H1.
+case b; simpl; auto.
 apply ndouble_correct; auto.
 Qed.
 
-Lemma npowl_wf: forall l x sc,
+
+Lemma scal_correct: forall n x sc,
   wfe x -> wft sc ->
-  wfe (fst (npowl sc x l)) /\  wft (snd (npowl sc x l)).
+  e2E (fst (scal sc x n)) = fst (ZEll.scal exx.(vN) exx.(vA) (z2Z sc) (e2E x) n)/\
+  z2Z (snd (scal sc x n)) = snd (ZEll.scal exx.(vN) exx.(vA) (z2Z sc) (e2E x) n).
 Proof.
-intros l1; elim l1; simpl; auto.
-unfold npowl; simpl; intros a l2 Hrec x sc H1 H2.
-generalize (npow_wf a _ H1 H2); case npow.
-intros a1 sc1 (H3, H4); auto.
+intros n; exact (scalb_correct n false).
 Qed. 
 
-Lemma npowl_correct: forall l x sc,
+Lemma scal_list_correct: forall l x sc,
   wfe x -> wft sc ->
-  e2E (fst (npowl sc x l)) = fst (ZEll.npowl exx.(vN) exx.(vA) (z2Z sc) (e2E x) l)/\
-  z2Z (snd (npowl sc x l)) = snd (ZEll.npowl exx.(vN) exx.(vA) (z2Z sc) (e2E x) l).
+  e2E (fst (scal_list sc x l)) = fst (ZEll.scal_list exx.(vN) exx.(vA) (z2Z sc) (e2E x) l)/\
+  z2Z (snd (scal_list sc x l)) = snd (ZEll.scal_list exx.(vN) exx.(vA) (z2Z sc) (e2E x) l).
 Proof.
 intros l1; elim l1; simpl; auto.
-unfold npowl, ZEll.npowl; simpl; intros a l2 Hrec x sc H1 H2.
-generalize (npow_correct a _ H1 H2) (npow_wf a _ H1 H2); case npow.
-case ZEll.npow; intros r1 rsc1; simpl.
+unfold scal_list, ZEll.scal_list; simpl; intros a l2 Hrec x sc H1 H2.
+generalize (scal_correct a _ H1 H2) (scal_wf a _ H1 H2); case scal.
+case ZEll.scal; intros r1 rsc1; simpl.
 simpl; intros a1 sc1 (H3, H4) (H5, H6); subst r1 rsc1; auto.
 Qed.
 
-Lemma npowl1_wf: forall l x sc,
+Lemma scal_list_wf: forall l x sc,
   wfe x -> wft sc ->
-  wfe (fst (npowl1 sc x l)) /\  wft (snd (npowl1 sc x l)).
+  wfe (fst (scal_list sc x l)) /\  wft (snd (scal_list sc x l)).
+Proof.
+intros l1; elim l1; simpl; auto.
+unfold scal_list; intros a l Hrec x sc H1 H2; simpl.
+generalize (@scal_wf a _ _ H1 H2); 
+  case (scal sc x a); simpl; intros x1 sc1 [H3 H4]; auto.
+Qed.
+
+Lemma scalL_wf: forall l x sc,
+  wfe x -> wft sc ->
+  wfe (fst (scalL sc x l)) /\  wft (snd (scalL sc x l)).
 Proof.
 intros l1; elim l1; simpl; auto.
 intros a l2 Hrec x sc H1 H2.
-generalize (npow_wf a _ H1 H2); case npow; simpl.
+generalize (scal_wf a _ H1 H2); case scal; simpl.
 intros a1 sc1 (H3, H4); auto.
-generalize (npowl_wf l2 _ H1 H4); case npowl; simpl.
+generalize (scal_list_wf l2 _ H1 H4); case scal_list; simpl.
 intros a2 sc2; case a2; simpl; auto.
 intros x1 y1 z1 ((V1, (V2, V3)), V4); apply Hrec; auto.
 Qed. 
 
-Lemma npowl1_correct: forall l x sc,
+Lemma scalL_correct: forall l x sc,
   wfe x -> wft sc ->
-  e2E (fst (npowl1 sc x l)) = fst (ZEll.npowl1 exx.(vN) exx.(vA) (z2Z sc) (e2E x) l)/\
-  z2Z (snd (npowl1 sc x l)) = snd (ZEll.npowl1 exx.(vN) exx.(vA) (z2Z sc) (e2E x) l).
+  e2E (fst (scalL sc x l)) = fst (ZEll.scalL exx.(vN) exx.(vA) (z2Z sc) (e2E x) l)/\
+  z2Z (snd (scalL sc x l)) = snd (ZEll.scalL exx.(vN) exx.(vA) (z2Z sc) (e2E x) l).
 Proof.
 intros l1; elim l1; simpl; auto.
 intros a l2 Hrec x sc H1 H2.
-generalize (npow_wf a _ H1 H2) (npow_correct a _ H1 H2); case npow; simpl.
-case ZEll.npow; intros r1 rsc1; simpl.
+generalize (scal_wf a _ H1 H2) (scal_correct a _ H1 H2); case scal; simpl.
+case ZEll.scal; intros r1 rsc1; simpl.
 intros a1 sc1 (H3, H4) (H5, H6); subst r1 rsc1.
-generalize (npowl_wf l2 _ H1 H4) (npowl_correct l2 _ H1 H4); case npowl; simpl.
-case ZEll.npowl; intros r1 rsc1; simpl.
+generalize (scal_list_wf l2 _ H1 H4) (scal_list_correct l2 _ H1 H4); case scal_list; simpl.
+case ZEll.scal_list; intros r1 rsc1; simpl.
 intros a2 sc2 (H7, H8) (H9, H10); subst r1 rsc1.
 generalize H7; clear H7; case a2; simpl; auto.
 rewrite zc0; auto.
 intros x1 y1 z1 (V1, (V2, V3)); auto.
 generalize (nmulw H8 V3) (nmulz H8 V3); intros V4 V5; rewrite <- V5.
 apply Hrec; auto.
-rewrite zc0; auto.
 Qed.
 
 Lemma f4 : wft (Z2z 4).
@@ -594,13 +712,13 @@ intros x; unfold ZEll.nmul.
 unfold B; rewrite z2Zx; rewrite Zmodmr; auto.
 Qed.
 
- Lemma  npowl1_prime: 
+ Lemma  scalL_prime: 
   let a := ntriple (Z2z (exx.(vx))) (Z2z (exx.(vy))) c1 in
   let isc := (Z2z 4) ** A ** A ** A  ++ (Z2z 27) ** B ** B in
-  let (a1, sc1) := npow isc a exx.(vS) in
+  let (a1, sc1) := scal isc a exx.(vS) in
   let (S1,R1) := psplit exx.(vR) in
-  let (a2, sc2) := npow sc1 a1 S1 in
-  let (a3, sc3) := npowl1 sc2 a2 R1 in
+  let (a2, sc2) := scal sc1 a1 S1 in
+  let (a3, sc3) := scalL sc2 a2 R1 in
     match a3 with
      nzero => if (Zeq_bool (Zgcd (z2Z sc3) exx.(vN)) 1) then prime exx.(vN)
               else True
@@ -608,10 +726,10 @@ Qed.
    end.
   Proof.
   intros a isc.
-  case_eq (npow isc a (vS exx)); intros a1 sc1 Ha1.
+  case_eq (scal isc a (vS exx)); intros a1 sc1 Ha1.
   case_eq (psplit (vR exx)); intros S1 R1 HS1.
-  case_eq (npow sc1 a1 S1); intros a2 sc2 Ha2.
-  case_eq (npowl1 sc2 a2 R1); intros a3 sc3; case a3; auto.
+  case_eq (scal sc1 a1 S1); intros a2 sc2 Ha2.
+  case_eq (scalL sc2 a2 R1); intros a3 sc3; case a3; auto.
   intros Ha3; case_eq (Zeq_bool (Zgcd (z2Z sc3) (vN exx)) 1); auto.
   intros H1.
   assert (F0: 
@@ -638,21 +756,21 @@ Qed.
       rewrite Zmod_mult; auto; symmetry; rewrite Zmod_mult; auto; symmetry.
       apply f_equal2 with (f := Zmod); auto.
       rewrite Zmod_mod; auto.
-   generalize (@ZEll.npowl1_prime exx.(vN) 
+   generalize (@ZEll.scalL_prime exx.(vN) 
                (exx.(vx) mod exx.(vN))
                (exx.(vy) mod exx.(vN))
                exx.(vA)
                exx.(vB) 
                exxs.(n_pos) exxs.(n2_div) exx.(vR) 
                exxs.(lprime) exx.(vS) exxs.(lbig) F0); simpl.
-generalize (@npow_wf (vS exx) a isc) (@npow_correct (vS exx) a isc).
+generalize (@scal_wf (vS exx) a isc) (@scal_correct (vS exx) a isc).
 unfold isc.
 rewrite nplusz; auto; try nw; auto.
 repeat rewrite nmulz; auto; try nw; auto.
   repeat rewrite z2Zx.
 repeat rewrite wwA || rewrite wwB|| rewrite mww.
 replace (e2E a) with (ZEll.ntriple (vx exx mod vN exx) (vy exx mod vN exx) 1).
-case ZEll.npow.
+case ZEll.scal.
 fold isc; rewrite HS1; rewrite Ha1; simpl; auto.
 intros r1 rsc1 HH1 HH2.
 case HH1; clear HH1.
@@ -662,15 +780,15 @@ case HH2; clear HH2.
   unfold c1; repeat split; red; try apply z2Zx1.
   unfold isc; nw.
 intros U1 U2 W1 W2; subst r1 rsc1.
-generalize (@npow_wf S1 a1 sc1) (@npow_correct S1 a1 sc1).
-case ZEll.npow.
+generalize (@scal_wf S1 a1 sc1) (@scal_correct S1 a1 sc1).
+case ZEll.scal.
 intros r1 rsc1 HH1 HH2.
 case HH1; clear HH1; auto.
 case HH2; clear HH2; auto.
 rewrite Ha2; simpl.
 intros U1 U2 W3 W4; subst r1 rsc1.
-generalize (@npowl1_wf R1 a2 sc2) (@npowl1_correct R1 a2 sc2).
-case ZEll.npowl1.
+generalize (@scalL_wf R1 a2 sc2) (@scalL_correct R1 a2 sc2).
+case ZEll.scalL.
 intros n; case n; auto.
 rewrite Ha3; simpl.
 intros rsc1 HH1 HH2.
@@ -679,9 +797,6 @@ case HH2; clear HH2; auto.
 intros _ U2 _ W5; subst rsc1.
 rewrite H1; auto.
 intros x1 y1 z1 sc4; rewrite Ha3; simpl; auto.
-intros _ HH; case HH; auto.
-intros; discriminate.
-intros sc4; rewrite Ha3; simpl; auto.
 intros _ HH; case HH; auto.
 intros; discriminate.
 unfold a; simpl.
@@ -770,10 +885,10 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
           let da := mop.(add_mod) in
           let dm := mop.(mul_mod) in
           let isc := (da (dm (dm  (dm d4 A) A) A) (dm (dm d27 B) B)) in
-          let (a1, sc1) := npow ex op mop isc a S in
+          let (a1, sc1) := scal ex op mop isc a S in
           let (S1,R1) := ZEll.psplit l in
-          let (a2, sc2) := npow ex op mop sc1 a1 S1 in
-          let (a3, sc3) := npowl1 ex op mop sc2 a2 R1 in
+          let (a2, sc2) := scal ex op mop sc1 a1 S1 in
+          let (a3, sc3) := scalL ex op mop sc2 a2 R1 in
           match a3 with
            nzero => if (Zeq_bool (Zgcd (z2Z op sc3) N) 1) then true
                     else false
@@ -831,15 +946,15 @@ assert (H0: N < base (znz_digits op)).
 assert (mspec: mod_spec op (zN exx op) mop).
   unfold mop; apply make_mod_spec; auto.
   rewrite znz_of_Z_correct; auto with zarith.
-generalize (@npowl1_prime exx exxs _ op (cmk_spec n) mop mspec H0).
+generalize (@scalL_prime exx exxs _ op (cmk_spec n) mop mspec H0).
 lazy zeta.
 unfold c1, A, B,  nplus, nmul; 
   simpl exx.(vA); simpl exx.(vB); simpl exx.(vx); simpl exx.(vy);
   simpl exx.(vS); simpl exx.(vR); simpl exx.(vN).
-case npow; intros a1 sc1.
+case scal; intros a1 sc1.
 case ZEll.psplit; intros S2 R2.
-case npow; intros a2 sc2.
-case npowl1; intros a3 sc3.
+case scal; intros a2 sc2.
+case scalL; intros a3 sc3.
 case a3; auto.
 case Zeq_bool; auto.
 Qed.

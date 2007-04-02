@@ -24,6 +24,7 @@ all:
 	make first
 	make nextprime
 	make o2v
+	make o2ml
 
 clean:
 	rm -f *~ *.o pocklington firstprimes nextprime o2v
@@ -36,5 +37,8 @@ clean:
 
 o2v: parser.ml
 	ocamlc -o o2v nums.cma str.cma parser.ml
+
+o2ml: mparser.ml
+	ocamlc -o o2ml nums.cma str.cma mparser.ml
 
 
