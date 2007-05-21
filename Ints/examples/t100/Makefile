@@ -64,24 +64,20 @@ PP=-pp "camlp4o -I . -I $(COQTOP)/parsing $(CAMLP4EXTEND) $(GRAMMARS) -impl"
 
 OCAMLLIBS=-I .\
   -I ..\
-  -I ../../Tactic\
   -I ../../N\
   -I ../../Z\
   -I ../../PrimalityTest\
   -I ../../List\
   -I ../../elliptic\
-  -I ../../num\
-  -I ../../num/W/W8
+  -I ../../num
 COQLIBS=-I .\
   -I ..\
-  -I ../../Tactic\
   -I ../../N\
   -I ../../Z\
   -I ../../PrimalityTest\
   -I ../../List\
   -I ../../elliptic\
-  -I ../../num\
-  -I ../../num/W/W8
+  -I ../../num
 
 ###################################
 #                                 #

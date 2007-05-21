@@ -168,7 +168,7 @@ res:
 	$(COQDOC) -html -g $< -o $@
 
 byte:
-	$(MAKE) all "OPT=-byte"
+	$(MAKE) all "OPT="
 
 opt:
 	$(MAKE) all "OPT=-opt"
