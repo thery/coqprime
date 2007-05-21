@@ -715,7 +715,7 @@ Section Zn2Z.
  exact (spec_sqrt2 op_spec).
  Qed.
 
- Lemma mk_znz2_spec : znz_spec mk_zn2z_op.
+ Lemma mk_zn2z_spec : znz_spec mk_zn2z_op.
  Proof.
   apply mk_znz_spec;auto.
   exact spec_ww_add_mul_div.
@@ -723,7 +723,7 @@ Section Zn2Z.
        _ _ _ _);auto. exact (spec_WW op_spec). exact (spec_pos_mod op_spec).
  Qed.
 
- Lemma mk_znz2_karatsuba_spec : znz_spec mk_zn2z_op_karatsuba.
+ Lemma mk_zn2z_karatsuba_spec : znz_spec mk_zn2z_op_karatsuba.
  Proof.
   apply mk_znz_spec;auto.
   exact spec_ww_add_mul_div.

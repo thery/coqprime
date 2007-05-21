@@ -1,0 +1,15 @@
+Iterator.vo: Iterator.v Permutation.vo
+Iterator.vi: Iterator.v Permutation.vo
+ListAux.vo: ListAux.v
+ListAux.vi: ListAux.v
+Permutation.vo: Permutation.v ListAux.vo
+Permutation.vi: Permutation.v ListAux.vo
+UList.vo: UList.v Permutation.vo
+UList.vi: UList.v Permutation.vo
+ZProgression.vo: ZProgression.v Iterator.vo UList.vo
+ZProgression.vi: ZProgression.v Iterator.vo UList.vo
+Iterator.html: Iterator.v Permutation.html
+ListAux.html: ListAux.v
+Permutation.html: Permutation.v ListAux.html
+UList.html: UList.v Permutation.html
+ZProgression.html: ZProgression.v Iterator.html UList.html
