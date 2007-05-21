@@ -10,7 +10,8 @@ for i in t25 t50 t75 t100 t125 t150 t175 t200 t225 t250;
    cat res >> ../res; 
    cd ..; 
 done
-echo "End" >> res;
+echo "End" >> res
+
 
 
 
