@@ -89,6 +89,43 @@ Eval vm_compute in 4423.
 Time Eval vm_compute in lucas 4423.
 
 (*
+Eval vm_compute in 9689.
+
+Time Eval vm_compute in lucas 9689.
+
+Eval vm_compute in 9941
+
+Time Eval vm_compute in lucas 9941.
+
+Eval vm_compute in 11213.
+
+Time Eval vm_compute in lucas 11213.
+
+Eval vm_compute in 19937.
+
+Time Eval vm_compute in lucas 19937.
+
+Eval vm_compute in 21701.
+
+Time Eval vm_compute in lucas 21701.
+
+Eval vm_compute in 23209.
+
+Time Eval vm_compute in lucas 23209.
+
+Eval vm_compute in 44497.
+
+Time Eval vm_compute in lucas 44497.
+
+Eval vm_compute in 86243.
+
+Time Eval vm_compute in lucas 86243.
+
+*)
+
+
+
+(*
      = 3
      = 0
 Finished transaction in 0. secs (0.01u,0.s)
