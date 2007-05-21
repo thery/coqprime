@@ -1,0 +1,101 @@
+coqc  -q  -I . -I ../N -I ../Z -I ../PrimalityTest -I ../List -I ../elliptic -I ../num   TestLucas
+     = 2
+     : BinInt.Z
+     = 2
+     : BinInt.Z
+Finished transaction in 1. secs (0.285957u,0.006s)
+     = 3
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.u,0.000999s)
+     = 5
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.001u,0.s)
+     = 7
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.u,0.s)
+     = 13
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.001u,0.s)
+     = 17
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.u,0.s)
+     = 19
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.u,0.s)
+     = 31
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.001u,0.s)
+     = 61
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.001u,0.s)
+     = 89
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.003999u,0.s)
+     = 107
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.004u,0.s)
+     = 127
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.007999u,0.s)
+     = 521
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.163975u,0.s)
+     = 607
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 0. secs (0.277957u,0.s)
+     = 1279
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 3. secs (2.258657u,0.004s)
+     = 2203
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 9. secs (9.568545u,0.024996s)
+     = 2281
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 7. secs (6.392028u,0.010998s)
+     = 3217
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 21. secs (21.494732u,0.025996s)
+     = 4253
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 49. secs (48.968556u,0.033995s)
+     = 4423
+     : BinInt.Z
+     = 0
+     : BinInt.Z
+Finished transaction in 44. secs (43.893327u,0.028996s)

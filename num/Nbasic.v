@@ -48,9 +48,9 @@ Section ExtendMax.
   forall n m (x:zn2z (word w n)) (y:zn2z (word w m)), 
         (zn2z (word w m) + zn2z (word w n))%type.
   intros n m x y.
-   case (max n m);intros (p, Heq);case Heq.
-   left;exact (extend p (word w n) x).
-   right;exact (extend p (word w m) y).
+   case (max n m);intros (p, Heq). 
+   left; case Heq;exact (extend p (word w n) x).
+   right;case Heq;exact (extend p (word w m) y).
  Defined. 
 
 End ExtendMax.

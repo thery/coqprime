@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo "Start" > res;
+for i in t25 t50;
+ do 
+   echo $i; 
+   cd $i; make clean;
+   echo $i >> ../res; echo "" >> ../res;
+   make res; 
+   cat res >> ../res; 
+   cd ..; 
+done
+echo "End" >> res;
+
+
+

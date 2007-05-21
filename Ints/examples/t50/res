@@ -1,0 +1,11 @@
+make[2]: Entering directory `/home/thery/coq/V8/Ints/examples/t50'
+Finished transaction in 1. secs (1.185819u,0.001999s)
+Finished transaction in 0. secs (0.58791u,0.002s)
+Finished transaction in 3. secs (1.998696u,0.000999s)
+Finished transaction in 3. secs (2.823571u,0.s)
+Finished transaction in 1. secs (0.720891u,0.001999s)
+Finished transaction in 1. secs (1.293804u,0.002999s)
+Finished transaction in 2. secs (2.625601u,0.001s)
+Finished transaction in 1. secs (0.79188u,0.001999s)
+Finished transaction in 1. secs (1.197818u,0.001s)
+make[2]: Leaving directory `/home/thery/coq/V8/Ints/examples/t50'
