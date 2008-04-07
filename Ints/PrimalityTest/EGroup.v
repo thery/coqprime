@@ -14,6 +14,7 @@
 Require Import ZArith.
 Require Import Tactic.
 Require Import List.
+Require Import ZCAux.
 Require Import ZAux.
 Require Import Wf_nat.
 Require Import UList.
@@ -246,9 +247,11 @@ intros _; rewrite <- gpow_1; repeat rewrite <- gpow_add; auto with zarith.
 replace (1 + Z_of_nat p) with ((1 + m) + (Z_of_nat (p - Zabs_nat m))); auto with zarith.
 apply support_aux_in; auto with zarith.
 rewrite inj_minus1; auto with zarith.
-rewrite Z_of_nat_Zabs_nat; auto with zarith.
-apply inj_le_inv.
-rewrite Z_of_nat_Zabs_nat; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
+apply inj_le_rev.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 rewrite <- gpow_1; repeat rewrite <- gpow_add; auto with zarith.
 apply (Rec (1 + m)); auto with zarith.
 intros p H1; case (Zle_lt_or_eq p m); intros; subst; auto with zarith.
@@ -295,7 +298,8 @@ Qed.
 
 Theorem support_in:  forall p, 0 <= p < Z_of_nat (length support) ->  In (gpow p) support.
 intros p (H, H1); unfold support.
-rewrite <-  (Z_of_nat_Zabs_nat p); auto.
+rewrite <-  (Zabs_eq p); auto with zarith.
+rewrite <-  (inj_Zabs_nat p); auto.
 generalize (support_aux_in (Zabs_nat (g_order G)) 0); simpl; intros H2; apply H2; auto with zarith.
 rewrite <-  (fun x => Zabs_nat_Z_of_nat (@length A x)); auto.
 apply Zabs_nat_lt; split; auto.
@@ -319,15 +323,19 @@ intros p1 ((H2, H3), H4); case Zle_lt_or_eq with (1 := H2); clear H2; intros H2;
 replace (G.(i) (gpow p1)) with (gpow (Z_of_nat (length support - Zabs_nat p1))).
 apply support_in; auto with zarith.
 rewrite inj_minus1.
-rewrite Z_of_nat_Zabs_nat; auto with zarith.
-apply inj_le_inv; rewrite Z_of_nat_Zabs_nat; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
+apply inj_le_rev; rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 apply g_cancel_l with (g:= G) (a := gpow p1); sauto.
 rewrite <- gpow_add; auto with zarith.
 replace (p1 + Z_of_nat (length support - Zabs_nat p1)) with (Z_of_nat (length support)).
 rewrite gpow_length_support_is_e; sauto.
 rewrite inj_minus1; auto with zarith.
-rewrite Z_of_nat_Zabs_nat; auto with zarith.
-apply inj_le_inv; rewrite Z_of_nat_Zabs_nat; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
+apply inj_le_rev; rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 Qed.
 
 (************************************** 
@@ -411,14 +419,19 @@ rewrite <- (fun x => Zabs_nat_Z_of_nat (@length A x)).
 replace (Zabs_nat n - 1)%nat  with (Zabs_nat (n - 1)).
 apply Zabs_nat_lt; split; auto with zarith.
 rewrite G.(e_is_zero_r) in H3; try rewrite gpow_1; auto with zarith.
-apply inj_eq_inv; rewrite Z_of_nat_Zabs_nat; auto with zarith.
+apply inj_eq_rev; rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 rewrite inj_minus1; auto with zarith.
-rewrite Z_of_nat_Zabs_nat; auto with zarith.
-apply inj_le_inv; rewrite Z_of_nat_Zabs_nat; simpl; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
+apply inj_le_rev; rewrite inj_Zabs_nat; simpl; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 rewrite inj_minus1; auto with zarith.
-rewrite Z_of_nat_Zabs_nat; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 rewrite Zplus_comm; simpl; auto with zarith.
-apply inj_le_inv; rewrite Z_of_nat_Zabs_nat; simpl; auto with zarith.
+apply inj_le_rev; rewrite inj_Zabs_nat; simpl; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 exists 0; auto with arith.
 Qed.
 
@@ -458,9 +471,7 @@ replace m with (n + (m - n)); auto with zarith.
 rewrite Zpower_exp; auto with zarith.
 rewrite gpow_gpow; auto with zarith.
 rewrite H2; apply gpow_e.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
+apply Zpower_ge_0; auto with zarith.
 Qed.
 
 Theorem gpow_mult: forall (A : Set) (op : A -> A -> A) (a b: A) (G : FGroup op)
@@ -584,7 +595,7 @@ case (H _ Hr1); auto.
   apply Zdivide_factor_r.
 case Hr2; intros q1 Hq1; subst.
 assert (F3: 0 < r).
-  generalize (prime_le_2 _ Hr1); auto with zarith.
+  generalize (prime_ge_2 _ Hr1); auto with zarith.
 rewrite <- Zmult_assoc; rewrite Zmult_comm; rewrite <- Zmult_assoc;
   rewrite Zmult_comm; rewrite Z_div_mult; auto with zarith.
 rewrite gpow_gpow; auto with zarith.

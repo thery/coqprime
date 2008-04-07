@@ -1,3 +1,4 @@
+-I ../Tactic
 -I ../N
 -I ../Z
 -I ../PrimalityTest

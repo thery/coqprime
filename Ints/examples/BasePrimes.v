@@ -17,6 +17,11 @@ Open Local Scope positive_scope.
 Set Virtual Machine.
 Ltac enc t := exact_no_check t.
 
+Lemma prime2 : prime 2.
+exact prime_2.
+Qed.
+
+
 Lemma prime3 : prime 3.
 Proof.
  apply (Pocklington_refl (Pock_certif 3 2 ((2,1)::nil) 1)

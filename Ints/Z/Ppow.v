@@ -15,16 +15,15 @@ Theorem Ppow_correct: forall a z,
 intros a z; elim z; simpl Ppow; auto; 
   try (intros z1 Hrec; repeat rewrite Zpos_mult_morphism; rewrite Hrec).
   rewrite Zpos_xI; rewrite Zpower_exp; auto with zarith.
-    rewrite Zpower_exp_1; rewrite (Zmult_comm 2);
+    rewrite Zpower_1_r; rewrite (Zmult_comm 2);
     try rewrite Zpower_mult; auto with zarith.
     change 2 with (1 + 1); rewrite Zpower_exp; auto with zarith.
-    rewrite Zpower_exp_1; rewrite Zmult_comm; auto.
-    apply Zle_ge; auto with zarith.
+    rewrite Zpower_1_r; rewrite Zmult_comm; auto.
   rewrite Zpos_xO; rewrite (Zmult_comm 2); 
     rewrite Zpower_mult; auto with zarith.
     change 2 with (1 + 1); rewrite Zpower_exp; auto with zarith.
-    rewrite Zpower_exp_1; auto.
- rewrite Zpower_exp_1; auto.
+    rewrite Zpower_1_r; auto.
+ rewrite Zpower_1_r; auto.
 Qed.
 
 Theorem Ppow_plus: forall a z1 z2,

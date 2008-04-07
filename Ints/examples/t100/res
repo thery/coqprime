@@ -1,9 +1,6 @@
-Finished transaction in 20. secs (19.420048u,0.033995s)
-Finished transaction in 27. secs (26.714938u,0.038994s)
-Finished transaction in 41. secs (41.000767u,0.036995s)
-Finished transaction in 28. secs (27.56281u,0.025996s)
-Finished transaction in 26. secs (26.005046u,0.041994s)
-Finished transaction in 49. secs (48.80658u,0.058991s)
-Finished transaction in 27. secs (27.256857u,0.040994s)
-Finished transaction in 13. secs (13.348971u,0.015998s)
-Finished transaction in 23. secs (22.575568u,0.027995s)
+make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t100'
+Require Import PocklingtonRefl.
+Error while reading ./prime1.v :
+File "./prime1.v", line 1, characters 0-31
+User error: Cannot find library Tactic in loadpath
+make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t100'

@@ -9,7 +9,6 @@
 
 Require Import ZArith.
 Require Import ZAux.
-Require Import ZDivModAux.
 Require Import Basic_type.
 Require Import ZnZ.
 Require Import W.
@@ -308,14 +307,14 @@ generalize (Z_mod_lt x exx.(vN)).
 case_eq (x mod exx.(vN)).
 intros _ _.
 simpl; unfold z2Z; rewrite op_spec.(spec_0).
-rewrite Zmod_def_small; split; auto with zarith.
+rewrite Zmod_small; split; auto with zarith.
 generalize  z2ZN; unfold z2Z; intros HH; rewrite HH; auto.
 intros p H1 H2.
 case (op_spec.(spec_to_Z) zN).
 generalize  z2ZN; unfold z2Z; intros HH; rewrite HH; auto.
 intros _ H0.
 case H2; auto with zarith; clear H2; intros _ H2.
-rewrite Zmod_def_small; auto.
+rewrite Zmod_small; auto.
 set (v := znz_of_pos op p).
 split.
   case (op_spec.(spec_to_Z) (snd v)); auto.
@@ -743,18 +742,18 @@ Qed.
       intros HH.
       match goal with |- ?t1 = ?t2 => rmod t1; auto end.
       rewrite HH.
-      rewrite Zmod_plus; auto; symmetry; rewrite Zmod_plus; auto; symmetry.
+      rewrite Zplus_mod; auto; symmetry; rewrite Zplus_mod; auto; symmetry.
       apply f_equal2 with (f := Zmod); auto.
       apply f_equal2 with (f := Zplus); auto.
-      rewrite Zmod_plus; auto; symmetry; rewrite Zmod_plus; auto; symmetry.
+      rewrite Zplus_mod; auto; symmetry; rewrite Zplus_mod; auto; symmetry.
       apply f_equal2 with (f := Zmod); auto.
       apply f_equal2 with (f := Zplus); auto.
-      rewrite Zmod_mult; auto; symmetry; rewrite Zmod_mult; auto; symmetry.
+      rewrite Zmult_mod; auto; symmetry; rewrite Zmult_mod; auto; symmetry.
       apply f_equal2 with (f := Zmod); auto.
       apply f_equal2 with (f := Zmult); auto.
       rewrite Zmod_mod; auto.
       match goal with |- ?t1 = ?t2 => rmod t2; auto end.
-      rewrite Zmod_mult; auto; symmetry; rewrite Zmod_mult; auto; symmetry.
+      rewrite Zmult_mod; auto; symmetry; rewrite Zmult_mod; auto; symmetry.
       apply f_equal2 with (f := Zmod); auto.
       rewrite Zmod_mod; auto.
    generalize (@ZEll.scalL_prime exx.(vN) 
@@ -802,7 +801,7 @@ intros _ HH; case HH; auto.
 intros; discriminate.
 unfold a; simpl.
 unfold c1; repeat rewrite z2Zx.
-rewrite (Zmod_def_small 1); auto.
+rewrite (Zmod_small 1); auto.
 generalize exxs.(n_pos).
 auto with zarith.
 Qed.
@@ -828,14 +827,14 @@ assert (tmp: (forall p, 2 * p = p + p)%Z);
 intros p1 Hp1; rewrite F; rewrite (Zpos_xO p1).
 assert (tmp: (forall p, 2 * p = p + p)%Z);
   try repeat rewrite tmp; auto with zarith.
-rewrite ZPowerAux.Zpower_exp_1; auto with zarith.
+rewrite Zpower_1_r; auto with zarith.
 Qed.
 
 Theorem plength_pred_correct: forall p, (Zpos p <= 2 ^ Zpos (plength (Ppred p)))
 %Z.
 intros p; case (Psucc_pred p); intros H1.
 subst; simpl plength.
-rewrite ZPowerAux.Zpower_exp_1; auto with zarith.
+rewrite Zpower_1_r; auto with zarith.
 pattern p at 1; rewrite <- H1.
 rewrite Zpos_succ_morphism; unfold Zsucc; auto with zarith.
 generalize (plength_correct (Ppred p)); auto with zarith.
@@ -845,7 +844,7 @@ Definition pheight p := plength (Ppred (plength (Ppred p))).
 
 Theorem pheight_correct: forall p, (Zpos p <= 2 ^ (2 ^ (Zpos (pheight p))))%Z.
 intros p; apply Zle_trans with (1 := (plength_pred_correct p)).
-apply ZPowerAux.Zpower_le_monotone; auto with zarith.
+apply Zpower_le_monotone; auto with zarith.
 split; auto with zarith.
 unfold pheight; apply plength_pred_correct.
 Qed.

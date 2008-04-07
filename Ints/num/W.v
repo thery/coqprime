@@ -8,11 +8,11 @@
 
 Set Implicit Arguments.
 
-Require Import Basic_type.
 Require Import ZnZ.
 Require Import Zn2Z.
 Require Import BigN.
 Require Import ZArith.
+Require Import ZCAux.
 
 (* ** Type of words ** *)
 
@@ -52,8 +52,8 @@ rewrite mk_op_digits.
 rewrite <- (Zmult_1_r 1).
 apply Zle_lt_trans with (2 ^ (Z_of_nat n) * 1)%Z.
 apply Zmult_le_compat_r; auto with zarith.
-rewrite <- (ZAux.Zpower_exp_0 2).
-apply ZAux.Zpower_le_monotone; auto with zarith.
+rewrite <- (Zpower_0_r 2).
+apply Zpower_le_monotone; auto with zarith.
 apply Zmult_lt_compat_l; auto with zarith.
 Qed.
 
@@ -64,7 +64,7 @@ Fixpoint mk_spec (w : Set) (op : znz_op w) (op_spec : znz_spec op)
   | O => op_spec
   | S n1 =>
       @mk_znz2_karatsuba_spec (word w n1) (mk_op op n1)
-        (digits_pos op n1 H) (mk_spec op_spec H n1)
+        (* (digits_pos op n1 H) *) (mk_spec op_spec H n1)
   end.
 
 (* ** Operators ** *)
@@ -186,7 +186,9 @@ repeat match goal with |- znz_spec (mk_zn2z_op_karatsuba ?X) =>
   generalize (@mk_znz2_karatsuba_spec _ X); intros tmp;
   apply tmp; clear tmp; auto with zarith
 end.
+(*
 apply digits_pos.
+*)
 auto with zarith.
 apply mk_spec.
 exact int31_spec.

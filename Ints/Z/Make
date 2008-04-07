@@ -1,6 +1,11 @@
+-I ../Tactic
 -I ../List
+ZCmisc.v
+ZCAux.v
 ZSum.v
 Ppow.v
+Pmod.v
+Zmod.v
 
 
 
