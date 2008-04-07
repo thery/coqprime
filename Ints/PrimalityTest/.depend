@@ -1,42 +1,42 @@
-Cyclic.vo: Cyclic.v Root.vo ../List/UList.vo IGroup.vo EGroup.vo FGroup.vo
-Cyclic.vi: Cyclic.v Root.vo ../List/UList.vo IGroup.vo EGroup.vo FGroup.vo
-EGroup.vo: EGroup.v ../List/UList.vo FGroup.vo Lagrange.vo
-EGroup.vi: EGroup.v ../List/UList.vo FGroup.vo Lagrange.vo
-Euler.vo: Euler.v ../Z/ZSum.vo
-Euler.vi: Euler.v ../Z/ZSum.vo
-FGroup.vo: FGroup.v ../List/UList.vo
-FGroup.vi: FGroup.v ../List/UList.vo
-IGroup.vo: IGroup.v ../List/UList.vo ../List/ListAux.vo FGroup.vo
-IGroup.vi: IGroup.v ../List/UList.vo ../List/ListAux.vo FGroup.vo
+Cyclic.vo: Cyclic.v ../Z/ZCAux.vo Root.vo ../List/UList.vo IGroup.vo EGroup.vo FGroup.vo
+Cyclic.vi: Cyclic.v ../Z/ZCAux.vo Root.vo ../List/UList.vo IGroup.vo EGroup.vo FGroup.vo
+EGroup.vo: EGroup.v ../Tactic/Tactic.vo ../Z/ZCAux.vo ../List/UList.vo FGroup.vo Lagrange.vo
+EGroup.vi: EGroup.v ../Tactic/Tactic.vo ../Z/ZCAux.vo ../List/UList.vo FGroup.vo Lagrange.vo
+Euler.vo: Euler.v ../Tactic/Tactic.vo ../Z/ZSum.vo
+Euler.vi: Euler.v ../Tactic/Tactic.vo ../Z/ZSum.vo
+FGroup.vo: FGroup.v ../List/UList.vo ../Tactic/Tactic.vo
+FGroup.vi: FGroup.v ../List/UList.vo ../Tactic/Tactic.vo
+IGroup.vo: IGroup.v ../Tactic/Tactic.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo
+IGroup.vi: IGroup.v ../Tactic/Tactic.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo
 Lagrange.vo: Lagrange.v ../List/UList.vo ../List/ListAux.vo ../N/NatAux.vo FGroup.vo
 Lagrange.vi: Lagrange.v ../List/UList.vo ../List/ListAux.vo ../N/NatAux.vo FGroup.vo
-LucasLehmer.vo: LucasLehmer.v ../N/NatAux.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo EGroup.vo PGroup.vo IGroup.vo
-LucasLehmer.vi: LucasLehmer.v ../N/NatAux.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo EGroup.vo PGroup.vo IGroup.vo
+LucasLehmer.vo: LucasLehmer.v ../Tactic/Tactic.vo ../N/NatAux.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo EGroup.vo PGroup.vo IGroup.vo
+LucasLehmer.vi: LucasLehmer.v ../Tactic/Tactic.vo ../N/NatAux.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo EGroup.vo PGroup.vo IGroup.vo
 Pepin.vo: Pepin.v Pocklington.vo
 Pepin.vi: Pepin.v Pocklington.vo
-PGroup.vo: PGroup.v ../List/ListAux.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo
-PGroup.vi: PGroup.v ../List/ListAux.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo
+PGroup.vo: PGroup.v ../Tactic/Tactic.vo ../List/ListAux.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo
+PGroup.vi: PGroup.v ../Tactic/Tactic.vo ../List/ListAux.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo
 PocklingtonCertificat.vo: PocklingtonCertificat.v LucasLehmer.vo Pocklington.vo
 PocklingtonCertificat.vi: PocklingtonCertificat.v LucasLehmer.vo Pocklington.vo
-Pocklington.vo: Pocklington.v Zp.vo FGroup.vo EGroup.vo Euler.vo
-Pocklington.vi: Pocklington.v Zp.vo FGroup.vo EGroup.vo Euler.vo
+Pocklington.vo: Pocklington.v ../Tactic/Tactic.vo Zp.vo FGroup.vo EGroup.vo Euler.vo
+Pocklington.vi: Pocklington.v ../Tactic/Tactic.vo Zp.vo FGroup.vo EGroup.vo Euler.vo
 Proth.vo: Proth.v Pocklington.vo
 Proth.vi: Proth.v Pocklington.vo
-Root.vo: Root.v ../List/UList.vo ../List/Permutation.vo
-Root.vi: Root.v ../List/UList.vo ../List/Permutation.vo
-Zp.vo: Zp.v ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo Cyclic.vo Euler.vo ../List/ZProgression.vo
-Zp.vi: Zp.v ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo Cyclic.vo Euler.vo ../List/ZProgression.vo
-Cyclic.html: Cyclic.v Root.html ../List/UList.html IGroup.html EGroup.html FGroup.html
-EGroup.html: EGroup.v ../List/UList.html FGroup.html Lagrange.html
-Euler.html: Euler.v ../Z/ZSum.html
-FGroup.html: FGroup.v ../List/UList.html
-IGroup.html: IGroup.v ../List/UList.html ../List/ListAux.html FGroup.html
+Root.vo: Root.v ../List/UList.vo ../Tactic/Tactic.vo ../List/Permutation.vo
+Root.vi: Root.v ../List/UList.vo ../Tactic/Tactic.vo ../List/Permutation.vo
+Zp.vo: Zp.v ../Tactic/Tactic.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo Cyclic.vo Euler.vo ../List/ZProgression.vo
+Zp.vi: Zp.v ../Tactic/Tactic.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo Cyclic.vo Euler.vo ../List/ZProgression.vo
+Cyclic.html: Cyclic.v ../Z/ZCAux.html Root.html ../List/UList.html IGroup.html EGroup.html FGroup.html
+EGroup.html: EGroup.v ../Tactic/Tactic.html ../Z/ZCAux.html ../List/UList.html FGroup.html Lagrange.html
+Euler.html: Euler.v ../Tactic/Tactic.html ../Z/ZSum.html
+FGroup.html: FGroup.v ../List/UList.html ../Tactic/Tactic.html
+IGroup.html: IGroup.v ../Tactic/Tactic.html ../List/UList.html ../List/ListAux.html FGroup.html
 Lagrange.html: Lagrange.v ../List/UList.html ../List/ListAux.html ../N/NatAux.html FGroup.html
-LucasLehmer.html: LucasLehmer.v ../N/NatAux.html ../List/UList.html ../List/ListAux.html FGroup.html EGroup.html PGroup.html IGroup.html
+LucasLehmer.html: LucasLehmer.v ../Tactic/Tactic.html ../N/NatAux.html ../List/UList.html ../List/ListAux.html FGroup.html EGroup.html PGroup.html IGroup.html
 Pepin.html: Pepin.v Pocklington.html
-PGroup.html: PGroup.v ../List/ListAux.html ../List/UList.html FGroup.html EGroup.html IGroup.html
+PGroup.html: PGroup.v ../Tactic/Tactic.html ../List/ListAux.html ../List/UList.html FGroup.html EGroup.html IGroup.html
 PocklingtonCertificat.html: PocklingtonCertificat.v LucasLehmer.html Pocklington.html
-Pocklington.html: Pocklington.v Zp.html FGroup.html EGroup.html Euler.html
+Pocklington.html: Pocklington.v ../Tactic/Tactic.html Zp.html FGroup.html EGroup.html Euler.html
 Proth.html: Proth.v Pocklington.html
-Root.html: Root.v ../List/UList.html ../List/Permutation.html
-Zp.html: Zp.v ../List/UList.html FGroup.html EGroup.html IGroup.html Cyclic.html Euler.html ../List/ZProgression.html
+Root.html: Root.v ../List/UList.html ../Tactic/Tactic.html ../List/Permutation.html
+Zp.html: Zp.v ../Tactic/Tactic.html ../List/UList.html FGroup.html EGroup.html IGroup.html Cyclic.html Euler.html ../List/ZProgression.html

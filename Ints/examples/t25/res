@@ -1,11 +1,6 @@
-make[2]: Entering directory `/home/thery/coq/V8/Ints/examples/t25'
-Finished transaction in 0. secs (0.149977u,0.s)
-Finished transaction in 1. secs (0.356946u,0.s)
-Finished transaction in 0. secs (0.029995u,0.s)
-Finished transaction in 1. secs (0.427935u,0.004s)
-Finished transaction in 0. secs (0.295955u,0.s)
-Finished transaction in 0. secs (0.010998u,0.s)
-Finished transaction in 0. secs (0.213968u,0.001999s)
-Finished transaction in 0. secs (0.017997u,0.s)
-Finished transaction in 0. secs (0.104984u,0.s)
-make[2]: Leaving directory `/home/thery/coq/V8/Ints/examples/t25'
+make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t25'
+Require Import PocklingtonRefl.
+Error while reading ./prime1.v :
+File "./prime1.v", line 1, characters 0-31
+User error: Cannot find library Tactic in loadpath
+make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t25'

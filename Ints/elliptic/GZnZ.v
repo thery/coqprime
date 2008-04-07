@@ -60,14 +60,14 @@ intros [x Hx] [y Hy].
   rewrite Zplus_comm; auto.
 intros [x Hx] [y Hy] [z Hz].
   refine (zirr _ _ _ _ _); simpl.
-  rewrite Zmod_plus; auto.
-  rewrite (Zmod_plus((x + y) mod n)); auto.
+  rewrite Zplus_mod; auto.
+  rewrite (Zplus_mod((x + y) mod n)); auto.
   repeat rewrite Zmod_mod; auto.
-  repeat rewrite <- Zmod_plus; auto; rewrite Zplus_assoc; auto.
+  repeat rewrite <- Zplus_mod; auto; rewrite Zplus_assoc; auto.
 intros p; case p; intros x H.
    refine (zirr _ _ _ _ _); simpl.
    case (Zle_lt_or_eq 1 n); auto with zarith; intros Hz.
-     rewrite (Zmod_def_small 1); auto with zarith.
+     rewrite (Zmod_small 1); auto with zarith.
      rewrite Zmult_1_l; auto.
      subst n; rewrite znz1; rewrite H; rewrite znz1; auto.
 intros [x Hx] [y Hy].
@@ -75,29 +75,29 @@ intros [x Hx] [y Hy].
   rewrite Zmult_comm; auto.
 intros [x Hx] [y Hy] [z Hz].
   refine (zirr _ _ _ _ _); simpl.
-  rewrite Zmod_mult; auto.
-  rewrite (Zmod_mult ((x * y) mod n)); auto.
+  rewrite Zmult_mod; auto.
+  rewrite (Zmult_mod ((x * y) mod n)); auto.
   repeat rewrite Zmod_mod; auto.
-  repeat rewrite <- Zmod_mult; auto; rewrite Zmult_assoc; auto.
+  repeat rewrite <- Zmult_mod; auto; rewrite Zmult_assoc; auto.
 intros [x Hx] [y Hy] [z Hz].
   refine (zirr _ _ _ _ _); simpl.
-  rewrite Zmod_mult; auto.
+  rewrite Zmult_mod; auto.
   rewrite Zmod_mod; auto.
-  rewrite <- Zmod_mult; auto.
-  rewrite (Zmod_plus ((x*z) mod n)); auto.
+  rewrite <- Zmult_mod; auto.
+  rewrite (Zplus_mod ((x*z) mod n)); auto.
   repeat rewrite Zmod_mod; auto.
-  rewrite <- Zmod_plus; auto. 
+  rewrite <- Zplus_mod; auto. 
   apply f_equal2 with (f := Zmod); auto; ring. 
 intros [x Hx] [y Hy].
   refine (zirr _ _ _ _ _); simpl.
-  rewrite Zmod_plus; auto.
+  rewrite Zplus_mod; auto.
   repeat rewrite Zmod_mod; auto.
-  rewrite <- Zmod_plus; auto. 
+  rewrite <- Zplus_mod; auto. 
 intros [x Hx].
   refine (zirr _ _ _ _ _); simpl.
-  rewrite Zmod_plus; auto.
+  rewrite Zplus_mod; auto.
   repeat rewrite Zmod_mod; auto.
-  rewrite <- Zmod_plus; auto. 
+  rewrite <- Zplus_mod; auto. 
   apply f_equal2 with (f := Zmod); auto; ring. 
 Defined.
 
@@ -134,10 +134,11 @@ apply mklist_lt; auto.
 Qed.
 
 Theorem nat_z_kt: forall x, (x < Zabs_nat n)%nat -> (Z_of_nat x) = (Z_of_nat x) mod n.
-intros x H; rewrite Zmod_def_small; split; auto with zarith.
+intros x H; rewrite Zmod_small; split; auto with zarith.
 replace n with (Z_of_nat (Zabs_nat n)).
 apply inj_lt; auto.
-rewrite Z_of_nat_Zabs_nat; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 Qed.
 
 Definition mkzlist: 
@@ -171,7 +172,8 @@ Theorem mkzlist_in:
 intros l1; elim l1; simpl; auto; clear l1.
 intros a1 l1 Hrec1 a2 l2 Hl2 [H4 | H4]; auto.
   left; apply zirr; auto.
-  rewrite H4; rewrite Z_of_nat_Zabs_nat; auto.
+  rewrite H4; rewrite inj_Zabs_nat; auto.
+  rewrite Zabs_eq; auto with zarith.
   case (Z_mod_lt a2 n); auto with zarith.
 Qed.
 
@@ -212,8 +214,10 @@ case (Z_mod_lt z1 n); auto with zarith.
 rewrite <- Hz1; intros H1 H2.
 case (le_or_lt (Zabs_nat n) (Zabs_nat z1)); auto; intros H3.
 absurd (z1 < n); auto; apply Zle_not_lt.
-rewrite <- Z_of_nat_Zabs_nat; auto.
-rewrite <- (Z_of_nat_Zabs_nat n); auto.
+rewrite <- Zabs_eq; auto.
+rewrite <- inj_Zabs_nat; auto.
+rewrite <- (Zabs_eq n); auto.
+rewrite <- (inj_Zabs_nat n); auto.
 apply inj_le; auto.
 Qed.
 
@@ -229,23 +233,23 @@ Variable p: Z.
 Variable p_prime: prime p.
 
 Theorem p_pos: 0 < p.
-generalize (prime_le_2 _ p_prime); auto with zarith.
+generalize (prime_ge_2 _ p_prime); auto with zarith.
 Qed.
 
-Definition inv v := mkznz _ _ (modz p p_pos (fst (fst (Zegcd (val p v) p)))).
+Definition inv v := mkznz _ _ (modz p (fst (fst (Zegcd (val p v) p)))).
 
-Definition div v1 v2 := mul _ p_pos v1 (inv v2).
+Definition div v1 v2 := mul _ v1 (inv v2).
 
-Definition FZpZ:  field_theory (zero _ p_pos) (one _ p_pos)
-                               (add _ p_pos) (mul _ p_pos)
-                              (sub _ p_pos) (opp _ p_pos)
+Definition FZpZ:  field_theory (zero _) (one _)
+                               (add _) (mul _)
+                              (sub _) (opp _)
                                div inv (@eq (znz p)).
 assert (Hmp := p_pos).
 split; auto.
 exact (RZnZ _ p_pos).
-intros H; injection H; repeat rewrite Zmod_def_small;
+intros H; injection H; repeat rewrite Zmod_small;
   auto with zarith.
-generalize (prime_le_2 _ p_prime); auto with zarith.
+generalize (prime_ge_2 _ p_prime); auto with zarith.
 intros (n, Hn); unfold zero, one, inv, mul; simpl.
 intros H; apply zirr.
 generalize (Zegcd_is_egcd n p); case Zegcd; intros (u,v) w (Hu, (Hv, Hw));
@@ -258,11 +262,11 @@ case (Zle_lt_or_eq _ _ H1); auto with zarith.
 rewrite <- Hn; intros H3;
   case H; apply zirr; rewrite <- H3; auto.
 red in F1.
-case (Zis_gcd_unique _ _ _ _ Hv (Zis_gcd_sym _ _ _ F1)); 
+case (Zis_gcd_unique _ _ _ _ Hv F1); 
   auto with zarith;
  intros; subst w.
 rewrite <- H0.
-rewrite Zmod_mult; repeat rewrite Zmod_mod; try rewrite <- Zmod_mult;
+rewrite Zmult_mod; repeat rewrite Zmod_mod; try rewrite <- Zmult_mod;
   auto.
 rewrite Z_mod_plus; auto with zarith.
 Defined.

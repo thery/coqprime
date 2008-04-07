@@ -9,11 +9,10 @@
 Require Import List.
 Require Import ZArith.
 Require Import Zorder.
-Require Import ZAux.
+Require Import ZCAux.
 Require Import LucasLehmer.
 Require Import Pocklington.
 Require Import ZnZ.
-Require Import IntsZmisc.
 Require Import Pmod.
 Require Import Mod_op.
 Require Import W.
@@ -55,23 +54,23 @@ Definition fold_pow_mod (a: w) l :=
     l a.
 
 Lemma fold_pow_mod_spec : forall l (a:w), 
-  [|a|] < [|b|] -> [|fold_pow_mod a l|] = ([|a|]^(mkProd' l) mod [|b|])%Z. 
+  ([|a|] < [|b|])%Z -> [|fold_pow_mod a l|] = ([|a|]^(mkProd' l) mod [|b|])%Z. 
 intros l; unfold fold_pow_mod; elim l; simpl fold_left; simpl mkProd'; auto; clear l.
-intros a H; rewrite Zpower_exp_1; rewrite Zmod_def_small; auto with zarith.
+intros a H; rewrite Zpower_1_r; rewrite Zmod_small; auto with zarith.
 case (spec_to_Z op_spec a); auto with zarith.
 intros (p1, q1) l Rec a H.
 case (spec_to_Z op_spec a); auto with zarith; intros U1 U2.
 rewrite Rec.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
-rewrite <- Zmod_Zpower.
+rewrite <- Zpower_mod.
 rewrite times_Zmult; rewrite Zpower_mult; auto with zarith.
 apply Zle_lt_trans with (2 := H); auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
 match goal with |- context[(?X mod ?Y)%Z] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 Qed.
 
 
@@ -85,25 +84,25 @@ Fixpoint all_pow_mod (prod a: w) (l:dec_prime) {struct l}: w*w :=
 
 
 Lemma snd_all_pow_mod :
- forall l (prod a :w), [|a|] < [|b|] ->
+ forall l (prod a :w), ([|a|] < [|b|])%Z ->
    [|snd (all_pow_mod prod a l)|] = ([|a|]^(mkProd' l) mod [|b|])%Z.
 intros l; elim l; simpl all_pow_mod; simpl mkProd'; simpl snd; clear l.
-intros _ a H; rewrite Zpower_exp_1; auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+intros _ a H; rewrite Zpower_1_r; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 case (spec_to_Z op_spec a); auto with zarith.
 intros (p1, q1) l Rec prod a H.
 case (spec_to_Z op_spec a); auto with zarith; intros U1 U2.
 rewrite Rec; auto with zarith.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
-rewrite <- Zmod_Zpower.
+rewrite <- Zpower_mod.
 rewrite times_Zmult; rewrite Zpower_mult; auto with zarith.
 apply Zle_lt_trans with (2 := H); auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
 match goal with |- context[(?X mod ?Y)%Z] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 Qed.
 
 Lemma fold_aux : forall a N l prod,
@@ -116,9 +115,9 @@ Lemma fold_aux : forall a N l prod,
 induction l;simpl;intros.
 rewrite Zmod_mod; auto with zarith.
 rewrite <- IHl; auto with zarith.
-rewrite Zmod_mult; auto with zarith.
+rewrite Zmult_mod; auto with zarith.
 rewrite Zmod_mod; auto with zarith.
-rewrite <- Zmod_mult; auto with zarith.
+rewrite <- Zmult_mod; auto with zarith.
 Qed.
 
 Lemma fst_all_pow_mod :
@@ -133,25 +132,25 @@ intros l; elim l; simpl all_pow_mod; simpl fold_left; simpl fst;
   auto with zarith; clear l.
 intros (p1,q1) l Rec; simpl fst.
 intros a R prod A H1 H2.
-assert (F: 0 <= [|A|] < [|b|]).
+assert (F: (0 <= [|A|] < [|b|])%Z).
 rewrite H2.
 match goal with |- context[(?X mod ?Y)%Z] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
 assert (F1: ((fun x => x = x mod [|b|])%Z [|fold_pow_mod A l|])).
-rewrite Zmod_def_small; auto.
+rewrite Zmod_small; auto.
 rewrite fold_pow_mod_spec; auto with zarith.
 match goal with |- context[(?X mod ?Y)%Z] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
 assert (F2: ((fun x => x = x mod [|b|])%Z [|pred (fold_pow_mod A l)|])).
-rewrite Zmod_def_small; auto.
+rewrite Zmod_small; auto.
 rewrite(fun x => m_op_spec.(pred_mod_spec) x [|x|]);
   auto with zarith.
 match goal with |- context[(?X mod ?Y)%Z] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite (Rec a (R * p1)); auto with zarith.
+rewrite (Rec a (R * p1)%positive); auto with zarith.
 rewrite(fun x y => m_op_spec.(mul_mod_spec) x y [|x|] [|y|]);
   auto with zarith.
 rewrite(fun x => m_op_spec.(pred_mod_spec) x [|x|]);
@@ -170,16 +169,16 @@ end.
 rewrite Zmod_mod; auto with zarith.
 rewrite (Zmult_comm R); repeat rewrite <- Zmult_assoc;
  rewrite (Zmult_comm p1); rewrite Z_div_mult; auto with zarith.
-repeat rewrite (Zmod_mult [|prod|]);auto with zmisc.
+repeat rewrite (Zmult_mod [|prod|]);auto with zmisc.
 eq_tac; [idtac | eq_tac]; auto.
 eq_tac; auto.
 rewrite Zmod_mod; auto.
-repeat rewrite (fun x => Zmod_minus x 1); auto with zarith.
+repeat rewrite (fun x => Zminus_mod x 1); auto with zarith.
 eq_tac; auto; eq_tac; auto.
-rewrite Zmult_comm; rewrite <- Zmod_Zpower; auto with zmisc. 
+rewrite Zmult_comm; rewrite <- Zpower_mod; auto with zmisc. 
 rewrite Zpower_mult; auto with zarith.
 rewrite Zmod_mod; auto with zarith.
-rewrite Zmod_def_small; auto.
+rewrite Zmod_small; auto.
 rewrite(fun x y => m_op_spec.(mul_mod_spec) x y [|x|] [|y|]);
   auto with zarith.
 match goal with |- context[(?X mod ?Y)%Z] =>
@@ -189,9 +188,10 @@ rewrite(fun x => m_op_spec.(power_mod_spec) x [|x|]);
   auto with zarith.
 apply trans_equal with ([|A|] ^ p1 mod [|b|])%Z; auto.
 rewrite H2.
-rewrite times_Zmult; rewrite Zpower_mult; auto with zarith.
-rewrite <- Zmod_Zpower; auto with zarith.
-rewrite Zmod_def_small; auto.
+Set Printing All.
+rewrite Zpos_mult_morphism; rewrite Zpower_mult; auto with zarith.
+rewrite <- Zpower_mod; auto with zarith.
+rewrite Zmod_small; auto.
 Qed.
 
 
@@ -215,9 +215,9 @@ repeat rewrite Rec; auto with zarith.
 match goal with |- (Zpower_pos ?X ?Y mod ?Z = _)%Z => 
   apply trans_equal with (X ^ Y mod Z)%Z; auto
 end.
-repeat rewrite <- Zmod_Zpower; auto with zmisc.
+repeat rewrite <- Zpower_mod; auto with zmisc.
 repeat rewrite <- Zpower_mult; auto with zmisc.
-repeat rewrite <- Zmod_Zpower; auto with zmisc.
+repeat rewrite <- Zpower_mod; auto with zmisc.
 repeat rewrite <- Zpower_mult; auto with zarith zmisc.
 eq_tac; auto.
 eq_tac; auto.
@@ -225,7 +225,7 @@ rewrite Zpos_xI.
 assert (tmp: forall x, (2 * x = x + x)%Z); auto with zarith; rewrite tmp;
   clear tmp.
 repeat rewrite Zpower_exp; auto with zarith.
-rewrite Zpower_exp_1; try ring; auto with misc.
+rewrite Zpower_1_r; try ring; auto with misc.
 rewrite Zmod_mod; auto with zarith.
 rewrite Rec; auto with zmisc.
 rewrite Zmod_mod; auto with zarith.
@@ -233,7 +233,7 @@ rewrite Rec; auto with zmisc.
 rewrite Zmod_mod; auto with zarith.
 intros p1 Rec a Ha.
 repeat rewrite Rec; auto with zarith.
-repeat rewrite <- Zmod_Zpower; auto with zmisc.
+repeat rewrite <- Zpower_mod; auto with zmisc.
 repeat rewrite <- Zpower_mult; auto with zmisc.
 eq_tac; auto.
 eq_tac; auto.
@@ -242,7 +242,7 @@ assert (tmp: forall x, (2 * x = x + x)%Z); auto with zarith; rewrite tmp;
   clear tmp.
 repeat rewrite Zpower_exp; auto with zarith.
 rewrite Zmod_mod; auto with zarith.
-intros a Ha; rewrite Zpower_exp_1; auto with zarith.
+intros a Ha; rewrite Zpower_1_r; auto with zarith.
 rewrite(fun x => m_op_spec.(power_mod_spec) x [|x|]);
   auto with zarith.
 Qed.
@@ -251,15 +251,15 @@ Lemma pow_mod_pred_spec : forall l a,
   ([|a|] = [|a|] mod [|b|] ->
   [|pow_mod_pred a l|] = [|a|]^(mkProd_pred l) mod [|b|])%Z. 
 intros l; elim l; simpl pow_mod_pred; simpl mkProd_pred; clear l.
-intros; rewrite Zpower_exp_1; auto with zarith.
+intros; rewrite Zpower_1_r; auto with zarith.
 intros (p1,q1) l Rec a H; simpl snd; simpl fst.
 case (q1 ?= 1)%P; auto with zarith.
 rewrite Rec; auto.
 rewrite iter_pow_mod_spec; auto with zarith.
 rewrite times_Zmult; rewrite pow_Zpower.
-rewrite <- Zmod_Zpower; auto with zarith.
+rewrite <- Zpower_mod; auto with zarith.
 rewrite Zpower_mult; auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite iter_pow_mod_spec; auto with zarith.
 match goal with |- context[(?X mod ?Y)%Z] =>
   case (Z_mod_lt X Y); auto with zarith
@@ -461,50 +461,50 @@ rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 rewrite F1.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 rewrite F1; rewrite F4.
-rewrite <- Zmod_Zpower; auto with zarith.
+rewrite <- Zpower_mod; auto with zarith.
 rewrite <- Zpower_mult; auto with zarith.
 rewrite mkProd_pred_mkProd; auto with zarith.
 rewrite U1; rewrite Zmult_comm.
 rewrite Zpower_mult; auto with zarith.
-rewrite <- Zmod_Zpower; auto with zarith.
-rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite <- Zpower_mod; auto with zarith.
+rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
+rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
+rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 match type of H6 with _ -> _ -> ?X =>
   assert (tmp: X); [apply H6 | clear H6; rename tmp into H6];
   auto with zarith
 end.
 rewrite F1.
-rewrite F5; rewrite Zmod_def_small; auto with zarith.
+rewrite F5; rewrite Zmod_small; auto with zarith.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 repeat (rewrite F1 || rewrite F4).
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 repeat (rewrite F1 || rewrite F4).
-rewrite Zpos_mult; rewrite <- Zmod_Zpower; auto with zarith.
+rewrite Zpos_mult; rewrite <- Zpower_mod; auto with zarith.
 rewrite Zpower_mult; auto with zarith.
 repeat (rewrite F1 || rewrite F4).
-rewrite Zmod_def_small; auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
 repeat (rewrite F1 || rewrite F4).
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite F5 in H6; rewrite F1 in H6; rewrite F4 in H6.
 case in_mkProd_prime_div_in with (3 := Hdec); auto.
 intros p1 Hp1.
@@ -719,50 +719,50 @@ rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 rewrite F1.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 rewrite F1; rewrite F4.
-rewrite <- Zmod_Zpower; auto with zarith.
+rewrite <- Zpower_mod; auto with zarith.
 rewrite <- Zpower_mult; auto with zarith.
 rewrite mkProd_pred_mkProd; auto with zarith.
 rewrite U1; rewrite Zmult_comm.
 rewrite Zpower_mult; auto with zarith.
-rewrite <- Zmod_Zpower; auto with zarith.
-rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite <- Zpower_mod; auto with zarith.
+rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
+rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-rewrite F1; rewrite F4; rewrite Zmod_def_small; auto with zarith.
+rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 match type of H6 with _ -> _ -> ?X =>
   assert (tmp: X); [apply H6 | clear H6; rename tmp into H6];
   auto with zarith
 end.
 rewrite F1.
-rewrite F5; rewrite Zmod_def_small; auto with zarith.
+rewrite F5; rewrite Zmod_small; auto with zarith.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 repeat (rewrite F1 || rewrite F4).
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 repeat (rewrite F1 || rewrite F4).
-rewrite Zpos_mult; rewrite <- Zmod_Zpower; auto with zarith.
+rewrite Zpos_mult; rewrite <- Zpower_mod; auto with zarith.
 rewrite Zpower_mult; auto with zarith.
 repeat (rewrite F1 || rewrite F4).
-rewrite Zmod_def_small; auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
 repeat (rewrite F1 || rewrite F4).
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 rewrite F5 in H6; rewrite F1 in H6; rewrite F4 in H6.
 case in_mkProd_prime_div_in with (3 := Hdec); auto.
 intros p1 Hp1.
@@ -822,16 +822,22 @@ Fixpoint test_Certif (lc : Certif) : bool :=
     else false 
     else false
   | (Pock_certif n a dec sqrt) :: lc =>
-    if test_pock n a dec sqrt then 
-     if all_in lc dec then test_Certif lc else false
+    let xx := test_pock n a dec sqrt in 
+    if xx then 
+      let yy := all_in lc dec in
+      (if yy then test_Certif lc else false)
     else false
   | (SPock_certif n a dec) :: lc =>
-    if test_spock n a dec then 
-     if all_in lc dec then test_Certif lc else false
+    let xx :=test_spock n a dec in
+    if xx then
+      let yy := all_in lc dec in
+      (if yy then test_Certif lc else false)
     else false
   | (Ell_certif n ss l a b x y) :: lc =>
-    if ell_test n ss l a b x y then 
-     if all_in lc l then test_Certif lc else false
+    let xx := ell_test n ss l a b x y in
+    if xx then
+     let yy :=  all_in lc l in 
+     if yy then test_Certif lc else false
     else false
   end.
 

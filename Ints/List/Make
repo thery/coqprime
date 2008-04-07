@@ -1,3 +1,4 @@
+-I ../Tactic
 Iterator.v
 ListAux.v
 Permutation.v

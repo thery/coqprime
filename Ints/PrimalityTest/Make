@@ -1,3 +1,4 @@
+-I ../Tactic
 -I ../Z
 -I ../N
 -I ../List

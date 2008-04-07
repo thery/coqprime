@@ -231,18 +231,19 @@ Definition mL := mkRect (Zabs_nat (m - 1)) (Zabs_nat (m -1)).
  **************************************)
 
 Theorem mL_length : length mL = Zabs_nat (m * m).
-unfold mL; rewrite mkRect_length; simpl; apply inj_eq_inv.
-repeat (rewrite inj_mult || rewrite inj_plus || rewrite Z_of_nat_Zabs_nat); simpl; auto with zarith.
+unfold mL; rewrite mkRect_length; simpl; apply inj_eq_rev.
+repeat (rewrite inj_mult || rewrite inj_plus || rewrite inj_Zabs_nat || rewrite Zabs_eq); simpl; auto with zarith.
 eq_tac; auto with zarith.
 Qed.
 
 Theorem mL_in: forall p q, 0 <= p < m -> 0 <= q <  m -> (In (p, q) mL).
-intros p q (H1, H2) (H3, H4); unfold mL; apply mkRect_in; rewrite Z_of_nat_Zabs_nat; auto with zarith.
+intros p q (H1, H2) (H3, H4); unfold mL; apply mkRect_in; rewrite inj_Zabs_nat; 
+  rewrite Zabs_eq; auto with zarith.
 Qed.
 
 Theorem in_mL: forall p, In p mL->  exists p1, exists  p2, 0 <= p1 < m  /\ 0 <= p2 < m  /\ p = (p1, p2).
 unfold mL; intros p H1; case in_mkRect with (1 := H1).
-repeat rewrite Z_of_nat_Zabs_nat; auto with zarith.
+repeat (rewrite inj_Zabs_nat || rewrite Zabs_eq); auto with zarith.
 intros p1 (p2, ((H2, H3), ((H4, H5), H6))); exists p1; exists p2; repeat split; auto with zarith.
 Qed.
 
@@ -281,47 +282,47 @@ end.
 eq_tac.
 generalize (f_equal (fun x => x mod m) H1).
 repeat rewrite <- Zmult_assoc.
-repeat (rewrite (fun x  => Zmod_plus (t1 * x))); auto.
-repeat (rewrite (fun x  => Zmod_plus (x1 * x))); auto.
-repeat (rewrite (fun x  => Zmod_plus (x1 mod m * x))); auto.
-repeat (rewrite (Zmod_mult t1)); auto.
-repeat (rewrite (Zmod_mult x1)); auto.
-repeat (rewrite (Zmod_mult base)); auto.
-repeat (rewrite (Zmod_mult t2)); auto.
-repeat (rewrite (Zmod_mult x2)); auto.
-repeat (rewrite (Zmod_mult (t2 mod m))); auto.
-repeat (rewrite (Zmod_mult (x1 mod m))); auto.
-repeat (rewrite (Zmod_mult (x2 mod m))); auto.
+repeat (rewrite (fun x  => Zplus_mod (t1 * x))); auto.
+repeat (rewrite (fun x  => Zplus_mod (x1 * x))); auto.
+repeat (rewrite (fun x  => Zplus_mod (x1 mod m * x))); auto.
+repeat (rewrite (Zmult_mod t1)); auto.
+repeat (rewrite (Zmult_mod x1)); auto.
+repeat (rewrite (Zmult_mod base)); auto.
+repeat (rewrite (Zmult_mod t2)); auto.
+repeat (rewrite (Zmult_mod x2)); auto.
+repeat (rewrite (Zmult_mod (t2 mod m))); auto.
+repeat (rewrite (Zmult_mod (x1 mod m))); auto.
+repeat (rewrite (Zmult_mod (x2 mod m))); auto.
 repeat (rewrite Zmod_mod); auto.
 generalize (f_equal (fun x => x mod m) H2).
-repeat (rewrite (fun x  => Zmod_plus (t1 * x))); auto.
-repeat (rewrite (fun x  => Zmod_plus (x1 * x))); auto.
-repeat (rewrite (fun x  => Zmod_plus (x1 mod m * x))); auto.
-repeat (rewrite (Zmod_mult t1)); auto.
-repeat (rewrite (Zmod_mult x1)); auto.
-repeat (rewrite (Zmod_mult t2)); auto.
-repeat (rewrite (Zmod_mult x2)); auto.
-repeat (rewrite (Zmod_mult (t2 mod m))); auto.
-repeat (rewrite (Zmod_mult (x1 mod m))); auto.
-repeat (rewrite (Zmod_mult (x2 mod m))); auto.
+repeat (rewrite (fun x  => Zplus_mod (t1 * x))); auto.
+repeat (rewrite (fun x  => Zplus_mod (x1 * x))); auto.
+repeat (rewrite (fun x  => Zplus_mod (x1 mod m * x))); auto.
+repeat (rewrite (Zmult_mod t1)); auto.
+repeat (rewrite (Zmult_mod x1)); auto.
+repeat (rewrite (Zmult_mod t2)); auto.
+repeat (rewrite (Zmult_mod x2)); auto.
+repeat (rewrite (Zmult_mod (t2 mod m))); auto.
+repeat (rewrite (Zmult_mod (x1 mod m))); auto.
+repeat (rewrite (Zmult_mod (x2 mod m))); auto.
 repeat (rewrite Zmod_mod); auto.
 Qed.
 
 Theorem zpmult_0_l: forall p, (zpmult (0, 0) p) = (0, 0).
 intros p; case p; intros x y; unfold zpmult, pmult; simpl.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 Qed.
 
 Theorem zpmult_1_l: forall p, In p mL -> zpmult (1, 0) p = p.
 intros p H; case in_mL with (1 := H); clear H; intros p1 (p2, ((H1, H2), (H3, H4))); subst.
 unfold zpmult; rewrite pmult_1_l.
-repeat rewrite Zmod_def_small; auto with zarith.
+repeat rewrite Zmod_small; auto with zarith.
 Qed.
 
 Theorem zpmult_1_r: forall p, In p mL -> zpmult p (1, 0) = p.
 intros p H; case in_mL with (1 := H); clear H; intros p1 (p2, ((H1, H2), (H3, H4))); subst.
 unfold zpmult; rewrite pmult_1_r.
-repeat rewrite Zmod_def_small; auto with zarith.
+repeat rewrite Zmod_small; auto with zarith.
 Qed.
 
 Theorem zpmult_comm: forall p q, zpmult p q = zpmult q p.
