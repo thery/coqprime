@@ -1,9 +1,13 @@
-Finished transaction in 0. secs (0.075988u,0.s)
-Finished transaction in 0. secs (0.220966u,0.s)
-Finished transaction in 0. secs (0.015998u,0.s)
-Finished transaction in 1. secs (0.347947u,0.s)
-Finished transaction in 0. secs (0.147977u,0.s)
-Finished transaction in 0. secs (0.017997u,0.s)
-Finished transaction in 0. secs (0.165975u,0.s)
-Finished transaction in 0. secs (0.032995u,0.s)
-Finished transaction in 0. secs (0.102985u,0.s)
+make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t25'
+make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t25'
+make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t25'
+Finished transaction in 1. secs (0.094986u,0.s)
+Finished transaction in 0. secs (0.376943u,0.001s)
+Finished transaction in 0. secs (0.012998u,0.s)
+Finished transaction in 1. secs (0.378942u,0.s)
+Finished transaction in 1. secs (0.154976u,0.s)
+Finished transaction in 0. secs (0.013998u,0.s)
+Finished transaction in 0. secs (0.232964u,0.002s)
+Finished transaction in 0. secs (0.031995u,0.s)
+Finished transaction in 0. secs (0.158976u,0.s)
+make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t25'

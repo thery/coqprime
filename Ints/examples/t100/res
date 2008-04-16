@@ -1,9 +1,13 @@
-Finished transaction in 26. secs (25.928059u,0.008999s)
-Finished transaction in 16. secs (16.597477u,0.008998s)
-Finished transaction in 35. secs (33.974835u,0.011998s)
-Finished transaction in 35. secs (34.115814u,0.013998s)
-Finished transaction in 30. secs (30.463369u,0.006999s)
-Finished transaction in 49. secs (48.330652u,0.028995s)
-Finished transaction in 34. secs (33.323934u,0.009998s)
-Finished transaction in 16. secs (15.602628u,0.025997s)
-Finished transaction in 33. secs (33.077972u,0.016997s)
+make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t100'
+make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t100'
+make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t100'
+Finished transaction in 29. secs (28.370687u,0.093985s)
+Finished transaction in 30. secs (29.566505u,0.051992s)
+Finished transaction in 40. secs (39.765955u,0.076988s)
+Finished transaction in 28. secs (27.063885u,0.070989s)
+Finished transaction in 32. secs (30.966292u,0.06499s)
+Finished transaction in 58. secs (56.313439u,0.096985s)
+Finished transaction in 35. secs (33.756869u,0.045993s)
+Finished transaction in 25. secs (24.886217u,0.037994s)
+Finished transaction in 41. secs (39.408009u,0.106983s)
+make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t100'

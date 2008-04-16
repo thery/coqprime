@@ -8,7 +8,7 @@
 
 Require Import List.
 Require Import ZArith.
-Require Import ZAux.
+Require Import ZCAux.
 
 Require Import Pock.
 

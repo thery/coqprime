@@ -1,6 +1,13 @@
 make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t50'
-Require Import PocklingtonRefl.
-Error while reading ./prime1.v :
-File "./prime1.v", line 1, characters 0-31
-User error: Cannot find library Tactic in loadpath
+make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t50'
+make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t50'
+Finished transaction in 2. secs (2.463626u,0.001s)
+Finished transaction in 0. secs (0.622906u,0.001999s)
+Finished transaction in 1. secs (1.408786u,0.s)
+Finished transaction in 2. secs (2.391636u,0.004999s)
+Finished transaction in 1. secs (0.777882u,0.s)
+Finished transaction in 1. secs (0.833874u,0.001s)
+Finished transaction in 2. secs (2.453627u,0.001999s)
+Finished transaction in 1. secs (1.322799u,0.002s)
+Finished transaction in 2. secs (1.750734u,0.002s)
 make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t50'
