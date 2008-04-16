@@ -2,5 +2,8 @@ BasePrimes.vo: BasePrimes.v ../num/Pock.vo
 BasePrimes.vi: BasePrimes.v ../num/Pock.vo
 PocklingtonRefl.vo: PocklingtonRefl.v ../num/Pock.vo BasePrimes.vo
 PocklingtonRefl.vi: PocklingtonRefl.v ../num/Pock.vo BasePrimes.vo
+TestLucas.vo: TestLucas.v ../num/Lucas.vo
+TestLucas.vi: TestLucas.v ../num/Lucas.vo
 BasePrimes.html: BasePrimes.v ../num/Pock.html
 PocklingtonRefl.html: PocklingtonRefl.v ../num/Pock.html BasePrimes.html
+TestLucas.html: TestLucas.v ../num/Lucas.html
