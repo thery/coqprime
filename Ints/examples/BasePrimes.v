@@ -21,7 +21,6 @@ Lemma prime2 : prime 2.
 exact prime_2.
 Qed.
 
-
 Lemma prime3 : prime 3.
 Proof.
  apply (Pocklington_refl (Pock_certif 3 2 ((2,1)::nil) 1)

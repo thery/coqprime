@@ -12,20 +12,21 @@ Require Import Zorder.
 Require Import ZCAux.
 Require Import LucasLehmer.
 Require Import Pocklington.
-Require Import ZnZ.
+Require Import ZArith Znumtheory Zpow_facts.
+Require Import CyclicAxioms DoubleCyclic BigN Cyclic31 Int31.
 Require Import Pmod.
 Require Import Mod_op.
 Require Import W.
 Require Import Lucas.
 Require Export PocklingtonCertificat.
 Require Import NEll.
-
+Import CyclicAxioms DoubleType DoubleBase List.
 
 Open Scope Z_scope. 
 
 Section test.
 
-Variable w: Set.
+Variable w: Type.
 Variable w_op: znz_op w.
 Variable op_spec: znz_spec w_op.
 Variable p: positive.
@@ -188,7 +189,6 @@ rewrite(fun x => m_op_spec.(power_mod_spec) x [|x|]);
   auto with zarith.
 apply trans_equal with ([|A|] ^ p1 mod [|b|])%Z; auto.
 rewrite H2.
-Set Printing All.
 rewrite Zpos_mult_morphism; rewrite Zpower_mult; auto with zarith.
 rewrite <- Zpower_mod; auto with zarith.
 rewrite Zmod_small; auto.
@@ -372,9 +372,9 @@ set (bb := pred (nat_of_P (get_height 31 (plength N)))).
 set (w_op := cmk_op bb).
 assert (op_spec: znz_spec w_op).
 unfold bb, w_op; apply cmk_spec; auto.
-assert (F0: N < Basic_type.base (znz_digits w_op)).
+assert (F0: N < DoubleType.base (znz_digits w_op)).
   apply Zlt_le_trans with (1 := plength_correct N).
-  unfold w_op, Basic_type.base.
+  unfold w_op, DoubleType.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
   generalize (get_height_correct 31 (plength N)); unfold bb.
@@ -644,9 +644,9 @@ end.
 match goal with H: (?X ?< ?Y) = true |- _ =>
   generalize (is_lt_spec X Y); rewrite H; clear H; intros H
 end.
-assert (F0: N < Basic_type.base (znz_digits w_op)).
+assert (F0: N < DoubleType.base (znz_digits w_op)).
   apply Zlt_le_trans with (1 := plength_correct N).
-  unfold w_op, Basic_type.base.
+  unfold w_op, DoubleType.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
   generalize (get_height_correct 31 (plength N)); unfold bb.
@@ -803,14 +803,18 @@ Fixpoint test_Certif (lc : Certif) : bool :=
   | nil => true
   | (Proof_certif _ _) :: lc => test_Certif lc
   | (Lucas_certif n p) :: lc =>
-     if test_Certif lc then
-     if gt2 p then
+     let xx := test_Certif lc in
+     if xx then
+     let yy := gt2 p in 
+     if yy then
        match p with 
          Zpos p1 => 
-           match Mp p with
+           let zz := Mp p in
+           match zz with
           | Zpos n' =>
-             if (n ?= n')%P then 
-               match lucas p1 with
+             if (n ?= n')%P then
+               let tt :=  lucas p1 in
+               match tt with
                | Z0 => true
                | _ => false
                end

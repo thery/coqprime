@@ -63,6 +63,7 @@ rewrite (Zmod_small 1); auto with zarith.
 rewrite <- Zpower_mod; auto with zarith.
 rewrite Zmod_small; auto with zarith.
 simpl; unfold Zpower_pos; simpl; auto with zarith.
+apply Z_div_pos; auto with zarith.
 apply Zis_gcd_gcd; auto with zarith.
 apply Zis_gcd_intro; auto with zarith.
 intros x HD1 HD2.
@@ -96,6 +97,7 @@ rewrite H1.
 rewrite (Zmod_small 1); auto with zarith.
 replace (FermatNumber n - 1 + 1) with (FermatNumber n); auto with zarith.
 apply Zdivide_mod; auto with zarith.
+apply Z_div_pos; auto with zarith.
 Qed.
 
 Theorem prime5: prime 5.
@@ -114,7 +116,7 @@ Theorem prime65537:  prime 65537.
 exact (PepinTestOp 4 (refl_equal _)).
 Qed.
 
-(* Too touch !! 
+(* Too tough !! 
 Theorem prime4294967297:  prime 4294967297.
 refine (PepinTestOp 5 (refl_equal _)).
 Qed.

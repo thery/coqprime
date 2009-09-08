@@ -147,7 +147,7 @@ case (Zle_or_lt m c); intros Hc3.
 2: case (H6 c); auto with zarith; rewrite <- Hc2; auto.
 2: contradict Hc3; rewrite <- H5; auto with zarith.
 pose (d := ((N / X) /  F1)).
-assert(Hd0: 0 <= N / X); auto with zarith.
+assert(Hd0: 0 <= N / X); try apply Z_div_pos; auto with zarith.
 (*
 apply Zge_le; unfold d; repeat apply Z_div_ge0; auto with zarith.
 *)

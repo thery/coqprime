@@ -15,7 +15,7 @@
     Definition: PGroup              
  **********************************************************************)
 Require Import ZArith.
-Require Import ZAux.
+Require Import Znumtheory.
 Require Import Tactic.
 Require Import Wf_nat.
 Require Import ListAux.

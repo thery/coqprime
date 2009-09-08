@@ -13,7 +13,6 @@ Require Import Arith.
 Require Import ArithRing.
 Require Import ListAux.
 Require Import ZArith.
-Require Import ZAux.
 Require Import Iterator.
 Require Import ZProgression.
 

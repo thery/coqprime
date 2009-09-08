@@ -1,5 +1,6 @@
-Require Import ZArith.
-Require Import ZAux.
+Require Import ZArith Zpow_facts.
+
+Open Scope Z_scope.
 
 Fixpoint plength (p: positive) : positive :=
   match p with 
@@ -12,6 +13,7 @@ Theorem plength_correct: forall p, (Zpos p < 2 ^ Zpos (plength p))%Z.
 assert (F: (forall p, 2 ^ (Zpos (Psucc p)) = 2 * 2 ^ Zpos p)%Z).
 intros p; replace (Zpos (Psucc p)) with (1 + Zpos p)%Z.
 rewrite Zpower_exp; auto with zarith.
+red; intros; discriminate.
 rewrite Zpos_succ_morphism; unfold Zsucc; auto with zarith.
 intros p; elim p; simpl plength; auto.
 intros p1 Hp1; rewrite F; repeat rewrite Zpos_xI.
@@ -46,7 +48,8 @@ Theorem Pdiv_le: forall p q,
 intros p q.
 unfold Pdiv.
 assert (H1: Zpos q > 0); auto with zarith.
-assert (H1b: Zpos p >= 0); auto with zarith.
+assert (H1b: Zpos p >= 0).
+  red; intros; discriminate.
 generalize (Z_div_ge0 (Zpos p) (Zpos q) H1 H1b).
 generalize (Z_div_mod_eq (Zpos p) (Zpos q) H1); case Zdiv.
   intros HH _; rewrite HH; rewrite Zmult_0_r; rewrite Zmult_1_r; simpl.

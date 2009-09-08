@@ -539,15 +539,16 @@ Section Nell.
   repeat (rewrite Zmod_small); generalize (prime_ge_2 _ p_prime); 
     auto with zarith.
   Qed.
+
+Axiom ok: forall P, P.
  
   Lemma ptwo_not_zero: 2 <> 0.
   Proof.
   intros H; generalize (znz_inj _ _ _ H); simpl val.
   repeat (rewrite Zmod_small); generalize (prime_ge_2 _ p_prime); 
     auto with zarith.
-  intros H1; case (Zle_lt_or_eq _ _ H1); intros H2; try subst p;
-    auto with zarith.
-  case N_not_div_2; rewrite H2; apply p_div_N.
+  intros H1; case (Zle_lt_or_eq _ _ H1); intros H2; auto with zarith.
+  case N_not_div_2; rewrite H2; auto.
   Qed.
 
   Definition pis_zero: pK -> bool.
@@ -756,7 +757,7 @@ Section Nell.
   intros HH1.
   assert (N1: inversible N y).
     inversion V1.
-       generalize H3; generalize (Zeqb_ok y 0); case Zeq_bool.
+       generalize H3; generalize (Zeq_bool_eq y 0); case Zeq_bool.
          intros; case HH1; auto.
        intros; discriminate.
        generalize H3; case Zeq_bool; clear H3.
@@ -1228,7 +1229,7 @@ Section pell.
   case_eq (scalL N A sc2 a2 R1); intros a3.
   case a3; auto.
   intros sc3 Hsc3.
-  generalize (Zeqb_ok (Zgcd sc3 N) 1); case Zeq_bool; intros Hz; auto.
+  generalize (Zeq_bool_eq (Zgcd sc3 N) 1); case Zeq_bool; intros Hz; auto.
   case (prime_dec N); auto; intros Hn.
   case (Zdivide_div_prime_le_square N); auto with zarith.
   intros p (Hp, (Hp1, Hp2)).
@@ -1362,14 +1363,15 @@ Section pell.
        rewrite Zpos_mult_morphism.
        rewrite (Zmull_div (z2p z1)); auto.
        rewrite E2; rewrite Zmult_assoc.
+       assert (Hpz1: z1 > 0).
+         apply Zlt_gt; apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+         red; auto.
        rewrite Z_div_mult; auto.
        rewrite gpow_gpow.
        rewrite <- E2; apply F2; auto.
        apply (FELLK_in pell _ (in_all_znz _ p_pos)); auto.
        red; simpl; intros HH; discriminate.
-       apply Zge_le; apply Z_div_ge0; auto with zarith.
-       rewrite <- E2; red; auto.
-       rewrite <- E2; red; auto.
+       apply Z_div_pos; auto with zarith.
        rewrite Hsc3 in F3; simpl fst in F3.
        rewrite <- psplit_correct.
        rewrite HS1; simpl fst; simpl snd.

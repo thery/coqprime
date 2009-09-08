@@ -15,7 +15,6 @@
   **********************************************************************)
 Require Import ZArith.
 Require Import Tactic.
-Require Import ZAux.
 Require Import Wf_nat.
 Require Import UList.
 Require Import ListAux.
