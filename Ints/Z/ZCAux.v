@@ -13,8 +13,7 @@
  **********************************************************************)
 
 Require Import ArithRing.
-Require Export ZArith.
-Require Export ZAux.
+Require Export ZArith Zpow_facts.
 Require Export Znumtheory.
 Require Export Tactic.
 
@@ -134,11 +133,13 @@ apply H; auto with zarith.
 apply Zdivide_trans with (1 := Hi1); auto.
 apply Rec; auto with zarith.
 split; auto with zarith.
+apply Z_div_pos; auto with zarith.
 apply Z_div_lt; auto with zarith.
 apply Zle_ge; apply Zle_trans with p.
 apply prime_ge_2; auto.
 pattern p at 1; rewrite <- Zpower_1_r; apply Zpower_le_monotone; auto with zarith.
 apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply Z_div_pos; auto with zarith.
 apply Zdivide_trans with (2 := H2); auto.
 exists (p ^ i); apply Z_div_exact_2; auto with zarith.
 apply Zdivide_mod; auto with zarith.

@@ -1,5 +1,4 @@
-Require Import ZArith.
-Require Import ZAux.
+Require Import ZArith Znumtheory.
 
 Set Implicit Arguments.
 

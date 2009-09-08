@@ -47,6 +47,7 @@ rewrite (Zmod_small 1); auto with zarith.
 rewrite <- Zpower_mod; auto with zarith.
 rewrite Zmod_small; auto with zarith.
 simpl; unfold Zpower_pos; simpl; auto with zarith.
+apply Z_div_pos; auto with zarith.
 apply Zdivide_trans with (2 ^ k).
 apply Zpower_divide; auto with zarith.
 apply Zdivide_factor_l; auto with zarith.
@@ -93,6 +94,7 @@ rewrite H1.
 rewrite (Zmod_small 1); auto with zarith.
 replace (h * 2 ^ k + 1 - 1 + 1) with (h * 2 ^ k + 1); auto with zarith.
 apply Zdivide_mod; auto with zarith.
+apply Z_div_pos; auto with zarith.
 Qed.
 
 Theorem prime5: prime 5.
@@ -111,7 +113,7 @@ Theorem prime65537:  prime 65537.
 exact (ProthTestOp 1 16 3 (refl_equal _)).
 Qed.
 
-(* Too touch !! 
+(* Too tough !! 
 Theorem prime4294967297:  prime 4294967297.
 exact (ProthTestOp 1 32 3 (refl_equal _)).
 Qed.

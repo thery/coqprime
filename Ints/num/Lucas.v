@@ -8,20 +8,20 @@
 
 Set Implicit Arguments.
 
-Require Import ZArith.
+Require Import ZArith Znumtheory Zpow_facts.
+Require Import CyclicAxioms DoubleCyclic BigN Cyclic31 Int31.
 Require Import ZCAux.
-Require Import Basic_type.
-Require Import ZnZ.
 Require Import W.
 Require Import Mod_op.
 Require Import LucasLehmer.
 Require Import Bits.
+Import CyclicAxioms DoubleType DoubleBase.
 
 Open Scope Z_scope. 
 
 Section test.
 
-Variable w: Set.
+Variable w: Type.
 Variable w_op: znz_op w.
 Variable op_spec: znz_spec w_op.
 Variable p: positive.
@@ -154,7 +154,7 @@ Qed.
 
 End test.
 
-Definition znz_of_Z (w:Set) (op:znz_op w) z :=
+Definition znz_of_Z (w: Type) (op:znz_op w) z :=
  match z with
  | Zpos p => snd (op.(znz_of_pos) p)
  | _ => op.(znz_0)

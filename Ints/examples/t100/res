@@ -1,13 +1,10 @@
 make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t100'
 make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t100'
 make[2]: Entering directory `/home/thery/gforge/coqprime/Ints/examples/t100'
-Finished transaction in 29. secs (28.370687u,0.093985s)
-Finished transaction in 30. secs (29.566505u,0.051992s)
-Finished transaction in 40. secs (39.765955u,0.076988s)
-Finished transaction in 28. secs (27.063885u,0.070989s)
-Finished transaction in 32. secs (30.966292u,0.06499s)
-Finished transaction in 58. secs (56.313439u,0.096985s)
-Finished transaction in 35. secs (33.756869u,0.045993s)
-Finished transaction in 25. secs (24.886217u,0.037994s)
-Finished transaction in 41. secs (39.408009u,0.106983s)
+Require Import PocklingtonRefl.
+Set Virtual Machine.
+Open Local Scope positive_scope.
+Lemma prime128075015790613 : prime 128075015790613.
+File "./prime1.v", line 6, characters 29-34:
+Error: The reference prime was not found in the current environment.
 make[2]: Leaving directory `/home/thery/gforge/coqprime/Ints/examples/t100'

@@ -1,5 +1,4 @@
-Require Import ZArith.
-Require Import ZAux.
+Require Import ZArith Znumtheory.
 Require Import Eqdep_dec.
 
 Section ZnZ.
@@ -216,7 +215,7 @@ case (le_or_lt (Zabs_nat n) (Zabs_nat z1)); auto; intros H3.
 absurd (z1 < n); auto; apply Zle_not_lt.
 rewrite <- Zabs_eq; auto.
 rewrite <- inj_Zabs_nat; auto.
-rewrite <- (Zabs_eq n); auto.
+rewrite <- (Zabs_eq n); auto with zarith.
 rewrite <- (inj_Zabs_nat n); auto.
 apply inj_le; auto.
 Qed.

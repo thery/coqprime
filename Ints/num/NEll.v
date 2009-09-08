@@ -7,14 +7,14 @@
 (*************************************************************)
 
 
-Require Import ZArith.
-Require Import ZAux.
-Require Import Basic_type.
-Require Import ZnZ.
+Require Import ZArith Znumtheory Zpow_facts.
+Require Import CyclicAxioms DoubleCyclic BigN Cyclic31 Int31.
 Require Import W.
 Require Import Mod_op.
 Require Import ZEll.
 Require Import Bits.
+Import CyclicAxioms DoubleType DoubleBase.
+
 
 Set Implicit Arguments.
 
@@ -47,7 +47,7 @@ Section NEll.
 Variable exx: ex.
 Variable exxs: ex_spec exx.
 
-Variable zZ: Set.
+Variable zZ: Type.
 Variable op: znz_op zZ.
 Variable op_spec: znz_spec op.
 Definition z2Z z := op.(znz_to_Z) z.
@@ -78,7 +78,7 @@ Definition c2 := Z2z 2.
 Definition c1 := Z2z 1.
 Definition c0 := Z2z 0.
 
-Inductive nelt: Set :=
+Inductive nelt: Type :=
   nzero | ntriple: zZ -> zZ -> zZ  -> nelt.
 
 Definition pp := ntriple xx yy c1.
@@ -380,10 +380,10 @@ Qed.
    unfold neq; case znz_compare; intros H.
  symmetry; apply GZnZ.Zeq_iok; auto.
  case_eq (Zeq_bool (z2Z x) (z2Z y)); intros H1; auto;
-   generalize H; generalize (Zeqb_ok _ _ H1); unfold z2Z;
+   generalize H; generalize (Zeq_bool_eq _ _ H1); unfold z2Z;
    intros HH; rewrite HH; auto with zarith.
  case_eq (Zeq_bool (z2Z x) (z2Z y)); intros H1; auto;
-   generalize H; generalize (Zeqb_ok _ _ H1); unfold z2Z;
+   generalize H; generalize (Zeq_bool_eq _ _ H1); unfold z2Z;
    intros HH; rewrite HH; auto with zarith.
  Qed.
 

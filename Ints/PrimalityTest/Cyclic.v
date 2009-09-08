@@ -198,6 +198,7 @@ apply gpow_in; auto.
 rewrite <- gpow_gpow; auto with zarith.
 rewrite Zmult_comm; rewrite <- Zdivide_Zdiv_eq; auto with zarith.
 apply fermat_gen; auto.
+apply Z_div_pos; auto with zarith.
 case prime_power_div with (4 := H1); auto with zarith.
 intros j ((Hj1, Hj2), Hj3).
 case Zle_lt_or_eq with (1 := Hj2); intros Hj4; subst; auto.
@@ -210,6 +211,8 @@ rewrite gpow_e_order_is_e; auto with zarith.
 rewrite gpow_e; auto.
 apply Zlt_le_weak; apply Zpower_gt_0; auto with zarith.
 apply gpow_in; auto.
+apply Z_div_pos; auto with zarith.
+apply Zmult_le_0_compat; try apply Z_div_pos; auto with zarith.
 pattern p at 4; rewrite <- Zpower_1_r.
 repeat rewrite <- Zmult_assoc; repeat rewrite <- Zpower_exp; auto with zarith.
 replace (j + (i - j - 1 + 1)) with i; auto with zarith.

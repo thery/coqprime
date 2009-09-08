@@ -15,7 +15,7 @@ Require Import ZArith.
 Require Import Tactic.
 Require Import List.
 Require Import ZCAux.
-Require Import ZAux.
+Require Import ZArith Znumtheory.
 Require Import Wf_nat.
 Require Import UList.
 Require Import FGroup.

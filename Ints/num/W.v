@@ -7,19 +7,15 @@
 (*************************************************************)
 
 Set Implicit Arguments.
-
-Require Import ZnZ.
-Require Import Zn2Z.
-Require Import BigN.
-Require Import ZArith.
-Require Import ZCAux.
+Require Import CyclicAxioms DoubleCyclic BigN Cyclic31 Int31.
+Require Import ZArith ZCAux.
 
 (* ** Type of words ** *)
 
 
 (* Make the words *)
 
-Definition mk_word (w: Set) (n:nat): Set.
+Definition mk_word (w: Type) (n:nat): Type.
 fix 2.
 intros w n; case n; simpl.
 exact int31.
@@ -28,7 +24,7 @@ Defined.
 
 (* Make the op *)
 
-Fixpoint mk_op (w : Set) (op : znz_op w) (n : nat) {struct n} :
+Fixpoint mk_op (w : Type) (op : znz_op w) (n : nat) {struct n} :
   znz_op (word w n) :=
   match n return (znz_op (word w n)) with
   | O => op
@@ -57,7 +53,7 @@ apply Zpower_le_monotone; auto with zarith.
 apply Zmult_lt_compat_l; auto with zarith.
 Qed.
 
-Fixpoint mk_spec (w : Set) (op : znz_op w) (op_spec : znz_spec op) 
+Fixpoint mk_spec (w : Type) (op : znz_op w) (op_spec : znz_spec op) 
     (H: (1 < Zpos (znz_digits op))%Z)  (n : nat)
             {struct n} : znz_spec (mk_op op n) :=
   match n return (znz_spec (mk_op op n)) with

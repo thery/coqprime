@@ -8,14 +8,10 @@
 
 Set Implicit Arguments.
 
-Require Import ZArith.
-Require Import ZCAux.
-Require Import Basic_type.
-Require Import ZnZ.
-Require Import Zn2Z.
-Require Import GenBase.
-Require Import GenLift.
-Require Import GenSub.
+Require Import DoubleBase DoubleSub DoubleMul DoubleSqrt DoubleLift DoubleDivn1 DoubleDiv. 
+Require Import CyclicAxioms DoubleCyclic BigN Cyclic31.
+Require Import ZArith ZCAux.
+Import CyclicAxioms DoubleType DoubleBase.
 
 Theorem Zpos_pos: forall x, 0 < Zpos x.
 red; simpl; auto.
@@ -24,9 +20,9 @@ Hint Resolve Zpos_pos: zarith.
 
 Section Mod_op.
 
- Variable w : Set.
+ Variable w : Type.
  
- Record mod_op : Set := mk_mod_op {    
+ Record mod_op : Type := mk_mod_op {    
    succ_mod   : w -> w;
    add_mod    : w -> w -> w;
    pred_mod   : w -> w;
@@ -48,9 +44,9 @@ Section Mod_op.
  Let w1            := w_op.(znz_1).
  Let wBm1          := w_op.(znz_Bm1).
 
- Let wWW           := w_op.(znz_WW).
- Let wW0           := w_op.(znz_W0).
- Let w0W           := w_op.(znz_0W).
+ Let wWW           := znz_WW w_op.
+ Let wW0           := znz_W0 w_op.
+ Let w0W           := znz_0W w_op.
 
  Let w_compare     := w_op.(znz_compare).
  Let w_opp_c       := w_op.(znz_opp_c).
@@ -105,7 +101,7 @@ Section Mod_op.
  Eval lazy beta delta [ww_sub] in 
    ww_sub w0 wWW w_opp_c w_opp_carry w_sub_c w_opp w_sub w_sub_carry.
 
- Let ww_add_mul_div := 
+ Let ww_add_mul_div :=
  Eval lazy beta delta [ww_add_mul_div] in 
    ww_add_mul_div w0 wWW wW0 w0W 
               ww_compare w_add_mul_div 
@@ -164,7 +160,6 @@ Notation "[[ x ]]" :=
   End Mod_spec.
 
  Hypothesis b_pos: 1 < [|b|].
-
  Variable op_spec: znz_spec w_op.
 
 
@@ -448,10 +443,10 @@ Notation "[[ x ]]" :=
  pattern [|n|]; rewrite <- Zplus_0_r; auto with zarith.
  apply Zplus_lt_compat; auto with zarith.
  change 
-  ([[GenLift.ww_add_mul_div w0 wWW wW0 w0W 
+  ([[DoubleLift.ww_add_mul_div w0 wWW wW0 w0W 
               ww_compare w_add_mul_div 
               ww_sub w_zdigits low (w0W n) w2 W0]] = 2 ^ [|n|] * [[w2]]).
- rewrite (spec_ww_add_mul_div ); auto with zarith.
+ rewrite (DoubleLift.spec_ww_add_mul_div ); auto with zarith.
  2: exact (spec_to_Z op_spec).
  2: refine (spec_ww_to_Z _ _ _); auto.
  2: exact (spec_to_Z op_spec).
@@ -569,7 +564,7 @@ Notation "[[ x ]]" :=
    generalize (@spec_ww_compare w w0 w_digits w_to_Z w_compare
     (spec_0 op_spec) (spec_to_Z op_spec) (spec_compare op_spec)
    x y); simpl ww_to_Z; unfold w_to_Z;
-   change (GenBase.ww_compare w0 w_compare x y) with (ww_compare x y);
+   change (DoubleBase.ww_compare w0 w_compare x y) with (ww_compare x y);
    case (ww_compare x y); autorewrite with w_rewrite
  end; try rewrite _w0_is_0; try rewrite _w1_is_1; auto with zarith.
  unfold w_mul_c, ww_to_Z,w_digits; rewrite spec_mul_c; auto with zarith.
@@ -634,7 +629,7 @@ Notation "[[ x ]]" :=
  unfold w_mul_c in H3; unfold ww_to_Z in H3;simpl H3.
  unfold w_digits,w_to_Z in H3. rewrite <- H3; simpl.
  rewrite H7; rewrite (fun x => Zmult_comm (2 ^ x));
-   rewrite Zmult_assoc; rewrite Z_div_plus_l; auto with zarith.
+   rewrite Zmult_assoc; rewrite  BigNumPrelude.Z_div_plus_l; auto with zarith.
  rewrite Zplus_mod; auto with zarith.
  rewrite Z_mod_mult; auto with zarith.
  rewrite Zplus_0_l; auto with zarith.
@@ -666,7 +661,7 @@ Notation "[[ x ]]" :=
    generalize (@spec_ww_compare w w0 w_digits w_to_Z w_compare
     (spec_0 op_spec) (spec_to_Z op_spec) (spec_compare op_spec)
    x y); simpl ww_to_Z; unfold w_to_Z;
-   change (GenBase.ww_compare w0 w_compare x y) with (ww_compare x y);
+   change (DoubleBase.ww_compare w0 w_compare x y) with (ww_compare x y);
    case (ww_compare x y); autorewrite with w_rewrite
  end; try rewrite _w0_is_0; try rewrite _w1_is_1; auto with zarith.
  unfold w_square_c, ww_to_Z,w_digits; rewrite spec_square_c; auto with zarith.
@@ -731,7 +726,7 @@ Notation "[[ x ]]" :=
  unfold w_square_c, ww_to_Z in H3;  unfold w_digits,w_to_Z in H3.
  rewrite <- H3; simpl.
  rewrite H7; rewrite (fun x => Zmult_comm (2 ^ x));
-   rewrite Zmult_assoc; rewrite Z_div_plus_l; auto with zarith.
+   rewrite Zmult_assoc; rewrite BigNumPrelude.Z_div_plus_l; auto with zarith.
  rewrite Zplus_mod; auto with zarith.
  rewrite Z_mod_mult; auto with zarith.
  rewrite Zplus_0_l; auto with zarith.
@@ -869,7 +864,7 @@ Notation "[[ x ]]" :=
              (spec_sub_carry op_spec).
 
  Theorem zp1_b: [[zp1]] = Zpos p1.
- change ([[GenSub.ww_sub w0 wWW w_opp_c w_opp_carry w_sub_c w_opp w_sub
+ change ([[DoubleSub.ww_sub w0 wWW w_opp_c w_opp_carry w_sub_c w_opp w_sub
             w_sub_carry ww_zdigits (WW w0 zp)]] =
           Zpos p1).
  rewrite spec_ww_sub; auto with zarith.
@@ -895,7 +890,7 @@ Notation "[[ x ]]" :=
  Let w_pos_mod := w_op.(znz_pos_mod).
 
  Let add_mul_div := 
-   GenLift.ww_add_mul_div w0 wWW wW0 w0W 
+   DoubleLift.ww_add_mul_div w0 wWW wW0 w0W 
               ww_compare w_add_mul_div 
               ww_sub w_zdigits low. 
 
@@ -993,14 +988,14 @@ Notation "[[ x ]]" :=
  assert (Hp: [[zp1]] <= Zpos (xO w_digits)); auto with zarith.
    rewrite zp1_b; rewrite <- p_p1; auto with zarith.
    assert (0 <= Zpos p); auto with zarith.
- generalize (@spec_ww_add_mul_div w w0 wWW wW0 w0W
+ generalize (@DoubleLift.spec_ww_add_mul_div w w0 wWW wW0 w0W
     ww_compare w_add_mul_div ww_sub w_digits w_zdigits low w_to_Z
     (spec_0 op_spec) (spec_to_Z op_spec) spec_ww_to_Z
     (spec_WW op_spec) (spec_W0 op_spec) (spec_0W op_spec)
     spec_ww_compare (spec_add_mul_div op_spec) spec_ww_sub
     (spec_zdigits op_spec) spec_low W0 x zp1 Hp).
   unfold add_mul_div; 
-    case GenLift.ww_add_mul_div; autorewrite with w_rewrite; auto.
+    case DoubleLift.ww_add_mul_div; autorewrite with w_rewrite; auto.
  rewrite Zmult_0_l; rewrite Zplus_0_l.
  rewrite zp1_b.
  generalize mmul_aux0; unfold w_digits; intros tmp; rewrite tmp.
@@ -1069,14 +1064,14 @@ Notation "[[ x ]]" :=
  assert (Hp: [[zp1]] <= Zpos (xO w_digits)); auto with zarith.
    rewrite zp1_b; rewrite <- p_p1; auto with zarith.
    assert (0 <= Zpos p); auto with zarith.
- generalize (@spec_ww_add_mul_div w w0 wWW wW0 w0W
+ generalize (@DoubleLift.spec_ww_add_mul_div w w0 wWW wW0 w0W
     ww_compare w_add_mul_div ww_sub w_digits w_zdigits low w_to_Z
     (spec_0 op_spec) (spec_to_Z op_spec) spec_ww_to_Z
     (spec_WW op_spec) (spec_W0 op_spec) (spec_0W op_spec)
     spec_ww_compare (spec_add_mul_div op_spec) spec_ww_sub
     (spec_zdigits op_spec) spec_low W0 (WW xh xl) zp1 Hp).
   unfold add_mul_div; 
-    case GenLift.ww_add_mul_div; autorewrite with w_rewrite; auto.
+    case DoubleLift.ww_add_mul_div; autorewrite with w_rewrite; auto.
  rewrite Zmult_0_l; rewrite Zplus_0_l.
  rewrite zp1_b.
  generalize mmul_aux0; unfold w_digits; intros tmp; rewrite tmp; clear tmp.

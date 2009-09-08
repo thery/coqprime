@@ -1,5 +1,4 @@
-Require Import ZArith.
-Require Import ZAux.
+Require Import ZArith Zpow_facts.
 
 Open Scope Z_scope.
 
@@ -15,7 +14,8 @@ Theorem Ppow_correct: forall a z,
 intros a z; elim z; simpl Ppow; auto; 
   try (intros z1 Hrec; repeat rewrite Zpos_mult_morphism; rewrite Hrec).
   rewrite Zpos_xI; rewrite Zpower_exp; auto with zarith.
-    rewrite Zpower_1_r; rewrite (Zmult_comm 2);
+  2: rewrite <-Zpos_xO; red; simpl; intros; discriminate.
+ rewrite Zpower_1_r; rewrite (Zmult_comm 2);
     try rewrite Zpower_mult; auto with zarith.
     change 2 with (1 + 1); rewrite Zpower_exp; auto with zarith.
     rewrite Zpower_1_r; rewrite Zmult_comm; auto.
