@@ -533,7 +533,7 @@ Qed.
 Theorem SS_prop_cor: forall p, 1 < p -> SS p = 0 -> (Mp p | fst(s (p -2))).
 intros p H H1.
 apply Zmod_divide.
-apply Zlt_gt; apply Zlt_trans with 1; try apply mersenne_pos; auto with zarith.
+generalize (mersenne_pos _ H); auto with zarith.
 apply trans_equal with (2:= H1); apply sym_equal; apply SS_prop; auto.
 Qed.
 
