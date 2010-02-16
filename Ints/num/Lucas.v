@@ -22,13 +22,13 @@ Open Scope Z_scope.
 Section test.
 
 Variable w: Type.
-Variable w_op: znz_op w.
-Variable op_spec: znz_spec w_op.
+Variable w_op: ZnZ.Ops w.
+Variable op_spec: ZnZ.Specs w_op.
 Variable p: positive.
 Variable b: w.
 
 Notation "[| x |]" :=
-   (znz_to_Z w_op x)  (at level 0, x at level 99).
+   (ZnZ.to_Z x)  (at level 0, x at level 99).
 
 
 Hypothesis p_more_1: 2 < Zpos p.
@@ -46,10 +46,10 @@ Hint Resolve b_pos.
 Variable m_op: mod_op w.
 Variable m_op_spec: mod_spec w_op b m_op.
 
-Let w2 := m_op.(add_mod) w_op.(znz_1) w_op.(znz_1).
+Let w2 := m_op.(add_mod) ZnZ.one ZnZ.one.
 
-Lemma w1_b: [|w_op.(znz_1)|] = 1 mod [|b|].
-rewrite (spec_1 op_spec); simpl; auto.
+Lemma w1_b: [|ZnZ.one|] = 1 mod [|b|].
+rewrite ZnZ.spec_1; simpl; auto.
 rewrite Zmod_small; auto with zarith.
 split; auto with zarith.
 rewrite b_p.
@@ -76,7 +76,7 @@ Let square_m2 :=
    fun x => sub (square x) w2.
 
 Definition lucastest :=
- w_op.(znz_to_Z) (iter_pos (Pminus p 2) _ square_m2 w4).
+ ZnZ.to_Z (iter_pos (Pminus p 2) _ square_m2 w4).
 
 Theorem lucastest_aux_correct:
  forall p1 z n, 0 <= n -> [|z|] = fst (s n) mod (2 ^ Zpos p - 1) ->
@@ -154,14 +154,14 @@ Qed.
 
 End test.
 
-Definition znz_of_Z (w: Type) (op:znz_op w) z :=
+Definition znz_of_Z (w: Type) (op: ZnZ.Ops w) z :=
  match z with
- | Zpos p => snd (op.(znz_of_pos) p)
- | _ => op.(znz_0)
+ | Zpos p => snd (ZnZ.of_pos p)
+ | _ => ZnZ.zero
  end.
 
 Definition lucas p :=
- let op := cmk_op (pred (nat_of_P (get_height 31 p))) in
+ let op := cmk_ops (pred (nat_of_P (get_height 31 p))) in
  let b := znz_of_Z op (Zpower 2 (Zpos p) - 1) in
  let zp := znz_of_Z op (Zpos p) in
  let mod_op := mmake_mod_op op b zp in
@@ -170,43 +170,42 @@ Definition lucas p :=
 Theorem lucas_prime:
  forall p, 2 < Zpos p -> lucas p = 0 -> prime (2 ^ Zpos p - 1).
 unfold lucas; intros p Hp H.
-match type of H with lucastest (cmk_op ?x) ?y ?z = _ =>
-   set (w_op := (cmk_op x)); assert(A1: znz_spec w_op)
+match type of H with lucastest (cmk_ops ?x) ?y ?z = _ =>
+   set (w_op := (cmk_ops x)); assert(A1: ZnZ.Specs w_op)
 end.
 unfold w_op; apply cmk_spec.
-assert (F0: Zpos p <= Zpos (znz_digits w_op)).
-unfold w_op, base; rewrite (cmk_op_digits (pred (nat_of_P (get_height 31 p)))).
+assert (F0: Zpos p <= Zpos (ZnZ.digits w_op)).
+unfold w_op, base; rewrite (cmk_ops_digits (pred (nat_of_P (get_height 31 p)))).
 generalize (get_height_correct 31 p).
 replace (Z_of_nat (pred (nat_of_P (get_height 31 p)))) with
        ((Zpos (get_height 31 p) - 1) ); auto with zarith.
 rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
 rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
 generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
-assert (F1: znz_to_Z w_op (znz_of_Z w_op (2 ^ (Zpos p) - 1)) = 2 ^ (Zpos p) - 1).
+assert (F1: ZnZ.to_Z (ZnZ.of_Z (2 ^ (Zpos p) - 1)) = 2 ^ (Zpos p) - 1).
 assert (F1: 0 < 2 ^ (Zpos p) - 1).
 assert (F2: 2 ^ 0 < 2 ^ (Zpos p)); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_0_r in F2; auto with zarith.
-case_eq (2 ^ (Zpos p) - 1); simpl znz_to_Z.
+case_eq (2 ^ (Zpos p) - 1); simpl ZnZ.to_Z.
 intros HH; contradict F1; rewrite HH; auto with zarith.
 2: intros p1 HH; contradict F1; rewrite HH; 
   apply Zle_not_lt; red; simpl; intros; discriminate.
-intros p1 Hp1; apply znz_of_pos_correct; auto.
+intros p1 Hp1; apply ZnZ.of_pos_correct; auto.
 rewrite <- Hp1.
 unfold base.
 apply Zlt_le_trans with (2 ^ (Zpos p)); auto with zarith.
 apply Zpower_le_monotone; auto with zarith.
-match type of H with lucastest (cmk_op ?x) ?y ?z = _ =>
-   apply (fun U V =>
-    @lucastest_prime _ _ (cmk_spec x) p (znz_of_Z (cmk_op x) 
-                 (2 ^ Zpos p  -1)) U V z)
+match type of H with lucastest (cmk_ops ?x) ?y ?z = _ =>
+  apply  
+  (@lucastest_prime _ _ (cmk_spec x) p (ZnZ.of_Z (2 ^ Zpos p  -1)) Hp F1 z)
 end; auto with zarith; fold w_op.
 eapply mmake_mod_spec with (p := p); auto with zarith.
-rewrite F1.
+unfold znz_of_Z; unfold ZnZ.of_Z in F1; rewrite F1.
 assert (F2: 2 ^ 1 < 2 ^ (Zpos p)); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_1_r in F2; auto with zarith.
-rewrite znz_of_Z_correct; auto with zarith.
+rewrite ZnZ.of_Z_correct; auto with zarith.
 split; auto with zarith.
 apply Zle_lt_trans with (1 := F0); auto with zarith.
 unfold base; apply Zpower2_lt_lin; auto with zarith.

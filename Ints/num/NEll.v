@@ -48,24 +48,23 @@ Variable exx: ex.
 Variable exxs: ex_spec exx.
 
 Variable zZ: Type.
-Variable op: znz_op zZ.
-Variable op_spec: znz_spec op.
-Definition z2Z z := op.(znz_to_Z) z.
-Definition zN := snd (op.(znz_of_pos) exx.(vN)).
+Variable op: ZnZ.Ops zZ.
+Variable op_spec: ZnZ.Specs op.
+Definition z2Z z :=  ZnZ.to_Z z.
+Definition zN := snd (ZnZ.of_pos exx.(vN)).
 Variable mop: mod_op zZ.
 Variable mop_spec: mod_spec op zN mop.
-Variable N_small:  exx.(vN) < base (znz_digits op).
+Variable N_small:  exx.(vN) < base (ZnZ.digits op).
 
 Lemma z2ZN: z2Z zN = exx.(vN).
-apply (@znz_of_Z_correct _ _ op_spec exx.(vN)); split; auto with zarith.
+apply (@ZnZ.of_Z_correct _ _ op_spec exx.(vN)); split; auto with zarith.
 Qed.
 
 Definition Z2z z :=
  match z mod exx.(vN) with
- | Zpos p => snd (op.(znz_of_pos) p)
- | _ => op.(znz_0)
+ | Zpos p => snd (ZnZ.of_pos p)
+ | _ => ZnZ.zero
  end.
-
 
 Definition S := exx.(vS).
 Definition R := exx.(vR).
@@ -86,9 +85,9 @@ Definition pp := ntriple xx yy c1.
 Definition nplus x y := mop.(add_mod) x y.
 Definition nmul x y :=  mop.(mul_mod) x y.
 Definition nsub x y :=  mop.(sub_mod) x y.
-Definition neq x y := match op.(znz_compare) x y with Eq => true | _ => false end.
+Definition neq x y := match ZnZ.compare x y with Eq => true | _ => false end.
 
-Notation "x ++ y " := (nplus x y) (at level 50, left associativity).
+Notation "x ++ y " := (nplus x y).
 Notation "x -- y" := (nsub x y) (at level 50, left associativity).
 Notation "x ** y" := (nmul x y) (at level 40, left associativity).
 Notation "x ?= y" := (neq x y).
@@ -189,7 +188,7 @@ Fixpoint scalL (sc:zZ) (a: nelt) (l: List.list positive) {struct l}: (nelt * zZ)
 
 Definition zpow sc p n :=
   let (p,sc') := scal sc p n in
-  (p, op.(znz_to_Z) (op.(znz_gcd) sc' zN)).
+  (p, ZnZ.to_Z (ZnZ.gcd sc' zN)).
 
 Definition e2E n := 
   match n with 
@@ -276,25 +275,25 @@ unfold Z2z; intros x.
 generalize (Z_mod_lt x exx.(vN)).
 case_eq (x mod exx.(vN)).
 intros _ _.
-simpl; unfold z2Z; rewrite op_spec.(spec_0); auto.
+simpl; unfold z2Z; rewrite ZnZ.spec_0; auto.
 intros p Hp HH; case HH; auto with zarith; clear HH.
 intros _ HH1.
-case (op_spec.(spec_to_Z) zN).
+case (ZnZ.spec_to_Z zN).
 generalize  z2ZN; unfold z2Z; intros HH; rewrite HH; auto.
 intros _ H0.
-set (v := znz_of_pos op p); generalize HH1.
-rewrite (op_spec.(spec_of_pos) p); fold v.
+set (v := ZnZ.of_pos p); generalize HH1.
+rewrite (ZnZ.spec_of_pos p); fold v.
 case (fst v).
   simpl; auto.
 intros p1 H1.
 contradict H0; apply Zle_not_lt.
 apply Zlt_le_weak; apply Zle_lt_trans with (2:= H1).
-apply Zle_trans with (1 * base (znz_digits op) + 0); auto with zarith.
+apply Zle_trans with (1 * base (ZnZ.digits op) + 0); auto with zarith.
 apply Zplus_le_compat; auto.
 apply Zmult_gt_0_le_compat_r; auto with zarith.
-  case (op_spec.(spec_to_Z) (snd v)); auto with zarith.
+  case (ZnZ.spec_to_Z (snd v)); auto with zarith.
   case p1; red; simpl; intros; discriminate.
-  case (op_spec.(spec_to_Z) (snd v)); auto with zarith.
+  case (ZnZ.spec_to_Z (snd v)); auto with zarith.
 intros p Hp; case (Z_mod_lt x exx.(vN)); auto with zarith.
 rewrite Hp; intros HH; case HH; auto.
 Qed.
@@ -306,30 +305,30 @@ unfold Z2z; intros x.
 generalize (Z_mod_lt x exx.(vN)).
 case_eq (x mod exx.(vN)).
 intros _ _.
-simpl; unfold z2Z; rewrite op_spec.(spec_0).
+simpl; unfold z2Z; rewrite ZnZ.spec_0.
 rewrite Zmod_small; split; auto with zarith.
 generalize  z2ZN; unfold z2Z; intros HH; rewrite HH; auto.
 intros p H1 H2.
-case (op_spec.(spec_to_Z) zN).
+case (ZnZ.spec_to_Z zN).
 generalize  z2ZN; unfold z2Z; intros HH; rewrite HH; auto.
 intros _ H0.
 case H2; auto with zarith; clear H2; intros _ H2.
 rewrite Zmod_small; auto.
-set (v := znz_of_pos op p).
+set (v := ZnZ.of_pos p).
 split.
-  case (op_spec.(spec_to_Z) (snd v)); auto.
-generalize H2; rewrite (op_spec.(spec_of_pos) p); fold v.
+  case (ZnZ.spec_to_Z (snd v)); auto.
+generalize H2; rewrite (ZnZ.spec_of_pos p); fold v.
 case (fst v).
   simpl; auto.
 intros p1 H.
 contradict H0; apply Zle_not_lt.
 apply Zlt_le_weak; apply Zle_lt_trans with (2:= H).
-apply Zle_trans with (1 * base (znz_digits op) + 0); auto with zarith.
+apply Zle_trans with (1 * base (ZnZ.digits op) + 0); auto with zarith.
 apply Zplus_le_compat; auto.
 apply Zmult_gt_0_le_compat_r; auto with zarith.
-  case (op_spec.(spec_to_Z) (snd v)); auto with zarith.
+  case (ZnZ.spec_to_Z (snd v)); auto with zarith.
   case p1; red; simpl; intros; discriminate.
-  case (op_spec.(spec_to_Z) (snd v)); auto with zarith.
+  case (ZnZ.spec_to_Z (snd v)); auto with zarith.
 intros p Hp; case (Z_mod_lt x exx.(vN)); auto with zarith.
 rewrite Hp; intros HH; case HH; auto.
 Qed.
@@ -376,8 +375,12 @@ Qed.
  Lemma ztest: forall x y,
      x ?= y =Zeq_bool (z2Z x) (z2Z y).
  Proof.
- intros x y; generalize (op_spec.(spec_compare) x y);
-   unfold neq; case znz_compare; intros H.
+ intros x y.
+ unfold neq; rewrite ZnZ.spec_compare; 
+  destr_zcompare.
+ match goal with H: context[x] |- _ =>
+   generalize H; clear H; intros H1
+ end.
  symmetry; apply GZnZ.Zeq_iok; auto.
  case_eq (Zeq_bool (z2Z x) (z2Z y)); intros H1; auto;
    generalize H; generalize (Zeq_bool_eq _ _ H1); unfold z2Z;
@@ -390,7 +393,7 @@ Qed.
  Lemma zc0: z2Z c0 = 0.
  Proof.
  unfold z2Z, c0, z2Z; simpl.
- generalize op_spec.(spec_0); auto.
+ generalize ZnZ.spec_0; auto.
  Qed.
 
 
@@ -447,7 +450,6 @@ intros x1 y1 z1 y; case y; clear; auto.
   repeat ((rewrite nmulz || rewrite nplusz || rewrite nsubz ||
            rewrite c2ww || rewrite c3ww || rewrite Aww); try nw; auto).
   Qed.
-
 
  Lemma ndouble_wf: forall x sc,
   wfe x -> wft sc ->
@@ -869,8 +871,8 @@ Qed.
 
 Definition ell_test (N S: positive) (l: List.list (positive * positive))
                       (A B x y: Z) :=
-  let op := cmk_op (pred (nat_of_P (get_height 31 (plength N)))) in
-  let mop := make_mod_op op (znz_of_Z op N) in
+  let op := cmk_ops (pred (nat_of_P (get_height 31 (plength N)))) in
+  let mop := make_mod_op op (ZnZ.of_Z N) in
     if isM2 N then
     match (4 * N) ?= (ZEll.Zmullp l - 1) ^ 2  with
       Lt => 
@@ -920,16 +922,16 @@ match goal with |- context[?x ?= ?y] =>
   generalize (Zcompare_correct x y); case Zcompare; auto
 end; intros H4.
 set (n := pred (nat_of_P (get_height 31 (plength N)))).
-set (op := cmk_op n).
-set (mop := make_mod_op op (znz_of_Z op N)).
+set (op := cmk_ops n).
+set (mop := make_mod_op op (ZnZ.of_Z N)).
 set (exx := mkEx N S1 l A1 B1 x y).
 set (op_spec := cmk_spec n).
 assert (exxs: ex_spec exx).
   constructor; auto.
-assert (H0: N < base (znz_digits op)).
+assert (H0: N < base (ZnZ.digits op)).
   apply Zlt_le_trans with (1 := plength_correct N).
   unfold op, base.
-  rewrite cmk_op_digits.
+  rewrite cmk_ops_digits.
   apply Zpower_le_monotone; split; auto with zarith.
   generalize (get_height_correct 31 (plength N)); unfold n.
   set (p := plength N).
@@ -940,7 +942,7 @@ assert (H0: N < base (znz_digits op)).
   generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
 assert (mspec: mod_spec op (zN exx op) mop).
   unfold mop; apply make_mod_spec; auto.
-  rewrite znz_of_Z_correct; auto with zarith.
+  rewrite ZnZ.of_Z_correct; auto with zarith.
 generalize (@scalL_prime exx exxs _ op (cmk_spec n) mop mspec H0).
 lazy zeta.
 unfold c1, A, B,  nplus, nmul; 

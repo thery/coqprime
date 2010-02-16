@@ -1848,10 +1848,11 @@ Theorem pe2e_double: forall p1,
   pe2e (pdouble p1) = add (pe2e p1) (pe2e p1).
 intros (x1,y1,z1,H1). 
 unfold pdouble, pe2e.
-case wb; intros b; case b; intros Hb; clear b;
+case wb; intros b; case b; intros Hb; clear b.
   rewrite Hb; auto.
 case wb; intros b; case b; intros Hz1; clear b; auto.
 apply False_ind; rewrite Hb in Hz1; discriminate.
+replace (z1 ?0) with false.
 unfold add.
 generalize (is_zero_false Hb); intros Hz1.
 repeat ksplit.
@@ -1883,13 +1884,15 @@ Theorem pe2e_add: forall p1 p2,
   pe2e (padd p1 p2) = add (pe2e p1) (pe2e p2).
 intros (x1,y1,z1,H1) (x2,y2,z2,H2).
 unfold padd, pe2e.
-case wb; intros b; case b; intros Hb; clear b;
+case wb; intros b; case b; intros Hb; clear b.
   rewrite Hb; auto.
-case wb; intros b; case b; intros Hb1; clear b;
+replace (z1 ?0) with false.
+case wb; intros b; case b; intros Hb1; clear b.
   rewrite Hb1; auto.
   case wb; intros b; case b; intros Hb2; clear b; auto.
     rewrite Hb in Hb2; discriminate.
   simpl; apply curve_elt_irr; auto.
+replace (z2 ?0) with false.
 assert (F1 := is_zero_false Hb).
 assert (F2 := is_zero_false Hb1).
 unfold add.

@@ -30,7 +30,7 @@ Section Nell.
  Definition nsub x y := (Zmod (x - y) N).
  Definition ninv x := (Zmod (-x) N).
 
- Notation "x ++ y " := (nplus x y) (at level 50, left associativity).
+ Notation "x ++ y " := (nplus x y).
  Notation "x -- y" := (nsub x y) (at level 50, left associativity).
  Notation "x ** y" := (nmul x y) (at level 40, left associativity).
  Notation "-- x" := (ninv x) (at level 40, left associativity).
@@ -1191,7 +1191,7 @@ Section pell.
  Hypothesis on_curve: y^2 mod N = (x^3 + A * x + B) mod N.
  
 
- Notation "x ++ y " := (nplus N x y) (at level 50, left associativity).
+ Notation "x ++ y " := (nplus N x y).
  Notation "x -- y" := (nsub N x y) (at level 50, left associativity).
  Notation "x ** y" := (nmul N x y) (at level 40, left associativity).
  Notation "x ?= y" := (Zeq_bool x y).
