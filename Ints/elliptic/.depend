@@ -1,9 +1,0 @@
-SMain.vo: SMain.v ../PrimalityTest/FGroup.vo ../List/UList.vo
-SMain.vi: SMain.v ../PrimalityTest/FGroup.vo ../List/UList.vo
-ZEll.vo: ZEll.v GZnZ.vo ../PrimalityTest/EGroup.vo SMain.vo
-ZEll.vi: ZEll.v GZnZ.vo ../PrimalityTest/EGroup.vo SMain.vo
-GZnZ.vo: GZnZ.v ../List/UList.vo
-GZnZ.vi: GZnZ.v ../List/UList.vo
-SMain.html: SMain.v ../PrimalityTest/FGroup.html ../List/UList.html
-ZEll.html: ZEll.v GZnZ.html ../PrimalityTest/EGroup.html SMain.html
-GZnZ.html: GZnZ.v ../List/UList.html

@@ -1,3 +1,0 @@
-ZSum.vo: ZSum.v ../List/ListAux.vo ../List/Iterator.vo ../List/ZProgression.vo
-ZSum.vi: ZSum.v ../List/ListAux.vo ../List/Iterator.vo ../List/ZProgression.vo
-ZSum.html: ZSum.v ../List/ListAux.html ../List/Iterator.html ../List/ZProgression.html
