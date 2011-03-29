@@ -60,9 +60,9 @@ intros a l; elim l; clear l; simpl; auto.
 intros H; case H.
 intros a1 l H [H1|H1]; auto.
 exists (nil (A:=A)); exists l; simpl; auto.
-eq_tac; auto.
+rewrite H1; auto.
 case H; auto; intros l1 [l2 Hl2]; exists (a1 :: l1); exists l2; simpl; auto.
-eq_tac; auto.
+rewrite Hl2; auto.
 Qed.
 
 (**************************************
@@ -92,8 +92,7 @@ simpl; intros H1; absurd (length (a :: (l ++ l1)) <= length l1).
 simpl; rewrite length_app; auto with arith.
 rewrite H1; auto with arith.
 simpl; intros b l0 H0; injection H0.
-intros H1 H2; eq_tac; auto.
-apply H with ( 1 := H1 ); auto.
+intros H1 H2; rewrite H2, (H _ _ H1); auto.
 Qed.
  
 Theorem app_inv_app:
@@ -104,11 +103,11 @@ Theorem app_inv_app:
 intros l1; elim l1; simpl; auto.
 intros l2 l3 l4 a H; right; exists l3; auto.
 intros a l H l2 l3 l4 a0; case l3; simpl.
-intros H0; left; exists l; eq_tac; injection H0; auto.
+intros H0; left; exists l; injection H0; intros; subst; auto.
 intros b l0 H0; case (H l2 l0 l4 a0); auto.
 injection H0; auto.
 intros [l5 H1].
-left; exists l5; eq_tac; injection H0; auto.
+left; exists l5; injection H0; intros; subst; auto.
 Qed.
  
 Theorem app_inv_app2:
@@ -122,13 +121,13 @@ intros l2 l3 l4 a b H; right; left; exists l3; auto.
 intros a l H l2 l3 l4 a0 b; case l3; simpl.
 case l; simpl.
 intros H0; right; right; injection H0; split; auto.
-eq_tac; auto.
-intros b0 l0 H0; left; exists l0; injection H0; intros; (repeat eq_tac); auto.
+rewrite H2; auto.
+intros b0 l0 H0; left; exists l0; injection H0; intros; subst; auto.
 intros b0 l0 H0; case (H l2 l0 l4 a0 b); auto.
 injection H0; auto.
-intros [l5 HH1]; left; exists l5; eq_tac; auto; injection H0; auto.
+intros [l5 HH1]; left; exists l5; injection H0; intros; subst; auto.
 intros [H1|[H1 H2]]; auto.
-right; right; split; auto; eq_tac; auto; injection H0; auto.
+right; right; split; auto; injection H0; intros; subst; auto.
 Qed.
  
 Theorem same_length_ex:
@@ -146,7 +145,7 @@ intros b l0 H0.
 case (H l2 l0); auto.
 intros l4 [l5 [b1 [HH1 [HH2 HH3]]]].
 exists (b :: l4); exists l5; exists b1; (repeat (simpl; split; auto)).
-eq_tac; auto.
+rewrite HH3; auto.
 Qed.
 
 (************************************** 
@@ -179,7 +178,7 @@ Qed.
  
 Theorem map_app: forall l1 l2,  map f (l1 ++ l2) = map f l1 ++ map f l2.
 intros l; elim l; simpl; auto.
-intros a l0 H l2; eq_tac; auto.
+intros a l0 H l2; rewrite H; auto.
 Qed.
  
 Theorem map_length_decompose:
@@ -195,7 +194,7 @@ intros b l2 l3 l4 H1 H2.
 injection H2; clear H2; intros H2 H3.
 case (Rec l2 l3 l4); auto.
 intros H4 H5; split; auto.
-eq_tac; auto.
+subst; auto.
 Qed.
 
 (************************************** 

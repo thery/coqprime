@@ -11,7 +11,7 @@
                                                                                                          
       Proof that an abelien ring is cyclic                                 
  ************************************************************************)
-Require Import ZAux.
+Require Import ZCAux.
 Require Import List.
 Require Import Root.
 Require Import UList.
@@ -105,10 +105,9 @@ Defined.
 Theorem prime_power_div: forall p q i, prime p -> 0 <= q -> 0 <= i -> (q | p ^ i)  -> exists j, 0 <= j <= i /\ q = p ^ j.
 intros p q i Hp Hq Hi H.
 assert (Hp1: 0 < p).
-apply Zlt_le_trans with 2; try apply prime_le_2; auto with zarith.
+apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 pattern q; apply prime_div_induction with (p ^ i); auto with zarith.
-apply Zpower_lt_0; auto with zarith.
-exists 0; rewrite Zpower_exp_0; auto with zarith.
+exists 0; rewrite Zpower_0_r; auto with zarith.
 intros p1 i1 Hp2 Hi1 H1.
 case Zle_lt_or_eq with (1 := Hi1); clear Hi1; intros Hi1; subst.
 assert (Heq: p1 = p).
@@ -119,10 +118,8 @@ exists i1; split; auto; try split; auto with zarith.
 case (Zle_or_lt i1 i); auto; intros H2.
 absurd (p1 ^ i1 <= p  ^ i).
 apply Zlt_not_le; rewrite Heq; apply Zpower_lt_monotone; auto with zarith.
-apply Zlt_le_trans with 2; try apply prime_le_2; auto with zarith.
+apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 apply Zdivide_le; auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-apply Zpower_lt_0; auto with zarith.
 rewrite Heq; auto.
 exists 0; repeat rewrite Zpower_exp_0; auto with zarith.
 intros p1 q1 Hpq (j1,((Hj1, Hj2), Hj3)) (j2, ((Hj4, Hj5), Hj6)).
@@ -132,10 +129,10 @@ inversion Hpq as [ H0 H1 H2].
 absurd (p | 1).
 intros H3; absurd (1 < p).
 apply Zle_not_lt; apply Zdivide_le; auto with zarith.
-apply Zlt_le_trans with 2; try apply prime_le_2; auto with zarith.
+apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 apply H2; apply Zpower_divide; auto with zarith.
-exists j1; rewrite Zpower_exp_0; auto with zarith.
-exists j2; rewrite Zpower_exp_0; auto with zarith.
+exists j1; rewrite Zpower_0_r; auto with zarith.
+exists j2; rewrite Zpower_0_r; auto with zarith.
 Qed.
 
 Theorem inj_lt_inv: forall n m : nat, Z_of_nat n < Z_of_nat m -> (n < m)%nat.
@@ -161,7 +158,8 @@ apply mult_internal; auto.
 apply eval_P; auto.
 simpl; apply lt_le_S; apply le_lt_trans with (1 := Hp1).
 apply inj_lt_inv.
-rewrite Z_of_nat_Zabs_nat; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Zabs_eq; auto with zarith.
 Qed.
  
 Theorem divide_g_order_e_order: forall n, 0 <= n -> (n | g_order IA) -> exists a, In a IA.(s) /\ e_order A_dec  a IA = n.
@@ -182,13 +180,13 @@ apply IA.(e_in_s).
 match goal with |- (_ <= ?X) => assert (0 < X) end; try apply e_order_pos; auto with zarith.
 intros p i Hp Hi K.
 assert (Hp1: 0 < p).
-apply Zlt_le_trans with 2; try apply prime_le_2; auto with zarith.
+apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 assert (Hi1: 0 < p ^ i).
-apply Zpower_lt_0; auto.
+apply Zpower_gt_0; auto.
 case Zle_lt_or_eq with (1 := Hi); clear Hi; intros Hi; subst.
 case (not_all_solutions (g_order IA / p)).
 apply Zdivide_Zdiv_lt_pos; auto with zarith.
-apply Zlt_le_trans with 2; try apply prime_le_2; auto with zarith.
+apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 apply Zdivide_trans with (2 := K).
 apply Zpower_divide; auto.
 intros a (Ha1, Ha2).
@@ -200,7 +198,7 @@ apply gpow_in; auto.
 rewrite <- gpow_gpow; auto with zarith.
 rewrite Zmult_comm; rewrite <- Zdivide_Zdiv_eq; auto with zarith.
 apply fermat_gen; auto.
-apply Zge_le; apply Z_div_ge0; auto with zarith.
+apply Z_div_pos; auto with zarith.
 case prime_power_div with (4 := H1); auto with zarith.
 intros j ((Hj1, Hj2), Hj3).
 case Zle_lt_or_eq with (1 := Hj2); intros Hj4; subst; auto.
@@ -211,19 +209,15 @@ repeat rewrite gpow_gpow; auto with zarith.
 rewrite <- Hj3.
 rewrite gpow_e_order_is_e; auto with zarith.
 rewrite gpow_e; auto.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
+apply Zlt_le_weak; apply Zpower_gt_0; auto with zarith.
 apply gpow_in; auto.
-apply Zge_le; apply Z_div_ge0; auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-apply Zmult_le_0_compat; auto with zarith.
-apply Zge_le; apply Z_div_ge0; auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-pattern p at 4; rewrite <- Zpower_exp_1.
+apply Z_div_pos; auto with zarith.
+apply Zmult_le_0_compat; try apply Z_div_pos; auto with zarith.
+pattern p at 4; rewrite <- Zpower_1_r.
 repeat rewrite <- Zmult_assoc; repeat rewrite <- Zpower_exp; auto with zarith.
 replace (j + (i - j - 1 + 1)) with i; auto with zarith.
 apply sym_equal; rewrite Zmult_comm; apply Zdivide_Zdiv_eq; auto with zarith.
-rewrite Zpower_exp_0; exists e; split.
+rewrite Zpower_0_r; exists e; split.
 apply IA.(e_in_s).
 match goal with |- ?X = 1 => assert (tmp: 0 < X); try apply e_order_pos;
 case Zle_lt_or_eq with 1 X; auto with zarith; clear tmp; intros H1 end.

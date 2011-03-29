@@ -15,7 +15,6 @@ Require Import ZArith.
 Require Export Znumtheory.
 Require Import Tactic.
 Require Export ZSum.
-Require Import ZAux.
 
 Open Scope Z_scope.
 
@@ -57,7 +56,7 @@ Theorem prime_phi_n_minus_1: forall n, prime n -> phi n = n - 1.
 intros n H; replace (n-1) with ((1 +  (n - 1) - 1) * 1); auto with zarith.
 assert (Hu: 1 <= n - 1).
 assert (2 <= n); auto with zarith.
-apply prime_le_2; auto.
+apply prime_ge_2; auto.
 rewrite <- Zsum_c; auto with zarith; unfold phi; apply Zsum_ext; auto.
 intros x  (H2, H3); case H; clear H; intros H H1.
 generalize (H1 x); case (rel_prime_dec x n); auto with zarith. 
@@ -77,7 +76,6 @@ case (rel_prime_dec x n); auto with zarith.
 intros H5; absurd (x = 1 \/ x = -1); auto with zarith.
 case (Zis_gcd_unique  x n x 1); auto.
 apply Zis_gcd_intro; auto; exists 1; auto with zarith.
-apply Zis_gcd_sym; exact H5.
 contradict H3; rewrite H1; auto with zarith.
 Qed.
 

@@ -6,7 +6,11 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import Zmisc.
+Require Export ZArith.
+Require Export ZCmisc.
+
+Open Local Scope positive_scope.
+
 Open Local Scope P_scope.
 
 (* [div_eucl a b] return [(q,r)] such that a = q*b + r *)
@@ -45,24 +49,72 @@ Opaque Zmult.
 Lemma div_eucl_spec : forall a b, 
           Zpos a = fst (a/b)%P * b + snd (a/b)%P
        /\ snd (a/b)%P < b.
-Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega).  
- intros a b;generalize a;clear a;induction a;simpl;zsimpl;
-  try (case IHa;clear IHa;repeat rewrite Zmult_0_l;zsimpl;intros H1 H2; 
-       try rewrite H1; destruct (a/b)%P as [q r];
-       destruct q as [|q];destruct r as [|r];simpl in *;
-       generalize H1 H2;clear H1 H2);repeat rewrite Zmult_0_l;
-       repeat rewrite Zplus_0_r;
-       zsimpl;simpl;intros;
+Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega). 
+ intros a b;generalize a;clear a;induction a;simpl;zsimpl.
+ case IHa; destruct (a/b)%P as [q r].
+   case q; case r; simpl fst; simpl snd.
+     rewrite Zmult_0_l; rewrite Zplus_0_r; intros HH; discriminate HH.
+  intros p H; rewrite H;
   match goal with 
-  | [H : Zpos _ = 0 |- _] => discriminate H
   | [|- context [ ?xx ?< b ]] => 
-    assert (H3 := is_lt_spec xx b);destruct (xx ?< b)
+    generalize (is_lt_spec xx b);destruct (xx ?< b)
   | _ => idtac
-  end;simpl;try assert(H4 := Zlt_0_pos r);split;repeat rewrite Zplus_0_r;
-  try (generalize H3;zsimpl;intros);
-  try (rewrite PminusN_le;trivial) ...
- assert (Zpos b = 1) ... rewrite H ...
- assert (H4 := Zlt_0_pos b); assert (Zpos b = 1) ... 
+  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto.
+  rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
+  rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
+  intros p H; rewrite H;
+  match goal with 
+  | [|- context [ ?xx ?< b ]] => 
+    generalize (is_lt_spec xx b);destruct (xx ?< b)
+  | _ => idtac
+  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto; try ring.
+  ring_simplify.
+  case (Zle_lt_or_eq _ _ H1); auto with zarith.
+  intros p p1 H; rewrite H.
+  match goal with 
+  | [|- context [ ?xx ?< b ]] => 
+    generalize (is_lt_spec xx b);destruct (xx ?< b)
+  | _ => idtac
+  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto; try ring.
+  rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
+  rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
+ case IHa; destruct (a/b)%P as [q r].
+   case q; case r; simpl fst; simpl snd.
+     rewrite Zmult_0_l; rewrite Zplus_0_r; intros HH; discriminate HH.
+  intros p H; rewrite H;
+  match goal with 
+  | [|- context [ ?xx ?< b ]] => 
+    generalize (is_lt_spec xx b);destruct (xx ?< b)
+  | _ => idtac
+  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto.
+  rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
+  rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
+  intros p H; rewrite H; simpl; intros H1; split; auto.
+  zsimpl; ring.
+  intros p p1 H; rewrite H.
+  match goal with 
+  | [|- context [ ?xx ?< b ]] => 
+    generalize (is_lt_spec xx b);destruct (xx ?< b)
+  | _ => idtac
+  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto; try ring.
+  rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
+  rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
+  match goal with 
+  | [|- context [ ?xx ?< b ]] => 
+    generalize (is_lt_spec xx b);destruct (xx ?< b)
+  | _ => idtac
+  end; zsimpl; simpl.
+  split; auto.
+  case (Zle_lt_or_eq 1 b); auto with zarith.
+  generalize (Zlt_0_pos b); auto with zarith.
 Qed.
 Transparent Zmult.
 
@@ -552,7 +604,7 @@ Proof.
  try (rewrite zx0; apply Zis_gcd_minus; try rewrite zx1; auto;
        apply Zis_gcd_minus; try rewrite zx1; simpl; auto);
  try apply Zis_gcd_0; try (apply Zis_gcd_sym;apply Zis_gcd_0);
- generalize (egcd_Zis_gcd p p0); case egcd; intros (u,v,w) (H1, H2); 
+ generalize (egcd_Zis_gcd p p0); case egcd; intros (u,v) w (H1, H2); 
  split; repeat rewrite zx0; try (rewrite <- H1; ring); auto;
  (split; [idtac | red; intros; discriminate]).
  apply Zis_gcd_sym; auto.

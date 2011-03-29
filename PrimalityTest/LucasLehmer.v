@@ -14,7 +14,7 @@
     Definition: LucasLehmer              
   **********************************************************************)
 Require Import ZArith.
-Require Import ZAux.
+Require Import ZCAux.
 Require Import Tactic.
 Require Import Wf_nat.
 Require Import NatAux.
@@ -135,10 +135,9 @@ Qed.
 Theorem sn_aux: forall n, 0 <= n -> s (n+1) = (pplus (pmult (s n) (s n)) (-2, 0)).
 intros n Hn.
 assert (Hu: 0 <= 2 ^n); auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
 set (y := (fst (s n) * fst (s n) - 2, 0)).
 unfold s; simpl; rewrite Zpower_exp; auto with zarith.
-rewrite Zpower_exp_1; rewrite ppow_ppow; auto with zarith.
+rewrite Zpower_1_r; rewrite ppow_ppow; auto with zarith.
 repeat rewrite pplus_pmult_dist_r || rewrite pplus_pmult_dist_l.
 repeat rewrite <- pplus_assoc.
 eq_tac; auto.
@@ -173,8 +172,7 @@ Qed.
 Theorem sn_w: forall n, 0 <= n ->  ppow w (2 ^ (n + 1)) = pplus (pmult (s n) (ppow w (2 ^ n))) (- 1, 0).
 intros n H; unfold s; simpl; rewrite Zpower_exp; auto with zarith.
 assert (Hu: 0 <= 2 ^n); auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-rewrite Zpower_exp_1; rewrite ppow_ppow; auto with zarith.
+rewrite Zpower_1_r; rewrite ppow_ppow; auto with zarith.
 repeat rewrite pplus_pmult_dist_r || rewrite pplus_pmult_dist_l.
 pattern 2 at 2; replace 2 with (1 + 1); auto with zarith.
 rewrite ppow_add; auto with zarith; simpl.
@@ -188,8 +186,7 @@ Qed.
 Theorem sn_w_next: forall n, 0 <= n ->  ppow w (2 ^ (n + 1)) = pplus (pmult (s n) (ppow w (2 ^ n))) (- 1, 0).
 intros n H; unfold s; simpl; rewrite Zpower_exp; auto with zarith.
 assert (Hu: 0 <= 2 ^n); auto with zarith.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-rewrite Zpower_exp_1; rewrite ppow_ppow; auto with zarith.
+rewrite Zpower_1_r; rewrite ppow_ppow; auto with zarith.
 repeat rewrite pplus_pmult_dist_r || rewrite pplus_pmult_dist_l.
 pattern 2 at 2; replace 2 with (1 + 1); auto with zarith.
 rewrite ppow_add; auto with zarith; simpl.
@@ -255,10 +252,10 @@ unfold zpmult, w, pmult, base; repeat (rewrite Zmult_1_r || rewrite Zmult_1_l).
 eq_tac.
 apply trans_equal with ((3 * q + 1) mod q).
 eq_tac; auto with zarith.
-rewrite Zmod_plus; auto.
-rewrite Zmod_mult; auto.
+rewrite Zplus_mod; auto.
+rewrite Zmult_mod; auto.
 rewrite Z_mod_same; auto with zarith.
-rewrite Zmult_0_r; repeat rewrite Zmod_def_small; auto with zarith.
+rewrite Zmult_0_r; repeat rewrite Zmod_small; auto with zarith.
 apply trans_equal with (2 * q mod q).
 eq_tac; auto with zarith.
 apply Zdivide_mod; auto with zarith; exists 2; auto with zarith.
@@ -278,7 +275,8 @@ Qed.
 
 Theorem order_lt:  g_order pgroup < q * q.
 unfold g_order, pgroup, PGroup; simpl.
-rewrite <- (Z_of_nat_Zabs_nat (q * q)); auto with zarith.
+rewrite <- (Zabs_eq (q * q)); auto with zarith.
+rewrite <- (inj_Zabs_nat (q * q)); auto with zarith.
 rewrite <- mL_length; auto with zarith.
 apply inj_lt; apply isupport_length_strict with (0, 0).
 apply mL_ulist.
@@ -304,7 +302,7 @@ generalize q_pos; intros HM.
 generalize q_pos2; intros HM2.
 assert (H0: 0 < q); auto with zarith.
 intros a b Ha Hb; generalize Hb; pattern b; apply natlike_ind; auto.
-intros _; repeat rewrite Zmod_def_small; auto with zarith.
+intros _; repeat rewrite Zmod_small; auto with zarith.
 rewrite ppow_0; simpl; auto with zarith.
 unfold zpow; intros n1 H Rec _; unfold Zsucc.
 rewrite gpow_add; auto with zarith.
@@ -313,19 +311,19 @@ rewrite Rec; unfold zpmult; auto with zarith.
 case (ppow a n1); case a; unfold pmult, fst, snd.
 intros x y z t.
 repeat (rewrite Zmult_1_r || rewrite Zmult_0_r || rewrite Zplus_0_r || rewrite Zplus_0_l); eq_tac.
-repeat rewrite (fun u v => Zmod_plus (u * v)); auto.
+repeat rewrite (fun u v => Zplus_mod (u * v)); auto.
 eq_tac; try eq_tac; auto.
-repeat rewrite (Zmod_mult z); auto with zarith.
-repeat rewrite (fun u v => Zmod_mult (u * v)); auto.
+repeat rewrite (Zmult_mod z); auto with zarith.
+repeat rewrite (fun u v => Zmult_mod (u * v)); auto.
 eq_tac; try eq_tac; auto with zarith.
-repeat rewrite (Zmod_mult base); auto with zarith.
+repeat rewrite (Zmult_mod base); auto with zarith.
 eq_tac; try eq_tac; auto with zarith.
 apply Zmod_mod; auto.
 apply Zmod_mod; auto.
-repeat rewrite (fun u v => Zmod_plus (u * v)); auto.
+repeat rewrite (fun u v => Zplus_mod (u * v)); auto.
 eq_tac; try eq_tac; auto.
-repeat rewrite (Zmod_mult z); auto with zarith.
-repeat rewrite (Zmod_mult t); auto with zarith.
+repeat rewrite (Zmult_mod z); auto with zarith.
+repeat rewrite (Zmult_mod t); auto with zarith.
 Qed.
 
 Theorem zpow_w_n_minus_1: zpow w (2 ^ (p - 1)) = (-1 mod q, 0).
@@ -341,18 +339,18 @@ repeat (rewrite Zmult_0_l || rewrite Zmult_0_r || rewrite Zplus_0_l || rewrite Z
 assert (H2: z mod q = 0).
 case H1; intros q1 Hq1; rewrite Hq1.
 case q_divide_Mp; intros q2 Hq2; rewrite Hq2.
-rewrite Zmod_mult; auto.
-rewrite (Zmod_mult q2); auto.
+rewrite Zmult_mod; auto.
+rewrite (Zmult_mod q2); auto.
 rewrite Z_mod_same; auto with zarith.
-repeat (rewrite Zmult_0_r; rewrite (Zmod_def_small 0)); auto with zarith.
+repeat (rewrite Zmult_0_r; rewrite (Zmod_small 0)); auto with zarith.
 assert (H3:  forall x, (z * x) mod q = 0).
-intros y1; rewrite Zmod_mult; try rewrite H2; auto.
+intros y1; rewrite Zmult_mod; try rewrite H2; auto.
 assert (H4:  forall x y,  (z * x +  y) mod q = y mod q).
-intros x1 y1; rewrite Zmod_plus; try rewrite H3; auto.
+intros x1 y1; rewrite Zplus_mod; try rewrite H3; auto.
 rewrite Zplus_0_l; apply Zmod_mod; auto.
 eq_tac; auto.
 apply w_in_pgroup.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
+apply Zlt_le_weak; apply Zpower_gt_0; auto with zarith.
 Qed.
 
 Theorem zpow_w_n: zpow w (2 ^ p) = (1, 0).
@@ -368,10 +366,9 @@ repeat (rewrite Zmult_0_l || rewrite Zmult_0_r || rewrite Zplus_0_l ||
               rewrite Zplus_0_r || rewrite Zmult_1_r).
 eq_tac; auto.
 pattern (-1 mod q) at 1; rewrite <- (Zmod_mod (-1) q); auto with zarith.
-repeat rewrite <- Zmod_mult; auto.
-rewrite Zmod_def_small; auto with zarith.
+repeat rewrite <- Zmult_mod; auto.
+rewrite Zmod_small; auto with zarith.
 apply w_in_pgroup.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
 Qed.
 
 (************************************** 
@@ -384,7 +381,7 @@ generalize q_pos2; intros HM2.
 assert (H0: 0 < q); auto with zarith.
 apply e_order_divide_gpow.
 apply w_in_pgroup.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
+apply Zlt_le_weak; apply Zpower_gt_0; auto with zarith.
 exact zpow_w_n.
 Qed.
 
@@ -395,7 +392,7 @@ Qed.
 Theorem e_order_le_pow : e_order P_dec w pgroup <= 2 ^ p.
 apply Zdivide_le.
 apply Zlt_le_weak; apply e_order_pos.
-apply Zpower_lt_0; auto with zarith.
+apply Zpower_gt_0; auto with zarith.
 apply e_order_divide_pow.
 Qed.
 
@@ -404,8 +401,9 @@ Qed.
  **************************************)
 
 Theorem e_order_eq_pow:  exists q, (e_order P_dec w pgroup)  = 2 ^ q.
-case (Zdivide_power_2 (e_order P_dec w pgroup) p); auto with zarith. 
+case (Zdivide_power_2 (e_order P_dec w pgroup) 2 p); auto with zarith. 
 apply Zlt_le_weak; apply e_order_pos.
+apply prime_2.
 apply e_order_divide_pow; auto.
 intros x H; exists x; auto with zarith.
 Qed.
@@ -415,8 +413,9 @@ Qed.
  **************************************)
 
 Theorem e_order_eq_p: e_order P_dec w pgroup = 2 ^ p.
-case (Zdivide_power_2 (e_order P_dec w pgroup) p); auto with zarith.
+case (Zdivide_power_2 (e_order P_dec w pgroup) 2 p); auto with zarith.
 apply Zlt_le_weak; apply e_order_pos.
+apply prime_2.
 apply e_order_divide_pow; auto.
 intros p1 Hp1.
 case (Zle_lt_or_eq p1 p); try (intro H1; subst; auto; fail).
@@ -424,8 +423,8 @@ case (Zle_or_lt p1 p); auto; intros H1.
 absurd (2 ^ p1 <= 2 ^ p); auto with zarith.
 apply Zlt_not_le; apply Zpower_lt_monotone; auto with zarith.
 apply Zdivide_le.
-apply Zlt_le_weak; apply Zpower_lt_0; auto with zarith.
-apply Zpower_lt_0; auto with zarith.
+apply Zlt_le_weak; apply Zpower_gt_0; auto with zarith.
+apply Zpower_gt_0; auto with zarith.
 rewrite <- Hp1; apply e_order_divide_pow.
 intros H1.
 assert (Hu: 0 <= p1).
@@ -439,10 +438,10 @@ intros H2; injection H2; clear H2; intros H2.
 assert (H0: 0 < q); auto with zarith.
 absurd (0 mod q = 0).
 pattern 0 at 1; replace 0 with (-1 + 1); auto with zarith.
-rewrite Zmod_plus; auto with zarith.
-rewrite H2; rewrite (Zmod_def_small 1); auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite Zplus_mod; auto with zarith.
+rewrite H2; rewrite (Zmod_small 1); auto with zarith.
+rewrite Zmod_small; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 unfold zpow; apply (gpow_pow _ _ w pgroup) with p1; auto with zarith.
 apply w_in_pgroup.
 rewrite <- Hp1.
@@ -501,22 +500,22 @@ Theorem SS_aux_correct:
 intros p; pattern p; apply Pind.
 simpl.
 intros z1 z2 n Hn H H1; rewrite sn; auto; rewrite H1;  rewrite Zmodd_correct; rewrite Zsquare_correct; simpl.
-unfold Zminus; rewrite Zmod_plus; auto.
-rewrite (Zmod_plus (fst (s n) * fst (s n))); auto with zarith.
+unfold Zminus; rewrite Zplus_mod; auto.
+rewrite (Zplus_mod (fst (s n) * fst (s n))); auto with zarith.
 eq_tac; auto.
 eq_tac; auto.
-apply sym_equal; apply Zmod_mult; auto.
+apply sym_equal; apply Zmult_mod; auto.
 intros n Rec z1 z2 n1 Hn1 H1 H2.
 rewrite Pplus_one_succ_l; rewrite iter_pos_plus.
 rewrite Rec with (n0 := n1); auto.
 replace (n1 + Zpos (1 + n)) with ((n1 + Zpos n) + 1); auto with zarith.
 rewrite sn; simpl; try rewrite Zmodd_correct; try rewrite Zsquare_correct; simpl; auto with zarith.
-unfold Zminus; rewrite Zmod_plus; auto.
+unfold Zminus; rewrite Zplus_mod; auto.
 unfold Zmodd.
-rewrite (Zmod_plus (fst (s (n1 + Zpos n)) * fst (s (n1 + Zpos n)))); auto with zarith.
+rewrite (Zplus_mod (fst (s (n1 + Zpos n)) * fst (s (n1 + Zpos n)))); auto with zarith.
 eq_tac; auto.
 eq_tac; auto.
-apply sym_equal; apply Zmod_mult; auto.
+apply sym_equal; apply Zmult_mod; auto.
 rewrite Zpos_plus_distr; auto with zarith.
 Qed.
 
@@ -534,7 +533,7 @@ Qed.
 Theorem SS_prop_cor: forall p, 1 < p -> SS p = 0 -> (Mp p | fst(s (p -2))).
 intros p H H1.
 apply Zmod_divide.
-apply Zlt_gt; apply Zlt_trans with 1; try apply mersenne_pos; auto with zarith.
+generalize (mersenne_pos _ H); auto with zarith.
 apply trans_equal with (2:= H1); apply sym_equal; apply SS_prop; auto.
 Qed.
 
@@ -548,14 +547,14 @@ apply q_more_than_square; auto.
 apply SS_prop_cor; auto.
 apply Zlt_trans with 2; auto with zarith.
 case (Zle_lt_or_eq 2 q); auto.
-apply prime_le_2; auto.
+apply prime_ge_2; auto.
 intros H5; subst.
 absurd (2 <= 1); auto with arith.
 apply Zdivide_le; auto with zarith.
 case H4; intros x Hx.
 exists (2 ^ (p -1) - x).
 rewrite Zmult_minus_distr_r; rewrite <- Hx; unfold Mp.
-pattern 2 at 2; rewrite <- Zpower_exp_1; rewrite <- Zpower_exp; auto with zarith.
+pattern 2 at 2; rewrite <- Zpower_1_r; rewrite <- Zpower_exp; auto with zarith.
 replace (p - 1 + 1) with p; auto with zarith.
 Qed.
 

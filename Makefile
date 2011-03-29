@@ -5,10 +5,6 @@ all:
 	cd Z; $(MAKE) all
 	cd PrimalityTest; $(MAKE) all
 	cd elliptic; $(MAKE) all
-	cd num; $(MAKE) GenBase.vo
-	cd num/W; $(MAKE) all
-	cd num/W/W2; $(MAKE) all
-	cd num/W/W8; $(MAKE) all
 	cd num; $(MAKE) all
 
 clean: 
@@ -19,6 +15,6 @@ clean:
 	cd PrimalityTest; $(MAKE) clean
 	cd elliptic; $(MAKE) clean
 	cd num; $(MAKE) clean
-	cd num/W; $(MAKE) clean
-	cd num/W/W2; $(MAKE) clean
-	cd num/W/W8; $(MAKE) clean
+
+
+

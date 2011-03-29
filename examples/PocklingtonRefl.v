@@ -8,7 +8,7 @@
 
 Require Export List.
 Require Export ZArith.
-Require Export ZAux.
+Require Export Znumtheory.
 Require Export Pock.
 Require Export BasePrimes.
 

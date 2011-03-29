@@ -1,4 +1,4 @@
-ECMDIR=/usr/local/lib/
+ECMDIR=/usr/lib/
 
 OPT=
 CC=gcc
@@ -11,13 +11,13 @@ CPOCK=certif.c factorize.c pocklington.c
 OPOCK=$(CPOCK:.c=.o)
 
 pock: $(OPOCK)
-	$(CC) -g -O2  -o pocklington $(OPOCK) $(ECMDIR)libecm.a -lgmp -lm 
+	$(CC) -g -O2  -o pocklington $(OPOCK) -lecm -lgmp -lm 
 
 first: $(OFIRSTPRIMES)
-	$(CC) -g -O2 -o firstprimes $(OFIRSTPRIMES) $(ECMDIR)libecm.a -lgmp -lm
+	$(CC) -g -O2 -o firstprimes $(OFIRSTPRIMES) -lecm -lgmp -lm
 
 nextprime: nextprime.c nextprime.o
-	$(CC) -g -O2  -o nextprime nextprime.o  $(ECMDIR)libecm.a -lgmp -lm 
+	$(CC) -g -O2  -o nextprime nextprime.o  -lecm -lgmp -lm 
 
 all:   
 	make pock

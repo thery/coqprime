@@ -1,5 +1,4 @@
-Require Import ZArith.
-Require Import ZAux.
+Require Import ZArith Znumtheory.
 
 Set Implicit Arguments.
 
@@ -18,9 +17,9 @@ Lemma Zmodpl: forall a b n, 0 < n ->
   (a mod n + b) mod n = (a + b) mod n.
 Proof.
 intros a b n H.
-rewrite Zmod_plus; auto.
+rewrite Zplus_mod; auto.
 rewrite Zmod_mod; auto.
-apply sym_equal; apply Zmod_plus; auto.
+apply sym_equal; apply Zplus_mod; auto.
 Qed.
 
 Lemma Zmodpr: forall a b n, 0 < n ->
@@ -34,9 +33,9 @@ Lemma Zmodml: forall a b n, 0 < n ->
   (a mod n * b) mod n = (a * b) mod n.
 Proof.
 intros a b n H.
-rewrite Zmod_mult; auto.
+rewrite Zmult_mod; auto.
 rewrite Zmod_mod; auto.
-apply sym_equal; apply Zmod_mult; auto.
+apply sym_equal; apply Zmult_mod; auto.
 Qed.
 
 Lemma Zmodmr: forall a b n, 0 < n ->
@@ -62,7 +61,7 @@ Ltac  rmod t :=
      | ?x1   =>  match (is_ok y) with 
                 |false => rmod y
                 | ?y1 => 
-                   rewrite <- (Zmod_plus x1 y1)
+                   rewrite <- (Zplus_mod x1 y1)
                 |false => rmod y
                 end
      end
@@ -71,7 +70,7 @@ Ltac  rmod t :=
      | false => rmod x
      | ?x1 =>  match (is_ok y) with 
                 |false => rmod y
-                | ?y1 => rewrite <- (Zmod_mult x1 y1)
+                | ?y1 => rewrite <- (Zmult_mod x1 y1)
                 end
      | false => rmod x
      end
@@ -85,10 +84,10 @@ intros n m a H1 H2 H3.
 pattern a at 1; rewrite (Z_div_mod_eq a m); auto with zarith.
 case H3; intros q Hq; pattern m at 1; rewrite Hq.
 rewrite (Zmult_comm q).
-rewrite Zmod_plus; auto.
-rewrite <- Zmult_assoc; rewrite Zmod_mult; auto.
+rewrite Zplus_mod; auto.
+rewrite <- Zmult_assoc; rewrite Zmult_mod; auto.
 rewrite Z_mod_same; try rewrite Zmult_0_l; auto with zarith.
-rewrite (Zmod_def_small 0); auto with zarith.
+rewrite (Zmod_small 0); auto with zarith.
 rewrite Zplus_0_l; rewrite Zmod_mod; auto with zarith.
 Qed.
 
