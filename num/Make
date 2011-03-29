@@ -4,29 +4,11 @@
 -I ../PrimalityTest
 -I ../List
 -I ../elliptic
--I W/W8
--I W/W2
 
-Basic_type.v
-GenBase.v
-GenAdd.v
-GenSub.v
-GenMul.v
-GenLift.v
-GenDivn1.v
-GenDiv.v
-GenSqrt.v
-ZnZ.v
-Zn2Z.v
-GenWord.v
+NEll.v
 W.v
+Mod_op.v
 Lucas.v
 Pock.v
-Mod_op.v
-Nbasic.v
-NMake.v
-ZMake.v
-Arith.v
-NEll.v
--custom "ocamlopt -o genN unix.cmxa genN.ml" "genN.ml" genN
+Bits.v
 

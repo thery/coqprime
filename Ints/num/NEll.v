@@ -376,11 +376,7 @@ Qed.
      x ?= y =Zeq_bool (z2Z x) (z2Z y).
  Proof.
  intros x y.
- unfold neq; rewrite ZnZ.spec_compare; 
-  destr_zcompare.
- match goal with H: context[x] |- _ =>
-   generalize H; clear H; intros H1
- end.
+ unfold neq; rewrite ZnZ.spec_compare; case Zcompare_spec; intros H.
  symmetry; apply GZnZ.Zeq_iok; auto.
  case_eq (Zeq_bool (z2Z x) (z2Z y)); intros H1; auto;
    generalize H; generalize (Zeq_bool_eq _ _ H1); unfold z2Z;

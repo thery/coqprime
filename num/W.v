@@ -7,28 +7,23 @@
 (*************************************************************)
 
 Set Implicit Arguments.
-
-Require Import Basic_type.
-Require Import ZnZ.
-Require Import Zn2Z.
-Require Import W8_op.
-Require Import ZArith.
+Require Import CyclicAxioms DoubleCyclic BigN Cyclic31 Int31.
+Require Import ZArith ZCAux.
 
 (* ** Type of words ** *)
 
 
 (* Make the words *)
 
-Definition mk_word (w: Set) (n:nat): Set.
+Definition mk_word: forall (w: Type) (n:nat), Type.
 fix 2.
 intros w n; case n; simpl.
-exact w8.
+exact int31.
 intros n1; exact (zn2z (mk_word w n1)).
 Defined.
 
 (* Make the op *)
-
-Fixpoint mk_op (w : Set) (op : znz_op w) (n : nat) {struct n} :
+Fixpoint mk_op (w : Type) (op : znz_op w) (n : nat) {struct n} :
   znz_op (word w n) :=
   match n return (znz_op (word w n)) with
   | O => op
@@ -52,108 +47,106 @@ rewrite mk_op_digits.
 rewrite <- (Zmult_1_r 1).
 apply Zle_lt_trans with (2 ^ (Z_of_nat n) * 1)%Z.
 apply Zmult_le_compat_r; auto with zarith.
-rewrite <- (ZAux.Zpower_exp_0 2).
-apply ZAux.Zpower_le_monotone; auto with zarith.
+rewrite <- (Zpower_0_r 2).
+apply Zpower_le_monotone; auto with zarith.
 apply Zmult_lt_compat_l; auto with zarith.
 Qed.
 
-Fixpoint mk_spec (w : Set) (op : znz_op w) (op_spec : znz_spec op) 
+Fixpoint mk_spec (w : Type) (op : znz_op w) (op_spec : znz_spec op) 
     (H: (1 < Zpos (znz_digits op))%Z)  (n : nat)
             {struct n} : znz_spec (mk_op op n) :=
   match n return (znz_spec (mk_op op n)) with
   | O => op_spec
   | S n1 =>
-      @mk_zn2z_karatsuba_spec (word w n1) (mk_op op n1)
-        (digits_pos op n1 H) (mk_spec op_spec H n1)
+      @mk_znz2_karatsuba_spec (word w n1) (mk_op op n1)
+        (* (digits_pos op n1 H) *) (mk_spec op_spec H n1)
   end.
 
 (* ** Operators ** *)
-Definition w8_1_op := mk_zn2z_op w8_op.           
-Definition w8_2_op := mk_zn2z_op w8_1_op.
-Definition w8_3_op := mk_zn2z_op w8_2_op.
-Definition w8_4_op := mk_zn2z_op_karatsuba w8_3_op.
-Definition w8_5_op := mk_zn2z_op_karatsuba w8_4_op.
-Definition w8_6_op := mk_zn2z_op_karatsuba w8_5_op.
-Definition w8_7_op := mk_zn2z_op_karatsuba w8_6_op.
-Definition w8_8_op := mk_zn2z_op_karatsuba w8_7_op.
-Definition w8_9_op := mk_zn2z_op_karatsuba w8_8_op.
-Definition w8_10_op := mk_zn2z_op_karatsuba w8_9_op.
-Definition w8_11_op := mk_zn2z_op_karatsuba w8_10_op.
-Definition w8_12_op := mk_zn2z_op_karatsuba w8_11_op.
-Definition w8_13_op := mk_zn2z_op_karatsuba w8_12_op.
-Definition w8_14_op := mk_zn2z_op_karatsuba w8_13_op.
+Definition w31_1_op := mk_zn2z_op int31_op.           
+Definition w31_2_op := mk_zn2z_op w31_1_op.
+Definition w31_3_op := mk_zn2z_op w31_2_op.
+Definition w31_4_op := mk_zn2z_op_karatsuba w31_3_op.
+Definition w31_5_op := mk_zn2z_op_karatsuba w31_4_op.
+Definition w31_6_op := mk_zn2z_op_karatsuba w31_5_op.
+Definition w31_7_op := mk_zn2z_op_karatsuba w31_6_op.
+Definition w31_8_op := mk_zn2z_op_karatsuba w31_7_op.
+Definition w31_9_op := mk_zn2z_op_karatsuba w31_8_op.
+Definition w31_10_op := mk_zn2z_op_karatsuba w31_9_op.
+Definition w31_11_op := mk_zn2z_op_karatsuba w31_10_op.
+Definition w31_12_op := mk_zn2z_op_karatsuba w31_11_op.
+Definition w31_13_op := mk_zn2z_op_karatsuba w31_12_op.
+Definition w31_14_op := mk_zn2z_op_karatsuba w31_13_op.
 
-Definition cmk_op (n: nat): znz_op (word w8 n).
+Definition cmk_op: forall (n: nat), znz_op (word int31 n).
 intros n; case n; clear n.
-exact w8_op.
+exact int31_op.
 intros n; case n; clear n.
-exact w8_1_op.
+exact w31_1_op.
 intros n; case n; clear n.
-exact w8_2_op.
+exact w31_2_op.
 intros n; case n; clear n.
-exact w8_3_op.
+exact w31_3_op.
 intros n; case n; clear n.
-exact w8_4_op.
+exact w31_4_op.
 intros n; case n; clear n.
-exact w8_5_op.
+exact w31_5_op.
 intros n; case n; clear n.
-exact w8_6_op.
+exact w31_6_op.
 intros n; case n; clear n.
-exact w8_7_op.
+exact w31_7_op.
 intros n; case n; clear n.
-exact w8_8_op.
+exact w31_8_op.
 intros n; case n; clear n.
-exact w8_9_op.
+exact w31_9_op.
 intros n; case n; clear n.
-exact w8_10_op.
+exact w31_10_op.
 intros n; case n; clear n.
-exact w8_11_op.
+exact w31_11_op.
 intros n; case n; clear n.
-exact w8_12_op.
+exact w31_12_op.
 intros n; case n; clear n.
-exact w8_13_op.
+exact w31_13_op.
 intros n; case n; clear n.
-exact w8_14_op.
+exact w31_14_op.
 intros n.
 match goal with |- context[S ?X] =>
- exact (mk_op w8_op (S X))
+ exact (mk_op int31_op (S X))
 end.
 Defined.
 
-Require Import W8_op_spec.
-
-Definition cmk_spec n: znz_spec (cmk_op n).
-assert (S1: znz_spec w8_1_op).
-unfold w8_1_op; apply mk_zn2z_spec; auto with zarith.
-exact w8_op_spec.
-assert (S2: znz_spec w8_2_op).
-unfold w8_2_op; apply mk_zn2z_spec; auto with zarith.
-assert (S3: znz_spec w8_3_op).
-unfold w8_3_op; apply mk_zn2z_spec; auto with zarith.
-assert (S4: znz_spec w8_4_op).
-unfold w8_4_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S5: znz_spec w8_5_op).
-unfold w8_5_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S6: znz_spec w8_6_op).
-unfold w8_6_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S7: znz_spec w8_7_op).
-unfold w8_7_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S8: znz_spec w8_8_op).
-unfold w8_8_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S9: znz_spec w8_9_op).
-unfold w8_9_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S10: znz_spec w8_10_op).
-unfold w8_10_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S11: znz_spec w8_11_op).
-unfold w8_11_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S12: znz_spec w8_12_op).
-unfold w8_12_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S13: znz_spec w8_13_op).
-unfold w8_13_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
-assert (S14: znz_spec w8_14_op).
-unfold w8_14_op; apply mk_zn2z_karatsuba_spec; auto with zarith.
+Definition cmk_spec: forall n, znz_spec (cmk_op n).
+assert (S1: znz_spec w31_1_op).
+unfold w31_1_op; apply mk_znz2_spec; auto with zarith.
+exact int31_spec.
+assert (S2: znz_spec w31_2_op).
+unfold w31_2_op; apply mk_znz2_spec; auto with zarith.
+assert (S3: znz_spec w31_3_op).
+unfold w31_3_op; apply mk_znz2_spec; auto with zarith.
+assert (S4: znz_spec w31_4_op).
+unfold w31_4_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S5: znz_spec w31_5_op).
+unfold w31_5_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S6: znz_spec w31_6_op).
+unfold w31_6_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S7: znz_spec w31_7_op).
+unfold w31_7_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S8: znz_spec w31_8_op).
+unfold w31_8_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S9: znz_spec w31_9_op).
+unfold w31_9_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S10: znz_spec w31_10_op).
+unfold w31_10_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S11: znz_spec w31_11_op).
+unfold w31_11_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S12: znz_spec w31_12_op).
+unfold w31_12_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S13: znz_spec w31_13_op).
+unfold w31_13_op; apply mk_znz2_karatsuba_spec; auto with zarith.
+assert (S14: znz_spec w31_14_op).
+unfold w31_14_op; apply mk_znz2_karatsuba_spec; auto with zarith.
 intros n; case n; clear n.
-exact w8_op_spec.
+exact int31_spec.
 intros n; case n; clear n.
 exact S1.
 intros n; case n; clear n.
@@ -184,22 +177,24 @@ intros n; case n; clear n.
 exact S14.
 intro n.
 simpl cmk_op.
-repeat match goal with |- znz_spec (mk_zn2z_op_karatsuba ?X) =>
-  generalize (@mk_zn2z_karatsuba_spec _ X); intros tmp;
+repeat match goal with |- znz_spec
+ (mk_zn2z_op_karatsuba ?X) =>
+  generalize (@mk_znz2_karatsuba_spec _ X); intros tmp;
   apply tmp; clear tmp; auto with zarith
 end.
+(*
 apply digits_pos.
+*)
 auto with zarith.
 apply mk_spec.
-exact w8_op_spec.
+exact int31_spec.
 auto with zarith.
 Defined.
 
 
 Theorem cmk_op_digits: forall n, 
-  (Zpos (znz_digits (cmk_op n)) = 2 ^ (Z_of_nat n + 3))%Z.
+  (Zpos (znz_digits (cmk_op n)) = 2 ^ (Z_of_nat n) * 31)%Z.
 do 15 (intros n; case n; clear n; [try reflexivity | idtac]).
 intros n; unfold cmk_op; lazy beta.
 rewrite mk_op_digits; auto.
-rewrite Zpower_exp; auto with zarith.
 Qed.

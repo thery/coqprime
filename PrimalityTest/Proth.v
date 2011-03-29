@@ -14,7 +14,7 @@
     Definition: ProthTest              
  **********************************************************************)
 Require Import ZArith.
-Require Import ZAux.
+Require Import ZCAux.
 Require Import Pocklington.
 
 Open Scope Z_scope.
@@ -39,15 +39,15 @@ generalize H2; replace (h * 2 ^ k + 1 - 1) with (h * 2 ^k); auto with zarith; cl
 exists a; split; auto; split.
 pattern (h * 2 ^k) at 1; rewrite (Zdivide_Zdiv_eq  2 (h * 2 ^ k)); auto with zarith.
 rewrite (Zmult_comm 2); rewrite Zpower_mult; auto with zarith.
-rewrite Zmod_Zpower; auto with zarith.
+rewrite Zpower_mod; auto with zarith.
 assert (tmp: forall p, p = (p + 1) -1); auto with zarith; rewrite (fun x => (tmp (a ^ x))).
-rewrite Zmod_minus; auto with zarith.
+rewrite Zminus_mod; auto with zarith.
 rewrite H2.
-rewrite (Zmod_def_small 1); auto with zarith.
-rewrite <- Zmod_Zpower; auto with zarith.
-rewrite Zmod_def_small; auto with zarith.
+rewrite (Zmod_small 1); auto with zarith.
+rewrite <- Zpower_mod; auto with zarith.
+rewrite Zmod_small; auto with zarith.
 simpl; unfold Zpower_pos; simpl; auto with zarith.
-apply Zge_le; apply Z_div_ge0; auto with zarith.
+apply Z_div_pos; auto with zarith.
 apply Zdivide_trans with (2 ^ k).
 apply Zpower_divide; auto with zarith.
 apply Zdivide_factor_l; auto with zarith.
@@ -56,7 +56,7 @@ apply Zis_gcd_intro; auto with zarith.
 intros x HD1 HD2.
 assert (Hd1: p = 2).
 apply prime_div_Zpower_prime with (4 := H4); auto with zarith.
-apply prime2.
+apply prime_2.
 assert (Hd2: (x | 2)).
 replace 2 with ((a ^ (h * 2 ^ k / 2) + 1) - (a ^ (h * 2 ^ k/ 2) - 1)); auto with zarith.
 apply Zdivide_minus_l; auto.
@@ -88,13 +88,13 @@ intros H1 H2 H3 H4 _.
 assert (Hu: 0 < h * 2 ^ k).
 apply Zmult_lt_O_compat; auto with zarith.
 apply ProthTest with (a := a); auto.
-rewrite Zmod_plus; auto with zarith.
+rewrite Zplus_mod; auto with zarith.
 rewrite <- Zpow_mod_Zpower_correct; auto with zarith.
 rewrite H1.
-rewrite (Zmod_def_small 1); auto with zarith.
+rewrite (Zmod_small 1); auto with zarith.
 replace (h * 2 ^ k + 1 - 1 + 1) with (h * 2 ^ k + 1); auto with zarith.
 apply Zdivide_mod; auto with zarith.
-apply Zge_le; apply Z_div_ge0; auto with zarith.
+apply Z_div_pos; auto with zarith.
 Qed.
 
 Theorem prime5: prime 5.
@@ -113,7 +113,7 @@ Theorem prime65537:  prime 65537.
 exact (ProthTestOp 1 16 3 (refl_equal _)).
 Qed.
 
-(* Too touch !! 
+(* Too tough !! 
 Theorem prime4294967297:  prime 4294967297.
 exact (ProthTestOp 1 32 3 (refl_equal _)).
 Qed.

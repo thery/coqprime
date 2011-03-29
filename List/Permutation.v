@@ -91,11 +91,8 @@ Let permutation_one_inv_aux :
   permutation l1 l2 -> forall a : A, l1 = a :: nil -> l2 = a :: nil.
 intros l1 l2 H; elim H; clear H l1 l2; auto.
 intros a l3 l4 H0 H1 b H2.
-eq_tac.
-injection H2; auto.
-apply permutation_nil_inv; auto.
-injection H2; intros H3 H4; rewrite <- H3; auto.
-apply permutation_sym; auto.
+injection H2; intros; subst; auto.
+rewrite (permutation_nil_inv _ (permutation_sym _ _ H0)); auto.
 intros; discriminate.
 Qed.
 
@@ -206,27 +203,27 @@ intros a l1 l2 H; elim H; clear H l1 l2.
 intros l11 l12; case l11; simpl in |- *; intros; discriminate.
 intros a0 l1 l2 H H0 l11 l12; case l11; simpl in |- *.
 exists (nil (A:=A)); exists l1; simpl in |- *; split; auto.
-eq_tac; injection H1; auto.
+injection H1; intros; subst; auto.
 injection H1; intros H2 H3; rewrite <- H2; auto.
 intros a1 l111 H1.
 case (H0 l111 l12); auto.
 injection H1; auto.
 intros l3 (l4, (Hl1, Hl2)).
 exists (a0 :: l3); exists l4; split; simpl in |- *; auto.
-eq_tac; injection H1; auto.
+injection H1; intros; subst; auto.
 injection H1; intros H2 H3; rewrite H3; auto.
 intros a0 b l l11 l12; case l11; simpl in |- *.
 case l12; try (intros; discriminate).
 intros a1 l0 H; exists (b :: nil); exists l0; simpl in |- *; split; auto.
-repeat eq_tac; injection H; auto.
+injection H; intros; subst; auto.
 injection H; intros H1 H2 H3; rewrite H2; auto.
 intros a1 l111; case l111; simpl in |- *.
 intros H; exists (nil (A:=A)); exists (a0 :: l12); simpl in |- *; split; auto.
-repeat eq_tac; injection H; auto.
+injection H; intros; subst; auto.
 injection H; intros H1 H2 H3; rewrite H3; auto.
 intros a2 H1111 H; exists (a2 :: a1 :: H1111); exists l12; simpl in |- *;
  split; auto.
-repeat eq_tac; injection H; auto.
+injection H; intros; subst; auto.
 intros l1 l2 l3 H H0 H1 H2 l11 l12 H3.
 case H0 with (1 := H3).
 intros l4 (l5, (Hl1, Hl2)).
@@ -307,7 +304,7 @@ Theorem split_one_in_ex :
 intros a l1; elim l1; simpl in |- *; auto.
 intros H; case H.
 intros a0 l H [H0| H0]; auto.
-exists l; left; eq_tac; auto.
+exists l; left; subst; auto.
 case H; auto.
 intros x H1; exists (a0 :: x); right; auto.
 apply
@@ -471,13 +468,13 @@ intros; discriminate.
 intros a1 l H1; case (H0 l); auto.
 injection H1; auto.
 intros l5 (H2, H3); exists (a1 :: l5); split; simpl in |- *; auto.
-eq_tac; auto; injection H1; auto.
+injection H1; intros; subst; auto.
 intros a0 b l l3; case l3.
 intros; discriminate.
 intros a1 l0; case l0; simpl in |- *.
 intros; discriminate.
 intros a2 l1 H; exists (a2 :: a1 :: l1); split; simpl in |- *; auto.
-repeat eq_tac; injection H; auto.
+injection H; intros; subst; auto.
 intros l1 l2 l3 H H0 H1 H2 l0 H3.
 case H0 with (1 := H3); auto.
 intros l4 (HH1, HH2).

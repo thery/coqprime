@@ -12,7 +12,6 @@
      Auxillary functions & Theorems                                              
  **********************************************************************)
 Require Export Arith.
-Require Export Tactic.
 
 (**************************************
   Some properties of minus

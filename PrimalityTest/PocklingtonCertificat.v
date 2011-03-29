@@ -9,11 +9,9 @@
 Require Import List.
 Require Import ZArith.
 Require Import Zorder.
-Require Import ZAux.
+Require Import ZCAux.
 Require Import LucasLehmer.
 Require Import Pocklington.
-Require Import Zmisc.
-Require Import Pmod.
 Require Import Zmisc.
 Require Import Pmod.
 
@@ -238,7 +236,7 @@ Lemma pos_eq_1_spec :
     if (p ?= 1)%P then p = xH 
     else (1 < p).
 Proof.
- unfold Zlt;destruct p;simpl;reflexivity.
+ unfold Zlt;destruct p;simpl; auto; red;reflexivity.
 Qed.
 
 Open Scope Z_scope.
@@ -277,9 +275,9 @@ Proof.
  intros;simpl;apply Zge_0_pos.
 Qed.
 
-Hint Resolve Zpower_lt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak Zge_0_pos_add: zmisc.
+Hint Resolve Zpower_gt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak Zge_0_pos_add: zmisc.
 
-Hint Rewrite  Zpos_mult Zpower_mult Zpower_exp_1 Zmod_mod Zpower_exp 
+Hint Rewrite  Zpos_mult Zpower_mult Zpower_1_r Zmod_mod Zpower_exp 
             times_Zmult square_Zmult Psucc_Zplus: zmisc.
 
 Ltac mauto := 
@@ -291,28 +289,28 @@ Proof.
 Qed.
 Hint Resolve mod_lt : zmisc.
 
-Lemma Zmod_mult_l : forall (n:positive) a b, (a mod n * b) mod n = (a * b) mod n.
+Lemma Zmult_mod_l : forall (n:positive) a b, (a mod n * b) mod n = (a * b) mod n.
 Proof with mauto.
- intros;rewrite Zmod_mult ... rewrite (Zmod_mult a) ...
+ intros;rewrite Zmult_mod ... rewrite (Zmult_mod a) ...
 Qed.
 
-Lemma Zmod_mult_r : forall (n:positive) a b, (a * (b mod n)) mod n = (a * b) mod n.
+Lemma Zmult_mod_r : forall (n:positive) a b, (a * (b mod n)) mod n = (a * b) mod n.
 Proof with mauto.
- intros;rewrite Zmod_mult ... rewrite (Zmod_mult a) ...
+ intros;rewrite Zmult_mod ... rewrite (Zmult_mod a) ...
 Qed.
 
-Lemma Zmod_minus_l : forall (n:positive) a b, (a mod n - b) mod n = (a - b) mod n.
+Lemma Zminus_mod_l : forall (n:positive) a b, (a mod n - b) mod n = (a - b) mod n.
 Proof with mauto.
- intros;rewrite Zmod_minus ... rewrite (Zmod_minus a) ...
+ intros;rewrite Zminus_mod ... rewrite (Zminus_mod a) ...
 Qed.
 
-Lemma Zmod_minus_r : forall (n:positive) a b, (a - (b mod n)) mod n = (a - b) mod n.
+Lemma Zminus_mod_r : forall (n:positive) a b, (a - (b mod n)) mod n = (a - b) mod n.
 Proof with mauto.
- intros;rewrite Zmod_minus ... rewrite (Zmod_minus a) ...
+ intros;rewrite Zminus_mod ... rewrite (Zminus_mod a) ...
 Qed.
 
-Hint Rewrite Zmod_mult_l Zmod_mult_r Zmod_minus_l Zmod_minus_r : zmisc.
-Hint Rewrite <- Zmod_Zpower : zmisc.
+Hint Rewrite Zmult_mod_l Zmult_mod_r Zminus_mod_l Zminus_mod_r : zmisc.
+Hint Rewrite <- Zpower_mod : zmisc.
 
 Lemma Pmod_Zmod : forall a b, Z_of_N (a mod b)%P = a mod b.
 Proof.
@@ -350,10 +348,10 @@ Hint Rewrite pow_Zpower : zmisc.
 Lemma pow_mod_spec : forall n a m, Z_of_N (pow_mod a m n) = a^m mod n.
 Proof with mauto.
  induction m;simpl;intros...
- rewrite Zmod_mult; auto with zmisc.
- rewrite (Zmod_mult (a^m)); auto with zmisc. rewrite <- IHm.
+ rewrite Zmult_mod; auto with zmisc.
+ rewrite (Zmult_mod (a^m)); auto with zmisc. rewrite <- IHm.
  destruct (pow_mod a m n);simpl...
- rewrite Zmod_mult; auto with zmisc. 
+ rewrite Zmult_mod; auto with zmisc. 
  rewrite <- IHm. destruct (pow_mod a m n);simpl...
 Qed. 
 Hint Rewrite pow_mod_spec Zpower_0 : zmisc.
@@ -369,8 +367,8 @@ Lemma iter_Npow_mod_spec : forall n q p a,
 Proof with mauto.
  induction p;simpl;intros ...
  repeat rewrite IHp.
- rewrite (Zmod_Zpower ((a ^ q ^ p) ^ q ^ p));auto with zmisc.
- rewrite (Zmod_Zpower (a ^ q ^ p))...
+ rewrite (Zpower_mod ((a ^ q ^ p) ^ q ^ p));auto with zmisc.
+ rewrite (Zpower_mod (a ^ q ^ p))...
  repeat rewrite IHp...
 Qed.
 Hint Rewrite iter_Npow_mod_spec : zmisc.				
@@ -412,6 +410,7 @@ Proof with mauto.
  replace ((snd a - 1)+1) with (Zpos (snd a)) ...
  rewrite <- IHl;repeat rewrite Zmult_assoc ...
  destruct (snd a - 1);trivial.
+ assert (1 < snd a); auto with zarith.
 Qed.
 Hint Rewrite mkProd_pred_mkProd : zmisc.				
 
@@ -439,6 +438,7 @@ Transparent Zminus.
  rewrite H1 ...
  unfold Z_of_N;rewrite <- Ppred_Zminus...
  simpl in H;symmetry; apply (lt_Zmod (p-1) n)...
+ assert (1 < p); auto with zarith.
 Qed.
 Hint Rewrite Npred_mod_spec : zmisc.
 
@@ -492,10 +492,10 @@ Proof with mauto.
  rewrite <- (fold_aux a (R * q * mkProd' l) n l (prod * (a ^ (R * mkProd' l) - 1)))...
  assert ( ((prod * (A ^ mkProd' l - 1)) mod n) = 
               ((prod * ((a ^ R) ^ mkProd' l - 1)) mod n)).
-  repeat rewrite (Zmod_mult prod);auto with zmisc.
-  rewrite Zmod_minus;auto with zmisc.
-  rewrite (Zmod_minus ((a ^ R) ^ mkProd' l));auto with zmisc.
-  rewrite (Zmod_Zpower (a^R));auto with zmisc.  rewrite H1...
+  repeat rewrite (Zmult_mod prod);auto with zmisc.
+  rewrite Zminus_mod;auto with zmisc.
+  rewrite (Zminus_mod ((a ^ R) ^ mkProd' l));auto with zmisc.
+  rewrite (Zpower_mod (a^R));auto with zmisc.  rewrite H1...
  rewrite H3... 
  rewrite H1 ...
 Qed.
@@ -596,9 +596,9 @@ Lemma in_mkProd_prime_div_in :
 Proof with mauto.
  induction l;simpl ...
  intros _ H1; absurd (p <= 1).
- apply Zlt_not_le; apply Zlt_le_trans with 2; try apply prime_le_2; auto with zarith.
+ apply Zlt_not_le; apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
  apply Zdivide_le; auto with zarith.
- intros;case prime_mult with (2 := H1); auto with zarith; intros H2.
+ intros; case prime_mult with (2 := H1); auto with zarith; intros H2.
  exists (snd a);left. 
  destruct a;simpl in *.
  assert (Zpos p = Zpos p0).
@@ -659,7 +659,7 @@ Proof with mauto.
  match type of H14 with _ -> _ -> _ -> ?X =>
   assert (H12:X); try apply H14; clear H14
  end...
- rewrite Zmod_def_small...
+ rewrite Zmod_small...
  assert (1 < mkProd dec).
   assert (H14 := Zlt_0_pos (mkProd dec)). 
   assert (1 <= mkProd dec)...

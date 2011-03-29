@@ -17,7 +17,7 @@
 Require Import List.
 Require Import UList.
 Require Import ListAux.
-Require Import ZAux.
+Require Import ZArith Znumtheory.
 Require Import NatAux.
 Require Import FGroup.
 

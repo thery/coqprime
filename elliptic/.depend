@@ -1,9 +1,6 @@
-SMain.vo: SMain.v ../PrimalityTest/FGroup.vo ../List/UList.vo
-SMain.vi: SMain.v ../PrimalityTest/FGroup.vo ../List/UList.vo
-ZEll.vo: ZEll.v ../Z/ZAux.vo ../Z/Ppow.vo GZnZ.vo ../PrimalityTest/EGroup.vo SMain.vo ../Z/Zmod.vo
-ZEll.vi: ZEll.v ../Z/ZAux.vo ../Z/Ppow.vo GZnZ.vo ../PrimalityTest/EGroup.vo SMain.vo ../Z/Zmod.vo
-GZnZ.vo: GZnZ.v ../Z/ZAux.vo ../List/UList.vo ../Z/Pmod.vo
-GZnZ.vi: GZnZ.v ../Z/ZAux.vo ../List/UList.vo ../Z/Pmod.vo
-SMain.html: SMain.v ../PrimalityTest/FGroup.html ../List/UList.html
-ZEll.html: ZEll.v ../Z/ZAux.html ../Z/Ppow.html GZnZ.html ../PrimalityTest/EGroup.html SMain.html ../Z/Zmod.html
-GZnZ.html: GZnZ.v ../Z/ZAux.html ../List/UList.html ../Z/Pmod.html
+SMain.vo SMain.glob: SMain.v ../PrimalityTest/FGroup.vo ../List/UList.vo
+ZEll.vo ZEll.glob: ZEll.v ../Z/ZCAux.vo ../Z/Ppow.vo GZnZ.vo ../PrimalityTest/EGroup.vo SMain.vo ../Z/Zmod.vo
+GZnZ.vo GZnZ.glob: GZnZ.v ../List/UList.vo ../Z/Pmod.vo
+SMain.html SMain.glob: SMain.v ../PrimalityTest/FGroup.html ../List/UList.html
+ZEll.html ZEll.glob: ZEll.v ../Z/ZCAux.html ../Z/Ppow.html GZnZ.html ../PrimalityTest/EGroup.html SMain.html ../Z/Zmod.html
+GZnZ.html GZnZ.glob: GZnZ.v ../List/UList.html ../Z/Pmod.html

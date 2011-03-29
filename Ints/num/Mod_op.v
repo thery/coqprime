@@ -238,11 +238,8 @@ Notation "[[ x ]]" :=
  intros w2 t H; unfold _succ_mod, w_compare; simpl.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t [|b|]); auto with zarith.
- rewrite ZnZ.spec_compare; destr_zcompare;
- match goal with H: context[w_succ _] |- _ =>
-   generalize H; clear H; rewrite (without_c_b _ F); intros H1;
-   auto with zarith
- end.
+ rewrite ZnZ.spec_compare; case Zcompare_spec;
+ rewrite (without_c_b _ F); intros H1; auto with zarith.
  rewrite H1, Z_mod_same, _w0_is_0; auto with zarith.
  rewrite Zmod_small; auto with zarith.
  case (ZnZ.spec_to_Z w2); auto with zarith.
@@ -267,11 +264,8 @@ Notation "[[ x ]]" :=
    case (ZnZ.add_c x y); autorewrite with w_rewrite
  end; auto with zarith.
  intros w4 H2.
- rewrite ZnZ.spec_compare; destr_zcompare;
- match goal with H: context[b] |- _ =>
-   generalize H; clear H; intros H1; rewrite <-H2;
-   auto with zarith
- end.
+ rewrite ZnZ.spec_compare; case Zcompare_spec;
+   intros H1; rewrite <-H2.
  rewrite H1, Z_mod_same; auto with zarith.
  rewrite Zmod_small; auto with zarith.
  case (ZnZ.spec_to_Z w4); auto with zarith.
@@ -329,11 +323,9 @@ Notation "[[ x ]]" :=
  intros w2 t H; unfold _pred_mod, w_compare, bm1; simpl.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t [|b|]); auto with zarith.
- rewrite ZnZ.spec_compare; destr_zcompare;
- match goal with H: context[w2] |- _ =>
-   generalize H; clear H; intros H1; autorewrite with w_rewrite;
-   auto with zarith
- end; try rewrite _w0_is_0; try rewrite _w1_is_1; auto with zarith.
+ rewrite ZnZ.spec_compare; case Zcompare_spec;
+   intros H1; autorewrite with w_rewrite;
+   try rewrite _w0_is_0; try rewrite _w1_is_1; auto with zarith.
  rewrite <- H1, _w0_is_0; simpl.
  rewrite <- (Zmod_plus_one (-1)); auto with zarith.
  repeat rewrite Zmod_small; auto with zarith.
@@ -559,10 +551,7 @@ Notation "[[ x ]]" :=
  end.
  rewrite (@spec_ww_compare w w0 w_digits w_to_Z w_compare
     ZnZ.spec_0 ZnZ.spec_to_Z ZnZ.spec_compare).
- destr_zcompare;
- match goal with H: context[w_mul_c] |- _ =>
-   generalize H; clear H
- end; try rewrite _w0_is_0; try rewrite !_w1_is_1; auto with zarith.
+ case Zcompare_spec; try rewrite _w0_is_0; try rewrite !_w1_is_1; auto with zarith.
  unfold w_mul_c, ww_to_Z, w_to_Z, w_digits; rewrite ZnZ.spec_mul_c; auto with zarith.
  simpl; rewrite _w0_is_0, Zmult_0_l, Zplus_0_l.
  intros H2; rewrite H2; simpl.
@@ -663,10 +652,7 @@ Notation "[[ x ]]" :=
  end.
  rewrite (@spec_ww_compare w w0 w_digits w_to_Z w_compare
     ZnZ.spec_0 ZnZ.spec_to_Z ZnZ.spec_compare).
- destr_zcompare;
- match goal with H: context[w_square_c] |- _ =>
-   generalize H; clear H
- end; autorewrite with w_rewrite; try rewrite _w0_is_0; try rewrite !_w1_is_1; auto with zarith.
+ case Zcompare_spec; autorewrite with w_rewrite; try rewrite _w0_is_0; try rewrite !_w1_is_1; auto with zarith.
  unfold w_square_c, ww_to_Z, w_to_Z, w_digits; rewrite ZnZ.spec_square_c; auto with zarith.
  intros H2;rewrite H2; simpl.
  rewrite _w0_is_0; simpl.
@@ -1087,10 +1073,7 @@ Notation "[[ x ]]" :=
   rewrite <- ZnZ.spec_pos_mod; auto with zarith.
  generalize (ZnZ.spec_compare (ZnZ.pos_mod zp xl) b).
  unfold w_compare; intros HH; rewrite HH; clear HH.
- destr_zcompare;
- match goal with H: context[b] |- _ =>
-   generalize H; clear H
- end; try rewrite _w0_is_0.
+ case Zcompare_spec; try rewrite _w0_is_0.
  intros H3; rewrite H3.
  rewrite Z_mod_same; auto with zarith.
  intros H3; rewrite Zmod_small; auto with zarith.

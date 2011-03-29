@@ -197,10 +197,10 @@ intros H; case H.
 intros a1 l H H1; auto.
 generalize (in_inv_dec _ _ _ H1); intros [H2|[H2 H3]].
 exists (nil (A:=A)); exists l; simpl; split; auto.
-eq_tac; auto.
+subst; auto.
 case H; auto; intros l1 [l2 [Hl2 Hl3]]; exists (a1 :: l1); exists l2; simpl;
  split; auto.
-eq_tac; auto.
+subst; auto.
 intros H4; case H4; auto.
 Qed.
  
