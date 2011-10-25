@@ -57,7 +57,8 @@ simpl; rewrite Eth.(Kfth).(F_R).(Rmul_comm).
 rewrite Eth.(Kfth).(F_R).(Rmul_1_l); auto.
 Qed.
 
-Lemma Kpower_theory : power_theory 1 kmul (eq (A:=K)) Nnat.nat_of_N pow.
+Lemma Kpower_theory : 
+  power_theory 1 kmul (eq (A:=K)) BinNat.nat_of_N pow.
 constructor.
 intros r n; case n; simpl; auto.
 intros p; elim p using BinPos.Pind; auto.
@@ -80,7 +81,7 @@ Ltac iskpow_coef t :=
 
 Ltac kpow_tac t :=
  match iskpow_coef t with
- | true => constr:(Nnat.N_of_nat t)
+ | true => constr:(BinNat.N_of_nat t)
  | _ => constr:(NotConstant)
  end.
 

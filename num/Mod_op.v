@@ -32,46 +32,46 @@ Section Mod_op.
    power_mod  : w -> positive -> w
  }.
 
- Variable w_op : znz_op w.
+ Variable w_op : ZnZ.Ops w.
  
- Let w_digits      := w_op.(znz_digits).
- Let w_zdigits     := w_op.(znz_zdigits).
- Let w_to_Z        := znz_to_Z w_op.
- Let w_of_pos      := znz_of_pos w_op.
- Let w_head0       := znz_head0 w_op.
- Let w0            := znz_0 w_op.
- Let w1            := znz_1 w_op.
- Let wBm1          := znz_Bm1 w_op.
+ Let w_digits      := w_op.(ZnZ.digits).
+ Let w_zdigits     := w_op.(ZnZ.zdigits).
+ Let w_to_Z        := (@ZnZ.to_Z _ w_op).
+ Let w_of_pos      := (@ZnZ.of_pos _ w_op).
+ Let w_head0       := (@ZnZ.head0 _ w_op).
+ Let w0            := (@ZnZ.zero _ w_op).
+ Let w1            := (@ZnZ.one _ w_op).
+ Let wBm1          := (@ZnZ.minus_one _ w_op).
 
- Let wWW           := znz_WW w_op.
- Let wW0           := znz_W0 w_op.
- Let w0W           := znz_0W w_op.
+ Let wWW           := (@ZnZ.WW _ w_op).
+ Let wW0           := (@ZnZ.WO _ w_op).
+ Let w0W           := (@ZnZ.OW _ w_op).
 
- Let w_compare     := znz_compare w_op.
- Let w_opp_c       := znz_opp_c w_op.
- Let w_opp         := znz_opp w_op.
- Let w_opp_carry   := znz_opp_carry w_op.
+ Let w_compare     := (@ZnZ.compare _ w_op).
+ Let w_opp_c       := (@ZnZ.opp_c _ w_op).
+ Let w_opp         := (@ZnZ.opp _ w_op).
+ Let w_opp_carry   := (@ZnZ.opp_carry _ w_op).
 
- Let w_succ        := znz_succ w_op.
- Let w_succ_c      := znz_succ_c w_op.
- Let w_add_c       := znz_add_c w_op.
- Let w_add_carry_c := znz_add_carry_c w_op.
- Let w_add         := znz_add w_op.
+ Let w_succ        := (@ZnZ.succ _ w_op).
+ Let w_succ_c      := (@ZnZ.succ_c _ w_op).
+ Let w_add_c       := (@ZnZ.add_c _ w_op).
+ Let w_add_carry_c := (@ZnZ.add_carry_c _ w_op).
+ Let w_add         := (@ZnZ.add _ w_op).
 
 
- Let w_pred_c      := znz_pred_c w_op.
- Let w_sub_c       := znz_sub_c w_op.
- Let w_sub_carry   := znz_sub_carry w_op.
- Let w_sub_carry_c := znz_sub_carry_c w_op.
- Let w_sub         := znz_sub w_op.
- Let w_pred        := znz_pred w_op.
+ Let w_pred_c      := (@ZnZ.pred_c _ w_op).
+ Let w_sub_c       := (@ZnZ.sub_c _ w_op).
+ Let w_sub_carry   := (@ZnZ.sub_carry _ w_op).
+ Let w_sub_carry_c := (@ZnZ.sub_carry_c _ w_op).
+ Let w_sub         := (@ZnZ.sub _ w_op).
+ Let w_pred        := (@ZnZ.pred _ w_op).
 
- Let w_mul_c       := znz_mul_c w_op.
- Let w_mul         := znz_mul w_op.
- Let w_square_c    := znz_square_c w_op.
+ Let w_mul_c       := (@ZnZ.mul_c _ w_op).
+ Let w_mul         := (@ZnZ.mul _ w_op).
+ Let w_square_c    := (@ZnZ.square_c _ w_op).
 
- Let w_div21       := znz_div21 w_op.
- Let w_add_mul_div := znz_add_mul_div w_op.
+ Let w_div21       := (@ZnZ.div21 _ w_op).
+ Let w_add_mul_div := (@ZnZ.add_mul_div _ w_op).
 
  Variable b : w.
     (* b should be > 1 *)
@@ -115,10 +115,10 @@ Section Mod_op.
 
  Open Scope Z_scope. 
  Notation "[| x |]" :=
-   (znz_to_Z w_op x)  (at level 0, x at level 99).
+   (@ZnZ.to_Z _ w_op x)  (at level 0, x at level 99).
 
 Notation "[[ x ]]" :=
-   (ww_to_Z w_digits w_to_Z x)  (at level 0, x at level 99).
+   (@ww_to_Z _ w_digits w_to_Z x)  (at level 0, x at level 99).
 
  Section Mod_spec.
  
@@ -159,12 +159,12 @@ Notation "[[ x ]]" :=
   End Mod_spec.
 
  Hypothesis b_pos: 1 < [|b|].
- Variable op_spec: znz_spec w_op.
+ Variable op_spec: ZnZ.Specs w_op.
 
 
  Lemma Zpower_n: 0 < 2 ^ [|n|].
  apply Zpower_gt_0; auto with zarith.
- case (spec_to_Z op_spec n); auto with zarith.
+ case (ZnZ.spec_to_Z n); auto with zarith.
  Qed.
 
  Hint Resolve Zpower_n Zmult_lt_0_compat Zpower_gt_0.
@@ -172,23 +172,23 @@ Notation "[[ x ]]" :=
  Variable m_op : mod_op.
 
  Hint Rewrite 
-    spec_0
-    spec_1
-    spec_Bm1
-    spec_WW
-    spec_opp_c
-    spec_opp	
-    spec_opp_carry 
-    spec_succ_c
-    spec_add_c
-    spec_add_carry_c 
-    spec_add
-    spec_pred_c
-    spec_sub_c
-    spec_sub_carry_c
-    spec_sub
-    spec_mul_c
-    spec_mul
+    ZnZ.spec_0
+    ZnZ.spec_1
+    ZnZ.spec_m1
+    ZnZ.spec_WW
+    ZnZ.spec_opp_c
+    ZnZ.spec_opp	
+    ZnZ.spec_opp_carry 
+    ZnZ.spec_succ_c
+    ZnZ.spec_add_c
+    ZnZ.spec_add_carry_c 
+    ZnZ.spec_add
+    ZnZ.spec_pred_c
+    ZnZ.spec_sub_c
+    ZnZ.spec_sub_carry_c
+    ZnZ.spec_sub
+    ZnZ.spec_mul_c
+    ZnZ.spec_mul
     : w_rewrite.
 
  Let _succ_mod x :=
@@ -205,11 +205,11 @@ Notation "[[ x ]]" :=
   end. 
 
  Let _w0_is_0: [|w0|] = 0.
- unfold znz_to_Z; rewrite <- (spec_0 op_spec); auto.
+ unfold ZnZ.to_Z; rewrite <- ZnZ.spec_0; auto.
  Qed.
 
  Let _w1_is_1: [|w1|] = 1.
- unfold znz_to_Z; rewrite <-(spec_1 op_spec); simpl; auto.
+ unfold ZnZ.to_Z; rewrite <-ZnZ.spec_1; simpl; auto.
  Qed.
 
  Theorem Zmod_plus_one: forall a1 b1, 0 < b1 -> (a1 + b1) mod b1 = a1 mod b1.
@@ -227,10 +227,10 @@ Notation "[[ x ]]" :=
  Lemma without_c_b: forall w2, [|w2|] < [|b|] -> 
     [|w_succ w2|] = [|w2|] + 1.
  intros w2 H.
- unfold w_succ;rewrite (spec_succ op_spec).
+ unfold w_succ;rewrite ZnZ.spec_succ.
  rewrite Zmod_small;auto.
- assert (HH := spec_to_Z op_spec w2).
- assert (HH' := spec_to_Z op_spec b);auto with zarith.
+ assert (HH := ZnZ.spec_to_Z w2).
+ assert (HH' := ZnZ.spec_to_Z b);auto with zarith.
  Qed.
 
  Lemma _succ_mod_spec: forall w t, [|w|]= t mod [|b|] ->
@@ -238,14 +238,14 @@ Notation "[[ x ]]" :=
  intros w2 t H; unfold _succ_mod, w_compare; simpl.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t [|b|]); auto with zarith.
- generalize (spec_compare op_spec  (w_succ w2) b); case znz_compare; intros H1;
+ rewrite ZnZ.spec_compare; case Zcompare_spec; intros H1;
  match goal with H: context[w_succ _] |- _ =>
    generalize H; clear H; rewrite (without_c_b _ F); intros H1;
    auto with zarith
  end.
  rewrite H1, Z_mod_same, _w0_is_0; auto with zarith.
  rewrite Zmod_small; auto with zarith.
- case (spec_to_Z op_spec w2); auto with zarith.
+ case (ZnZ.spec_to_Z w2); auto with zarith.
  Qed.
 
  Let _add_mod x y :=
@@ -262,19 +262,19 @@ Notation "[[ x ]]" :=
  Lemma _add_mod_correct: forall w1 w2, [|w1|] + [|w2|] < 2 * [|b|] ->
      [|_add_mod w1 w2|] = ([|w1|] + [|w2|]) mod [|b|].
  intros w2 w3; unfold _add_mod, w_compare, w_add_c; intros H.
- match goal with |- context[znz_add_c ?h ?x ?y] =>
-   generalize (spec_add_c op_spec x y); unfold interp_carry;
-   case (znz_add_c h x y); autorewrite with w_rewrite
+ match goal with |- context[ZnZ.add_c ?x ?y] =>
+   generalize (ZnZ.spec_add_c x y); unfold interp_carry;
+   case (ZnZ.add_c x y); autorewrite with w_rewrite
  end; auto with zarith.
  intros w4 H2.
- generalize (spec_compare op_spec w4 b); case znz_compare; intros H1;
+ rewrite ZnZ.spec_compare; case Zcompare_spec; intros H1;
  match goal with H: context[b] |- _ =>
    generalize H; clear H; intros H1; rewrite <-H2;
    auto with zarith
  end.
  rewrite H1, Z_mod_same; auto with zarith.
  rewrite Zmod_small; auto with zarith.
- case (spec_to_Z op_spec w4); auto with zarith.
+ case (ZnZ.spec_to_Z w4); auto with zarith.
  assert (F1: 0 < [|w4|] - [|b|]); auto with zarith.
  assert (F2: [|w4|] < [|b|] + [|b|]); auto with zarith.
  autorewrite with w_rewrite; auto.
@@ -283,27 +283,27 @@ Notation "[[ x ]]" :=
  apply sym_equal; apply Zmod_small; auto with zarith.
  split; auto with zarith.
  apply Zlt_trans with [|b|]; auto with zarith.
- case (spec_to_Z op_spec b); unfold base; auto with zarith.
+ case (ZnZ.spec_to_Z b); unfold base; auto with zarith.
  rewrite Zmult_1_l; intros w4 H2; rewrite <- H2.
- unfold mb, w_add; rewrite spec_add; auto with zarith.
+ unfold mb, w_add; rewrite ZnZ.spec_add; auto with zarith.
  assert (F1: [|w4|] < [|b|]).
- assert (F2: base (znz_digits w_op) + [|w4|] < base (znz_digits w_op) + [|b|]);
+ assert (F2: base (ZnZ.digits w_op) + [|w4|] < base (ZnZ.digits w_op) + [|b|]);
    auto with zarith.
  rewrite H2.
  apply Zlt_trans with ([|b|] +[|b|]); auto with zarith.
  apply Zplus_lt_compat_r; auto with zarith.
- case (spec_to_Z op_spec b); auto with zarith.
- assert (F2: [|b|] < base (znz_digits w_op) + [|w4|]); auto with zarith.
- apply Zlt_le_trans with (base (znz_digits w_op)); auto with zarith.
- case (spec_to_Z op_spec b); auto with zarith.
- case (spec_to_Z op_spec w4); auto with zarith.
- assert (F3: base (znz_digits w_op) + [|w4|] < [|b|] + [|b|]); auto with zarith.
+ case (ZnZ.spec_to_Z b); auto with zarith.
+ assert (F2: [|b|] < base (ZnZ.digits w_op) + [|w4|]); auto with zarith.
+ apply Zlt_le_trans with (base (ZnZ.digits w_op)); auto with zarith.
+ case (ZnZ.spec_to_Z b); auto with zarith.
+ case (ZnZ.spec_to_Z w4); auto with zarith.
+ assert (F3: base (ZnZ.digits w_op) + [|w4|] < [|b|] + [|b|]); auto with zarith.
  rewrite <- (fun x => Zmod_minus_one (base x + [|w4|])); auto with zarith.
  rewrite (fun x y => Zmod_small (x - y)); auto with zarith.
- unfold w_opp;rewrite (spec_opp op_spec b).
+ unfold w_opp;rewrite (ZnZ.spec_opp b).
  rewrite <- (fun x => Zmod_plus_one (-x)); auto with zarith.
- rewrite (Zmod_small (- [|b|] + base (znz_digits w_op)));auto with zarith.
- 2 : assert (HHH := spec_to_Z op_spec b);auto with zarith.
+ rewrite (Zmod_small (- [|b|] + base (ZnZ.digits w_op)));auto with zarith.
+ 2 : assert (HHH := ZnZ.spec_to_Z b);auto with zarith.
  repeat rewrite Zmod_small; auto with zarith.
  Qed.
 
@@ -329,7 +329,7 @@ Notation "[[ x ]]" :=
  intros w2 t H; unfold _pred_mod, w_compare, bm1; simpl.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t [|b|]); auto with zarith.
- generalize (spec_compare op_spec w0 w2); case znz_compare; intros H1;
+ rewrite ZnZ.spec_compare; case Zcompare_spec; intros H1;
  match goal with H: context[w2] |- _ =>
    generalize H; clear H; intros H1; autorewrite with w_rewrite;
    auto with zarith
@@ -337,11 +337,11 @@ Notation "[[ x ]]" :=
  rewrite <- H1, _w0_is_0; simpl.
  rewrite <- (Zmod_plus_one (-1)); auto with zarith.
  repeat rewrite Zmod_small; auto with zarith.
- case (spec_to_Z op_spec b); auto with zarith.
- unfold w_pred;rewrite spec_pred; auto.
- assert (HHH := spec_to_Z op_spec b);repeat rewrite Zmod_small;auto with
+ case (ZnZ.spec_to_Z b); auto with zarith.
+ unfold w_pred;rewrite ZnZ.spec_pred; auto.
+ assert (HHH := ZnZ.spec_to_Z b);repeat rewrite Zmod_small;auto with
  zarith.
- intros;assert (HHH := spec_to_Z op_spec w2);auto with zarith.
+ intros;assert (HHH := ZnZ.spec_to_Z w2);auto with zarith.
  Qed.
 
  Let _sub_mod x y :=
@@ -357,26 +357,26 @@ Notation "[[ x ]]" :=
  case (Z_mod_lt t1 [|b|]); auto with zarith.
  assert (F': [|w3|] < [|b|]).
  case (Z_mod_lt t2 [|b|]); auto with zarith.
- match goal with |- context[znz_sub_c ?h ?x ?y] =>
-   generalize (spec_sub_c op_spec x y); unfold interp_carry;
-   case (znz_sub_c h x y); autorewrite with w_rewrite
+ match goal with |- context[ZnZ.sub_c ?x ?y] =>
+   generalize (ZnZ.spec_sub_c x y); unfold interp_carry;
+   case (ZnZ.sub_c x y); autorewrite with w_rewrite
  end; auto with zarith.
  intros w4 H2.
  rewrite Zmod_small; auto with zarith.
  split; auto with zarith.
- rewrite <- H2; case (spec_to_Z op_spec w4); auto with zarith.
+ rewrite <- H2; case (ZnZ.spec_to_Z w4); auto with zarith.
  apply Zle_lt_trans with [|w2|]; auto with zarith.
- case (spec_to_Z op_spec w3); auto with zarith.
+ case (ZnZ.spec_to_Z w3); auto with zarith.
  intros w4 H2; rewrite <- H2.
- unfold w_add; rewrite spec_add; auto with zarith.
- case (spec_to_Z op_spec w4); intros F1 F2.
- assert (F3: 0 <= - 1 *  base (znz_digits w_op) + [|w4|] + [|b|]); auto with zarith.
+ unfold w_add; rewrite ZnZ.spec_add; auto with zarith.
+ case (ZnZ.spec_to_Z w4); intros F1 F2.
+ assert (F3: 0 <= - 1 *  base (ZnZ.digits w_op) + [|w4|] + [|b|]); auto with zarith.
  rewrite H2.
- case (spec_to_Z op_spec w3); case (spec_to_Z op_spec w2); auto with zarith.
+ case (ZnZ.spec_to_Z w3); case (ZnZ.spec_to_Z w2); auto with zarith.
  rewrite <- (fun x => Zmod_minus_one ([|w4|] + x)); auto with zarith.
  rewrite <- (fun x y => Zmod_plus_one (-y + x)); auto with zarith.
  repeat rewrite Zmod_small; auto with zarith.
- case (spec_to_Z op_spec b); auto with zarith.
+ case (ZnZ.spec_to_Z b); auto with zarith.
  Qed.
 
  Let _mul_mod x y :=
@@ -394,7 +394,7 @@ Notation "[[ x ]]" :=
  Theorem high_zero:forall x, [[x]] < base w_digits -> [|fst (split x)|] = 0.
   intros x; case x; simpl; auto.
  intros xh xl H; case (Zle_lt_or_eq 0 [|xh|]); auto with zarith.
- case (spec_to_Z op_spec xh); auto with zarith.
+ case (ZnZ.spec_to_Z xh); auto with zarith.
  intros H1; contradict H; apply Zle_not_lt.
  assert (HHHH := wB_pos w_digits).
  unfold w_to_Z.
@@ -402,22 +402,22 @@ Notation "[[ x ]]" :=
   pattern X at 1; rewrite <- (Zmult_1_l X); auto with zarith;
   apply Zle_trans with Y; auto with zarith
  end.
- case (spec_to_Z op_spec xl); auto with zarith.
+ case (ZnZ.spec_to_Z xl); auto with zarith.
  Qed.
 
- Theorem n_spec: base (znz_digits w_op) / 2 <= 2 ^ [|n|] * [|b|] 
-                        < base (znz_digits w_op).
- unfold n, w_head0; apply (spec_head0); auto with zarith.
+ Theorem n_spec: base (ZnZ.digits w_op) / 2 <= 2 ^ [|n|] * [|b|] 
+                        < base (ZnZ.digits w_op).
+ unfold n, w_head0; apply (ZnZ.spec_head0); auto with zarith.
  Qed. 
 
  Theorem b2n_spec: [|b2n|] = 2 ^ [|n|] * [|b|].
  unfold b2n, w_add_mul_div; case n_spec; intros Hp Hp1.
- assert (F1: [|n|] < Zpos (znz_digits w_op)).
- case (Zle_or_lt (Zpos (znz_digits w_op)) [|n|]); auto with zarith.
+ assert (F1: [|n|] < Zpos (ZnZ.digits w_op)).
+ case (Zle_or_lt (Zpos (ZnZ.digits w_op)) [|n|]); auto with zarith.
  intros H1; contradict Hp1; apply Zle_not_lt; unfold base.
  apply Zle_trans with (2 ^ [|n|] * 1); auto with zarith.
  rewrite Zmult_1_r; apply Zpower_le_monotone; auto with zarith.
- rewrite spec_add_mul_div; auto with zarith.
+ rewrite ZnZ.spec_add_mul_div; auto with zarith.
  rewrite _w0_is_0; rewrite Zdiv_0_l; auto with zarith.
  rewrite Zplus_0_r; rewrite Zmult_comm; apply Zmod_small; auto with zarith.
  Qed.
@@ -427,13 +427,13 @@ Notation "[[ x ]]" :=
  intros w2 H; unfold ww_lsl_n.
  case n_spec; intros Hp Hp1.
  assert (F0: forall x, 2 * x = x + x); auto with zarith.
- assert (F1: [|n|] < Zpos (znz_digits w_op)).
- case (Zle_or_lt (Zpos (znz_digits w_op)) [|n|]); auto.
+ assert (F1: [|n|] < Zpos (ZnZ.digits w_op)).
+ case (Zle_or_lt (Zpos (ZnZ.digits w_op)) [|n|]); auto.
  intros H1; contradict Hp1; apply Zle_not_lt; unfold base.
  apply Zle_trans with (2 ^ [|n|] * 1); auto with zarith.
  rewrite Zmult_1_r; apply Zpower_le_monotone; auto with zarith.
- assert (F2: [|n|] < Zpos (xO (znz_digits w_op))).
- rewrite (Zpos_xO (znz_digits w_op)); rewrite F0; auto with zarith.
+ assert (F2: [|n|] < Zpos (xO (ZnZ.digits w_op))).
+ rewrite (Zpos_xO (ZnZ.digits w_op)); rewrite F0; auto with zarith.
  pattern [|n|]; rewrite <- Zplus_0_r; auto with zarith.
  apply Zplus_lt_compat; auto with zarith.
  change 
@@ -441,68 +441,68 @@ Notation "[[ x ]]" :=
               ww_compare w_add_mul_div 
               ww_sub w_zdigits low (w0W n) w2 W0]] = 2 ^ [|n|] * [[w2]]).
  rewrite (DoubleLift.spec_ww_add_mul_div ); auto with zarith.
- 2: apply spec_to_Z; auto.
+ 2: apply ZnZ.spec_to_Z; auto.
  2: refine (spec_ww_to_Z _ _ _); auto.
- 2: apply spec_to_Z; auto.
- 2: apply spec_WW; auto.
- 2: apply spec_W0; auto.
- 2: apply spec_0W; auto.
+ 2: apply ZnZ.spec_to_Z; auto.
+ 2: apply ZnZ.spec_WW; auto.
+ 2: apply ZnZ.spec_WO; auto.
+ 2: apply ZnZ.spec_OW; auto.
  2: refine (spec_ww_compare _ _ _ _ _ _ _); auto.
- 2: apply spec_to_Z; auto.
- 2: apply spec_compare; auto.
- 2: apply spec_add_mul_div; auto.
+ 2: apply ZnZ.spec_to_Z; auto.
+ 2: apply ZnZ.spec_compare; auto.
+ 2: apply ZnZ.spec_add_mul_div; auto.
  2: refine (spec_ww_sub _ _ _ _ _ _ _ _ _ _
                 _ _ _ _ _ _ _ _ _ _ _); auto.
- 2: apply spec_to_Z; auto.
- 2: apply spec_WW; auto.
- 2: apply spec_opp_c; auto.
- 2: apply spec_opp; auto.
- 2: apply spec_opp_carry; auto.
- 2: apply spec_sub_c; auto.
- 2: apply spec_sub; auto.
- 2: apply spec_sub_carry; auto.
- 2: apply spec_zdigits; auto.
+ 2: apply ZnZ.spec_to_Z; auto.
+ 2: apply ZnZ.spec_WW; auto.
+ 2: apply ZnZ.spec_opp_c; auto.
+ 2: apply ZnZ.spec_opp; auto.
+ 2: apply ZnZ.spec_opp_carry; auto.
+ 2: apply ZnZ.spec_sub_c; auto.
+ 2: apply ZnZ.spec_sub; auto.
+ 2: apply ZnZ.spec_sub_carry; auto.
+ 2: apply ZnZ.spec_zdigits; auto.
  replace ([[w0W n]]) with  [|n|]. 
  change [[W0]] with 0. rewrite Zdiv_0_l; auto with zarith.
  rewrite Zplus_0_r; rewrite Zmod_small; auto with zarith.
  split; auto with zarith.
  case spec_ww_to_Z with (w_digits := w_digits) (w_to_Z := w_to_Z) (x:=w2); auto with zarith. 
- apply spec_to_Z; auto.
+ apply ZnZ.spec_to_Z; auto.
  apply Zlt_trans with ([|b|] * [|b|] * 2 ^ [|n|]); auto with zarith.
  apply Zmult_lt_compat_r; auto with zarith.
  rewrite <- Zmult_assoc.
  unfold base; unfold base in Hp.
- unfold ww_digits,w_digits;rewrite (Zpos_xO (znz_digits w_op)); rewrite F0; auto with zarith.
+ unfold ww_digits,w_digits;rewrite (Zpos_xO (ZnZ.digits w_op)); rewrite F0; auto with zarith.
  rewrite Zpower_exp; auto with zarith.
  apply Zmult_lt_compat; auto with zarith.
- case (spec_to_Z op_spec b); auto with zarith.
+ case (ZnZ.spec_to_Z b); auto with zarith.
  split; auto with zarith.
  rewrite Zmult_comm; auto with zarith.
  unfold w_digits;auto with zarith.
- generalize (spec_0W op_spec n).
+ generalize (ZnZ.spec_OW n).
  unfold ww_to_Z, w_digits; auto.
  intros x; case x; simpl.
- unfold w_to_Z, w_digits, w0; rewrite spec_0; auto.
+ unfold w_to_Z, w_digits, w0; rewrite ZnZ.spec_0; auto.
  intros w3 w4; rewrite Zplus_comm.
  rewrite Z_mod_plus; auto with zarith.
  rewrite Zmod_small; auto with zarith.
- case (spec_to_Z op_spec w4); auto with zarith.
+ case (ZnZ.spec_to_Z w4); auto with zarith.
  unfold base; auto with zarith.  
  unfold ww_to_Z, w_digits, w_to_Z, w0W; auto.
- rewrite spec_0W; auto with zarith.
+ rewrite ZnZ.spec_OW; auto with zarith.
  Qed.
 
  Theorem w_lsr_n_spec: forall w, [|w|] < 2 ^ [|n|] *  [|b|]->
    [|w_lsr_n w|] = [|w|] / 2 ^ [|n|].
  intros w2 H.
- case (spec_to_Z op_spec w2); intros U1 U2.
+ case (ZnZ.spec_to_Z w2); intros U1 U2.
  unfold w_lsr_n, w_add_mul_div.
- rewrite spec_add_mul_div; auto with zarith.
+ rewrite ZnZ.spec_add_mul_div; auto with zarith.
  rewrite _w0_is_0; rewrite Zmult_0_l; auto with zarith.
  rewrite Zplus_0_l.
  autorewrite with w_rewrite; auto.
  rewrite (fun x y => Zmod_small (x - y)); auto with zarith.
- unfold w_zdigits; rewrite spec_zdigits; auto.
+ unfold w_zdigits; rewrite ZnZ.spec_zdigits; auto.
  assert (tmp: forall p q, p - (p - q) = q); intros; try ring;
   rewrite tmp; clear tmp; auto.
  rewrite Zmod_small; auto with zarith.
@@ -513,39 +513,39 @@ Notation "[[ x ]]" :=
  simpl Zpower; rewrite Zmult_1_r; auto with zarith.
  apply Zmult_le_compat_l; auto with zarith.
  apply Zpower_le_monotone; auto with zarith.
- case (spec_to_Z op_spec n); auto with zarith.
+ case (ZnZ.spec_to_Z n); auto with zarith.
  unfold n.
  assert (HH: 0 < [|b|]); auto with zarith.
  split.
    case (Zle_or_lt [|w_head0 b|] [|w_zdigits|]); auto with zarith.
-   unfold w_zdigits; rewrite spec_zdigits; auto; intros H1.
-   case (spec_head0 op_spec b HH); intros _ H2; contradict H2.
+   unfold w_zdigits; rewrite ZnZ.spec_zdigits; auto; intros H1.
+   case (ZnZ.spec_head0 b HH); intros _ H2; contradict H2.
    apply Zle_not_lt; unfold base.
-   apply Zle_trans with (2^[|znz_head0 w_op b|] * 1); auto with zarith.
+   apply Zle_trans with (2^[|ZnZ.head0 b|] * 1); auto with zarith.
    rewrite Zmult_1_r; apply Zpower_le_monotone; auto with zarith.
- unfold w_zdigits; rewrite spec_zdigits; auto.
- apply Zle_lt_trans with (Zpos (znz_digits w_op)); auto with zarith.
-    case (spec_to_Z op_spec (w_head0 b)); auto with zarith.
+ unfold w_zdigits; rewrite ZnZ.spec_zdigits; auto.
+ apply Zle_lt_trans with (Zpos (ZnZ.digits w_op)); auto with zarith.
+    case (ZnZ.spec_to_Z (w_head0 b)); auto with zarith.
  unfold base; apply Zpower2_lt_lin; auto with zarith.
  autorewrite with w_rewrite; auto.
  rewrite Zmod_small; auto with zarith.
- unfold w_zdigits; rewrite spec_zdigits; auto with zarith.
- case (spec_to_Z op_spec n); auto with zarith.
- unfold w_zdigits; rewrite spec_zdigits; auto.
+ unfold w_zdigits; rewrite ZnZ.spec_zdigits; auto with zarith.
+ case (ZnZ.spec_to_Z n); auto with zarith.
+ unfold w_zdigits; rewrite ZnZ.spec_zdigits; auto.
  split; auto with zarith.
- case (Zle_or_lt [|n|] (Zpos (znz_digits w_op))); auto with zarith; intros H1.
- case (spec_head0 op_spec b); auto with zarith; intros _ H2.
+ case (Zle_or_lt [|n|] (Zpos (ZnZ.digits w_op))); auto with zarith; intros H1.
+ case (ZnZ.spec_head0 b); auto with zarith; intros _ H2.
  contradict H2; apply Zle_not_lt; auto with zarith.
- unfold base; apply Zle_trans with (2 ^ [|znz_head0 w_op b|] * 1);
+ unfold base; apply Zle_trans with (2 ^ [|ZnZ.head0 b|] * 1);
    auto with zarith.
  rewrite Zmult_1_r; unfold base; apply Zpower_le_monotone; auto with zarith.
- apply Zle_lt_trans with (Zpos (znz_digits w_op)); auto with zarith.
- case (spec_to_Z op_spec n); auto with zarith.
+ apply Zle_lt_trans with (Zpos (ZnZ.digits w_op)); auto with zarith.
+ case (ZnZ.spec_to_Z n); auto with zarith.
  unfold base; apply Zpower2_lt_lin; auto with zarith.
  Qed.
 
  Lemma split_correct: forall x, let (xh, xl) := split x in [[WW xh xl]] = [[x]].
- intros x; case x; simpl; unfold w0, w_to_Z;try rewrite spec_0; auto with zarith.
+ intros x; case x; simpl; unfold w0, w_to_Z;try rewrite ZnZ.spec_0; auto with zarith.
  Qed. 
 
  Lemma _mul_mod_spec: forall w1 w2 t1 t2, [|w1|] = t1 mod [|b|] -> [|w2|] = t2 mod [|b|] ->
@@ -558,19 +558,19 @@ Notation "[[ x ]]" :=
  match goal with |- context[ww_compare ?x ?y] =>
    change (ww_compare x y) with (DoubleBase.ww_compare w0 w_compare x y)
  end.
- generalize (@spec_ww_compare w w0 w_digits w_to_Z w_compare
-    (spec_0 op_spec) (spec_to_Z op_spec) (spec_compare op_spec)
-    (w_mul_c w2 w3) (WW w0 b)); case DoubleBase.ww_compare; intros H2;
+ rewrite (@spec_ww_compare w w0 w_digits w_to_Z w_compare
+    ZnZ.spec_0 ZnZ.spec_to_Z ZnZ.spec_compare 
+    (w_mul_c w2 w3) (WW w0 b)); case Zcompare_spec; intros H2;
  match goal with H: context[w_mul_c] |- _ =>
    generalize H; clear H
  end; try rewrite _w0_is_0; try rewrite !_w1_is_1; auto with zarith.
- unfold w_mul_c, ww_to_Z, w_to_Z, w_digits; rewrite spec_mul_c; auto with zarith.
+ unfold w_mul_c, ww_to_Z, w_to_Z, w_digits; rewrite ZnZ.spec_mul_c; auto with zarith.
  simpl; rewrite _w0_is_0, Zmult_0_l, Zplus_0_l.
  intros H2; rewrite H2; simpl.
  rewrite Z_mod_same; auto with zarith.
  generalize (high_zero (w_mul_c w2 w3)).
- unfold w_mul_c; generalize (spec_mul_c op_spec w2 w3); 
-  case (znz_mul_c w_op w2 w3); simpl; auto with zarith.
+ unfold w_mul_c; generalize (ZnZ.spec_mul_c w2 w3); 
+  case (ZnZ.mul_c w2 w3); simpl; auto with zarith.
  intros H3 _  _; rewrite <- H3; autorewrite with w_rewrite; auto.
 (*  rewrite Zmod_small; auto with zarith. *)
  intros w4 w5.
@@ -582,11 +582,11 @@ Notation "[[ x ]]" :=
  assert (E1: [|w4|] = 0).
  apply H3; auto with zarith.
  apply Zlt_trans with (1 := H4).
- case (spec_to_Z op_spec b); auto with zarith.
+ case (ZnZ.spec_to_Z b); auto with zarith.
  generalize H4 H2; rewrite E1; rewrite Zmult_0_l; rewrite Zplus_0_l;
    clear H4 H2; intros H4 H2.
  rewrite <- H2; rewrite Zmod_small; auto with zarith.
- case (spec_to_Z op_spec w5); auto with zarith.
+ case (ZnZ.spec_to_Z w5); auto with zarith.
  intros H2.
  match goal with |- context[split ?x] =>
  generalize (split_correct x); 
@@ -594,15 +594,15 @@ Notation "[[ x ]]" :=
  end.
  assert (F1: [[w_mul_c w2 w3]] < [|b|] * [|b|]).
  unfold w_to_Z, w_mul_c, ww_to_Z,w_digits;
-   rewrite spec_mul_c; auto with zarith.
+   rewrite ZnZ.spec_mul_c; auto with zarith.
  apply Zmult_lt_compat; auto with zarith.
- case (spec_to_Z op_spec w2); auto with zarith.
- case (spec_to_Z op_spec w3); auto with zarith.
+ case (ZnZ.spec_to_Z w2); auto with zarith.
+ case (ZnZ.spec_to_Z w3); auto with zarith.
  intros w4 w5; rewrite ww_lsl_n_spec; auto with zarith.
  intros H3.
- unfold w_div21; match goal with |- context[znz_div21 ?h ?y ?z ?t] =>
-   generalize (spec_div21 op_spec y z t);
-   case (znz_div21 h y z t)
+ unfold w_div21; match goal with |- context[ZnZ.div21 ?y ?z ?t] =>
+   generalize (ZnZ.spec_div21 y z t);
+   case (ZnZ.div21 y z t)
  end.
  rewrite b2n_spec; case (n_spec); auto.
  intros H4 H5 w6 w7 H6.
@@ -621,13 +621,13 @@ Notation "[[ x ]]" :=
  apply Zmult_lt_compat_l; auto with zarith.
  rewrite Zmult_assoc.
  apply Zmult_lt_compat2; auto with zarith.
- case (spec_to_Z op_spec b); auto with zarith.
- case (spec_to_Z op_spec w5); unfold w_to_Z;auto with zarith.
+ case (ZnZ.spec_to_Z b); auto with zarith.
+ case (ZnZ.spec_to_Z w5); unfold w_to_Z;auto with zarith.
  clear H6; intros H7 H8.
  rewrite w_lsr_n_spec; auto with zarith.
  rewrite <- (Z_div_mult ([|w2|] * [|w3|]) (2 ^ [|n|]));
   auto with zarith; rewrite Zmult_comm.
- rewrite <- spec_mul_c; auto with zarith.
+ rewrite <- ZnZ.spec_mul_c; auto with zarith.
  unfold w_mul_c in H3; unfold ww_to_Z in H3;simpl H3.
  unfold w_digits,w_to_Z in H3. rewrite <- H3; simpl.
  rewrite H7; rewrite (fun x => Zmult_comm (2 ^ x));
@@ -662,19 +662,19 @@ Notation "[[ x ]]" :=
  match goal with |- context[ww_compare ?x ?y] =>
    change (ww_compare x y) with (DoubleBase.ww_compare w0 w_compare x y)
  end.
- generalize (@spec_ww_compare w w0 w_digits w_to_Z w_compare
-    (spec_0 op_spec) (spec_to_Z op_spec) (spec_compare op_spec)
-    (w_square_c w2) (WW w0 b)); case DoubleBase.ww_compare; intros H2;
+ rewrite (@spec_ww_compare w w0 w_digits w_to_Z w_compare
+    ZnZ.spec_0 ZnZ.spec_to_Z ZnZ.spec_compare); case Zcompare_spec;
+   intros H2;
  match goal with H: context[w_square_c] |- _ =>
    generalize H; clear H
  end; autorewrite with w_rewrite; try rewrite _w0_is_0; try rewrite !_w1_is_1; auto with zarith.
- unfold w_square_c, ww_to_Z, w_to_Z, w_digits; rewrite spec_square_c; auto with zarith.
+ unfold w_square_c, ww_to_Z, w_to_Z, w_digits; rewrite ZnZ.spec_square_c; auto with zarith.
  intros H2;rewrite H2; simpl.
  rewrite _w0_is_0; simpl.
  rewrite Z_mod_same; auto with zarith.
  generalize (high_zero (w_square_c w2)).
- unfold w_square_c; generalize (spec_square_c op_spec w2); 
-  case (znz_square_c w_op w2); simpl; auto with zarith.
+ unfold w_square_c; generalize (ZnZ.spec_square_c w2); 
+  case (ZnZ.square_c w2); simpl; auto with zarith.
  intros H3 _  _; rewrite <- H3; autorewrite with w_rewrite; auto.
  intros w4 w5.
  change (w_to_Z w0) with [|w0|]; rewrite _w0_is_0; simpl.
@@ -684,11 +684,11 @@ Notation "[[ x ]]" :=
  assert (E1: [|w4|] = 0).
  apply H3; auto with zarith.
  apply Zlt_trans with (1 := H4).
- case (spec_to_Z op_spec b); auto with zarith.
+ case (ZnZ.spec_to_Z b); auto with zarith.
  generalize H4 H2; rewrite E1; rewrite Zmult_0_l; rewrite Zplus_0_l;
    clear H4 H2; intros H4 H2.
  rewrite <- H2; rewrite Zmod_small; auto with zarith.
- case (spec_to_Z op_spec w5); auto with zarith.
+ case (ZnZ.spec_to_Z w5); auto with zarith.
  intros H2.
  match goal with |- context[split ?x] =>
  generalize (split_correct x); 
@@ -696,15 +696,15 @@ Notation "[[ x ]]" :=
  end.
  assert (F1: [[w_square_c w2]] < [|b|] * [|b|]).
  unfold w_square_c, ww_to_Z, w_digits, w_to_Z.
- rewrite spec_square_c; auto with zarith.
+ rewrite ZnZ.spec_square_c; auto with zarith.
  apply Zmult_lt_compat; auto with zarith.
- case (spec_to_Z op_spec w2); auto with zarith.
- case (spec_to_Z op_spec w2); auto with zarith.
+ case (ZnZ.spec_to_Z w2); auto with zarith.
+ case (ZnZ.spec_to_Z w2); auto with zarith.
  intros w4 w5; rewrite ww_lsl_n_spec; auto with zarith.
  intros H3.
- unfold w_div21; match goal with |- context[znz_div21 ?h ?y ?z ?t] =>
-   generalize (spec_div21 op_spec y z t);
-   case (znz_div21 h y z t)
+ unfold w_div21; match goal with |- context[ZnZ.div21 ?y ?z ?t] =>
+   generalize (ZnZ.spec_div21 y z t);
+   case (ZnZ.div21 y z t)
  end.
  rewrite b2n_spec; case (n_spec); auto.
  intros H4 H5 w6 w7 H6.
@@ -723,13 +723,13 @@ Notation "[[ x ]]" :=
  apply Zmult_lt_compat_l; auto with zarith.
  rewrite Zmult_assoc.
  apply Zmult_lt_compat2; auto with zarith.
- case (spec_to_Z op_spec b); auto with zarith.
- unfold w_to_Z,w_digits;case (spec_to_Z op_spec w5); auto with zarith.
+ case (ZnZ.spec_to_Z b); auto with zarith.
+ unfold w_to_Z,w_digits;case (ZnZ.spec_to_Z w5); auto with zarith.
  clear H6; intros H7 H8.
  rewrite w_lsr_n_spec; auto with zarith.
  rewrite <- (Z_div_mult ([|w2|] * [|w2|]) (2 ^ [|n|]));
   auto with zarith; rewrite Zmult_comm.
- rewrite <- spec_square_c; auto with zarith.
+ rewrite <- ZnZ.spec_square_c; auto with zarith.
  unfold w_square_c, ww_to_Z in H3;  unfold w_digits,w_to_Z in H3.
  rewrite <- H3; simpl.
  rewrite H7; rewrite (fun x => Zmult_comm (2 ^ x));
@@ -791,7 +791,7 @@ Notation "[[ x ]]" :=
  rewrite Zmod_small; auto with zarith.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t [|b|]); auto with zarith.
- case (spec_to_Z op_spec w2); auto with zarith.
+ case (ZnZ.spec_to_Z w2); auto with zarith.
  Qed.
 
  Definition make_mod_op := 
@@ -834,12 +834,12 @@ Notation "[[ x ]]" :=
  Let spec_add2: forall x y,
   [[w_add2 x y]] = [|x|] + [|y|].
   unfold w_add2.
-  intros xh xl; generalize (spec_add_c op_spec xh xl).
-  unfold w_add_c; case znz_add_c; unfold interp_carry; simpl ww_to_Z.
+  intros xh xl; generalize (ZnZ.spec_add_c xh xl).
+  unfold w_add_c; case ZnZ.add_c; unfold interp_carry; simpl ww_to_Z.
     intros w2 Hw2; simpl; unfold w_to_Z; rewrite Hw2.
-  unfold w0; rewrite spec_0; simpl; auto with zarith.
+  unfold w0; rewrite ZnZ.spec_0; simpl; auto with zarith.
   intros w2; rewrite Zmult_1_l; simpl.
-  unfold w_to_Z, w1; rewrite spec_1; auto with zarith.
+  unfold w_to_Z, w1; rewrite ZnZ.spec_1; auto with zarith.
   rewrite Zmult_1_l; auto.
  Qed.
 
@@ -849,25 +849,25 @@ Notation "[[ x ]]" :=
  unfold w_to_Z, ww_zdigits.
  rewrite spec_add2.
  unfold w_to_Z, w_zdigits, w_digits.
- rewrite spec_zdigits; auto.
+ rewrite ZnZ.spec_zdigits; auto.
  rewrite Zpos_xO; auto with zarith.
  Qed.
 
- Let spec_ww_to_Z := (spec_ww_to_Z _ _ (spec_to_Z op_spec)).
- Let spec_ww_compare := spec_ww_compare _ _ _ _ (spec_0 op_spec) 
-      (spec_to_Z op_spec) (spec_compare op_spec).
+ Let spec_ww_to_Z := (spec_ww_to_Z _ _ ZnZ.spec_to_Z).
+ Let spec_ww_compare := spec_ww_compare _ _ _ _ ZnZ.spec_0  
+      ZnZ.spec_to_Z ZnZ.spec_compare.
  Let spec_ww_sub := 
          spec_ww_sub w0 zp wWW zp1 w_opp_c w_opp_carry
               w_sub_c w_opp w_sub w_sub_carry w_digits w_to_Z
-             (spec_0 op_spec)
-             (spec_to_Z op_spec)
-             (spec_WW op_spec)
-             (spec_opp_c op_spec)
-             (spec_opp op_spec)
-             (spec_opp_carry op_spec)
-             (spec_sub_c op_spec)
-             (spec_sub op_spec)
-             (spec_sub_carry op_spec).
+             ZnZ.spec_0
+             ZnZ.spec_to_Z
+             ZnZ.spec_WW
+             ZnZ.spec_opp_c
+             ZnZ.spec_opp
+             ZnZ.spec_opp_carry
+             ZnZ.spec_sub_c
+             ZnZ.spec_sub
+             ZnZ.spec_sub_carry.
 
  Theorem zp1_b: [[zp1]] = Zpos p1.
  change ([[DoubleSub.ww_sub w0 wWW w_opp_c w_opp_carry w_sub_c w_opp w_sub
@@ -876,7 +876,7 @@ Notation "[[ x ]]" :=
  rewrite spec_ww_sub; auto with zarith.
  rewrite spec_ww_digits; simpl ww_to_Z.
  change (w_to_Z w0) with [|w0|].
- unfold w0; rewrite spec_0; autorewrite with rm10; auto.
+ unfold w0; rewrite ZnZ.spec_0; autorewrite with rm10; auto.
  change (w_to_Z zp) with [|zp|].
  rewrite zp_b.
  rewrite Zmod_small; auto with zarith.
@@ -892,7 +892,7 @@ Notation "[[ x ]]" :=
  Hypothesis p_b: [|b|] = 2 ^ (Zpos p) - 1.
 
 
- Let w_pos_mod := znz_pos_mod.
+ Let w_pos_mod := ZnZ.pos_mod.
 
  Let add_mul_div := 
    DoubleLift.ww_add_mul_div w0 wWW wW0 w0W 
@@ -904,7 +904,7 @@ Notation "[[ x ]]" :=
   match xy with
     W0 => w0
   | WW xh xl =>
-      let xl1 := w_pos_mod w_op zp xl in
+      let xl1 := w_pos_mod zp xl in
         match add_mul_div zp1 W0 xy with
           W0 => match w_compare xl1 b with
                 | Lt => xl1
@@ -918,16 +918,16 @@ Notation "[[ x ]]" :=
  Hint Unfold w_digits.
 
  Lemma WW_0: forall x y, [[WW x y]] = 0 -> [|x|] = 0 /\ [|y|] =0.
- intros x y; simpl; case (spec_to_Z op_spec x); intros H1 H2;
-   case (spec_to_Z op_spec y); intros H3 H4 H5.
+ intros x y; simpl; case (ZnZ.spec_to_Z x); intros H1 H2;
+   case (ZnZ.spec_to_Z y); intros H3 H4 H5.
  case Zle_lt_or_eq with (1 := H1); clear H1; intros H1; auto with zarith.
- absurd (0 < [|x|] * base (znz_digits w_op) + [|y|]); auto with zarith.
+ absurd (0 < [|x|] * base (ZnZ.digits w_op) + [|y|]); auto with zarith.
  unfold w_to_Z, w_digits in H5;auto with zarith.
  match goal with |- _ < ?X + _ =>
   apply Zlt_le_trans with X; auto with zarith
  end.
  case Zle_lt_or_eq with (1 := H3); clear H3; intros H3; auto with zarith.
- absurd (0 < [|x|] * base (znz_digits w_op) + [|y|]); auto with zarith.
+ absurd (0 < [|x|] * base (ZnZ.digits w_op) + [|y|]); auto with zarith.
  unfold w_to_Z, w_digits in H5;auto with zarith.
  rewrite <- H1; rewrite Zmult_0_l; auto with zarith.
  Qed.
@@ -979,7 +979,7 @@ Notation "[[ x ]]" :=
   intros xh xl; simpl.
   rewrite Zplus_comm; rewrite Z_mod_plus; auto with zarith.
   rewrite Zmod_small; auto with zarith.
-  case (spec_to_Z op_spec xl); auto with zarith.
+  case (ZnZ.spec_to_Z xl); auto with zarith.
   unfold base; auto with zarith.
  Qed.
 
@@ -995,10 +995,10 @@ Notation "[[ x ]]" :=
    assert (0 <= Zpos p); auto with zarith.
  generalize (@DoubleLift.spec_ww_add_mul_div w w0 wWW wW0 w0W
     ww_compare w_add_mul_div ww_sub w_digits w_zdigits low w_to_Z
-    (spec_0 op_spec) (spec_to_Z  op_spec) spec_ww_to_Z
-    (spec_WW op_spec) (spec_W0 op_spec) (spec_0W op_spec)
-    spec_ww_compare (spec_add_mul_div op_spec) spec_ww_sub
-    (spec_zdigits op_spec) spec_low W0 x zp1 Hp).
+    ZnZ.spec_0 ZnZ.spec_to_Z spec_ww_to_Z
+    ZnZ.spec_WW ZnZ.spec_WO ZnZ.spec_OW
+    spec_ww_compare ZnZ.spec_add_mul_div spec_ww_sub
+    ZnZ.spec_zdigits spec_low W0 x zp1 Hp).
   unfold add_mul_div; 
     case DoubleLift.ww_add_mul_div; autorewrite with w_rewrite; auto.
  rewrite Zmult_0_l; rewrite Zplus_0_l.
@@ -1011,7 +1011,7 @@ Notation "[[ x ]]" :=
  unfold base.
  apply Zdiv_lt_upper_bound; auto with zarith.
  rewrite <- Zpower_exp; auto with zarith.
- apply Zlt_le_trans with (base (ww_digits (znz_digits w_op))); auto with zarith.
+ apply Zlt_le_trans with (base (ww_digits (ZnZ.digits w_op))); auto with zarith.
    case (spec_ww_to_Z x); auto with zarith.
  unfold base; apply Zpower_le_monotone; auto with zarith.
  split; auto with zarith.
@@ -1039,7 +1039,7 @@ Notation "[[ x ]]" :=
  unfold base.
  apply Zdiv_lt_upper_bound; auto with zarith.
  rewrite <- Zpower_exp; auto with zarith.
- apply Zlt_le_trans with (base (ww_digits (znz_digits w_op))); auto with zarith.
+ apply Zlt_le_trans with (base (ww_digits (ZnZ.digits w_op))); auto with zarith.
    case (spec_ww_to_Z x); auto with zarith.
  unfold base; apply Zpower_le_monotone; auto with zarith.
  split; auto with zarith.
@@ -1048,7 +1048,7 @@ Notation "[[ x ]]" :=
 
  Theorem mmul_aux5:forall xh xl, 
       [[WW xh xl]] < [|b|] * 2 ^  Zpos p ->
-      let xl1 := w_pos_mod w_op zp xl in
+      let xl1 := w_pos_mod zp xl in
       let r := 
         match add_mul_div zp1 W0 (WW xh xl) with
           W0 => match w_compare xl1 b with
@@ -1068,10 +1068,10 @@ Notation "[[ x ]]" :=
    assert (0 <= Zpos p); auto with zarith.
  generalize (@DoubleLift.spec_ww_add_mul_div w w0 wWW wW0 w0W
     ww_compare w_add_mul_div ww_sub w_digits w_zdigits low w_to_Z
-    (spec_0 op_spec) (spec_to_Z op_spec) spec_ww_to_Z
-    (spec_WW op_spec) (spec_W0 op_spec) (spec_0W op_spec)
-    spec_ww_compare (spec_add_mul_div op_spec) spec_ww_sub
-    (spec_zdigits op_spec) spec_low W0 (WW xh xl) zp1 Hp).
+    ZnZ.spec_0 ZnZ.spec_to_Z spec_ww_to_Z
+    ZnZ.spec_WW ZnZ.spec_WO ZnZ.spec_OW
+    spec_ww_compare ZnZ.spec_add_mul_div spec_ww_sub
+    ZnZ.spec_zdigits spec_low W0 (WW xh xl) zp1 Hp).
   unfold add_mul_div; 
     case DoubleLift.ww_add_mul_div; autorewrite with w_rewrite; auto.
  rewrite Zmult_0_l; rewrite Zplus_0_l.
@@ -1084,17 +1084,17 @@ Notation "[[ x ]]" :=
    auto with zarith.
  unfold xl1; unfold w_pos_mod.
   rewrite <- p_b; rewrite <- zp_b. 
-  rewrite <- spec_pos_mod; auto with zarith.
- generalize (spec_compare op_spec (znz_pos_mod w_op zp xl) b).
- unfold w_compare; case znz_compare; intros Hc;
+  rewrite <- ZnZ.spec_pos_mod; auto with zarith.
+ unfold w_compare; rewrite ZnZ.spec_compare;
+   case Zcompare_spec; intros Hc;
  match goal with H: context[b] |- _ =>
    generalize H; clear H
  end; try rewrite _w0_is_0.
  intros H3; rewrite H3.
  rewrite Z_mod_same; auto with zarith.
  intros H3; rewrite Zmod_small; auto with zarith.
- case (spec_to_Z op_spec (znz_pos_mod w_op zp xl)); unfold w_to_Z; auto with zarith.
- rewrite p_b; rewrite spec_pos_mod; auto with zarith.
+ case (ZnZ.spec_to_Z (ZnZ.pos_mod zp xl)); unfold w_to_Z; auto with zarith.
+ rewrite p_b; rewrite ZnZ.spec_pos_mod; auto with zarith.
  intros H3; assert (HH: [|xl|] mod 2 ^ Zpos p = 2 ^ Zpos p).
  apply Zle_antisym; auto with zarith.
  case (Z_mod_lt ([|xl|]) (2 ^ Zpos p)); auto with zarith.
@@ -1109,13 +1109,13 @@ Notation "[[ x ]]" :=
  generalize mmul_aux3; simpl ww_to_Z; intros tmp; rewrite tmp; clear tmp;
    auto with zarith.
  rewrite <- p_b; rewrite <- zp_b. 
- rewrite <- spec_pos_mod; auto with zarith.
+ rewrite <- ZnZ.spec_pos_mod; auto with zarith.
  unfold xl1; unfold w_pos_mod.
  rewrite Zplus_comm.
  apply _add_mod_correct; auto with zarith.
  assert (tmp: forall x, 2 * x = x + x); auto with zarith;
    rewrite tmp; apply Zplus_le_lt_compat; clear tmp; auto with zarith.
- rewrite spec_pos_mod; auto with zarith.
+ rewrite ZnZ.spec_pos_mod; auto with zarith.
  rewrite p_b; case (Z_mod_lt [|xl|] (2 ^ Zpos p)); auto with zarith.
  rewrite zp_b; auto with zarith.
  rewrite H2; apply Zdiv_lt_upper_bound; auto with zarith.
@@ -1128,9 +1128,9 @@ Notation "[[ x ]]" :=
  case (Z_mod_lt t1 [|b|]); auto with zarith.
  assert (F': [|w3|] < [|b|]).
  case (Z_mod_lt t2 [|b|]); auto with zarith.
- match goal with |- context[znz_mul_c ?h ?x ?y] =>
-   generalize (spec_mul_c op_spec x y); unfold interp_carry;
-   case (znz_mul_c h x y); autorewrite with w_rewrite
+ match goal with |- context[ZnZ.mul_c ?x ?y] =>
+   generalize (ZnZ.spec_mul_c x y); unfold interp_carry;
+   case (ZnZ.mul_c x y); autorewrite with w_rewrite
  end; auto with zarith.
  simpl; intros H2; rewrite <- H2; rewrite Zmod_small;
   auto with zarith.
@@ -1139,17 +1139,16 @@ Notation "[[ x ]]" :=
  rewrite <- H2; auto.
  unfold ww_to_Z,w_digits,w_to_Z; rewrite H2.
  apply Zmult_lt_compat; auto with zarith.
- case (spec_to_Z op_spec w2); auto with zarith.
- case (spec_to_Z op_spec w3); auto with zarith.
+ case (ZnZ.spec_to_Z w2); auto with zarith.
+ case (ZnZ.spec_to_Z w3); auto with zarith.
  Qed.
-
 
  Let _msquare_mod x :=
   let xy := w_square_c x in
   match xy with
     W0 => w0
   | WW xh xl =>
-      let xl1 := w_pos_mod w_op zp xl in
+      let xl1 := w_pos_mod zp xl in
         match add_mul_div zp1 W0 xy with
           W0 =>  match w_compare xl1 b with
                 | Lt => xl1
@@ -1165,9 +1164,9 @@ Notation "[[ x ]]" :=
  intros w2 t2; unfold _msquare_mod, w_square_c; intros H.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t2 [|b|]); auto with zarith.
- match goal with |- context[znz_square_c ?h ?x] =>
-   generalize (spec_square_c op_spec x); unfold interp_carry;
-   case (znz_square_c h x); autorewrite with w_rewrite
+ match goal with |- context[ZnZ.square_c ?x] =>
+   generalize (ZnZ.spec_square_c x); unfold interp_carry;
+   case (ZnZ.square_c x); autorewrite with w_rewrite
  end; auto with zarith.
  simpl; intros H2; rewrite <- H2; rewrite Zmod_small;
   auto with zarith.
@@ -1176,8 +1175,8 @@ Notation "[[ x ]]" :=
  unfold ww_to_Z, w_to_Z ,w_digits; rewrite <- H2; auto.
  unfold ww_to_Z,w_to_Z ,w_digits; rewrite H2.
  apply Zmult_lt_compat; auto with zarith.
- case (spec_to_Z op_spec w2); auto with zarith.
- case (spec_to_Z op_spec w2); auto with zarith.
+ case (ZnZ.spec_to_Z w2); auto with zarith.
+ case (ZnZ.spec_to_Z w2); auto with zarith.
  Qed.
 
  Definition mmake_mod_op := 

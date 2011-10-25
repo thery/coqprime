@@ -12,7 +12,7 @@ Require Import Zorder.
 Require Import ZCAux.
 Require Import LucasLehmer.
 Require Import Pocklington.
-Require Import Zmisc.
+Require Import ZCmisc.
 Require Import Pmod.
 
 Definition dec_prime := list (positive * positive).
@@ -332,7 +332,7 @@ Hint Rewrite Pmod_Zmod : zmisc.
 Lemma Zpower_0 : forall p : positive, 0^p = 0.
 Proof.
  intros;simpl;destruct p;unfold Zpower_pos;simpl;trivial.
- generalize (iter_pos p Z (fun _ : Z => 0) 1).
+ generalize (iter_pos p Z (Z.mul 0) 1).
  induction p;simpl;trivial.
 Qed.
 
@@ -528,7 +528,7 @@ Qed.
 Lemma borned_square : forall x y, 0 <= x -> 0 <= y -> 
                              x*x < y*y < (x+1)*(x+1) -> False. 
 Proof.
- intros;destruct (Z_lt_ge_dec x y).
+ intros;destruct (Z_lt_ge_dec x y) as [z|z].
  assert (x + 1 <= y). omega.
  assert (0 <= x+1). omega.
  assert (H4 := le_square _ _ H3 H2). omega.

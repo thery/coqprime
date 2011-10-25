@@ -27,13 +27,13 @@ Open Scope Z_scope.
 Section test.
 
 Variable w: Type.
-Variable w_op: znz_op w.
-Variable op_spec: znz_spec w_op.
+Variable w_op: ZnZ.Ops w.
+Variable op_spec: ZnZ.Specs w_op.
 Variable p: positive.
 Variable b: w.
 
 Notation "[| x |]" :=
-   (znz_to_Z w_op x)  (at level 0, x at level 99).
+   (ZnZ.to_Z x)  (at level 0, x at level 99).
 
 Hypothesis b_pos: 0 < [|b|].
 
@@ -58,9 +58,9 @@ Lemma fold_pow_mod_spec : forall l (a:w),
   ([|a|] < [|b|])%Z -> [|fold_pow_mod a l|] = ([|a|]^(mkProd' l) mod [|b|])%Z. 
 intros l; unfold fold_pow_mod; elim l; simpl fold_left; simpl mkProd'; auto; clear l.
 intros a H; rewrite Zpower_1_r; rewrite Zmod_small; auto with zarith.
-case (spec_to_Z op_spec a); auto with zarith.
+case (ZnZ.spec_to_Z a); auto with zarith.
 intros (p1, q1) l Rec a H.
-case (spec_to_Z op_spec a); auto with zarith; intros U1 U2.
+case (ZnZ.spec_to_Z a); auto with zarith; intros U1 U2.
 rewrite Rec.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
 rewrite <- Zpower_mod.
@@ -90,9 +90,9 @@ Lemma snd_all_pow_mod :
 intros l; elim l; simpl all_pow_mod; simpl mkProd'; simpl snd; clear l.
 intros _ a H; rewrite Zpower_1_r; auto with zarith.
 rewrite Zmod_small; auto with zarith.
-case (spec_to_Z op_spec a); auto with zarith.
+case (ZnZ.spec_to_Z a); auto with zarith.
 intros (p1, q1) l Rec prod a H.
-case (spec_to_Z op_spec a); auto with zarith; intros U1 U2.
+case (ZnZ.spec_to_Z a); auto with zarith; intros U1 U2.
 rewrite Rec; auto with zarith.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
 rewrite <- Zpower_mod.
@@ -283,7 +283,7 @@ Definition test_pock N a dec sqrt :=
             match r' with
             | Npos r =>
               if (a ?< N) then
-              let op := cmk_op (pred (nat_of_P (get_height 31 (plength N)))) in
+              let op := cmk_op (Peano.pred (nat_of_P (get_height 31 (plength N)))) in
               let wN := znz_of_Z op (Zpos N) in
               let wa := znz_of_Z op (Zpos a) in
               let w1 := znz_of_Z op 1 in
@@ -291,13 +291,13 @@ Definition test_pock N a dec sqrt :=
               let pow := mod_op.(power_mod) in
               let ttimes := mod_op.(mul_mod) in 
               let pred:= mod_op.(pred_mod) in
-              let gcd:= znz_gcd op in
+              let gcd:= ZnZ.gcd in
               let A := pow_mod_pred _ mod_op (pow wa R1) dec in
               match all_pow_mod _ mod_op w1 A dec with
               | (p, aNm1) =>
-                match znz_to_Z op aNm1 with 
+                match ZnZ.to_Z aNm1 with 
                   (Zpos xH) => 
-                   match znz_to_Z op (gcd p wN) with 
+                   match ZnZ.to_Z (gcd p wN) with 
                    (Zpos xH) => 
                     if check_s_r s r sqrt then 
 		      (N ?< (times ((times ((xO F1)+r+1) F1) + r) F1) + 1)
@@ -331,7 +331,7 @@ end.
 generalize (div_eucl_spec (Ppred N) (mkProd dec));
  destruct ((Ppred N) / (mkProd dec))%P as (R1,n).
 simpl fst; simpl snd; intros (H1, H2).
-destruct R1 as [|R1].
+destruct R1 as [ |R1].
 intros; discriminate.
 destruct n.
 2: intros; discriminate.
@@ -359,7 +359,7 @@ end.
 generalize (div_eucl_spec R1 (xO (mkProd dec)));
  destruct ((R1 / xO (mkProd dec))%P) as (s,r'); simpl fst;
  simpl snd; intros (H3, H4).
-destruct r' as [|r].
+destruct r' as [ |r].
 intros; discriminate.
 match goal with |- context[if ?x then _ else _] =>
   case_eq x; intros If5; auto
@@ -368,31 +368,31 @@ match goal with H: (?X ?< ?Y) = true |- _ =>
   generalize (is_lt_spec X Y); rewrite H; clear H; intros H
 end.
 2: intros; discriminate.
-set (bb := pred (nat_of_P (get_height 31 (plength N)))).
+set (bb := Peano.pred (nat_of_P (get_height 31 (plength N)))).
 set (w_op := cmk_op bb).
-assert (op_spec: znz_spec w_op).
+assert (op_spec: ZnZ.Specs w_op).
 unfold bb, w_op; apply cmk_spec; auto.
-assert (F0: N < DoubleType.base (znz_digits w_op)).
+assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
   apply Zlt_le_trans with (1 := plength_correct N).
   unfold w_op, DoubleType.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
   generalize (get_height_correct 31 (plength N)); unfold bb.
   set (p := plength N).
-  replace (Z_of_nat (pred (nat_of_P (get_height 31 p)))) with
+  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
        ((Zpos (get_height 31 p) - 1) ); auto with zarith.
   rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
   generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
-assert (F1: znz_to_Z w_op (znz_of_Z w_op N) = N).
-rewrite znz_of_Z_correct; auto with zarith.
-assert (F2: 1 < znz_to_Z w_op (znz_of_Z w_op N)).
+assert (F1: ZnZ.to_Z (ZnZ.of_Z N) = N).
+rewrite ZnZ.of_Z_correct; auto with zarith.
+assert (F2: 1 < ZnZ.to_Z (ZnZ.of_Z N)).
 rewrite F1; auto with zarith.
-assert (F3: 0 < znz_to_Z w_op (znz_of_Z w_op N)); auto with zarith.
-assert (F4: znz_to_Z w_op (znz_of_Z w_op a) = a).
-rewrite znz_of_Z_correct; auto with zarith.
-assert (F5: znz_to_Z w_op (znz_of_Z w_op 1) = 1).
-rewrite znz_of_Z_correct; auto with zarith.
+assert (F3: 0 < ZnZ.to_Z (ZnZ.of_Z N)); auto with zarith.
+assert (F4: ZnZ.to_Z (ZnZ.of_Z a) = a).
+rewrite ZnZ.of_Z_correct; auto with zarith.
+assert (F5: ZnZ.to_Z (ZnZ.of_Z 1) = 1).
+rewrite ZnZ.of_Z_correct; auto with zarith.
 assert (F6: N - 1 = (R1 * mkProd_pred dec)%positive * mkProd' dec).
 rewrite Zpos_mult.
 rewrite <- Zmult_assoc; rewrite mkProd_pred_mkProd; auto with zarith.
@@ -409,14 +409,14 @@ match goal with |- context[all_pow_mod ?x ?y ?z ?t ?u] =>
   case (all_pow_mod x y z t u); simpl fst; simpl snd 
 end.
 intros prod aNm1; intros H5 H6.
-case_eq (znz_to_Z w_op aNm1).
+case_eq (ZnZ.to_Z aNm1).
 intros; discriminate.
 2: intros; discriminate.
 intros p; case p; clear p.
 intros; discriminate.
 intros; discriminate.
 intros If6.
-case_eq (znz_to_Z w_op (znz_gcd w_op prod (znz_of_Z w_op N))).
+case_eq (ZnZ.to_Z (ZnZ.gcd prod (znz_of_Z w_op N))).
 intros; discriminate.
 2: intros; discriminate.
 intros p; case p; clear p.
@@ -460,8 +460,8 @@ rewrite H5.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 rewrite F1.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 rewrite F1; rewrite F4.
 rewrite <- Zpower_mod; auto with zarith.
 rewrite <- Zpower_mult; auto with zarith.
@@ -469,16 +469,16 @@ rewrite mkProd_pred_mkProd; auto with zarith.
 rewrite U1; rewrite Zmult_comm.
 rewrite Zpower_mult; auto with zarith.
 rewrite <- Zpower_mod; auto with zarith.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 rewrite Zmod_small; auto with zarith.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
@@ -489,47 +489,47 @@ rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 match type of H6 with _ -> _ -> ?X =>
   assert (tmp: X); [apply H6 | clear H6; rename tmp into H6];
   auto with zarith
 end.
 rewrite F1.
-change (znz_of_Z w_op 1) with (znz_of_Z w_op 1).
+change (znz_of_Z w_op 1) with (ZnZ.of_Z 1).
 rewrite F5; rewrite Zmod_small; auto with zarith.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 repeat (rewrite F1 || rewrite F4).
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 repeat (rewrite F1 || rewrite F4).
 rewrite Zpos_mult; rewrite <- Zpower_mod; auto with zarith.
 rewrite Zpower_mult; auto with zarith.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 repeat (rewrite F1 || rewrite F4).
 rewrite Zmod_small; auto with zarith.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 repeat (rewrite F1 || rewrite F4).
 rewrite Zmod_small; auto with zarith.
 rewrite (power_mod_spec m_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 repeat (rewrite F1 || rewrite F4); auto.
 rewrite Zmod_small; auto with zarith.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N); auto.
+change (znz_of_Z w_op N) with (ZnZ.of_Z N); auto.
 auto with zarith.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a) in H6.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N) in H6.
-change (znz_of_Z w_op 1) with (znz_of_Z w_op 1) in H6.
+change (znz_of_Z w_op a) with (ZnZ.of_Z a) in H6.
+change (znz_of_Z w_op N) with (ZnZ.of_Z N) in H6.
+change (znz_of_Z w_op 1) with (ZnZ.of_Z 1) in H6.
 rewrite F5 in H6; rewrite F1 in H6; rewrite F4 in H6.
 case in_mkProd_prime_div_in with (3 := Hdec); auto.
 intros p1 Hp1.
@@ -543,7 +543,7 @@ apply rel_prime_mod_rev; auto with zarith.
 red.
 pattern 1 at 4; rewrite <- If7; rewrite <- H6.
 pattern N at 2; rewrite <- F1.
-apply spec_gcd; auto with zarith.
+apply ZnZ.spec_gcd; auto with zarith.
 assert (foldtmp: forall (A B: Set) (f: A -> B -> A) (P: A -> Prop) l a b,
   In b l -> (forall x, P (f x b)) ->
   (forall x y, P x -> P (f x y)) ->
@@ -582,7 +582,7 @@ Definition test_spock N a dec :=
           if (1 ?< a) then
             if (a ?< N) then
               if (N ?< F1 * F1) then
-              let op := cmk_op (pred (nat_of_P (get_height 31 (plength N)))) in
+              let op := cmk_op (Peano.pred (nat_of_P (get_height 31 (plength N)))) in
               let wN := znz_of_Z op (Zpos N) in
               let wa := znz_of_Z op (Zpos a) in
               let w1 := znz_of_Z op 1 in
@@ -590,13 +590,13 @@ Definition test_spock N a dec :=
               let pow := mod_op.(power_mod) in
               let ttimes := mod_op.(mul_mod) in 
               let pred:= mod_op.(pred_mod) in
-              let gcd:= znz_gcd op in
+              let gcd:= ZnZ.gcd in
               let A := pow_mod_pred _ mod_op (pow wa R1) dec in
               match all_pow_mod _ mod_op w1 A dec with
               | (p, aNm1) =>
-                match znz_to_Z op aNm1 with 
+                match ZnZ.to_Z aNm1 with 
                   (Zpos xH) => 
-                   match znz_to_Z op (gcd p wN) with 
+                   match ZnZ.to_Z (gcd p wN) with 
                    (Zpos xH) => true
                    | _ => false
                    end
@@ -624,7 +624,7 @@ end.
 generalize (div_eucl_spec (Ppred N) (mkProd dec));
  destruct ((Ppred N) / (mkProd dec))%P as (R1,n).
 simpl fst; simpl snd; intros (H1, H2).
-destruct R1 as [|R1].
+destruct R1 as [ |R1].
 intros; discriminate.
 destruct n.
 2: intros; discriminate.
@@ -653,9 +653,9 @@ assert (F0: N < Basic_type.base (znz_digits w_op)).
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
   generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
 *)
-set (bb := pred (nat_of_P (get_height 31 (plength N)))).
+set (bb := Peano.pred (nat_of_P (get_height 31 (plength N)))).
 set (w_op := cmk_op bb).
-assert (op_spec: znz_spec w_op).
+assert (op_spec: ZnZ.Specs w_op).
 unfold bb, w_op; apply cmk_spec; auto.
 match goal with |- context[if ?x then _ else _] =>
   case_eq x; intros If3; auto
@@ -669,27 +669,27 @@ end.
 match goal with H: (?X ?< ?Y) = true |- _ =>
   generalize (is_lt_spec X Y); rewrite H; clear H; intros H
 end.
-assert (F0: N < DoubleType.base (znz_digits w_op)).
+assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
   apply Zlt_le_trans with (1 := plength_correct N).
   unfold w_op, DoubleType.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
   generalize (get_height_correct 31 (plength N)); unfold bb.
   set (p := plength N).
-  replace (Z_of_nat (pred (nat_of_P (get_height 31 p)))) with
+  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
        ((Zpos (get_height 31 p) - 1) ); auto with zarith.
   rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
   generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
-assert (F1: znz_to_Z w_op (znz_of_Z w_op N) = N).
-rewrite znz_of_Z_correct; auto with zarith.
-assert (F2: 1 < znz_to_Z w_op (znz_of_Z w_op N)).
+assert (F1: ZnZ.to_Z (ZnZ.of_Z N) = N).
+rewrite ZnZ.of_Z_correct; auto with zarith.
+assert (F2: 1 < ZnZ.to_Z (ZnZ.of_Z N)).
 rewrite F1; auto with zarith.
-assert (F3: 0 < znz_to_Z w_op (znz_of_Z w_op N)); auto with zarith.
-assert (F4: znz_to_Z w_op (znz_of_Z w_op a) = a).
-rewrite znz_of_Z_correct; auto with zarith.
-assert (F5: znz_to_Z w_op (znz_of_Z w_op 1) = 1).
-rewrite znz_of_Z_correct; auto with zarith.
+assert (F3: 0 < ZnZ.to_Z (ZnZ.of_Z N)); auto with zarith.
+assert (F4: ZnZ.to_Z (ZnZ.of_Z a) = a).
+rewrite ZnZ.of_Z_correct; auto with zarith.
+assert (F5: ZnZ.to_Z (ZnZ.of_Z 1) = 1).
+rewrite ZnZ.of_Z_correct; auto with zarith.
 assert (F6: N - 1 = (R1 * mkProd_pred dec)%positive * mkProd' dec).
 rewrite Zpos_mult.
 rewrite <- Zmult_assoc; rewrite mkProd_pred_mkProd; auto with zarith.
@@ -707,14 +707,14 @@ match goal with |- context[all_pow_mod ?x ?y ?z ?t ?u] =>
 end.
 2: intros; discriminate.
 intros prod aNm1; intros H5 H6.
-case_eq (znz_to_Z w_op aNm1).
+case_eq (ZnZ.to_Z aNm1).
 intros; discriminate.
 2: intros; discriminate.
 intros p; case p; clear p.
 intros; discriminate.
 intros; discriminate.
 intros If5.
-case_eq (znz_to_Z w_op (znz_gcd w_op prod (znz_of_Z w_op N))).
+case_eq (ZnZ.to_Z (ZnZ.gcd prod (znz_of_Z w_op N))).
 intros; discriminate.
 2: intros; discriminate.
 intros p; case p; clear p.
@@ -743,8 +743,8 @@ rewrite H5.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 rewrite F1.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 rewrite F1; rewrite F4.
 rewrite <- Zpower_mod; auto with zarith.
 rewrite <- Zpower_mult; auto with zarith.
@@ -752,18 +752,18 @@ rewrite mkProd_pred_mkProd; auto with zarith.
 rewrite U1; rewrite Zmult_comm.
 rewrite Zpower_mult; auto with zarith.
 rewrite <- Zpower_mod; auto with zarith.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 rewrite Zmod_small; auto with zarith.
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
@@ -774,26 +774,26 @@ rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 rewrite F1; rewrite F4; rewrite Zmod_small; auto with zarith.
 match type of H6 with _ -> _ -> ?X =>
   assert (tmp: X); [apply H6 | clear H6; rename tmp into H6];
   auto with zarith
 end.
 rewrite F1.
-change (znz_of_Z w_op 1) with (znz_of_Z w_op 1).
+change (znz_of_Z w_op 1) with (ZnZ.of_Z 1).
 rewrite F5; rewrite Zmod_small; auto with zarith.
 rewrite pow_mod_pred_spec with (2 := m_spec); auto with zarith.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 repeat (rewrite F1 || rewrite F4).
 rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 repeat (rewrite F1 || rewrite F4).
 rewrite Zpos_mult; rewrite <- Zpower_mod; auto with zarith.
 rewrite Zpower_mult; auto with zarith.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 repeat (rewrite F1 || rewrite F4).
 rewrite Zmod_small; auto with zarith.
 rewrite Zmod_small; auto with zarith.
@@ -801,13 +801,13 @@ rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N).
-change (znz_of_Z w_op a) with (znz_of_Z w_op a).
+change (znz_of_Z w_op N) with (ZnZ.of_Z N).
+change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 repeat (rewrite F1 || rewrite F4).
 rewrite Zmod_small; auto with zarith.
-change (znz_of_Z w_op N) with (znz_of_Z w_op N) in H6.
-change (znz_of_Z w_op a) with (znz_of_Z w_op a) in H6.
-change (znz_of_Z w_op 1) with (znz_of_Z w_op 1) in H6.
+change (znz_of_Z w_op N) with (ZnZ.of_Z N) in H6.
+change (znz_of_Z w_op a) with (ZnZ.of_Z a) in H6.
+change (znz_of_Z w_op 1) with (ZnZ.of_Z 1) in H6.
 rewrite F5 in H6; rewrite F1 in H6; rewrite F4 in H6.
 case in_mkProd_prime_div_in with (3 := Hdec); auto.
 intros p1 Hp1.
@@ -821,7 +821,7 @@ apply rel_prime_mod_rev; auto with zarith.
 red.
 pattern 1 at 4; rewrite <- If6; rewrite <- H6.
 pattern N at 2; rewrite <- F1.
-apply spec_gcd; auto with zarith.
+apply ZnZ.spec_gcd; auto with zarith.
 assert (foldtmp: forall (A B: Set) (f: A -> B -> A) (P: A -> Prop) l a b,
   In b l -> (forall x, P (f x b)) ->
   (forall x y, P x -> P (f x y)) ->
