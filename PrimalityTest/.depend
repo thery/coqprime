@@ -1,28 +1,56 @@
+NCyclic.cmo: nIGroup.cmo nEGroup.cmo nFGroup.cmo
+NCyclic.cmx: nIGroup.cmx nEGroup.cmx nFGroup.cmx
+NEGroup.cmo: nFGroup.cmo
+NEGroup.cmx: nFGroup.cmx
+NEuler.cmo: ../Z/nZSum.cmo
+NEuler.cmx: ../Z/nZSum.cmx
+NFGroup.cmo: ../List/nUList.cmo
+NFGroup.cmx: ../List/nUList.cmx
+NIGroup.cmo: nFGroup.cmo
+NIGroup.cmx: nFGroup.cmx
+NLagrange.cmo: nFGroup.cmo
+NLagrange.cmx: nFGroup.cmx
+NLucasLehmer.cmo: nPGroup.cmo nEGroup.cmo ../Z/nZCAux.cmo
+NLucasLehmer.cmx: nPGroup.cmx nEGroup.cmx ../Z/nZCAux.cmx
+NPepin.cmo:
+NPepin.cmx:
+NPGroup.cmo: nIGroup.cmo
+NPGroup.cmx: nIGroup.cmx
+NPocklingtonCertificat.cmo: ../Z/nZCmisc.cmo ../Z/nPmod.cmo nLucasLehmer.cmo
+NPocklingtonCertificat.cmx: ../Z/nZCmisc.cmx ../Z/nPmod.cmx nLucasLehmer.cmx
+NPocklington.cmo:
+NPocklington.cmx:
+NProth.cmo:
+NProth.cmx:
+NRoot.cmo:
+NRoot.cmx:
+NZp.cmo: nIGroup.cmo ../List/nIterator.cmo nEGroup.cmo
+NZp.cmx: nIGroup.cmx ../List/nIterator.cmx nEGroup.cmx
 Cyclic.vo Cyclic.glob: Cyclic.v ../Z/ZCAux.vo Root.vo ../List/UList.vo IGroup.vo EGroup.vo FGroup.vo
-EGroup.vo EGroup.glob: EGroup.v ../Tactic/Tactic.vo ../List/UList.vo FGroup.vo Lagrange.vo
+EGroup.vo EGroup.glob: EGroup.v ../Tactic/Tactic.vo ../Z/ZCAux.vo ../List/UList.vo FGroup.vo Lagrange.vo
 Euler.vo Euler.glob: Euler.v ../Tactic/Tactic.vo ../Z/ZSum.vo
 FGroup.vo FGroup.glob: FGroup.v ../List/UList.vo ../Tactic/Tactic.vo
 IGroup.vo IGroup.glob: IGroup.v ../Tactic/Tactic.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo
 Lagrange.vo Lagrange.glob: Lagrange.v ../List/UList.vo ../List/ListAux.vo ../N/NatAux.vo FGroup.vo
-LucasLehmer.vo LucasLehmer.glob: LucasLehmer.v ../Tactic/Tactic.vo ../N/NatAux.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo EGroup.vo PGroup.vo IGroup.vo
-Pepin.vo Pepin.glob: Pepin.v Pocklington.vo
+LucasLehmer.vo LucasLehmer.glob: LucasLehmer.v ../Z/ZCAux.vo ../Tactic/Tactic.vo ../N/NatAux.vo ../List/UList.vo ../List/ListAux.vo FGroup.vo EGroup.vo PGroup.vo IGroup.vo
+Pepin.vo Pepin.glob: Pepin.v ../Z/ZCAux.vo Pocklington.vo
 PGroup.vo PGroup.glob: PGroup.v ../Tactic/Tactic.vo ../List/ListAux.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo
-PocklingtonCertificat.vo PocklingtonCertificat.glob: PocklingtonCertificat.v LucasLehmer.vo Pocklington.vo ../Z/Zmisc.vo ../Z/Pmod.vo
-Pocklington.vo Pocklington.glob: Pocklington.v ../Tactic/Tactic.vo Zp.vo FGroup.vo EGroup.vo Euler.vo
-Proth.vo Proth.glob: Proth.v Pocklington.vo
+PocklingtonCertificat.vo PocklingtonCertificat.glob: PocklingtonCertificat.v ../Z/ZCAux.vo LucasLehmer.vo Pocklington.vo ../Z/ZCmisc.vo ../Z/Pmod.vo
+Pocklington.vo Pocklington.glob: Pocklington.v ../Tactic/Tactic.vo ../Z/ZCAux.vo Zp.vo FGroup.vo EGroup.vo Euler.vo
+Proth.vo Proth.glob: Proth.v ../Z/ZCAux.vo Pocklington.vo
 Root.vo Root.glob: Root.v ../List/UList.vo ../Tactic/Tactic.vo ../List/Permutation.vo
 Zp.vo Zp.glob: Zp.v ../Tactic/Tactic.vo ../List/UList.vo FGroup.vo EGroup.vo IGroup.vo Cyclic.vo Euler.vo ../List/ZProgression.vo
 Cyclic.html Cyclic.glob: Cyclic.v ../Z/ZCAux.html Root.html ../List/UList.html IGroup.html EGroup.html FGroup.html
-EGroup.html EGroup.glob: EGroup.v ../Tactic/Tactic.html ../List/UList.html FGroup.html Lagrange.html
+EGroup.html EGroup.glob: EGroup.v ../Tactic/Tactic.html ../Z/ZCAux.html ../List/UList.html FGroup.html Lagrange.html
 Euler.html Euler.glob: Euler.v ../Tactic/Tactic.html ../Z/ZSum.html
 FGroup.html FGroup.glob: FGroup.v ../List/UList.html ../Tactic/Tactic.html
 IGroup.html IGroup.glob: IGroup.v ../Tactic/Tactic.html ../List/UList.html ../List/ListAux.html FGroup.html
 Lagrange.html Lagrange.glob: Lagrange.v ../List/UList.html ../List/ListAux.html ../N/NatAux.html FGroup.html
-LucasLehmer.html LucasLehmer.glob: LucasLehmer.v ../Tactic/Tactic.html ../N/NatAux.html ../List/UList.html ../List/ListAux.html FGroup.html EGroup.html PGroup.html IGroup.html
-Pepin.html Pepin.glob: Pepin.v Pocklington.html
+LucasLehmer.html LucasLehmer.glob: LucasLehmer.v ../Z/ZCAux.html ../Tactic/Tactic.html ../N/NatAux.html ../List/UList.html ../List/ListAux.html FGroup.html EGroup.html PGroup.html IGroup.html
+Pepin.html Pepin.glob: Pepin.v ../Z/ZCAux.html Pocklington.html
 PGroup.html PGroup.glob: PGroup.v ../Tactic/Tactic.html ../List/ListAux.html ../List/UList.html FGroup.html EGroup.html IGroup.html
-PocklingtonCertificat.html PocklingtonCertificat.glob: PocklingtonCertificat.v LucasLehmer.html Pocklington.html ../Z/Zmisc.html ../Z/Pmod.html
-Pocklington.html Pocklington.glob: Pocklington.v ../Tactic/Tactic.html Zp.html FGroup.html EGroup.html Euler.html
-Proth.html Proth.glob: Proth.v Pocklington.html
+PocklingtonCertificat.html PocklingtonCertificat.glob: PocklingtonCertificat.v ../Z/ZCAux.html LucasLehmer.html Pocklington.html ../Z/ZCmisc.html ../Z/Pmod.html
+Pocklington.html Pocklington.glob: Pocklington.v ../Tactic/Tactic.html ../Z/ZCAux.html Zp.html FGroup.html EGroup.html Euler.html
+Proth.html Proth.glob: Proth.v ../Z/ZCAux.html Pocklington.html
 Root.html Root.glob: Root.v ../List/UList.html ../Tactic/Tactic.html ../List/Permutation.html
 Zp.html Zp.glob: Zp.v ../Tactic/Tactic.html ../List/UList.html FGroup.html EGroup.html IGroup.html Cyclic.html Euler.html ../List/ZProgression.html

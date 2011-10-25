@@ -436,7 +436,7 @@ Coercion Local Zpos : positive >-> Z.
 
  Lemma psplit_prime: forall l (p: positive),
   (forall (q: positive * positive), List.In q l -> prime (fst q)) ->
-   prime p -> (p | Zmullp l) -> List.In p (snd (psplit l)).
+   prime p -> (p | Zmullp l)%Z -> List.In p (snd (psplit l)).
  Proof.
  intros l; elim l.
    unfold Zmullp; simpl.
@@ -466,7 +466,7 @@ Coercion Local Zpos : positive >-> Z.
 
   Variable p: Z.
   Hypothesis p_prime: prime p.
-  Hypothesis p_div_N: (p | N).
+  Hypothesis p_div_N: (p | N)%Z.
 
   Let p_pos:= GZnZ.p_pos _ p_prime.
 

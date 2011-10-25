@@ -496,7 +496,7 @@ Proof.
  assert (log2 r <= log2 (xO r)). simpl;zsimpl;omega.
  assert (H1 := mod_lt _ _ _ H).
  pattern (gcd_log2 b r (xO r)) at 1; rewrite gcd_log2_Zle_log;auto with zarith.
- destruct (Z_lt_le_dec a b).
+ destruct (Z_lt_le_dec a b) as [z|z].
  pattern (gcd_log2 a b (xO b)) at 1; rewrite gcd_log2_xO_Zlt;trivial.
  rewrite (lt_mod _ _ z) in H;inversion H.
  assert  (r <= b). omega. 
