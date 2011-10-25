@@ -6,7 +6,6 @@
 -I ../../List
 -I ../../elliptic
 -I ../../num
--I ../../num/W/W8
 
 prime1.v
 prime2.v
