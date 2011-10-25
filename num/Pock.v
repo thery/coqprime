@@ -559,7 +559,7 @@ intros a1 l1 Rec a2 b [V|V] V1 V2; subst; auto.
 apply foldtmp0; auto.
 apply Rec with (b := b); auto with zarith.
 match goal with |- context [fold_left ?f _ _] =>
- apply (foldtmp _ _ f (fun k => (a ^ ((N - 1) / p) - 1 | k))) 
+ apply (foldtmp _ _ f (fun k => Zdivide (a ^ ((N - 1) / p) - 1) k)) 
    with (b := (p, p1)); auto with zarith
 end.
 rewrite <- HH2.
@@ -837,7 +837,7 @@ intros a1 l1 Rec a2 b [V|V] V1 V2; subst; auto.
 apply foldtmp0; auto.
 apply Rec with (b := b); auto with zarith.
 match goal with |- context [fold_left ?f _ _] =>
- apply (foldtmp _ _ f (fun k => (a ^ ((N - 1) / p) - 1 | k))) 
+ apply (foldtmp _ _ f (fun k => Zdivide (a ^ ((N - 1) / p) - 1) k)) 
    with (b := (p, p1)); auto with zarith
 end.
 intros; discriminate.

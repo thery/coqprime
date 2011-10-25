@@ -865,13 +865,13 @@ Definition isM2 p :=
 end.
 
 Lemma isM2_correct: forall p,
-  if isM2 p then ~(2| p) /\ 2 < p else True.
+  if isM2 p then ~(Zdivide 2 p) /\ 2 < p else True.
 Proof.
 intros p; case p; simpl; auto; clear p.
 intros p1; split; auto.
 intros HH; inversion_clear HH.
-  generalize H; rewrite Zmult_comm; simpl; case q; simpl;
-    intros; discriminate.
+generalize H; rewrite Zmult_comm.
+case x; simpl; intros; discriminate.
 case p1; red; simpl; auto.
 Qed.
 

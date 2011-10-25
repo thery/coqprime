@@ -121,7 +121,7 @@ apply Zpower_gt_0; auto with zarith.
 apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 rewrite (Z_div_exact_2 m (p ^ i)); auto with zarith. 
 apply H1; auto with zarith.
-apply rel_prime_sym; apply rel_prime_Zpower_r; auto.
+apply rel_prime_sym; apply rel_prime_Zpower_r; auto with zarith.
 apply rel_prime_sym.
 apply prime_rel_prime; auto.
 contradict Hi2.
@@ -231,7 +231,7 @@ apply Gauss with p.
 rewrite Zmult_comm; apply H2; auto.
 apply Zdivide_trans with (1:= Hp3).
 apply Zdivide_factor_l.
-apply rel_prime_sym; apply rel_prime_Zpower_r; auto.
+apply rel_prime_sym; apply rel_prime_Zpower_r; auto with zarith.
 apply prime_rel_prime; auto.
 contradict Hpp1; apply prime_divide_prime_eq; auto.
 Qed.
@@ -290,8 +290,6 @@ unfold Zpower_pos; simpl; rewrite Zmult_1_r; auto with zarith.
 Qed.
 
 Theorem Zpow_mod_Zpower_correct: forall a m n, 1 < n -> 0 <= m -> Zpow_mod a m n = (a ^ m) mod n.
-intros a m n; case m; simpl.
-intros; apply sym_equal; apply Zmod_small; auto with zarith.
+intros a m n; case m; simpl; auto.
 intros; apply Zpow_mod_pos_Zpower_pos_correct; auto with zarith.
-intros p H H1; case H1; auto.
 Qed.

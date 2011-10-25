@@ -592,7 +592,7 @@ Lemma in_mkProd_prime_div_in :
   forall p:positive,  prime p -> 
   forall (l:dec_prime),   
     (forall k, In k l -> prime (fst k)) -> 
-    (p | mkProd l) -> exists n,In (p, n) l.
+    Zdivide p (mkProd l) -> exists n,In (p, n) l.
 Proof with mauto.
  induction l;simpl ...
  intros _ H1; absurd (p <= 1).
@@ -694,7 +694,7 @@ Proof with mauto.
  destruct (in_mkProd_prime_div_in _ Hprime _ H Hdec) as (q,Hin).
  rewrite <- H2.
  match goal with |- context [fold_left ?f _ _] =>
-   apply (ListAux.fold_left_invol_in _ _ f (fun k => (a ^ ((N - 1) / p) - 1 | k))) 
+   apply (ListAux.fold_left_invol_in _ _ f (fun k => Zdivide (a ^ ((N - 1) / p) - 1) k)) 
      with (b := (p, q)); auto with zarith
  end.
  rewrite <- Heqr.

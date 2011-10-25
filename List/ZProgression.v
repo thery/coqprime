@@ -45,7 +45,6 @@ apply trans_equal with (cons n1 (progression Zpred (Zpred n1) (S m1))); auto.
 rewrite Hm1.
 replace (Zpred n1 - Z_of_nat m1) with (n1 - Z_of_nat (S m1)); auto with zarith.
 replace (Z_of_nat (S m1)) with (1 + Z_of_nat m1); auto with zarith.
-unfold Zpred; ring.
 rewrite inj_S; auto with zarith.
 Qed.
  
