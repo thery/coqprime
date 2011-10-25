@@ -112,7 +112,8 @@ all: prime1.vo\
   prime6.vo\
   prime7.vo\
   prime8.vo\
-  prime9.vo
+  prime9.vo\
+  res
 
 spec: $(VIFILES)
 
@@ -129,6 +130,15 @@ all-gal.ps: $(VFILES)
 	$(COQDOC) -ps -g -o $@ `$(COQDEP) -sort -suffix .v $(VFILES)`
 
 
+
+###################
+#                 #
+# Custom targets. #
+#                 #
+###################
+
+res: 
+	make clean; make -s all > res 
 
 ####################
 #                  #
@@ -186,6 +196,7 @@ Makefile: Make
 clean:
 	rm -f *.cmo *.cmi *.cmx *.o $(VOFILES) $(VIFILES) $(GFILES) *~
 	rm -f all.ps all-gal.ps $(HTMLFILES) $(GHTMLFILES)
+	- rm -f res
 
 archclean:
 	rm -f *.cmx *.o
