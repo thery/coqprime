@@ -116,7 +116,6 @@ Qed.
 
 Theorem g_order_pos: forall g: FGroup op, 0 < g_order g.
 intro g; generalize g.(e_in_s); unfold g_order; case g.(s); simpl; auto with zarith.
-intros a l _; red; auto.
 Qed.
 
 

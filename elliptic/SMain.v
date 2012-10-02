@@ -57,6 +57,8 @@ simpl; rewrite Eth.(Kfth).(F_R).(Rmul_comm).
 rewrite Eth.(Kfth).(F_R).(Rmul_1_l); auto.
 Qed.
 
+Let Mkmul := rmul_ext3_Proper (Eq_ext kplus kmul kopp).
+
 Lemma Kpower_theory : 
   power_theory 1 kmul (eq (A:=K)) BinNat.nat_of_N pow.
 constructor.
@@ -65,10 +67,8 @@ intros p; elim p using BinPos.Pind; auto.
 intros p1 H.
 rewrite Pnat.nat_of_P_succ_morphism;
   rewrite pow_S.
-rewrite (pow_pos_Psucc kmul (Eqsth K)); auto.
+rewrite (pow_pos_succ (Eqsth K) Mkmul); auto.
   rewrite H; auto.
-intros x1 x2 HH y1 y2 HH1; subst x2 y2; auto.
-exact Eth.(Kfth).(F_R).(Rmul_comm).
 exact Eth.(Kfth).(F_R).(Rmul_assoc).
 Qed.
 

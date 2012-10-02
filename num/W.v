@@ -18,7 +18,7 @@ Require Import ZArith ZCAux.
 Definition mk_word: forall (w: Type) (n:nat), Type.
 fix 2.
 intros w n; case n; simpl.
-exact int.
+exact int31.
 intros n1; exact (zn2z (mk_word w n1)).
 Defined.
 
@@ -63,7 +63,7 @@ Fixpoint mk_spec (w : Type) (op : ZnZ.Ops w) (op_spec : ZnZ.Specs op)
   end.
 
 (* ** Operators ** *)
-Definition w31_1_op := mk_zn2z_ops int_ops.           
+Definition w31_1_op := mk_zn2z_ops int31_ops.           
 Definition w31_2_op := mk_zn2z_ops w31_1_op.
 Definition w31_3_op := mk_zn2z_ops w31_2_op.
 Definition w31_4_op := mk_zn2z_ops_karatsuba w31_3_op.
@@ -78,9 +78,9 @@ Definition w31_12_op := mk_zn2z_ops_karatsuba w31_11_op.
 Definition w31_13_op := mk_zn2z_ops_karatsuba w31_12_op.
 Definition w31_14_op := mk_zn2z_ops_karatsuba w31_13_op.
 
-Definition cmk_op: forall (n: nat), ZnZ.Ops (word int n).
+Definition cmk_op: forall (n: nat), ZnZ.Ops (word int31 n).
 intros n; case n; clear n.
-exact int_ops.
+exact int31_ops.
 intros n; case n; clear n.
 exact w31_1_op.
 intros n; case n; clear n.
@@ -111,14 +111,14 @@ intros n; case n; clear n.
 exact w31_14_op.
 intros n.
 match goal with |- context[S ?X] =>
- exact (mk_op int_ops (S X))
+ exact (mk_op int31_ops (S X))
 end.
 Defined.
 
 Definition cmk_spec: forall n, ZnZ.Specs (cmk_op n).
 assert (S1: ZnZ.Specs w31_1_op).
 unfold w31_1_op; apply mk_zn2z_specs; auto with zarith.
-exact int_specs.
+exact int31_specs.
 assert (S2: ZnZ.Specs w31_2_op).
 unfold w31_2_op; apply mk_zn2z_specs; auto with zarith.
 assert (S3: ZnZ.Specs w31_3_op).
@@ -146,7 +146,7 @@ unfold w31_13_op; apply mk_zn2z_specs_karatsuba; auto with zarith.
 assert (S14: ZnZ.Specs w31_14_op).
 unfold w31_14_op; apply mk_zn2z_specs_karatsuba; auto with zarith.
 intros n; case n; clear n.
-exact int_specs.
+exact int31_specs.
 intros n; case n; clear n.
 exact S1.
 intros n; case n; clear n.
@@ -187,7 +187,7 @@ apply digits_pos.
 *)
 auto with zarith.
 apply mk_spec.
-exact int_specs.
+exact int31_specs.
 auto with zarith.
 Defined.
 

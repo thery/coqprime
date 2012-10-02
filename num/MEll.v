@@ -38,10 +38,11 @@ Record ex_spec (exx: ex): Prop := mkExS {
     vy exx ^ 2 mod vN exx = (vx exx ^ 3 + vA exx * vx exx + vB exx) mod vN exx
 }.
 
-
-Fixpoint invM_aux (n : nat) (m v: int) : int :=
+(*
+Let is_even m := 
+Fixpoint invM_aux (n : nat) (m v: int31) : int31 :=
   match n with 0%nat => 0%int31 | S n =>
-    if (is_even m) then
+    if (iszero (Cyclic31.nshiftl 30 m)) then
       lsl (invM_aux n (lsr m 1) v) 1
     else (1 lor (lsl (invM_aux n (lsr (m - v) 1) v) 1))
   end.
@@ -127,6 +128,10 @@ Definition mopp p :=
   match p with mzero => p | (mtriple x1 y1 z1) => (mtriple x1 (c0 -- y1) z1) end.
 
 End MEll.
+
+*)
+
+(* 
 
 Section Scal.
 
@@ -250,6 +255,8 @@ Time Eval vm_compute in (ell_test
   (- 169382514530949104195348226967375250000355478911252124)
   1045670343788723904542107880373576189650857982445904291
 ).
+
+*)
 
 (*
 Variable M : number.
