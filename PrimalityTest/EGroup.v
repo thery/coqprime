@@ -386,7 +386,6 @@ Qed.
 
 Theorem e_order_pos: 0 < e_order.
 unfold e_order, support; case (Zabs_nat (g_order G)); simpl; auto with zarith.
-intros n; red; auto.
 Qed.
 
 Theorem e_order_divide_gpow: forall n, 0 <= n -> gpow n = G.(e) -> (e_order | n).

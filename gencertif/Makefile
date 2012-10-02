@@ -11,7 +11,7 @@ CPOCK=certif.c factorize.c pocklington.c
 OPOCK=$(CPOCK:.c=.o)
 
 pock: $(OPOCK)
-	$(CC) -g -O2  -o pocklington $(OPOCK) -lecm -lgmp -lm 
+	$(CC) -g -O2  -o pocklington $(OPOCK) ecm-6.0.1/libecm.a -lgmp -lm 
 
 first: $(OFIRSTPRIMES)
 	$(CC) -g -O2 -o firstprimes $(OFIRSTPRIMES) -lecm -lgmp -lm

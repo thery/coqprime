@@ -4,7 +4,7 @@
 
 
 PRIME=`grep Proof_cert $1 | cut -d " " -f3`;
-`dirname $0`/pocklington $PRIME;
+`dirname $0`/pocklington.old $PRIME;
 cat $1 >> prime$PRIME.v;
 mv prime$PRIME.v $1
 
