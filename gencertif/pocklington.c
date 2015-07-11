@@ -13,11 +13,36 @@
 #include <unistd.h>
 #include "gmp.h"
 #include "ecm.h"
-#include "ecm-impl.h"
 #include "certif.h"
 #include "factorize.h"
 
 
+#if  defined (__STDC__)                                 \
+  || defined (__cplusplus)                              \
+  || defined (_AIX)                                     \
+  || defined (__DECC)                                   \
+  || (defined (__mips) && defined (_SYSTYPE_SVR4))      \
+  || defined (_MSC_VER)                                 \
+  || defined (_WIN32)
+#define __ECM_HAVE_TOKEN_PASTE  1
+#else
+#define __ECM_HAVE_TOKEN_PASTE  0
+#endif
+
+#ifndef __ECM
+#if __ECM_HAVE_TOKEN_PASTE
+#define __ECM(x) __ecm_##x
+#else
+#define __ECM(x) __ecm_/**/x
+#endif
+#endif
+
+#define pp1_random_seed __ECM(pp1_random_seed)
+void pp1_random_seed  (mpz_t, mpz_t, gmp_randstate_t);
+#define pm1_random_seed __ECM(pm1_random_seed)
+void pm1_random_seed  (mpz_t, mpz_t, gmp_randstate_t);
+#define get_random_ul   __ECM(get_random_ul)
+unsigned long get_random_ul (void);
 
 void usage ()
 {
@@ -78,7 +103,7 @@ main (int argc, char *argv[])
 
 	size = atoi(argv[2]);
 	gmp_randinit_default (randstate);
-	gmp_randseed_ui (randstate, get_random_ui ()); 
+	gmp_randseed_ui (randstate, get_random_ul ()); 
 	mpz_urandomb (t, randstate, 4*size);
 	while ( mpz_sizeinbase(t,10) <= size)
 	  mpz_urandomb (t, randstate, 4*size);

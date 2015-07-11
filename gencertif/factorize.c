@@ -12,8 +12,35 @@
 #include <string.h>
 #include "gmp.h"
 #include "ecm.h" 
-#include "ecm-impl.h"
 #include "certif.h"
+
+#if  defined (__STDC__)                                 \
+  || defined (__cplusplus)                              \
+  || defined (_AIX)                                     \
+  || defined (__DECC)                                   \
+  || (defined (__mips) && defined (_SYSTYPE_SVR4))      \
+  || defined (_MSC_VER)                                 \
+  || defined (_WIN32)
+#define __ECM_HAVE_TOKEN_PASTE  1
+#else
+#define __ECM_HAVE_TOKEN_PASTE  0
+#endif
+
+#ifndef __ECM
+#if __ECM_HAVE_TOKEN_PASTE
+#define __ECM(x) __ecm_##x
+#else
+#define __ECM(x) __ecm_/**/x
+#endif
+#endif
+
+#define pp1_random_seed __ECM(pp1_random_seed)
+void pp1_random_seed  (mpz_t, mpz_t, gmp_randstate_t);
+#define pm1_random_seed __ECM(pm1_random_seed)
+void pm1_random_seed  (mpz_t, mpz_t, gmp_randstate_t);
+#define get_random_ul   __ECM(get_random_ul)
+unsigned long get_random_ul (void);
+
 
 static unsigned add[] = {4, 2, 4, 2, 4, 6, 2, 6};
  
@@ -105,7 +132,7 @@ factor_using_division (mpz_t t, pock_certif_t c)
 void out_factor(mpz_t f,pock_certif_t c) 
 {
   mpz_out_str (stdout, 10, f);
-  fprintf(stdout," (%i digits, F1 %i digits) \n", mpz_sizeinbase(f,10),
+  fprintf(stdout," (%lu digits, F1 %lu digits) \n", mpz_sizeinbase(f,10),
 	  mpz_sizeinbase(c->_F1,10));
   fflush(stdout);
   return;
@@ -280,7 +307,7 @@ int my_ecm_factor(mpz_t n, pock_certif_t c, double B1, int iterate)
   ecm_init(params);
   /* if (flag_verbose) params->verbose = 1; */
   gmp_randinit_default (randstate);
-  gmp_randseed_ui (randstate, get_random_ui ());
+  gmp_randseed_ui (randstate, get_random_ul ());
   if (B1 > 11000) params->B1done = 11000;
   
   res = 0;
@@ -310,7 +337,7 @@ int my_ecm_factor(mpz_t n, pock_certif_t c, double B1, int iterate)
 	      {
 		fprintf(stdout,"composite factor ");
 		mpz_out_str (stdout, 10, f);
-		fprintf(stdout,"(%i digits)\n",mpz_sizeinbase(f,10));
+		fprintf(stdout,"(%lu digits)\n",mpz_sizeinbase(f,10));
 		fflush(stdout);	
 	    }
 	    if (B1 == 11000) res = factor_using_pollard_rho(f, 1, 0,c);
@@ -349,7 +376,7 @@ int my_ecm_factor(mpz_t n, pock_certif_t c, double B1, int iterate)
 	      {
 		fprintf(stdout,"composite factor ");
 		mpz_out_str (stdout, 10, f);
-		fprintf(stdout,"(%i digits)\n",mpz_sizeinbase(f,10));
+		fprintf(stdout,"(%lu digits)\n",mpz_sizeinbase(f,10));
 		fflush(stdout);	
 	      }
 	    if (B1 == 11000) res = factor_using_pollard_rho(f, 1, 0,c);
@@ -392,7 +419,7 @@ int my_ecm_factor(mpz_t n, pock_certif_t c, double B1, int iterate)
 	      {
 		fprintf(stdout,"composite factor ");
 		mpz_out_str (stdout, 10, f);
-		fprintf(stdout,"(%i digits)\n",mpz_sizeinbase(f,10));
+		fprintf(stdout,"(%lu digits)\n",mpz_sizeinbase(f,10));
 		fflush(stdout);	
 	      }
 	    if (B1 == 11000) res = factor_using_pollard_rho(f, 1, 0,c);
@@ -464,7 +491,7 @@ int factorize(mpz_t n, pock_certif_t c)
     fprintf(stdout,"   factorize "); 
     mpz_out_str (stdout, 10, n);fflush(stdout);
     fprintf(stdout,"\n     ");
-    fprintf(stdout,"   of %i digits\n", mpz_sizeinbase(n,10));
+    fprintf(stdout,"   of %lu digits\n", mpz_sizeinbase(n,10));
     fflush(stdout);
   }
 
