@@ -541,8 +541,6 @@ Coercion Local Zpos : positive >-> Z.
   repeat (rewrite Zmod_small); generalize (prime_ge_2 _ p_prime); 
     auto with zarith.
   Qed.
-
-Axiom ok: forall P, P.
  
   Lemma ptwo_not_zero: 2 <> 0.
   Proof.
