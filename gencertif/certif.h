@@ -118,10 +118,10 @@ void add_pre(pre_certif_t, certif_t lc);
 
 
 void print_pock_certif(FILE *out, pock_certif_t c);
-void print_file(char *filename, pre_certif_t c, certif_t lc);
+void print_file(char *filename, char *name, pre_certif_t c, certif_t lc);
 pock_certif_t read_file(char * filename, certif_t lc);
 
-void print_lemma(FILE *out, pre_certif_t p, certif_t lc);
+void print_lemma(FILE *out, char* name, pre_certif_t p, certif_t lc);
 void print_prelude(FILE *out);
 #define  __CERTIF_H__
 #endif /* __CERTIF_H__ */

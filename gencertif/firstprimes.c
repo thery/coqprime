@@ -11219,7 +11219,7 @@ main (int argc, char *argv[])
     c = pock_certif(t);
     extend_lc (lc, c, tprimes[min], tprimes[max]);  
     p = mk_pock_certif(c); 
-    print_lemma(out,p,lc);
+    print_lemma(out,"myPrime",p,lc);
   }
 
   fclose(out);

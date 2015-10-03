@@ -20,7 +20,9 @@ let t2hexa =regexp  "^Type=2"
 let t3hexa =regexp  "^Type=3"
 let t4hexa =regexp  "^Type=4"
 let hexa = regexp "-?[ABCDEF0123456789]*"
+let lemmaExp =regexp  "^Lemma"
 
+(* Conversion function *)
 let hexstring s =
   let rec main rem s = 
     if String.length s <= shift then
@@ -45,8 +47,6 @@ let hexstring s =
       main zero_big_int s1
 
 
-
-
 let rec comp2 r =
    let (q, r) = quomod_big_int r (big_int_of_int 2) in
      if eq_big_int r zero_big_int then
@@ -62,6 +62,17 @@ let gsqr n1 r =
       (square_big_int r1)
       (mult_big_int (big_int_of_int 8) s1))
 
+type certif =
+
+(* Elliptic (n, s, r, a, b, x y) *)
+  Elliptic of big_int * big_int * big_int * big_int * big_int * big_int * big_int
+(* Pocklington (n, b, r) *)
+| Pocklington of big_int * big_int * big_int
+(* External n *)
+| External of big_int
+(* Error t *)
+| Error of int;;
+
 
 let n = ref zero_big_int
 let s = ref zero_big_int
@@ -74,20 +85,17 @@ let ty = ref (-1)
 let file = ref ""
 let co = ref stdout
 let sep = ref ""
+let res = ref ([] : certif list)
+let split = ref false
+let fileout = ref "a"
+let fileoutflag = ref false
+let name = ref "primo"
 
-let pe s =
-  output_string !co s;
-  output_string !co "\n";
-  flush !co
-
-let change_sep () =
-  if !sep = "" then sep := "(" else
-  if !sep = "(" then sep := "::"
 
 let process_type() =
-  if !ty != -1 then
-    begin
-    if !ty = 4 then
+  let elt = 
+  (if !ty != -1 then
+    (if !ty = 4 then
       let n  = !n in
       let t  = !t in
       let j  = !j in
@@ -109,20 +117,8 @@ let process_type() =
                 (mult_big_int b (power_big_int_positive_int l 3)) n in
       let x = mod_big_int (mult_big_int t l) n in
       let y = mod_big_int (square_big_int l) n in
-      begin             
-       pe !sep;
-       pe ("(Ell_certif");
-       pe ((string_of_big_int n));
-       pe ((string_of_big_int !s));
-       pe ("((" ^ (string_of_big_int !r) ^ ",1)::nil)");
-       pe ((string_of_big_int a));
-       pe ((string_of_big_int b));
-       pe ((string_of_big_int x));
-       pe ((string_of_big_int y) ^ ")");
-       flush !co;
-       change_sep()
-      end
-    else if !ty = 3 then
+       Elliptic (n, !s, !r, a, b, x, y)
+     else if !ty = 3 then
       let n  = !n in
       let t  = !t in 
       let a  = !a in
@@ -137,49 +133,19 @@ let process_type() =
                 (mult_big_int b (power_big_int_positive_int l 3)) n in
       let x = mod_big_int (mult_big_int t l) n in
       let y = mod_big_int (square_big_int l) n in
-      
-      begin       
-       pe !sep;
-       pe ("(Ell_certif");
-       pe ((string_of_big_int n));
-       pe ((string_of_big_int !s));
-       pe ("((" ^ (string_of_big_int !r) ^ ",1)::nil)");
-       pe ((string_of_big_int a));
-       pe ((string_of_big_int b));
-       pe ((string_of_big_int x));
-       pe ((string_of_big_int y) ^ ")");
-       change_sep()
-      end
-    else if !ty = 1 then
-      begin   
-       pe !sep;         
-       pe ("(SPock_certif ");
-       pe ((string_of_big_int !n));
-       pe ((string_of_big_int !b));
-       pe ("((" ^ (string_of_big_int !r)  ^ ", 1)::nil))" );
-       flush !co;
-       change_sep()      
-      end
-    else if !ty = 0 then
-      begin             
-       pe (!sep ^ " (Proof_certif " ^ (string_of_big_int !n) ^
-            " prime" ^ (string_of_big_int !n)  ^ ") :: nil)).");
-       pe "exact_no_check (refl_equal true).";
-       pe "Time Qed.";
-       flush !co
-      end
-    else 
-      begin             
-       pe ("Type = " ^ (string_of_int !ty));
-       flush !co
-      end
-   end;
-   n := !r
+       Elliptic (n, !s, !r, a, b, x, y)
+     else if !ty = 1 then
+       Pocklington (!n, !b, !r)
+     else if !ty = 0 then
+       External !n
+     else 
+       Error !ty)
+  else Error 0)
+  in (n := !r; elt)
 
 
 
-
-let rf f = 
+let parse f = 
 n :=  zero_big_int;
 s :=  zero_big_int;
 r :=  zero_big_int;
@@ -189,27 +155,17 @@ t :=  zero_big_int;
 j :=  zero_big_int;
 ty:= (-1);
 file := "";
-co := stdout;
 sep := "";
+res := [];
 let ic = open_in f in
   let line = ref "" in
-  try 
+  (try 
     while true do
     line := input_line ic; 
 
     if string_match nhexa !line 0 then
  (
              n := hexstring (skip !line 3);
-           file := "prime" ^ (String.sub (string_of_big_int !n) 0 1) ^ ".v";
-             co := open_out !file;
-(*
-             pe "Require Import PocklingtonRefl.";
-             pe "Set Virtual Machine.";
-             pe "Open Local Scope positive_scope.";
-*)
-             pe ("Lemma prime" ^ (string_of_big_int !n) ^
-                ": prime  " ^ (string_of_big_int !n) ^ ".");
-             pe "apply (Pocklington_refl ";
              r := !n)
     else if string_match shexa !line 0 then 
           s := (hexstring (skip !line 3))
@@ -224,25 +180,279 @@ let ic = open_in f in
     else if string_match jhexa !line 0 then 
           j := (hexstring (skip !line 3))
     else if string_match t0hexa !line 0 then 
-          (process_type();ty := 0;process_type())
+          (res := process_type() :: !res; ty := 0;
+           res := process_type() :: !res)
     else if string_match t1hexa !line 0 then 
-          (process_type(); ty := 1)
+          (res := process_type() :: !res; ty := 1)
     else if string_match t2hexa !line 0 then 
-          (process_type(); ty := 2;)
+          (res := process_type() :: !res; ty := 2;)
     else if string_match t3hexa !line 0 then 
-          (process_type(); ty := 3)
+          (res := process_type() :: !res; ty := 3)
     else if string_match t4hexa !line 0 then 
-          (process_type();ty := 4)
+          (res := process_type() :: !res;ty := 4)
     done                 
 
   with e ->              
-    close_in_noerr ic;   
-    close_out_noerr !co
+    close_in_noerr ic);
+   List.rev !res
 
-                         
+let rec gen_name k l =
+  match l with
+  [] -> ()
+| Elliptic (n, s, r, a, b, x, y) :: l1 -> 
+    print_string "Let p" ; print_int k; print_string " = "; 
+    print_string (string_of_big_int n); print_string ";"; print_newline();
+    gen_name (k + 1) l1
+| Pocklington (n, b, r) :: l1 ->
+    print_string "Let p" ; print_int k; print_string " = "; 
+    print_string (string_of_big_int n); print_string ";"; print_newline();
+    gen_name (k + 1) l1
+| External n :: l1 ->
+    print_string "Let p" ; print_int k; print_string " = "; 
+    print_string (string_of_big_int n); print_string ";"; print_newline();
+    gen_name (k + 1) l1
+| _ :: l1 ->
+    print_string "(* Error *)"; print_newline(); gen_name (k + 1) l1
 
-let _ = 
-  if (Array.length Sys.argv) == 2 then
-    rf Sys.argv.(1)
-  else print_string "o2v file.out";
+let pe s =
+  output_string !co s;
+  output_string !co "\n";
+  flush !co
+
+let pef s =
+  output_string !co s;
+  flush !co
+
+
+let print_header () =
+   pe "Require Import PocklingtonRefl.";
+   pe "Set Virtual Machine.";
+   pe "Local Open Scope positive_scope."
+
+let split_begin k = 
+  if !split then
+   (let fname = !fileout ^ "_" ^ (string_of_int k) ^ ".v" in
+      co :=  open_out fname;
+      print_header())
+ 
+
+let split_close k = 
+  if !split then
+   (close_out !co)
+
+let print_elliptic k n s r a  b x y  =
+   split_begin k;
+   pe  "";
+   pe ("Lemma " ^ !name ^ (string_of_int k) ^
+         ":");
+   pe ("  prime  " ^ (string_of_big_int r) ^ "->");
+   pe ("  prime  " ^ (string_of_big_int n) ^ ".");
+   pe "Proof.";
+   pe "intro H.";
+   pe "apply (Pocklington_refl ";
+   pe ("     (Ell_certif");
+   pe ("      " ^ (string_of_big_int n));
+   pe ("      " ^ (string_of_big_int s));
+   pe ("      ((" ^ (string_of_big_int r) ^ ",1)::nil)");
+   pe ("      " ^ (string_of_big_int a));
+   pe ("      " ^ (string_of_big_int b));
+   pe ("      " ^ (string_of_big_int x));
+   pe ("      " ^ (string_of_big_int y) ^ ")");
+   pe  "     ((Proof_certif _ H) :: nil)).";
+   pe  "exact_no_check (refl_equal true).";
+   pe  "Time Qed.";
+   split_close k
+
+
+let print_external k n =
+  let fname = !fileout ^ "_" ^ (string_of_int k) ^ ".v" in
+  let _ = Sys.command (Filename.dirname (Sys.executable_name)^
+                "/pocklington -o " ^ fname ^ " -n " ^ !name ^
+                 (string_of_int k)^ " " ^ 
+                 (string_of_big_int n)) in
+  if (not !split) then 
+  (let ic = open_in fname in
+  let line = ref "" in
+  let flag = ref false in
+  (try 
+    while true do
+    line := input_line ic; 
+    if string_match lemmaExp !line 0 then flag := true;
+    if !flag then pe !line
+    done
+  with e ->              
+    close_in_noerr ic);
+  Sys.remove fname)
+
+
+let print_pocklington k n b r =
+   split_begin k;
+   pe  "";
+   pe ("Lemma " ^ !name  ^ (string_of_int k) ^
+         ":");
+   pe ("  prime  " ^ (string_of_big_int r) ^ "->");
+   pe ("  prime  " ^ (string_of_big_int n) ^ ".");
+   pe "Proof.";
+   pe "intro H.";
+   pe "apply (Pocklington_refl ";
+   pe ("  (SPock_certif ");
+   pe ("   " ^ (string_of_big_int n));
+   pe ("   " ^ (string_of_big_int b));
+   pe ("   ((" ^ (string_of_big_int r)  ^ ", 1)::nil))" );
+   pe  "   ((Proof_certif _ H) :: nil)).";
+   pe  "exact_no_check (refl_equal true).";
+   pe  "Time Qed.";
+   split_close k
+ 
+let rec print_goals k l =
+  match l with
+  [] -> ()
+| Elliptic (n, s, r, a, b, x, y) :: l1 -> 
+    print_elliptic  k n s r a b x y;
+    print_goals (k + 1) l1
+| Pocklington (n, b, r) :: l1 ->
+    print_pocklington k n b r;
+    print_goals (k + 1) l1
+| External n :: l1 ->
+    print_external k n;
+    print_goals k l1
+| _ :: l1 ->
+   print_goals k l1
+
+let rec rprint_main k l =
+  match l with
+  [] -> ()
+| Elliptic (n, s, r, a, b, x, y) :: l1 ->
+    pef ("(");
+    pef (!name  ^ (string_of_int k) ^ " "); 
+    rprint_main (k + 1) l1;
+    pef (")");
+| Pocklington (n, b, r) :: l1 ->
+    pef ("(");
+    pef (!name  ^ (string_of_int k)^ " "); 
+    rprint_main (k + 1) l1;
+    pef (")");
+| External n :: l1 ->
+    pef (!name  ^ (string_of_int k)); 
+    rprint_main k l1
+| _ :: l1 ->
+    rprint_main k l1
+
+   
+let rec print_main l =
+  match l with
+  [] -> ()
+| Elliptic (n, s, r, a, b, x, y) :: _ ->
+    pe ("");
+    pe ("Lemma  " ^ !name ^ ": prime " ^
+         (string_of_big_int n)^ ".");
+    pe ("Proof.");
+    pe ("exact");
+    rprint_main 0 l;
+    pe (".");
+    pe ("Qed.")
+| Pocklington (n, b, r) :: l1 ->
+    pe ("");
+    pe ("Lemma  " ^ !name  ^ ": prime " ^
+         (string_of_big_int n)^ ".");
+    pe ("Proof.");
+    pe ("exact");
+    rprint_main 0 l;
+    pe (".");
+    pe ("Qed.")
+| External n :: l1 ->
+    pe ("");
+    pe ("Lemma  " ^ !name ^ " : prime " ^
+         (string_of_big_int n)^ ".");
+    pe ("Proof.");
+    pef ("exact ");
+    rprint_main 0 l;
+    pe (".");
+    pe ("Qed.")
+| _ :: l1 ->
+    print_main l1
+ 
+   
+let rec print_require k l =
+  match l with
+  [] -> ()
+| Elliptic (n, s, r, a, b, x, y) :: l1 ->
+    pe ("Require Import  " ^ !fileout ^ "_" ^ (string_of_int k) ^ ".");
+    print_require (k + 1) l1
+| Pocklington (n, b, r) :: l1 ->
+    pe ("Require Import  " ^ !fileout ^ "_" ^  (string_of_int k) ^ ".");
+    print_require (k + 1) l1
+| External n :: l1 ->
+    pe ("Require Import  " ^ !fileout ^ "_" ^  (string_of_int k) ^ ".");
+    print_require (k + 1) l1
+| _ :: l1 ->
+    print_require k l1
+
+
+   
+let rec print_make k l =
+  match l with
+  [] -> ()
+| Elliptic (n, s, r, a, b, x, y) :: l1 ->
+    pe (!fileout ^ "_" ^ (string_of_int k) ^ ".v");
+    print_make (k + 1) l1
+| Pocklington (n, b, r) :: l1 ->
+    pe (!fileout ^ "_" ^ (string_of_int k) ^ ".v");
+    print_make (k + 1) l1
+| External n :: l1 ->
+    pe (!fileout ^ "_" ^ (string_of_int k) ^ ".v");
+    print_make (k + 1) l1
+| _ :: l1 ->
+    print_make k l1
+
+
+let _ =  
+  let v = ref (Array.length Sys.argv) in
+  let k = ref 1 in
+  let flag = ref true in
+  while !flag do
+    if Sys.argv.(!k) = "-split" then
+      (k := !k + 1; v := !v -1; split := true)
+    else if  Sys.argv.(!k) = "-o" then
+      (k := !k + 2; v := !v - 2; 
+        (try 
+          fileout := Filename.chop_extension (Sys.argv.(!k - 1))
+        with e -> fileout := Sys.argv.(!k - 1));
+       fileoutflag := true)
+    else if  Sys.argv.(!k) = "-n" then
+      (k := !k + 2; v := !v - 2; name := Sys.argv.(!k - 1))
+    else (flag := false)
+  done;
+  if (!v) == 2 then
+    (let p = parse Sys.argv.(!k) in
+    if (not !fileoutflag) then
+        (try 
+          fileout := Filename.chop_extension (Sys.argv.(!k))
+        with e -> fileout := Sys.argv.(!k));
+    if (not !split) then
+     (let fname = !fileout ^ ".v" in
+      co := open_out fname;
+      print_header ());
+    print_goals 0 p;
+    if (!split) then
+     (let fname = !fileout ^ ".v" in
+      co := open_out fname;
+      print_header ();
+      print_require 0 p);
+    print_main p;
+    close_out !co;
+    if (!split) then
+     (let fname = !fileout ^ "_make" in
+      co := open_out fname;
+      pe "-I ../Tactic";
+      pe "-I ../N";
+      pe "-I ../Z";
+      pe "-I ../PrimalityTest";
+      pe "-I ../List";
+      pe "-I ../elliptic";
+      pe "-I ../num";
+      pe (!fileout ^ ".v");
+      print_make 0 p);
+    close_out !co)
+  else print_string "o2v [-split] [-o file.out] [-n name] file.in ";
        print_newline()
