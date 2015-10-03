@@ -12,7 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "gmp.h"
-#include "ecm.h"
+#include "ecm.h" 
 #include "certif.h"
 #include "factorize.h"
 
@@ -46,7 +46,7 @@ unsigned long get_random_ul (void);
 
 void usage ()
 {
-  fprintf(stdout,"usage ; pocklington [-v] [-o file] numspec\n");
+  fprintf(stdout,"usage ; pocklington [-v] [-o file] [-n name] numspec\n");
   fprintf(stdout,"numspec = prime | -next number\n");
   fprintf(stdout,"        = -size number | -proth k n | -lucas number \n");
   fprintf(stdout,"        | -mersenne number | -dec filename\n");
@@ -63,7 +63,13 @@ main (int argc, char *argv[])
   certif_t lc;
   char *filename;
   int defaultname = 1;
+  char *lemmaname;
+  lemmaname = "myPrime";
   c = NULL;
+
+  if (argc < 2) {
+	usage();
+  }
 
   while (1) { 
     
@@ -77,12 +83,19 @@ main (int argc, char *argv[])
       defaultname = 0;
       argv += 2;
       argc -= 2;
-    } else break;
+    } else if (!strcmp (argv[1], "-n")) {
+      if (argc == 2) usage();
+      lemmaname = argv[2];
+      argv += 2;
+      argc -= 2;
+    } else
+
+break;
   }
 
   mpz_init (t);
   lc = init_certif();
-  
+ 
   switch (argc) {
   case 2:  
     mpz_set_str (t, argv[1], 0);
@@ -256,7 +269,7 @@ main (int argc, char *argv[])
    extend_lc (lc, c, 0, 0);  
  } 
 
- print_file(filename, p, lc);
+ print_file(filename, lemmaname, p, lc);
 
  fprintf(stdout,"\n");fflush(stdout);
  mpz_clear(t); 

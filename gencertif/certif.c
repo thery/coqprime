@@ -620,11 +620,10 @@ void print_lc(FILE *out, certif_t lc)
  
 }
 
-void print_lemma(FILE *out, pre_certif_t p, certif_t lc)
+void print_lemma(FILE *out, char *name, pre_certif_t p, certif_t lc)
 {
 
-  fprintf(out, "Lemma prime"); 
-  mpz_out_str (out, 10, get_N(p));
+  fprintf(out, "Lemma %s", name); 
   fprintf(out, " : prime ");mpz_out_str (out, 10, get_N(p));
   fprintf(out, ".\n");
   fprintf(out, "Proof.\n");
@@ -654,7 +653,7 @@ void print_prelude(FILE *out)
 }
 
 
-void print_file(char *filename, pre_certif_t p, certif_t lc)
+void print_file(char *filename, char *name, pre_certif_t p, certif_t lc)
 {
   FILE * out; 
 
@@ -666,7 +665,7 @@ void print_file(char *filename, pre_certif_t p, certif_t lc)
   
   fprintf(out,"Open Local Scope positive_scope.\n\n");
 
-  print_lemma(out, p, lc);
+  print_lemma(out, name, p, lc);
 
   fclose(out);
 
