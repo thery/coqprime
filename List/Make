@@ -1,6 +1,0 @@
--I ../Tactic
-Iterator.v
-ListAux.v
-Permutation.v
-UList.v
-ZProgression.v
