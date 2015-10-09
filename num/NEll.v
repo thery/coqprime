@@ -365,8 +365,8 @@ Lemma nadd_wf: forall x y sc,
   wfe x -> wfe y -> wft sc ->
   wfe (fst (nadd sc x y)) /\  wft (snd (nadd sc x y)).
 Proof.
-intros x; case x; clear; auto.
-intros x1 y1 z1 y; case y; clear; auto.
+intros x; case x; clear x; auto.
+intros x1 y1 z1 y; case y; clear y; auto.
   intros x2 y2 z2 sc (wfx1,(wfy1, wfz1)) (wfx2,(wfy2, wfz2)) wfsc; 
     simpl; auto.
    case neq.
@@ -438,8 +438,8 @@ Lemma nadd_correct: forall x y sc,
   e2E (fst (nadd sc x y)) = fst (ZEll.nadd exx.(vN) exx.(vA) (z2Z sc) (e2E x) (e2E y) )/\
   z2Z (snd (nadd sc x y)) = snd (ZEll.nadd exx.(vN) exx.(vA) (z2Z sc) (e2E x) (e2E y)).
 Proof.
-intros x; case x; clear; auto.
-intros x1 y1 z1 y; case y; clear; auto.
+intros x; case x; clear x; auto.
+intros x1 y1 z1 y; case y; clear y; auto.
   intros x2 y2 z2 sc (wfx1,(wfy1, wfz1)) (wfx2,(wfy2, wfz2)) wfsc; simpl.
   ftac.
   ftac.
@@ -461,7 +461,7 @@ intros x1 y1 z1 y; case y; clear; auto.
   wfe x -> wft sc ->
   wfe (fst (ndouble sc x)) /\  wft (snd (ndouble sc x)).
 Proof.
-intros x; case x; clear; auto.
+intros x; case x; clear x; auto.
 intros x1 y1 z1 sc (wfx1,(wfy1, wfz1)) wfsc; 
     simpl; auto.
   repeat (case neq; repeat split; simpl; nw; auto).
@@ -473,7 +473,7 @@ Lemma ndouble_correct: forall x sc,
   e2E (fst (ndouble sc x)) = fst (ZEll.ndouble exx.(vN) exx.(vA) (z2Z sc) (e2E x))/\
   z2Z (snd (ndouble sc x)) = snd (ZEll.ndouble exx.(vN) exx.(vA) (z2Z sc) (e2E x)).
 Proof.
-intros x; case x; clear; auto.
+intros x; case x; clear x; auto.
   intros x1 y1 z1 sc (wfx1,(wfy1, wfz1))  wfsc; simpl.
   ftac.
   simpl; split; auto.
@@ -547,7 +547,7 @@ Lemma scalb_correct: forall n b x sc,
   e2E (fst (scalb sc b x n)) = fst (ZEll.scalb exx.(vN) exx.(vA) (z2Z sc) b (e2E x) n)/\
   z2Z (snd (scalb sc b x n)) = snd (ZEll.scalb exx.(vN) exx.(vA) (z2Z sc) b (e2E x) n).
 Proof.
-intros n; elim n; clear; auto.
+intros n; elim n; clear n; auto.
 intros p Hrec b x sc H1 H2.
   case b; unfold scalb; fold scalb.
     generalize (scalb_wf p true x H1 H2);
@@ -898,7 +898,7 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
           let (a2, sc2) := scal ex op mop sc1 a1 S1 in
           let (a3, sc3) := scalL ex op mop sc2 a2 R1 in
           match a3 with
-           nzero => if (Zeq_bool (Zgcd (z2Z op sc3) N) 1) then true
+           nzero _ => if (Zeq_bool (Zgcd (z2Z op sc3) N) 1) then true
                     else false
           | _ => false
           end
@@ -952,8 +952,8 @@ assert (mspec: mod_spec op (zN exx op) mop).
 generalize (@scalL_prime exx exxs _ op (cmk_spec n) mop mspec H0).
 lazy zeta.
 unfold c1, A, B,  nplus, nmul; 
-  simpl exx.(vA); simpl exx.(vB); simpl exx.(vx); simpl exx.(vy);
-  simpl exx.(vS); simpl exx.(vR); simpl exx.(vN).
+  simpl (exx.(vA)); simpl (exx.(vB)); simpl (exx.(vx)); simpl (exx.(vy));
+  simpl (exx.(vS)); simpl (exx.(vR)); simpl (exx.(vN)).
 case scal; intros a1 sc1.
 case ZEll.psplit; intros S2 R2.
 case scal; intros a2 sc2.

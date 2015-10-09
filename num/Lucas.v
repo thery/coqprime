@@ -76,11 +76,11 @@ Let square_m2 :=
    fun x => sub (square x) w2.
 
 Definition lucastest :=
- ZnZ.to_Z (iter_pos (Pminus p 2) _ square_m2 w4).
+ ZnZ.to_Z (iter_pos _ square_m2 w4 (Pminus p 2)).
 
 Theorem lucastest_aux_correct:
  forall p1 z n, 0 <= n -> [|z|] = fst (s n) mod (2 ^ Zpos p - 1) ->
-       [|iter_pos p1 _ square_m2 z|] = fst (s (n + Zpos p1)) mod (2 ^ Zpos p - 1).
+       [|iter_pos _ square_m2 z p1|] = fst (s (n + Zpos p1)) mod (2 ^ Zpos p - 1).
 intros p1; pattern p1; apply Pind; simpl iter_pos; simpl s; clear p1.
 intros z p1 Hp1 H.
 unfold square_m2.

@@ -628,7 +628,7 @@ Notation "[[ x ]]" :=
  rewrite <- (Z_div_mult ([|w2|] * [|w3|]) (2 ^ [|n|]));
   auto with zarith; rewrite Zmult_comm.
  rewrite <- ZnZ.spec_mul_c; auto with zarith.
- unfold w_mul_c in H3; unfold ww_to_Z in H3;simpl H3.
+ unfold w_mul_c in H3; unfold ww_to_Z in H3;simpl in H3.
  unfold w_digits,w_to_Z in H3. rewrite <- H3; simpl.
  rewrite H7; rewrite (fun x => Zmult_comm (2 ^ x));
    rewrite Zmult_assoc; rewrite  BigNumPrelude.Z_div_plus_l; auto with zarith.

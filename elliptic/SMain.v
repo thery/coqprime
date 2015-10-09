@@ -304,7 +304,7 @@ Qed.
 Definition opp: elt -> elt.
 refine (fun p => match p with inf_elt => 
                    inf_elt
-                | curve_elt x y H => @curve_elt x (-y) _ end).
+                | @curve_elt x y H => @curve_elt x (-y) _ end).
 apply opp_lem; auto.
 Defined.
 
@@ -386,10 +386,10 @@ Definition add: elt -> elt -> elt.
 refine (fun p1 p2 => 
              match p1 with 
                inf_elt => p2
-             | curve_elt x1 y1 H1 =>
+             | @curve_elt x1 y1 H1 =>
              match p2 with
                inf_elt => p1  
-             | curve_elt x2 y2 H2 =>
+             | @curve_elt x2 y2 H2 =>
                   if x1 ?= x2 then
                      (* we have p1 = p2 or p1 = - p2 *)
                      if (y1 ?= -y2) then 
