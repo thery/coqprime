@@ -33,8 +33,8 @@ Let pol := list A.
 Definition toA z := 
 match z with 
   Z0  => zero 
-| Zpos p => iter_pos  p _ (plus one) zero 
-| Zneg p => op (iter_pos p _ (plus one) zero) 
+| Zpos p => iter_pos _ (plus one) zero p 
+| Zneg p => op (iter_pos _ (plus one) zero p) 
 end.
 
 Fixpoint eval (p: pol) (x: A) {struct p} : A :=

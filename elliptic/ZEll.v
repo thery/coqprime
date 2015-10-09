@@ -297,7 +297,7 @@ Section Nell.
  assert (F1:= Pmult_assoc).
  assert (F2:= Pmult_comm).
  unfold Zmull.
- repeat rewrite List.fold_symmetric; simpl; auto.
+ repeat rewrite List.fold_symmetric; simpl; auto; intros; rewrite F2; auto.
  Qed.
 
  Fixpoint scalL (sc:Z) (a: nelt) (l: List.list positive) {struct l}: (nelt * Z) :=
@@ -1112,7 +1112,7 @@ Coercion Local Zpos : positive >-> Z.
  rewrite gpow_gpow; auto.
  case (nInversible_scalL _ _ _ H1); auto.
  intros H3 H4.
- generalize H1; simpl nInversible.
+ simpl in H1; revert H1.
    case_eq (scal sc a1 a).
    intros n1 sc1 Hn1.
    case_eq (scal_list sc1 a1 l).
@@ -1155,7 +1155,7 @@ Coercion Local Zpos : positive >-> Z.
  rewrite gpow_gpow; auto.
    2: red;simpl; auto; intros HH; discriminate.
   2: red;simpl; auto; intros HH; discriminate.
- generalize H2; simpl nInversible; simpl scalL.
+ simpl in H2; revert H2; simpl scalL.
    case_eq (scal sc a1 a).
    intros n1 sc1 Hn1.
    case_eq (scal_list sc1 a1 l).

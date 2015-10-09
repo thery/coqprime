@@ -54,7 +54,7 @@ Theorem ulist_app_inv:
 intros l1; elim l1; simpl; auto.
 intros a l H l2 a0 H0 [H1|H1] H2.
 inversion H0 as [|a1 l0 H3 H4 H5]; auto.
-case H4; rewrite H1; auto with datatypes.
+case H3; rewrite H1; auto with datatypes.
 apply (H l2 a0); auto.
 apply ulist_inv with ( 1 := H0 ); auto.
 Qed.

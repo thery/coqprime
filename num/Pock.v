@@ -201,12 +201,12 @@ Fixpoint pow_mod_pred (a:w) (l:dec_prime) {struct l} : w :=
   | (q, p)::l =>
     if (p ?= 1) then pow_mod_pred a l
     else 
-      let a' := iter_pos (Ppred p) _ (fun x => pow x q) a in
+      let a' := iter_pos _ (fun x => pow x q) a (Ppred p) in
       pow_mod_pred a' l
   end.
 
 Lemma iter_pow_mod_spec : forall q p a, [|a|] = ([|a|] mod [|b|])%Z ->
-  ([|iter_pos p _ (fun x => pow x q) a|] = [|a|]^q^p mod [|b|])%Z.
+  ([|iter_pos _ (fun x => pow x q) a p|] = [|a|]^q^p mod [|b|])%Z.
 intros q1 p1; elim p1; simpl iter_pos; clear p1.
 intros p1 Rec a Ha.
 rewrite(fun x => m_op_spec.(power_mod_spec) x [|x|]);
