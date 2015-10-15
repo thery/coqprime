@@ -14,8 +14,7 @@ Require Import Pock.
 
 Open Local Scope positive_scope.
 
-Set Virtual Machine.
-Ltac enc t := exact_no_check t.
+Ltac enc t := vm_cast_no_check t.
 
 Lemma prime2 : prime 2.
 exact prime_2.
