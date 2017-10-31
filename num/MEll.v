@@ -25,7 +25,7 @@ Record ex: Set := mkEx {
   vy:  Z
 }.
 
-Coercion Local Zpos : positive >-> Z.
+Local Coercion Zpos : positive >-> Z.
 
 Record ex_spec (exx: ex): Prop := mkExS {
   n2_div: ~(2 | exx.(vN));

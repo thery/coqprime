@@ -9,7 +9,8 @@
 Set Implicit Arguments.
 
 Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms DoubleCyclic BigN Cyclic31 Int31.
+Require Import CyclicAxioms Cyclic31 Int31.
+From Bignums Require Import DoubleCyclic BigN.
 Require Import ZCAux.
 Require Import W.
 Require Import Mod_op.
@@ -399,7 +400,7 @@ assert (2 ^ Zpos p <= base (ZnZ.digits o)); auto with zarith.
 apply Zpower_le_monotone; auto with zarith.
 assert (F := lucas_f1 H); auto with zarith.
 rewrite <-(lucas_f2 H); auto.
-intros p3 []; unfold Zle; simpl; intros H3; case H3; auto.
+intros p3 [[]]; unfold Zle; simpl; auto.
 unfold lucastest_step.
 rewrite Pos.iter_add; auto. 
 change (@ZnZ.to_Z _ o (lucastest_step o m (lucastest_step o m (znz_of_Z o z) p1) p2) = z2).
@@ -440,4 +441,13 @@ Ltac vmtac :=
 match goal with |- _ = ?x =>
 vm_cast_no_check  (refl_equal x)
 end.
+
+Lemma lucas_Zpos p : 2 < Zpos p -> 0 <= 4 < 2 ^ (Zpos p) - 1.
+Proof.
+intros H; split; auto with zarith.
+assert (8 <= 2 ^Zpos p); auto with zarith.
+replace 8 with (2 ^ 3); auto with zarith.
+apply Zpow_facts.Zpower_le_monotone; auto with zarith.
+Qed.
+
 

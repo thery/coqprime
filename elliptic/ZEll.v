@@ -344,7 +344,7 @@ Section Nell.
  repeat itac.
  Qed.
 
-Coercion Local Zpos : positive >-> Z.
+Local Coercion Zpos : positive >-> Z.
 
  Lemma Zmull_div: forall a l, List.In a l ->
     Zmull l  = (Zmull l / a) * a :> Z.
@@ -1186,7 +1186,7 @@ Section pell.
  Hypothesis N_not_div_2: ~(2 | N).
  Variable lR: List.list (positive * positive).
 
- Coercion Local Zpos : positive >-> Z.
+ Local Coercion Zpos : positive >-> Z.
  Hypothesis lR_prime: forall p, List.In p lR -> prime (fst p).
  Variable F: positive.
  Hypothesis lR_big: (4 * N < ((Zmullp lR) -1) ^2)%Z.

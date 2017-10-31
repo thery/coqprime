@@ -1,6 +1,5 @@
 Require Import MEll.
 
-Set Virtual Machine.
 Open Local Scope positive_scope.
 
 Time Eval native_compute in

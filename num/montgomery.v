@@ -172,6 +172,7 @@ rewrite Zmod_small; nrom; auto with zarith.
 split; auto with zarith.
 change wB with (Zpower_nat 2 31); apply Zpower_nat_lt_compat; auto with zarith.
 rewrite HH3, Z_mod_same; auto with zarith.
+apply Zlt_gt; auto with zarith.
 assert (Hij: (forall i j n, phi i = Zpower_nat 2 n -> phi j < phi i -> 
              phi (i + j) = phi i + phi j)%Z).
 intros i j n Hi Hj.
@@ -218,11 +219,14 @@ Lemma phi_pos n : (0 <= [n])%Z.
 Proof.
 induction n as [ | a n Hrec]; nrom; auto with zarith.
 case (phi_bounded a); intros Ha1 Ha2; auto with zarith.
+apply Z.add_nonneg_nonneg; auto with zarith.
+apply Z.mul_nonneg_nonneg; auto with zarith.
+apply Z.pow_nonneg; auto with zarith.
 Qed.
 
 Lemma num_phi z :  (0 <= z)%Z -> [Z_to_num z] = z.
 Proof.
-generalize z; intros [Hp|p Hp|p Hp]; auto with zarith.
+destruct z as [|p|p]; intros Hp; auto with zarith.
 apply positive_phi.
 contradict Hp; auto with zarith.
 Qed.

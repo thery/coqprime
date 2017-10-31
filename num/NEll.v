@@ -8,7 +8,8 @@
 
 
 Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms DoubleCyclic BigN Cyclic31 Int31.
+Require Import CyclicAxioms Cyclic31 Int31.
+From Bignums Require Import DoubleCyclic BigN.
 Require Import W.
 Require Import Mod_op.
 Require Import ZEll.
@@ -31,7 +32,7 @@ Record ex: Set := mkEx {
   vy:  Z
 }.
 
-Coercion Local Zpos : positive >-> Z.
+Local Coercion Zpos : positive >-> Z.
 
 Record ex_spec (exx: ex): Prop := mkExS {
   n2_div: ~(2 | exx.(vN));

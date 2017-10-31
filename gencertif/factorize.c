@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "gmp.h"
-#include "ecm.h" 
+#include "ecm.h"
 #include "certif.h"
 
 #if  defined (__STDC__)                                 \
