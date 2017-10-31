@@ -635,7 +635,7 @@ void print_lemma(FILE *out, char *name, pre_certif_t p, certif_t lc)
 
   print_lc(out, lc);
   fprintf(out, ").\n");
-  fprintf(out," exact_no_check (refl_equal true).\n");
+  fprintf(out," vm_cast_no_check (refl_equal true).\n");
   fprintf(out,"Qed.\n\n");
 }
 
@@ -649,7 +649,7 @@ void print_prelude(FILE *out)
 
   fprintf(out,"Open Local Scope positive_scope.\n\n");
 
-  fprintf(out,"Set Virtual Machine.\n");
+/*  fprintf(out,"Set Virtual Machine.\n"); */
 }
 
 
@@ -661,7 +661,7 @@ void print_file(char *filename, char *name, pre_certif_t p, certif_t lc)
 
   fprintf(out, "Require Import PocklingtonRefl.\n\n"); 
 
-  fprintf(out,"Set Virtual Machine.\n");
+/*  fprintf(out,"Set Virtual Machine.\n"); */
   
   fprintf(out,"Open Local Scope positive_scope.\n\n");
 

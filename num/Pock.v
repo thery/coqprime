@@ -13,7 +13,8 @@ Require Import ZCAux.
 Require Import LucasLehmer.
 Require Import Pocklington.
 Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms DoubleCyclic BigN Cyclic31 Int31.
+Require Import CyclicAxioms Cyclic31 Int31.
+From Bignums Require Import DoubleCyclic BigN.
 Require Import Pmod.
 Require Import Mod_op.
 Require Import W.

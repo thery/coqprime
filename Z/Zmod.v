@@ -48,8 +48,8 @@ Qed.
 
 Ltac is_ok t :=
   match t with 
-  | (?x mod _ + ?y mod _) mod _ => constr:false
-  | (?x mod _ * (?y mod _)) mod _ => constr:false
+  | (?x mod _ + ?y mod _) mod _ => constr:(false)
+  | (?x mod _ * (?y mod _)) mod _ => constr:(false)
   |  ?x mod _ => x
   end.
  

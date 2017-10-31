@@ -11159,7 +11159,7 @@ void print_trivial_lemma(FILE* out, pock_certif_t c)
     fprintf(out, ") :: ");
   }
   fprintf(out, "(Proof_certif 2 prime2) :: nil)).\n");
-  fprintf(out,"  exact_no_check (refl_equal true).\n");
+  fprintf(out,"  vm_cast_no_check (refl_equal true).\n");
   if (time) fprintf(out,"Time ");
   fprintf(out,"Qed.\n\n");
 }
@@ -11208,9 +11208,7 @@ main (int argc, char *argv[])
 
   out = fopen(filename,"w+");
   fprintf(out, "Require Import PocklingtonRefl.\n\n"); 
- 
-  fprintf(out,"Set Virtual Machine.\n");
-  
+   
   fprintf(out,"Open Local Scope positive_scope.\n\n");
 
   for(i = min; i < max; i++) {

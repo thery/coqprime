@@ -1,6 +1,6 @@
 Require Import PocklingtonRefl.
 
-Set Virtual Machine.
+
 Open Local Scope positive_scope.
 
 (*
@@ -12,7 +12,7 @@ Proof.
          (Proof_certif 19 prime19) ::
          (Proof_certif 2 prime2) ::
           nil)).
- exact_no_check (refl_equal true).
+ vm_cast_no_check (refl_equal true).
 Qed.
 *)
 Lemma prime13524493647665641984723 : prime 13524493647665641984723.
@@ -24,7 +24,7 @@ Proof.
          (Proof_certif 3 prime3) ::
          (Proof_certif 2 prime2) ::
           nil)).
- exact_no_check (refl_equal true).
+ vm_cast_no_check (refl_equal true).
 Qed.
 
 
@@ -209,5 +209,5 @@ apply (Pocklington_refl
 196)
 :: (Proof_certif 142141912093 prime142141912093) :: nil)).
 *)
-exact_no_check (refl_equal true).
+vm_cast_no_check (refl_equal true).
 Time Qed.

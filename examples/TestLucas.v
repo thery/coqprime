@@ -147,5 +147,15 @@ Finished transaction in 506. secs (494.09u,4.65s)
      = 0
 Finished transaction in 572. secs (563.27u,5.45s)
 
+*)
+
+(* More
+Time Eval vm_compute in lucas 9689. 
+Time Eval vm_compute in lucas 9941.
+Time Eval vm_compute in lucas  11213.
+Time Eval vm_compute in lucas  19937.
+Time Eval vm_compute in lucas  21701.
+Time Eval vm_compute in lucas  23209. 
+Time Eval vm_compute in lucas 44497.
 
 *)

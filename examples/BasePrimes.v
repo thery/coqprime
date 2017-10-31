@@ -12,7 +12,7 @@ Require Import ZCAux.
 
 Require Import Pock.
 
-Open Local Scope positive_scope.
+Local Open Scope positive_scope.
 
 Ltac enc t := vm_cast_no_check t.
 
