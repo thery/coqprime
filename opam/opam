@@ -4,9 +4,9 @@ homepage: "http://coqprime.gforge.inria.fr/"
 bug-reports: "http://coqprime.gforge.inria.fr/"
 license: "MIT"
 build: [
-  ["sh" "-c" "cd ./src/Coqprime && ./configure.sh"]
-  ["sh" "-c" "cd ./src/Coqprime && make -j%{jobs}%"]
-  ["sh" "-c" "cd ./src/Coqprime && make install"]
+  ["./configure.sh"]
+  ["make" "-j%{jobs}%"]
+  ["make" "install"]
 ]
 remove: ["rm" "-R" "%{lib}%/coq/user-contrib/Coqprime"]
 depends: [
