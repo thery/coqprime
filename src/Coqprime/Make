@@ -1,11 +1,4 @@
--R Tactic Coqprime
--R N Coqprime
--R List Coqprime
--R Z Coqprime
--R PrimalityTest Coqprime
--R elliptic Coqprime
--R num Coqprime
--R examples Coqprime
+-R . Coqprime
 
 Tactic/Tactic.v
 N/NatAux.v
