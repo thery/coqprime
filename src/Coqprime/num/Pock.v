@@ -23,7 +23,7 @@ Require Export PocklingtonCertificat.
 Require Import NEll.
 Import CyclicAxioms DoubleType DoubleBase List.
 
-Open Scope Z_scope. 
+Open Scope Z_scope.
 
 Section test.
 
@@ -50,13 +50,13 @@ Let pred:= m_op.(pred_mod).
 
 (* [fold_pow_mod a [q1,_;...;qn,_]] b = a ^(q1*...*qn) mod b *)
 (* invariant a mod N = a *)
-Definition fold_pow_mod (a: w) l := 
+Definition fold_pow_mod (a: w) l :=
   fold_left
     (fun a' (qp:positive*positive) =>  pow a' (fst qp))
     l a.
 
-Lemma fold_pow_mod_spec : forall l (a:w), 
-  ([|a|] < [|b|])%Z -> [|fold_pow_mod a l|] = ([|a|]^(mkProd' l) mod [|b|])%Z. 
+Lemma fold_pow_mod_spec : forall l (a:w),
+  ([|a|] < [|b|])%Z -> [|fold_pow_mod a l|] = ([|a|]^(mkProd' l) mod [|b|])%Z.
 intros l; unfold fold_pow_mod; elim l; simpl fold_left; simpl mkProd'; auto; clear l.
 intros a H; rewrite Zpower_1_r; rewrite Zmod_small; auto with zarith.
 case (ZnZ.spec_to_Z a); auto with zarith.
@@ -66,7 +66,7 @@ rewrite Rec.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
 rewrite <- Zpower_mod.
 rewrite times_Zmult; rewrite Zpower_mult; auto with zarith.
-apply Zle_lt_trans with (2 := H); auto with zarith.
+apply Z.le_lt_trans with (2 := H); auto with zarith.
 rewrite Zmod_small; auto with zarith.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
 match goal with |- context[(?X mod ?Y)%Z] =>
@@ -79,7 +79,7 @@ Qed.
 Fixpoint all_pow_mod (prod a: w) (l:dec_prime) {struct l}: w*w :=
   match l with
   | nil => (prod,a)
-  | (q,_) :: l => 
+  | (q,_) :: l =>
     let m := pred (fold_pow_mod a l) in
     all_pow_mod (times prod m) (pow a q) l
   end.
@@ -98,7 +98,7 @@ rewrite Rec; auto with zarith.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
 rewrite <- Zpower_mod.
 rewrite times_Zmult; rewrite Zpower_mult; auto with zarith.
-apply Zle_lt_trans with (2 := H); auto with zarith.
+apply Z.le_lt_trans with (2 := H); auto with zarith.
 rewrite Zmod_small; auto with zarith.
 rewrite m_op_spec.(power_mod_spec) with (t := [|a|]); auto with zarith.
 match goal with |- context[(?X mod ?Y)%Z] =>
@@ -110,7 +110,7 @@ Qed.
 Lemma fold_aux : forall a N l prod,
   (fold_left
      (fun (r : Z) (k : positive * positive) =>
-      r * (a ^(N / fst k) - 1) mod [|b|]) l (prod mod [|b|]) mod [|b|] = 
+      r * (a ^(N / fst k) - 1) mod [|b|]) l (prod mod [|b|]) mod [|b|] =
   fold_left
      (fun (r : Z) (k : positive * positive) =>
       r * (a^(N / fst k) - 1)) l prod mod [|b|])%Z.
@@ -126,9 +126,9 @@ Lemma fst_all_pow_mod :
  forall l (a:w) (R:positive) (prod A :w),
   [|prod|] = ([|prod|] mod [|b|])%Z ->
   [|A|] = ([|a|]^R mod [|b|])%Z ->
-  [|fst (all_pow_mod prod A l)|] = 
+  [|fst (all_pow_mod prod A l)|] =
     ((fold_left
-      (fun r (k:positive*positive) => 
+      (fun r (k:positive*positive) =>
         (r * ([|a|] ^ (R* mkProd' l / (fst k)) - 1))) l [|prod|]) mod [|b|])%Z.
 intros l; elim l; simpl all_pow_mod; simpl fold_left; simpl fst;
   auto with zarith; clear l.
@@ -177,7 +177,7 @@ eq_tac; auto.
 rewrite Zmod_mod; auto.
 repeat rewrite (fun x => Zminus_mod x 1); auto with zarith.
 eq_tac; auto; eq_tac; auto.
-rewrite Zmult_comm; rewrite <- Zpower_mod; auto with zmisc. 
+rewrite Zmult_comm; rewrite <- Zpower_mod; auto with zmisc.
 rewrite Zpower_mult; auto with zarith.
 rewrite Zmod_mod; auto with zarith.
 rewrite Zmod_small; auto.
@@ -201,8 +201,8 @@ Fixpoint pow_mod_pred (a:w) (l:dec_prime) {struct l} : w :=
   | nil => a
   | (q, p)::l =>
     if (p ?= 1) then pow_mod_pred a l
-    else 
-      let a' := iter_pos _ (fun x => pow x q) a (Ppred p) in
+    else
+      let a' := iter_pos _ (fun x => pow x q) a (Pos.pred p) in
       pow_mod_pred a' l
   end.
 
@@ -213,7 +213,7 @@ intros p1 Rec a Ha.
 rewrite(fun x => m_op_spec.(power_mod_spec) x [|x|]);
   auto with zarith.
 repeat rewrite Rec; auto with zarith.
-match goal with |- (Zpower_pos ?X ?Y mod ?Z = _)%Z => 
+match goal with |- (Zpower_pos ?X ?Y mod ?Z = _)%Z =>
   apply trans_equal with (X ^ Y mod Z)%Z; auto
 end.
 repeat rewrite <- Zpower_mod; auto with zmisc.
@@ -250,7 +250,7 @@ Qed.
 
 Lemma pow_mod_pred_spec : forall l a,
   ([|a|] = [|a|] mod [|b|] ->
-  [|pow_mod_pred a l|] = [|a|]^(mkProd_pred l) mod [|b|])%Z. 
+  [|pow_mod_pred a l|] = [|a|]^(mkProd_pred l) mod [|b|])%Z.
 intros l; elim l; simpl pow_mod_pred; simpl mkProd_pred; clear l.
 intros; rewrite Zpower_1_r; auto with zarith.
 intros (p1,q1) l Rec a H; simpl snd; simpl fst.
@@ -271,9 +271,9 @@ End test.
 
 Require Import Bits.
 
-Definition test_pock N a dec sqrt := 
+Definition test_pock N a dec sqrt :=
   if (2 ?< N) then
-    let Nm1 := Ppred N in
+    let Nm1 := Pos.pred N in
     let F1 := mkProd dec in
     match (Nm1 / F1)%P with
     | (Npos R1, N0) =>
@@ -290,31 +290,31 @@ Definition test_pock N a dec sqrt :=
               let w1 := znz_of_Z op 1 in
               let mod_op := make_mod_op op wN in
               let pow := mod_op.(power_mod) in
-              let ttimes := mod_op.(mul_mod) in 
+              let ttimes := mod_op.(mul_mod) in
               let pred:= mod_op.(pred_mod) in
               let gcd:= ZnZ.gcd in
               let A := pow_mod_pred _ mod_op (pow wa R1) dec in
               match all_pow_mod _ mod_op w1 A dec with
               | (p, aNm1) =>
-                match ZnZ.to_Z aNm1 with 
-                  (Zpos xH) => 
-                   match ZnZ.to_Z (gcd p wN) with 
-                   (Zpos xH) => 
-                    if check_s_r s r sqrt then 
+                match ZnZ.to_Z aNm1 with
+                  (Zpos xH) =>
+                   match ZnZ.to_Z (gcd p wN) with
+                   (Zpos xH) =>
+                    if check_s_r s r sqrt then
 		      (N ?< (times ((times ((xO F1)+r+1) F1) + r) F1) + 1)
                     else false
                    | _ => false
                    end
                  | _ => false
-                end             
+                end
               end else false
             | _ => false
             end
 	  else false
-        else false 
+        else false
       else false
     | _=> false
-    end      
+    end
   else false.
 
 Lemma test_pock_correct : forall N a dec sqrt,
@@ -329,8 +329,8 @@ end.
 match goal with H: (?X ?< ?Y) = true |- _ =>
   generalize (is_lt_spec X Y); rewrite H; clear H; intros H
 end.
-generalize (div_eucl_spec (Ppred N) (mkProd dec));
- destruct ((Ppred N) / (mkProd dec))%P as (R1,n).
+generalize (div_eucl_spec (Pos.pred N) (mkProd dec));
+ destruct ((Pos.pred N) / (mkProd dec))%P as (R1,n).
 simpl fst; simpl snd; intros (H1, H2).
 destruct R1 as [ |R1].
 intros; discriminate.
@@ -374,7 +374,7 @@ set (w_op := cmk_op bb).
 assert (op_spec: ZnZ.Specs w_op).
 unfold bb, w_op; apply cmk_spec; auto.
 assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
-  apply Zlt_le_trans with (1 := plength_correct N).
+  apply Z.lt_le_trans with (1 := plength_correct N).
   unfold w_op, DoubleType.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
@@ -399,15 +399,15 @@ rewrite Zpos_mult.
 rewrite <- Zmult_assoc; rewrite mkProd_pred_mkProd; auto with zarith.
 simpl in H1; rewrite Zpos_mult in H1; rewrite <- H1; rewrite Ppred_Zminus;
   auto with zarith.
-assert (m_spec: mod_spec w_op (znz_of_Z w_op N) 
+assert (m_spec: mod_spec w_op (znz_of_Z w_op N)
                   (make_mod_op w_op (znz_of_Z w_op N))).
 apply make_mod_spec; auto with zarith.
 match goal with |- context[all_pow_mod ?x ?y ?z ?t ?u] =>
-  generalize (fst_all_pow_mod x w_op op_spec _ F3 _ m_spec 
+  generalize (fst_all_pow_mod x w_op op_spec _ F3 _ m_spec
                u (znz_of_Z w_op a) (R1*mkProd_pred dec) z t);
   generalize (snd_all_pow_mod x w_op op_spec _ F3 _ m_spec u z t);
   fold bb w_op;
-  case (all_pow_mod x y z t u); simpl fst; simpl snd 
+  case (all_pow_mod x y z t u); simpl fst; simpl snd
 end.
 intros prod aNm1; intros H5 H6.
 case_eq (ZnZ.to_Z aNm1).
@@ -560,7 +560,7 @@ intros a1 l1 Rec a2 b [V|V] V1 V2; subst; auto.
 apply foldtmp0; auto.
 apply Rec with (b := b); auto with zarith.
 match goal with |- context [fold_left ?f _ _] =>
- apply (foldtmp _ _ f (fun k => Zdivide (a ^ ((N - 1) / p) - 1) k)) 
+ apply (foldtmp _ _ f (fun k => Z.divide (a ^ ((N - 1) / p) - 1) k))
    with (b := (p, p1)); auto with zarith
 end.
 rewrite <- HH2.
@@ -574,9 +574,9 @@ apply check_s_r_correct with sqrt; auto.
 Qed.
 
 (* Simple version of pocklington for primo *)
-Definition test_spock N a dec := 
+Definition test_spock N a dec :=
   if (2 ?< N) then
-    let Nm1 := Ppred N in
+    let Nm1 := Pos.pred N in
     let F1 := mkProd dec in
     match (Nm1 / F1)%P with
     | (Npos R1, N0) =>
@@ -589,25 +589,25 @@ Definition test_spock N a dec :=
               let w1 := znz_of_Z op 1 in
               let mod_op := make_mod_op op wN in
               let pow := mod_op.(power_mod) in
-              let ttimes := mod_op.(mul_mod) in 
+              let ttimes := mod_op.(mul_mod) in
               let pred:= mod_op.(pred_mod) in
               let gcd:= ZnZ.gcd in
               let A := pow_mod_pred _ mod_op (pow wa R1) dec in
               match all_pow_mod _ mod_op w1 A dec with
               | (p, aNm1) =>
-                match ZnZ.to_Z aNm1 with 
-                  (Zpos xH) => 
-                   match ZnZ.to_Z (gcd p wN) with 
+                match ZnZ.to_Z aNm1 with
+                  (Zpos xH) =>
+                   match ZnZ.to_Z (gcd p wN) with
                    (Zpos xH) => true
                    | _ => false
                    end
                  | _ => false
-                end             
+                end
               end else false
            else false
          else false
     | _=> false
-    end      
+    end
   else false.
 
 Lemma test_spock_correct : forall N a dec,
@@ -622,8 +622,8 @@ end.
 match goal with H: (?X ?< ?Y) = true |- _ =>
   generalize (is_lt_spec X Y); rewrite H; clear H; intros H
 end.
-generalize (div_eucl_spec (Ppred N) (mkProd dec));
- destruct ((Ppred N) / (mkProd dec))%P as (R1,n).
+generalize (div_eucl_spec (Pos.pred N) (mkProd dec));
+ destruct ((Pos.pred N) / (mkProd dec))%P as (R1,n).
 simpl fst; simpl snd; intros (H1, H2).
 destruct R1 as [ |R1].
 intros; discriminate.
@@ -642,7 +642,7 @@ set (w_op := cmk_op bb).
 assert (op_spec: znz_spec w_op).
 unfold bb, w_op; apply cmk_spec; auto.
 assert (F0: N < Basic_type.base (znz_digits w_op)).
-  apply Zlt_le_trans with (1 := plength_correct N).
+  apply Z.lt_le_trans with (1 := plength_correct N).
   unfold w_op, Basic_type.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
@@ -671,7 +671,7 @@ match goal with H: (?X ?< ?Y) = true |- _ =>
   generalize (is_lt_spec X Y); rewrite H; clear H; intros H
 end.
 assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
-  apply Zlt_le_trans with (1 := plength_correct N).
+  apply Z.lt_le_trans with (1 := plength_correct N).
   unfold w_op, DoubleType.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
@@ -696,15 +696,15 @@ rewrite Zpos_mult.
 rewrite <- Zmult_assoc; rewrite mkProd_pred_mkProd; auto with zarith.
 simpl in H1; rewrite Zpos_mult in H1; rewrite <- H1; rewrite Ppred_Zminus;
   auto with zarith.
-assert (m_spec: mod_spec w_op (znz_of_Z w_op N) 
+assert (m_spec: mod_spec w_op (znz_of_Z w_op N)
                   (make_mod_op w_op (znz_of_Z w_op N))).
 apply make_mod_spec; auto with zarith.
 match goal with |- context[all_pow_mod ?x ?y ?z ?t ?u] =>
-  generalize (fst_all_pow_mod x w_op op_spec _ F3 _ m_spec 
+  generalize (fst_all_pow_mod x w_op op_spec _ F3 _ m_spec
                u (znz_of_Z w_op a) (R1*mkProd_pred dec) z t);
   generalize (snd_all_pow_mod x w_op op_spec _ F3 _ m_spec u z t);
   fold bb w_op;
-  case (all_pow_mod x y z t u); simpl fst; simpl snd 
+  case (all_pow_mod x y z t u); simpl fst; simpl snd
 end.
 2: intros; discriminate.
 intros prod aNm1; intros H5 H6.
@@ -838,7 +838,7 @@ intros a1 l1 Rec a2 b [V|V] V1 V2; subst; auto.
 apply foldtmp0; auto.
 apply Rec with (b := b); auto with zarith.
 match goal with |- context [fold_left ?f _ _] =>
- apply (foldtmp _ _ f (fun k => Zdivide (a ^ ((N - 1) / p) - 1) k)) 
+ apply (foldtmp _ _ f (fun k => Z.divide (a ^ ((N - 1) / p) - 1) k))
    with (b := (p, p1)); auto with zarith
 end.
 intros; discriminate.
@@ -851,10 +851,10 @@ Fixpoint test_Certif (lc : Certif) : bool :=
   | (Lucas_certif n p) :: lc =>
      let xx := test_Certif lc in
      if xx then
-     let yy := gt2 p in 
+     let yy := gt2 p in
      if yy then
-       match p with 
-         Zpos p1 => 
+       match p with
+         Zpos p1 =>
            let zz := Mp p in
            match zz with
           | Zpos n' =>
@@ -869,11 +869,11 @@ Fixpoint test_Certif (lc : Certif) : bool :=
            end
          | _ => false
        end
-    else false 
+    else false
     else false
   | (Pock_certif n a dec sqrt) :: lc =>
-    let xx := test_pock n a dec sqrt in 
-    if xx then 
+    let xx := test_pock n a dec sqrt in
+    if xx then
       let yy := all_in lc dec in
       (if yy then test_Certif lc else false)
     else false
@@ -886,13 +886,13 @@ Fixpoint test_Certif (lc : Certif) : bool :=
   | (Ell_certif n ss l a b x y) :: lc =>
     let xx := ell_test n ss l a b x y in
     if xx then
-     let yy :=  all_in lc l in 
+     let yy :=  all_in lc l in
      if yy then test_Certif lc else false
     else false
   end.
 
-Lemma test_Certif_In_Prime : 
-  forall lc, test_Certif lc = true -> 
+Lemma test_Certif_In_Prime :
+  forall lc, test_Certif lc = true ->
    forall c, In c lc -> prime (nprim c).
 intros lc; elim lc; simpl; auto.
 intros _ c H; case H.
@@ -957,9 +957,8 @@ intros; discriminate.
 intros; discriminate.
 Qed.
 
-Lemma Pocklington_refl : 
+Lemma Pocklington_refl :
   forall c lc, test_Certif (c::lc) = true -> prime (nprim c).
 Proof.
  intros c lc Heq;apply test_Certif_In_Prime with (c::lc);trivial;simpl;auto.
 Qed.
-

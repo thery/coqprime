@@ -18,7 +18,7 @@ Require Import LucasLehmer.
 Require Import Bits.
 Import CyclicAxioms DoubleType DoubleBase.
 
-Open Scope Z_scope. 
+Open Scope Z_scope.
 
 Section test.
 
@@ -278,13 +278,13 @@ apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_0_r in F2; auto with zarith.
 case_eq (2 ^ (Zpos p) - 1); simpl ZnZ.to_Z.
 intros HH; contradict F1; rewrite HH; auto with zarith.
-2: intros p1 HH; contradict F1; rewrite HH; 
+2: intros p1 HH; contradict F1; rewrite HH;
   apply Zle_not_lt; red; simpl; intros; discriminate.
 intros p1 Hp1; apply (@ZnZ.of_pos_correct _ (op p)); auto.
 apply cmk_spec.
 rewrite <- Hp1.
 unfold base.
-apply Zlt_le_trans with (2 ^ (Zpos p)); auto with zarith.
+apply Z.lt_le_trans with (2 ^ (Zpos p)); auto with zarith.
 apply Zpower_le_monotone; auto with zarith.
 Qed.
 
@@ -302,7 +302,7 @@ rewrite Zpower_1_r in F2; auto with zarith.
 unfold zp.
 apply ZnZ.of_Z_correct.
 split; auto with zarith.
-apply Zle_lt_trans with (1 := lucas_f1 Hp); auto with zarith.
+apply Z.le_lt_trans with (1 := lucas_f1 Hp); auto with zarith.
 unfold base; apply Zpower2_lt_lin; auto with zarith.
 Qed.
 
@@ -394,17 +394,17 @@ case z3; simpl; auto with zarith.
 rewrite ZnZ.spec_0; auto.
 intros p3 [H3 H4].
 apply ZnZ.of_pos_correct.
-apply Zlt_le_trans with (1 := H4).
+apply Z.lt_le_trans with (1 := H4).
 replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1).
 assert (2 ^ Zpos p <= base (ZnZ.digits o)); auto with zarith.
 apply Zpower_le_monotone; auto with zarith.
 assert (F := lucas_f1 H); auto with zarith.
 rewrite <-(lucas_f2 H); auto.
-intros p3 [[]]; unfold Zle; simpl; auto.
+intros p3 [[]]; unfold Z.le; simpl; auto.
 unfold lucastest_step.
-rewrite Pos.iter_add; auto. 
+rewrite Pos.iter_add; auto.
 change (@ZnZ.to_Z _ o (lucastest_step o m (lucastest_step o m (znz_of_Z o z) p1) p2) = z2).
-assert (F :  ZnZ.to_Z (lucastest_step  o m (znz_of_Z o z) p1) = 
+assert (F :  ZnZ.to_Z (lucastest_step  o m (znz_of_Z o z) p1) =
             ZnZ.to_Z (znz_of_Z o z1)).
 unfold lucas_step in H1; fold o in H1; fold m in H1; rewrite H1.
 rewrite F1; auto.
@@ -449,5 +449,3 @@ assert (8 <= 2 ^Zpos p); auto with zarith.
 replace 8 with (2 ^ 3); auto with zarith.
 apply Zpow_facts.Zpower_le_monotone; auto with zarith.
 Qed.
-
-

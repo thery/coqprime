@@ -7,12 +7,12 @@
 (*************************************************************)
 
 (**********************************************************************
-    PGroup.v                        
-                                                                     
+    PGroup.v
+
     Build the group of pairs modulo needed for the theorem of
       lucas lehmer
-                                                                 
-    Definition: PGroup              
+
+    Definition: PGroup
  **********************************************************************)
 Require Import ZArith.
 Require Import Znumtheory.
@@ -29,26 +29,26 @@ Open Scope Z_scope.
 Definition base := 3.
 
 
-(************************************** 
+(**************************************
   Equality is decidable on pairs
  **************************************)
 
 Definition P_dec: forall p q: Z * Z, {p = q} + {p <> q}.
-intros p1 q1; case p1; case q1; intros z t x y; case (Z_eq_dec x z); intros H1.
-case (Z_eq_dec y t); intros H2.
+intros p1 q1; case p1; case q1; intros z t x y; case (Z.eq_dec x z); intros H1.
+case (Z.eq_dec y t); intros H2.
 left; eq_tac; auto.
 right; contradict H2; injection H2; auto.
 right; contradict H1; injection H1; auto.
 Defined.
 
 
-(************************************** 
+(**************************************
   Addition of two pairs
  **************************************)
 
 Definition pplus (p q: Z * Z) := let (x ,y) := p in let (z,t) := q in (x + z, y + t).
 
-(************************************** 
+(**************************************
   Properties of addition
  **************************************)
 
@@ -62,13 +62,13 @@ intros p q; case p; case q; intros q1 q2 p1 p2; unfold pplus.
 eq_tac; ring.
 Qed.
 
-(************************************** 
+(**************************************
   Multiplication of two pairs
  **************************************)
 
 Definition pmult (p q: Z * Z) := let (x ,y) := p in let (z,t) := q in (x * z + base * y * t, x * t + y * z).
 
-(************************************** 
+(**************************************
   Properties of multiplication
  **************************************)
 
@@ -109,7 +109,7 @@ intros p q r; case p; case q; case r; intros r1 r2 q1 q2 p1 p2; unfold pplus, pm
 eq_tac; ring.
 Qed.
 
-(************************************** 
+(**************************************
   In this section we create the group PGroup of inversible elements {(p, q) | 0 <= p < m /\ 0 <= q < m}
  **************************************)
 Section Mod.
@@ -118,14 +118,14 @@ Variable m : Z.
 
 Hypothesis m_pos: 1 < m.
 
-(************************************** 
+(**************************************
   mkLine creates {(a, p) | 0 <= p < n}
  **************************************)
 
 Fixpoint mkLine (a: Z) (n: nat) {struct n} : list (Z * Z) :=
-  (a, Z_of_nat n) :: match n with O => nil | (S n1) => mkLine a n1 end. 
+  (a, Z_of_nat n) :: match n with O => nil | (S n1) => mkLine a n1 end.
 
-(************************************** 
+(**************************************
   Some properties of mkLine
  **************************************)
 
@@ -165,14 +165,14 @@ intros x ((H2, H3), H4); injection H4.
 intros H5; subst; auto with zarith.
 Qed.
 
-(************************************** 
+(**************************************
   mkRect creates the list  {(p, q) | 0 <= p < n /\ 0 <= q < m}
  **************************************)
 
 Fixpoint mkRect (n m: nat) {struct n} : list (Z * Z) :=
-  (mkLine (Z_of_nat n) m) ++ match n with O => nil | (S n1) => mkRect n1 m end. 
+  (mkLine (Z_of_nat n) m) ++ match n with O => nil | (S n1) => mkRect n1 m end.
 
-(************************************** 
+(**************************************
   Some properties of mkRect
  **************************************)
 
@@ -221,29 +221,29 @@ change (~ Z_of_nat (S n1) <= Z_of_nat  n1).
 rewrite inj_S; auto with zarith.
 Qed.
 
-(************************************** 
+(**************************************
   mL is the list  {(p, q) | 0 <= p < m-1 /\ 0 <= q < m - 1}
  **************************************)
-Definition mL := mkRect (Zabs_nat (m - 1)) (Zabs_nat (m -1)).
+Definition mL := mkRect (Z.abs_nat (m - 1)) (Z.abs_nat (m -1)).
 
-(************************************** 
+(**************************************
   Some properties of mL
  **************************************)
 
-Theorem mL_length : length mL = Zabs_nat (m * m).
+Theorem mL_length : length mL = Z.abs_nat (m * m).
 unfold mL; rewrite mkRect_length; simpl; apply inj_eq_rev.
-repeat (rewrite inj_mult || rewrite inj_plus || rewrite inj_Zabs_nat || rewrite Zabs_eq); simpl; auto with zarith.
+repeat (rewrite inj_mult || rewrite inj_plus || rewrite inj_Zabs_nat || rewrite Z.abs_eq); simpl; auto with zarith.
 eq_tac; auto with zarith.
 Qed.
 
 Theorem mL_in: forall p q, 0 <= p < m -> 0 <= q <  m -> (In (p, q) mL).
-intros p q (H1, H2) (H3, H4); unfold mL; apply mkRect_in; rewrite inj_Zabs_nat; 
-  rewrite Zabs_eq; auto with zarith.
+intros p q (H1, H2) (H3, H4); unfold mL; apply mkRect_in; rewrite inj_Zabs_nat;
+  rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem in_mL: forall p, In p mL->  exists p1, exists  p2, 0 <= p1 < m  /\ 0 <= p2 < m  /\ p = (p1, p2).
 unfold mL; intros p H1; case in_mkRect with (1 := H1).
-repeat (rewrite inj_Zabs_nat || rewrite Zabs_eq); auto with zarith.
+repeat (rewrite inj_Zabs_nat || rewrite Z.abs_eq); auto with zarith.
 intros p1 (p2, ((H2, H3), ((H4, H5), H6))); exists p1; exists p2; repeat split; auto with zarith.
 Qed.
 
@@ -251,13 +251,13 @@ Theorem mL_ulist:  ulist mL.
 unfold mL; apply mkRect_ulist; auto.
 Qed.
 
-(************************************** 
+(**************************************
   We define zpmult the multiplication of pairs module m
  **************************************)
 
 Definition zpmult (p q: Z * Z) := let (x ,y) := pmult p q in (Zmod x m, Zmod y m).
 
-(************************************** 
+(**************************************
   Some properties of zpmult
  **************************************)
 
@@ -329,8 +329,8 @@ Theorem zpmult_comm: forall p q, zpmult p q = zpmult q p.
 intros p q; unfold zpmult; rewrite pmult_comm; auto.
 Qed.
 
-(************************************** 
-   We are now ready to build our group 
+(**************************************
+   We are now ready to build our group
  **************************************)
 
 Definition PGroup : (FGroup zpmult).

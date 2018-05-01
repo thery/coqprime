@@ -24,18 +24,18 @@ Proof. intros p;rewrite Zpos_xI;ring. Qed.
 Lemma Zpos_xO_add : forall p, Zpos (xO p) = Zpos p + Zpos p.
 Proof. intros p;rewrite Zpos_xO;ring. Qed.
 
-Lemma Psucc_Zplus : forall p, Zpos (Psucc p) = p + 1.
-Proof. intros p;rewrite Zpos_succ_morphism;unfold Zsucc;trivial. Qed.
+Lemma Psucc_Zplus : forall p, Zpos (Pos.succ p) = p + 1.
+Proof. intros p;rewrite Zpos_succ_morphism; unfold Z.succ; trivial. Qed.
 
-Hint Rewrite Zpos_xI_add Zpos_xO_add Pplus_carry_spec 
+Hint Rewrite Zpos_xI_add Zpos_xO_add Pplus_carry_spec
  Psucc_Zplus Zpos_plus : zmisc.
 
 Lemma Zlt_0_pos : forall p, 0 < Zpos p.
-Proof. unfold Zlt;trivial. Qed.
-  
+Proof. unfold Z.lt; trivial. Qed.
 
-Lemma Pminus_mask_carry_spec : forall p q, 
-  Pminus_mask_carry p q = Pminus_mask p (Psucc q).
+
+Lemma Pminus_mask_carry_spec : forall p q,
+  Pminus_mask_carry p q = Pminus_mask p (Pos.succ q).
 Proof.
  intros p q;generalize q p;clear q p.
  induction q;destruct p;simpl;try rewrite IHq;trivial.
@@ -48,17 +48,17 @@ Ltac zsimpl := autorewrite with zmisc.
 Ltac CaseEq t := generalize (refl_equal t);pattern t at -1;case t.
 Ltac generalizeclear H := generalize H;clear H.
 
-Lemma Pminus_mask_spec : 
-   forall p q, 
+Lemma Pminus_mask_spec :
+   forall p q,
     match Pminus_mask p q with
     | IsNul    => Zpos p =  Zpos q
-    | IsPos k => Zpos p = q + k 
+    | IsPos k => Zpos p = q + k
     | IsNeq   => p < q
     end.
 Proof with zsimpl;auto with zarith.
  induction p;destruct q;simpl;zsimpl;
-  match goal with 
-  | [|- context [(Pminus_mask ?p1 ?q1)]] => 
+  match goal with
+  | [|- context [(Pminus_mask ?p1 ?q1)]] =>
     assert (H1 := IHp q1);destruct (Pminus_mask p1 q1)
   | _ => idtac
   end;simpl ...
@@ -69,7 +69,7 @@ Proof with zsimpl;auto with zarith.
  assert (H:= Zlt_0_pos q) ...   assert (H:= Zlt_0_pos q) ...
 Qed.
 
-Definition PminusN x y := 
+Definition PminusN x y :=
   match Pminus_mask x y with
   | IsPos k => Npos k
   | _ => N0
@@ -84,7 +84,7 @@ Proof.
  elimtype False;omega.
 Qed.
 
-Lemma Ppred_Zminus : forall p, 1< Zpos p ->  (p-1)%Z = Ppred p.
+Lemma Ppred_Zminus : forall p, 1< Zpos p ->  (p-1)%Z = Pos.pred p.
 Proof. destruct p;simpl;trivial. intros;elimtype False;omega. Qed.
 
 
@@ -100,9 +100,9 @@ Definition is_lt (n m : positive) :=
   end.
 Infix "?<" := is_lt (at level 70, no associativity) : P_scope.
 
-Lemma is_lt_spec : forall n m, if n ?< m then (n < m)%Z else (m <= n)%Z. 
+Lemma is_lt_spec : forall n m, if n ?< m then (n < m)%Z else (m <= n)%Z.
 Proof.
-intros n m; unfold is_lt, Zlt, Zle, Zcompare.
+intros n m; unfold is_lt, Z.lt , Z.le, Z.compare.
 rewrite Pos.compare_antisym.
 case (m ?= n); simpl; auto; intros HH; discriminate HH.
 Qed.
@@ -113,7 +113,7 @@ Definition is_eq a b :=
   | _ => false
   end.
 Infix "?=" := is_eq (at level 70, no associativity) : P_scope.
- 
+
 Lemma is_eq_refl : forall n, n ?= n = true.
 Proof. intros n;unfold is_eq;rewrite Pos.compare_refl;trivial. Qed.
 
@@ -123,14 +123,14 @@ Proof.
 destruct (n ?= m)%positive;trivial;try discriminate.
 Qed.
 
-Lemma is_eq_spec_pos : forall n m, if n ?= m then  n = m else  m <> n. 
+Lemma is_eq_spec_pos : forall n m, if n ?= m then  n = m else  m <> n.
 Proof.
  intros n m; CaseEq (n ?= m);intro H.
  rewrite (is_eq_eq _ _ H);trivial.
  intro H1;rewrite H1 in H;rewrite is_eq_refl in H;discriminate H.
 Qed.
 
-Lemma is_eq_spec : forall n m, if n ?= m then Zpos n = m else Zpos m <> n. 
+Lemma is_eq_spec : forall n m, if n ?= m then Zpos n = m else Zpos m <> n.
 Proof.
  intros n m; CaseEq (n ?= m);intro H.
  rewrite (is_eq_eq _ _ H);trivial.
@@ -145,8 +145,8 @@ Definition is_Eq a b :=
   | _, _ => false
   end.
 
-Lemma is_Eq_spec : 
- forall n m, if is_Eq n m then Z_of_N n = m else Z_of_N m <> n. 
+Lemma is_Eq_spec :
+ forall n m, if is_Eq n m then Z_of_N n = m else Z_of_N m <> n.
 Proof.
  destruct n;destruct m;simpl;trivial;try (intro;discriminate).
  apply is_eq_spec.

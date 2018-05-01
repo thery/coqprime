@@ -21,7 +21,7 @@ Set Implicit Arguments.
 
 Open Scope Z_scope.
 
-Section Nell.  
+Section Nell.
 
  Variable N: Z.
  Variable (A B: Z).
@@ -105,14 +105,14 @@ Section Nell.
  Proof.
  intros n Hn; exists 1%Z; rewrite Zmult_1_r;
    apply Zmod_small; split; auto with zarith.
- Qed. 
+ Qed.
 
 
  Notation "[ x ]" := (inversible N x).
 
  Lemma inversible_0: ~[0].
  Proof.
- intros HH; inversion_clear HH as [xz H1]. 
+ intros HH; inversion_clear HH as [xz H1].
  rewrite Zmod_small in H1; auto with zarith.
  Qed.
 
@@ -151,8 +151,8 @@ Section Nell.
  Qed.
 
  Ltac itac :=
-  match goal with 
-   H: inversible _ (_ ** _) |- _ => 
+  match goal with
+   H: inversible _ (_ ** _) |- _ =>
         case (inversible_mult_inv _ _ H); clear H;
          let H1 := fresh "NI" in
          let H2 := fresh "NI" in intros H1 H2
@@ -189,7 +189,7 @@ Section Nell.
  intros x1 y1 z1; case y; auto.
    intros H; inversion_clear H.
    repeat split; auto; try constructor; repeat itac.
- intros x2 y2 z2; case Zeq_bool. 
+ intros x2 y2 z2; case Zeq_bool.
  case Zeq_bool.
  case Zeq_bool.
  intros H; inversion_clear H; auto.
@@ -203,7 +203,7 @@ Section Nell.
  Qed.
 
 
- Definition nopp p := 
+ Definition nopp p :=
    match p with nzero => p | (ntriple x1 y1 z1) => (ntriple x1 (-- y1) z1) end.
 
  Fixpoint scalb (sc: Z) (b:bool) (a: nelt) (p: positive) {struct p}:
@@ -211,14 +211,14 @@ Section Nell.
    match p with
      xH => if b then ndouble sc a else (a,sc)
    | xO p1 => let (a1, sc1) := scalb sc false a p1 in
-              if b then 
+              if b then
                 let (a2, sc2) := ndouble sc1 a1 in
                 nadd sc2 a a2
               else ndouble sc1 a1
    | xI p1 => let (a1, sc1) := scalb sc true a p1 in
               if b then  ndouble sc1 a1
               else
-              let (a2, sc2) := ndouble sc1 a1 in 
+              let (a2, sc2) := ndouble sc1 a1 in
               nadd sc2 (nopp a) a2
    end.
 
@@ -231,7 +231,7 @@ Section Nell.
  assert (F2: [1]).
    apply inversible_1; auto with zarith.
  intros b sc a p0; generalize sc b a; elim p0; simpl; auto;
-    clear sc b a p0. 
+    clear sc b a p0.
  intros p0 Hrec sc b a.
    generalize (Hrec sc true a).
    case scalb.
@@ -270,7 +270,7 @@ Section Nell.
  Qed.
 
   Definition scal_list sc a l :=
-   List.fold_left 
+   List.fold_left
   (fun (asc: nelt * Z) p1 => let (a,sc) := asc in scal sc a p1) l (a,sc).
 
  Lemma nInversible_scal_list: forall sc a l,
@@ -279,9 +279,9 @@ Section Nell.
  assert (F1 := N_lt_2).
  assert (F2: [1]).
    apply inversible_1; auto with zarith.
- intros sc a l; generalize sc a; unfold scal; 
+ intros sc a l; generalize sc a; unfold scal;
    elim l; simpl; auto;
-    clear sc a l. 
+    clear sc a l.
   intros sc a; unfold scal_list; simpl.
     intros HH; inversion_clear HH; split; auto;
       try constructor; repeat itac; auto.
@@ -293,7 +293,7 @@ Section Nell.
    case (Hrec _ _ H2).
    intros H3 H4; apply H1; auto.
      inversion_clear H3; constructor; repeat itac; auto.
- Qed.  
+ Qed.
 
 
  Definition Zmull l := List.fold_left Pmult l 1%positive.
@@ -325,9 +325,9 @@ Section Nell.
  assert (F1 := N_lt_2).
  assert (F2: [1]).
    apply inversible_1; auto with zarith.
- intros sc a l; generalize sc a; 
+ intros sc a l; generalize sc a;
    elim l; simpl; auto;
-    clear sc a l. 
+    clear sc a l.
   intros sc a; unfold scal_list; simpl.
     intros HH; inversion_clear HH; split; auto;
       try constructor; repeat itac; auto.
@@ -371,14 +371,14 @@ Local Coercion Zpos : positive >-> Z.
  red; simpl; auto.
  Qed.
 
- Definition Zmullp l := 
+ Definition Zmullp l :=
     List.fold_left (fun y x => (Pmult (Ppow (fst x) (snd x)) y)) l 1%positive.
 
 
- Lemma Zmullp_cons: forall a l, 
+ Lemma Zmullp_cons: forall a l,
     Zmullp (List.cons a l) = ((Ppow (fst a) (snd a)) * (Zmullp l))%positive.
  Proof.
-  
+
  intros a l.
  assert (F1:= Pmult_assoc).
  assert (F2:= Pmult_comm).
@@ -399,8 +399,8 @@ Local Coercion Zpos : positive >-> Z.
  | List.cons (a, xH) l1 =>
               let (v, l2) := psplit l1 in (v, (List.cons a l2))
  | List.cons (a, n) l1 =>
-              let (v, l2) := psplit l1 in 
-             (Pmult (Ppow a (Ppred n)) v, (List.cons a l2))
+              let (v, l2) := psplit l1 in
+             (Pmult (Ppow a (Pos.pred n)) v, (List.cons a l2))
  end.
 
  Lemma psplit_correct: forall l,
@@ -418,7 +418,7 @@ Local Coercion Zpos : positive >-> Z.
        simpl Ppow.
        symmetry; rewrite <- F1; rewrite (F2 a).
        rewrite (F2 a); repeat rewrite F1; auto.
-     intros n1 l1; set (u := Ppred (xO n1));
+     intros n1 l1; set (u := Pos.pred (xO n1));
        case_eq (psplit l1); simpl fst; simpl snd.
        intros p1 l2 Hp1 H1.
        rewrite Zmullp_cons; simpl fst; simpl snd.
@@ -469,7 +469,7 @@ Local Coercion Zpos : positive >-> Z.
    case psplit; case n1; simpl snd; auto with datatypes.
  Qed.
 
- Section pell.  
+ Section pell.
 
   Variable p: Z.
   Hypothesis p_prime: prime p.
@@ -483,21 +483,21 @@ Local Coercion Zpos : positive >-> Z.
 
   Notation "x :%p" := (to_p x) (at level 30).
 
-  Definition pkO: pK := (zero _). 
- 
-  Definition pkI: pK := (one _). 
+  Definition pkO: pK := (zero _).
 
-  Definition pkplus: pK -> pK -> pK := (GZnZ.add _). 
+  Definition pkI: pK := (one _).
 
-  Definition pkmul: pK -> pK -> pK := (mul _). 
+  Definition pkplus: pK -> pK -> pK := (GZnZ.add _).
 
-  Definition pksub: pK -> pK -> pK := (sub _). 
+  Definition pkmul: pK -> pK -> pK := (mul _).
 
-  Definition pkopp: pK -> pK := (GZnZ.opp _). 
+  Definition pksub: pK -> pK -> pK := (sub _).
 
-  Definition pkinv: pK -> pK := (inv _). 
+  Definition pkopp: pK -> pK := (GZnZ.opp _).
 
-  Definition pkdiv: pK -> pK -> pK := (div _). 
+  Definition pkinv: pK -> pK := (inv _).
+
+  Definition pkdiv: pK -> pK -> pK := (div _).
 
   Definition pA: pK := to_p A.
 
@@ -508,7 +508,7 @@ Local Coercion Zpos : positive >-> Z.
                := (FZpZ _ p_prime).
 
   (* K notations *)
-  Notation "x + y" := (pkplus x y).  Notation "x * y " := (pkmul x y). 
+  Notation "x + y" := (pkplus x y).  Notation "x * y " := (pkmul x y).
   Notation "x - y " := (pksub x y). Notation "- x" := (pkopp x).
   Notation "/ x" := (pkinv x). Notation "x / y" := (pkdiv x y).
   Notation "0" := pkO.
@@ -518,7 +518,7 @@ Local Coercion Zpos : positive >-> Z.
   (* Non singularity *)
   Notation "4" := (2 * 2).
   Notation "27" := (3 * 3 * 3).
- 
+
   Add Field KFth : pKfth.
 
 
@@ -545,14 +545,14 @@ Local Coercion Zpos : positive >-> Z.
   Lemma pone_not_zero: 1 <> 0.
   Proof.
   intros H; generalize (znz_inj _ _ _ H); simpl val.
-  repeat (rewrite Zmod_small); generalize (prime_ge_2 _ p_prime); 
+  repeat (rewrite Zmod_small); generalize (prime_ge_2 _ p_prime);
     auto with zarith.
   Qed.
- 
+
   Lemma ptwo_not_zero: 2 <> 0.
   Proof.
   intros H; generalize (znz_inj _ _ _ H); simpl val.
-  repeat (rewrite Zmod_small); generalize (prime_ge_2 _ p_prime); 
+  repeat (rewrite Zmod_small); generalize (prime_ge_2 _ p_prime);
     auto with zarith.
   intros H1; case (Zle_lt_or_eq _ _ H1); intros H2; auto with zarith.
   case N_not_div_2; rewrite H2; auto.
@@ -562,7 +562,7 @@ Local Coercion Zpos : positive >-> Z.
   intros (k, Hk); case k; [exact true | idtac | idtac];
     intros; exact false.
   Defined.
- 
+
   Lemma pis_zero_correct: forall k: pK, pis_zero k = true <-> k = 0.
   Proof.
   assert (F0 := p_pos).
@@ -608,7 +608,7 @@ Local Coercion Zpos : positive >-> Z.
   Proof.
   intros x y; unfold Zeq_bool.
   case (Zcompare_Eq_iff_eq x y).
-  case Zcompare; auto.
+  case Z.compare; auto.
   intros _ H1 H2; assert (H3:= H1 H2); discriminate.
   intros _ H1 H2; assert (H3:= H1 H2); discriminate.
   Qed.
@@ -631,7 +631,7 @@ Local Coercion Zpos : positive >-> Z.
   apply Zmod_div_mod; auto with zarith.
   Qed.
 
-  Lemma inversible_is_zero: forall x, 
+  Lemma inversible_is_zero: forall x,
     [x] -> pis_zero (x :%p) = false.
   Proof.
   intros x1 H1.
@@ -657,7 +657,7 @@ Local Coercion Zpos : positive >-> Z.
   Proof.
   intros x n; elim n; clear n.
     simpl Z_of_nat; simpl pow; rewrite Zpower_0_r; auto.
-  intros n Hrec; rewrite inj_S; unfold Zsucc; rewrite Zpower_exp; auto with zarith.
+  intros n Hrec; rewrite inj_S; unfold Z.succ; rewrite Zpower_exp; auto with zarith.
   assert (tmp: forall n x, pow 1 pkmul x (S n) = x * pow 1 pkmul x n).
     intros n1 x1; case n1; simpl; auto; ring.
   rewrite tmp; clear tmp.
@@ -729,8 +729,8 @@ Local Coercion Zpos : positive >-> Z.
   Inductive equiv: nelt -> elt -> Prop :=
      z_equiv:equiv nzero inf_elt
   |  n_equiv: forall x y z x1 y1 H,
-      x:%p / z:%p = x1 -> 
-      y:%p / z:%p  = y1 -> 
+      x:%p / z:%p = x1 ->
+      y:%p / z:%p  = y1 ->
       equiv (ntriple x y z) (@curve_elt x1 y1 H).
 
   Infix "=~~=" := equiv (at level 40, no associativity).
@@ -741,7 +741,7 @@ Local Coercion Zpos : positive >-> Z.
   Let pow := pow pkI pkmul.
 
   Lemma nedouble_correct: forall sc n1 p1,
-    n1 =~~= p1 -> [[ndouble sc n1]] -> 
+    n1 =~~= p1 -> [[ndouble sc n1]] ->
        fst (ndouble sc n1) =~~= add p1 p1.
   Proof.
   intros sc n1 p1 H; inversion_clear H.
@@ -791,7 +791,7 @@ Local Coercion Zpos : positive >-> Z.
   Qed.
 
   Lemma neadd_correct: forall sc n1 p1 n2 p2,
-    n1 =~~= p1 -> n2 =~~= p2 -> [[nadd sc n1 n2]] -> 
+    n1 =~~= p1 -> n2 =~~= p2 -> [[nadd sc n1 n2]] ->
       fst (nadd sc n1 n2) =~~= add p1 p2.
   Proof.
   intros sc n1 p1 n2 p2 H; inversion_clear H.
@@ -932,17 +932,17 @@ Local Coercion Zpos : positive >-> Z.
  pattern y at 1; rewrite (Z_div_mod_eq y p); auto with zarith.
  rewrite Zopp_plus_distr.
  rewrite Zopp_mult_distr_r.
- rewrite Zmult_comm; rewrite Zplus_comm; 
+ rewrite Zmult_comm; rewrite Zplus_comm;
    rewrite Z_mod_plus; auto with zarith.
  inversion_clear H.
  case (inversible_mult_inv _ _ H3); intros _ H4.
  intros H5; apply (@inversible_kO z 0); auto.
  Qed.
-  
+
  Lemma scalb_correct: forall p sc b a1 p1,
-   a1 =~~= p1 ->  [[scalb sc b a1 p]] -> 
-     fst (scalb sc b a1 p) =~~= 
-     EGroup.gpow p1 pG (if b then (Psucc p) else p).
+   a1 =~~= p1 ->  [[scalb sc b a1 p]] ->
+     fst (scalb sc b a1 p) =~~=
+     EGroup.gpow p1 pG (if b then (Pos.succ p) else p).
  Proof.
  assert (F0: forall p1, List.In p1 (FGroup.s pG)).
     intros p1.
@@ -956,7 +956,7 @@ Local Coercion Zpos : positive >-> Z.
                 (nInversible_double sc2 a2); case ndouble.
      intros a3 sc3 H4 H5 H6.
      case (H5 H6); clear H5; intros H5 H7.
-     simpl Psucc.
+     simpl Pos.succ.
      rewrite ZCmisc.Zpos_xO_add.
      repeat rewrite gpow_add; auto with zarith.
      apply H4; auto.
@@ -981,7 +981,7 @@ Local Coercion Zpos : positive >-> Z.
      intros H13 H14.
      rewrite ZCmisc.Zpos_xI_add.
      replace (gpow p1 pG (p0 + p0 + 1)) with
-             (add (opp p1) (gpow p1 pG ((Psucc p0) + (Psucc p0)))).
+             (add (opp p1) (gpow p1 pG ((Pos.succ p0) + (Pos.succ p0)))).
      apply H6; auto.
        apply nopp_correct; auto.
      rewrite gpow_add; auto with zarith.
@@ -1015,7 +1015,7 @@ Local Coercion Zpos : positive >-> Z.
      case H3; clear H3.
         inversion_clear H11; try constructor; repeat itac; auto.
      intros H13 H14.
-     simpl Psucc.
+     simpl Pos.succ.
      rewrite ZCmisc.Zpos_xI_add.
      replace (p0 + p0 + 1)%Z with
              (1 + (p0 + p0))%Z; auto with zarith.
@@ -1044,14 +1044,14 @@ Local Coercion Zpos : positive >-> Z.
   Qed.
 
  Lemma scal_correct: forall p sc a1 p1,
-   a1 =~~= p1 ->  [[scal sc a1 p]] -> 
+   a1 =~~= p1 ->  [[scal sc a1 p]] ->
      fst (scal sc a1 p) =~~= EGroup.gpow p1 pG p.
  Proof.
  intros p1 sc; exact (scalb_correct p1 sc false).
  Qed.
 
  Lemma scal_list_correct: forall l sc a1 p1,
-   a1 =~~= p1 ->  [[scal_list sc a1 l]] -> 
+   a1 =~~= p1 ->  [[scal_list sc a1 l]] ->
      fst (scal_list sc a1 l) =~~= EGroup.gpow p1 pG (Zmull l).
  Proof.
  assert (F0: forall p1, List.In p1 (FGroup.s pG)).
@@ -1081,9 +1081,9 @@ Local Coercion Zpos : positive >-> Z.
 
 
  Lemma scalL_not_1: forall l sc a p1 n,
-    a =~~= p1 -> [[scalL sc a l]] ->  List.In n l -> 
+    a =~~= p1 -> [[scalL sc a l]] ->  List.In n l ->
     gpow p1  pG (Zmull l / n) <> pG.(FGroup.e).
- Proof. 
+ Proof.
  assert (F0: forall p1, List.In p1 (FGroup.s pG)).
     intros p1.
     apply (FELLK_in pell_theory _ (in_all_znz _ p_pos)).
@@ -1139,14 +1139,14 @@ Local Coercion Zpos : positive >-> Z.
    rewrite Hn1; inversion H6; constructor; auto;
       repeat itac.
  red; simpl; auto; intros HH; discriminate.
- apply Zge_le; apply Z_div_ge0; red; simpl; auto;
+ apply Z.ge_le; apply Z_div_ge0; red; simpl; auto;
    intros HH; discriminate.
  red; simpl; auto.
  Qed.
 
 
  Lemma  scalL_1: forall l sc a p1,
-  a =~~= p1 -> [[scalL sc a l]] -> 
+  a =~~= p1 -> [[scalL sc a l]] ->
   fst (scalL sc a l) =~~= gpow p1  pG (Zmull l).
  Proof.
  assert (F0: forall p1, List.In p1 (FGroup.s pG)).
@@ -1184,8 +1184,8 @@ Local Coercion Zpos : positive >-> Z.
  End pell.
 
 End Nell.
- 
-Section pell.  
+
+Section pell.
 
  Variable N: Z.
  Variable (x y A B: Z).
@@ -1198,7 +1198,7 @@ Section pell.
  Variable F: positive.
  Hypothesis lR_big: (4 * N < ((Zmullp lR) -1) ^2)%Z.
  Hypothesis on_curve: y^2 mod N = (x^3 + A * x + B) mod N.
- 
+
 
  Notation "x ++ y " := (nplus N x y).
  Notation "x -- y" := (nsub N x y) (at level 50, left associativity).
@@ -1206,8 +1206,8 @@ Section pell.
  Notation "x ?= y" := (Zeq_bool x y).
 
  Ltac itac :=
-  match goal with 
-   H: inversible _ (_ ** _) |- _ => 
+  match goal with
+   H: inversible _ (_ ** _) |- _ =>
         case (inversible_mult_inv  N_lt_2 _ _ H); clear H;
          let H1 := fresh "NI" in
          let H2 := fresh "NI" in intros H1 H2
@@ -1217,7 +1217,7 @@ Section pell.
 
  Let z2p x := match x with Zpos p => p | Zneg p => p | Z0 => xH end.
 
- Lemma  scalL_prime: 
+ Lemma  scalL_prime:
   let a := ntriple x y 1 in
   let isc := 4 ** A ** A ** A  ++ 27 ** B ** B in
   let (a1, sc1) := scal N A isc a F in
@@ -1225,7 +1225,7 @@ Section pell.
   let (a2, sc2) := scal N A sc1 a1 S1 in
   let (a3, sc3) := scalL N A sc2 a2 R1 in
     match a3 with
-     nzero => if (Zeq_bool (Zgcd sc3 N) 1) then prime N
+     nzero => if (Zeq_bool (Z.gcd sc3 N) 1) then prime N
               else True
    | _ => True
    end.
@@ -1238,7 +1238,7 @@ Section pell.
   case_eq (scalL N A sc2 a2 R1); intros a3.
   case a3; auto.
   intros sc3 Hsc3.
-  generalize (Zeq_bool_eq (Zgcd sc3 N) 1); case Zeq_bool; intros Hz; auto.
+  generalize (Zeq_bool_eq (Z.gcd sc3 N) 1); case Zeq_bool; intros Hz; auto.
   case (prime_dec N); auto; intros Hn.
   case (Zdivide_div_prime_le_square N); auto with zarith.
   intros p (Hp, (Hp1, Hp2)).
@@ -1250,7 +1250,7 @@ Section pell.
       apply Zis_gcd_bezout.
       rewrite <- Hz; auto; apply Zgcd_is_gcd.
    inversion_clear tmp as [u v Huv].
-   exists u. 
+   exists u.
    rewrite Zmult_comm.
    rewrite <- Z_mod_plus with (b := v); auto with zarith.
    rewrite Huv; rewrite Zmod_small; auto with zarith.
@@ -1274,7 +1274,7 @@ Section pell.
     generalize Hz1; unfold isc.
     unfold nplus, nmul.
     rewrite (Zmodml (4 * A)); auto.
-    rewrite (Zmodml (4 * A * A)); auto. 
+    rewrite (Zmodml (4 * A * A)); auto.
     rewrite (Zmodml (27 * B)); auto.
     rewrite <- Zplus_mod; auto.
     rewrite Zmodml; auto; fold d; clear Hz1; intros Hz1.
@@ -1288,8 +1288,8 @@ Section pell.
   pose (pell := pell_theory A B N_not_div_2 Rp Hp Hp1).
   pose (pequiv := @equiv A B p).
   assert (Hoc: pow  (pkI p) (@pkmul p) (to_p y) 2 =
-                pkplus 
-                 (pkplus 
+                pkplus
+                 (pkplus
                     (pow (pkI p) (@pkmul p) (to_p x) 3)
                     (pkmul (pA A p) (to_p x)))
                  (pB B p)).
@@ -1304,7 +1304,7 @@ Section pell.
        unfold nmul, nplus.
        rewrite (fun xx => @Zmodpr xx (x^3)); auto.
        rewrite Zmodpl; auto; rewrite <- Zmod_div_mod; auto.
-  pose (pcurve_elt := curve_elt (pkI p) (@pkplus p) 
+  pose (pcurve_elt := curve_elt (pkI p) (@pkplus p)
                                 (@pkmul p) (pA A p) (pB B p)).
   assert (E1: pequiv a (pcurve_elt (to_p x) (to_p y) Hoc)).
     unfold pequiv, a, pcurve_elt.
@@ -1335,7 +1335,7 @@ Section pell.
     apply (FZpZ _ Hp).(F_1_neq_0).
     assert(T1 := scal_correct N_lt_2 N_not_div_2 Rp Hp Hp1 _ _ E1 Ni3).
     rewrite Ha1 in T1; simpl fst in T1.
-    match type of T1 with equiv _ ?X => 
+    match type of T1 with equiv _ ?X =>
       set (p1 := X); fold p1 in T1
     end.
     assert(T2 := scal_correct N_lt_2 N_not_div_2 Rp Hp Hp1 _ _ T1 Ni2).
@@ -1347,7 +1347,7 @@ Section pell.
     assert (F2 := fun u =>
         @scalL_not_1 N A B N_lt_2 N_not_div_2 Rp _ Hp Hp1 R1 sc2 _ _ u T2 Ni1).
     fold ppG in F2.
-    assert (F3 := 
+    assert (F3 :=
         @scalL_1 N A B N_lt_2 N_not_div_2 Rp _ Hp Hp1 R1 sc2 _ _ T2 Ni1).
     fold ppG in F3.
     rewrite <- psplit_correct in lR_big.
@@ -1359,7 +1359,7 @@ Section pell.
         assert (E2: Zpos (z2p z1) = z1).
           generalize Hz1; case z1; simpl; auto; try (intros p2 HH || intro HH).
             case not_prime_0; auto.
-          generalize (prime_ge_2 _ HH); unfold Zle; simpl; 
+          generalize (prime_ge_2 _ HH); unfold Z.le; simpl;
               intros HH1; case HH1; auto.
         rewrite <- psplit_correct.
         rewrite HS1; simpl fst; simpl snd.
@@ -1373,7 +1373,7 @@ Section pell.
        rewrite (Zmull_div (z2p z1)); auto.
        rewrite E2; rewrite Zmult_assoc.
        assert (Hpz1: z1 > 0).
-         apply Zlt_gt; apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+         apply Z.lt_gt; apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
          red; auto.
        rewrite Z_div_mult; auto.
        rewrite gpow_gpow.
@@ -1391,7 +1391,7 @@ Section pell.
        red; simpl; intros; discriminate.
     absurd (e_order(ceqb pell) p1 ppG <= (FGroup.g_order ppG)).
       apply Zlt_not_le.
-      apply Zle_lt_trans with (1 := gorder_pG A B N_not_div_2 Rp Hp Hp1).
+      apply Z.le_lt_trans with (1 := gorder_pG A B N_not_div_2 Rp Hp Hp1).
       rewrite E2.
       replace (Zpos (Zmullp lR)) with ((Zmullp lR - 1) + 1)%Z; try ring.
       apply Zplus_lt_compat_r.
@@ -1399,7 +1399,7 @@ Section pell.
       change 0 with (1-1).
       unfold Zminus; apply Zplus_le_compat_r.
       case Zmullp; try intros p1; red; simpl; intros; discriminate.
-      apply Zle_lt_trans with (4 * N).
+      apply Z.le_lt_trans with (4 * N).
       replace (2 * p * (2 * p))%Z with (4 * (p * p))%Z; auto with zarith.
       ring.
       rewrite <- psplit_correct; rewrite HS1; simpl fst; simpl snd; auto.
@@ -1417,6 +1417,3 @@ Section pell.
 Qed.
 
 End pell.
-
-
-

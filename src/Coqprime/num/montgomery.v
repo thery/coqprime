@@ -15,15 +15,15 @@ Definition ntail (n : number) : number :=
 Open Scope int31_scope.
 
 Fixpoint positive_aux_to_num (p : positive) (i j : int31) : number :=
-  match p with 
+  match p with
   | xH    => (i + j) :: nil
-  | xO p1 => 
+  | xO p1 =>
     let i1 := 2 * i in
     match i1 ?= 0 with
     | Gt => positive_aux_to_num  p1 i1 j
     | _  =>  j :: positive_aux_to_num  p1 1 0
     end
-  | xI p1 => 
+  | xI p1 =>
     let i1 := 2 * i in
     let j1 := i + j in
     match i1 ?= 0 with
@@ -48,7 +48,7 @@ Eval vm_compute in
   positive_to_num 2147483648.
 
 Let wB := (2^ Z_of_nat size)%Z.
-Definition mphi (n : number) := 
+Definition mphi (n : number) :=
   fold_right (fun i r => phi i + wB * r )%Z 0%Z n.
 
 Notation "[ a ]" := (mphi a).
@@ -65,7 +65,7 @@ Proof. auto. Qed.
 Lemma phi_head_tail n : [n] = [nhead n :: ntail n].
 Proof. unfold nhead, ntail; case n; auto. Qed.
 
-Ltac nrom := 
+Ltac nrom :=
  repeat rewrite phi_nil;
  repeat rewrite phi_cons;
  try change (phi 0) with 0%Z;
@@ -83,7 +83,7 @@ Proof. auto. Qed.
 Lemma Zpower_nat_pos u n : (0 < u -> 0  < Zpower_nat u n)%Z.
 Proof.
 intros Hu.
-induction n; simpl; try rewrite Zpower_nat_S; 
+induction n; simpl; try rewrite Zpower_nat_S;
    try rewrite Zpower_nat_0; auto with zarith.
 apply Zmult_lt_0_compat; auto.
 Qed.
@@ -91,61 +91,61 @@ Qed.
 Lemma Zpower_base_pos n : (0  < Zpower_nat wB n)%Z.
 Proof. apply Zpower_nat_pos; auto with zarith; red; auto. Qed.
 
-Lemma Zpower_nat_le_compat u n m : 
+Lemma Zpower_nat_le_compat u n m :
   (0 < u)%Z -> (n <= m)%nat -> (Zpower_nat u n  <= Zpower_nat u m)%Z.
 Proof.
 intros Hu; generalize m; clear m; induction n as [ | n Hrec]; auto with zarith.
 intros [ | m]; repeat rewrite Zpower_nat_S; try rewrite Zpower_nat_0; auto with zarith.
-intros _; change 1%Z with (1 * 1)%Z; apply Zmult_le_compat; auto with zarith. 
+intros _; change 1%Z with (1 * 1)%Z; apply Zmult_le_compat; auto with zarith.
 generalize (Zpower_nat_pos _ m Hu); auto with zarith.
 intros [ | m]; repeat rewrite Zpower_nat_S; try rewrite Zpower_nat_0; auto with zarith.
 Qed.
 
-Lemma Zpower_nat_lt_compat u n m : 
+Lemma Zpower_nat_lt_compat u n m :
   (1 < u)%Z -> (n < m)%nat -> (Zpower_nat u n  < Zpower_nat u m)%Z.
 Proof.
 intros Hu; generalize m; clear m; induction n as [ | n Hrec]; auto with zarith.
 intros [ | m]; repeat rewrite Zpower_nat_S; try rewrite Zpower_nat_0; auto with zarith.
-intros _; apply Zlt_le_trans with (u * 1)%Z; auto with zarith.
-assert (Hv: (0 < u)%Z); auto with zarith. 
+intros _; apply Z.lt_le_trans with (u * 1)%Z; auto with zarith.
+assert (Hv: (0 < u)%Z); auto with zarith.
 generalize (Zpower_nat_pos _ m Hv); auto with zarith.
 intros [ | m]; repeat rewrite Zpower_nat_S; try rewrite Zpower_nat_0; auto with zarith.
 intros HH.
 apply Zmult_lt_compat_l; auto with zarith.
 Qed.
 
-Lemma Zpower_nat_le_reg u n m : 
+Lemma Zpower_nat_le_reg u n m :
   (1 < u)%Z -> (Zpower_nat u n  <= Zpower_nat u m)%Z -> (n <= m)%nat .
 Proof.
 intros Hu; generalize m; clear m; induction n as [ | n Hrec]; auto with zarith.
 intros [ | m]; repeat rewrite Zpower_nat_S; try rewrite Zpower_nat_0.
 intros Hv; contradict Hv; apply Zlt_not_le.
-apply Zlt_le_trans with (u * 1)%Z; auto with zarith.
+apply Z.lt_le_trans with (u * 1)%Z; auto with zarith.
 assert (HH: (0 < u)%Z); auto with zarith.
 assert (HH1:= Zpower_nat_pos u n HH); auto with zarith.
 intros Hv; assert (n <= m)%nat; auto with arith.
-apply Hrec; apply Zmult_le_reg_r with u; auto with zarith; 
+apply Hrec; apply Zmult_le_reg_r with u; auto with zarith;
   repeat rewrite <- (Zmult_comm u); auto.
 Qed.
 
-Lemma Zpower_nat_lt_reg u n m : 
+Lemma Zpower_nat_lt_reg u n m :
   (1 < u)%Z -> (Zpower_nat u n  < Zpower_nat u m)%Z -> (n < m)%nat .
 Proof.
 intros Hu; generalize m; clear m; induction n as [ | n Hrec]; auto with zarith.
 intros [ | m]; repeat rewrite Zpower_nat_S; try rewrite Zpower_nat_0; auto with zarith.
 intros [ | m]; repeat rewrite Zpower_nat_S; try rewrite Zpower_nat_0; auto with zarith.
 intros Hv; contradict Hv; apply Zle_not_lt.
-apply Zle_trans with (u * 1)%Z; auto with zarith.
+apply Z.le_trans with (u * 1)%Z; auto with zarith.
 assert (HH: (0 < u)%Z); auto with zarith.
 assert (HH1:= Zpower_nat_pos u n HH); auto with zarith.
 intros Hv; assert (n < m)%nat; auto with arith.
-apply Hrec; apply Zmult_lt_reg_r with u; auto with zarith; 
+apply Hrec; apply Zmult_lt_reg_r with u; auto with zarith;
   repeat rewrite <- (Zmult_comm u); auto.
 Qed.
 
 Lemma positive_phi p : [positive_to_num p] = Zpos p.
 Proof.
-assert (Hi0: (forall i n, phi i = Zpower_nat 2 n ->  
+assert (Hi0: (forall i n, phi i = Zpower_nat 2 n ->
               match 2 * i ?= 0 with
               | Eq => n = 30%nat
               | Lt => False
@@ -172,8 +172,8 @@ rewrite Zmod_small; nrom; auto with zarith.
 split; auto with zarith.
 change wB with (Zpower_nat 2 31); apply Zpower_nat_lt_compat; auto with zarith.
 rewrite HH3, Z_mod_same; auto with zarith.
-apply Zlt_gt; auto with zarith.
-assert (Hij: (forall i j n, phi i = Zpower_nat 2 n -> phi j < phi i -> 
+apply Z.lt_gt; auto with zarith.
+assert (Hij: (forall i j n, phi i = Zpower_nat 2 n -> phi j < phi i ->
              phi (i + j) = phi i + phi j)%Z).
 intros i j n Hi Hj.
   rewrite spec_add, Zmod_small; auto; nrom.
@@ -182,7 +182,7 @@ intros i j n Hi Hj.
   assert (n < 31)%nat.
   apply Zpower_nat_lt_reg with 2%Z; auto with zarith.
   rewrite <- Hi; auto with zarith.
-  apply Zlt_le_trans with (Zpower_nat 2 (S n)).
+  apply Z.lt_le_trans with (Zpower_nat 2 (S n)).
   rewrite Zpower_nat_S, <-Hi; auto with zarith.
   change wB with (Zpower_nat 2 31).
   apply Zpower_nat_le_compat; auto with zarith.
@@ -231,7 +231,7 @@ apply positive_phi.
 contradict Hp; auto with zarith.
 Qed.
 
-Lemma add_cp a b :  
+Lemma add_cp a b :
   match (a + b) ?= a with
   | Lt => (phi (a + b) = phi a + phi b - wB)%Z
   | _  => (phi (a + b) = phi a + phi b)%Z
@@ -251,7 +251,7 @@ rewrite spec_add, Zmod_small; auto with zarith.
 rewrite spec_compare; case Z.compare_spec; nrom; intros Hc; auto with zarith.
 Qed.
 
-Lemma add1_cp a :  
+Lemma add1_cp a :
   match (1 + a) ?= 0 with
   | Eq => (phi a = wB - 1)%Z
   | _ => (phi (1 + a) = 1 + phi a)%Z
@@ -263,7 +263,7 @@ case (phi_bounded (1 + a));
   rewrite spec_compare; case Z.compare_spec; nrom; auto with zarith.
 Qed.
 
-Lemma add2_cp a b :  
+Lemma add2_cp a b :
   match (1 + (a + b)) ?= a with
   | Gt  => (phi (1 + (a + b)) = phi a + phi b + 1)%Z
   | _ => (phi (1 + (a + b)) = phi a + phi b + 1 - wB)%Z
@@ -326,7 +326,7 @@ with add1_num (n1 n2 : number) :=
 Notation "a + b" := (add_num a b).
 Notation "a +1 b" := (add1_num a b) (at level 40).
 
-Lemma add_add1_correct m n : 
+Lemma add_add1_correct m n :
   [m + n] = ([m] + [n])%Z /\ [m +1 n] = ([m] + [n] + 1)%Z.
 Proof.
 generalize n; clear n.
@@ -352,7 +352,7 @@ change ((a :: m) +1 (b :: n)) with
                         | Gt => c::add_num m n
                         | _  => c::add1_num m n
                         end).
-lazy zeta;  generalize (add2_cp a b); rewrite spec_compare; case Z.compare_spec; 
+lazy zeta;  generalize (add2_cp a b); rewrite spec_compare; case Z.compare_spec;
  nrom; intros HH H1; case (Hrec n); intros Hr1 Hr2;
  rewrite H1; (rewrite Hr1 || rewrite Hr2); ring.
 Qed.
@@ -387,7 +387,7 @@ rewrite Zplus_0_l; intros HH; case (Zmult_integral _ _ HH);
   auto with zarith.
 generalize (phi_pos n); intros H1 H2 H3.
 assert (0 < phi a + wB * [n])%Z; auto with zarith.
-apply Zlt_le_trans with (phi a); auto with zarith.
+apply Z.lt_le_trans with (phi a); auto with zarith.
 assert (0 <= wB * [n])%Z; auto with zarith.
 Qed.
 
@@ -405,7 +405,7 @@ Fixpoint cpr_num (n1 n2: number) res :=
   end.
 
 Lemma base_lexi_order a b n1 n2 wB :
-  (0 <= a < wB -> 0 <= b < wB -> 
+  (0 <= a < wB -> 0 <= b < wB ->
    match a + wB * n1 ?= b + wB * n2 with
    | Eq => a = b /\ n1 = n2
    | Lt => n1 < n2 \/ (n1 = n2 /\ a < b)
@@ -413,7 +413,7 @@ Lemma base_lexi_order a b n1 n2 wB :
    end)%Z.
 Proof.
 intros (Ha1, Ha2) (Hb1, Hb2).
-case Zcompare_spec; intros HH.
+case Z.compare_spec; intros HH.
 case (Zle_or_lt n1 n2); intros H1.
 case (Zle_lt_or_eq _ _ H1); clear H1; intros H1; auto.
 assert (HH1: (wB + wB * (n2 - n1 -1) = (a - b))%Z).
@@ -451,29 +451,29 @@ Proof.
 generalize n2 res; clear n2 res.
 induction n1 as [ | a n1 Hrec].
 intros n2 res; simpl cpr_num; nrom.
-generalize (phi_pos n2); case Zcompare_spec; auto with zarith;
+generalize (phi_pos n2); case Z.compare_spec; auto with zarith;
   generalize (zerop_correct n2); case zerop_num; auto with zarith;
   intros H1 H2 H3; contradict H1; auto with zarith.
 intros [ | b n2].
 intros res; unfold cpr_num.
-generalize (phi_pos (a::n1)); case Zcompare_spec; auto with zarith;
+generalize (phi_pos (a::n1)); case Z.compare_spec; auto with zarith;
   generalize (zerop_correct (a::n1)); case zerop_num; auto with zarith;
   nrom; intros H1 H2 H3; contradict H1; auto with zarith.
 intros res; unfold cpr_num; fold cpr_num.
 set (v := (match a ?= b with Eq => res | _ => a ?= b end)).
 generalize (base_lexi_order _ _ [n1] [n2] _
                     (phi_bounded a) (phi_bounded b)); nrom;
-  case Zcompare.
+  case Z.compare.
 intros (HH, HH0).
 unfold v; rewrite spec_compare; case Z.compare_spec; nrom; intros HH2;
   try (contradict HH2; auto with zarith; fail).
-generalize (Hrec n2 res); case Zcompare_spec; auto;
+generalize (Hrec n2 res); case Z.compare_spec; auto;
  intros HH3; contradict HH3; auto with zarith.
 intros [HH2 | (HH2, HH3)].
-generalize (Hrec n2 v); rewrite HH2; unfold v; 
+generalize (Hrec n2 v); rewrite HH2; unfold v;
   rewrite spec_compare; case Z.compare_spec; auto.
 generalize (Hrec n2 v); rewrite HH2; unfold v.
-rewrite Zcompare_refl.
+rewrite Z.compare_refl.
 rewrite spec_compare; case Z.compare_spec; auto with zarith
  ; intros HH; contradict HH; auto with zarith.
 intros [HH2 | (HH2, HH3)].
@@ -481,7 +481,7 @@ generalize (Hrec n2 v); case Z.compare_spec; auto with zarith.
 intros HH; contradict HH2; auto with zarith.
 intros HH; contradict HH2; auto with zarith.
 unfold v; rewrite spec_compare; case Z.compare_spec; auto.
-generalize (Hrec n2 v); rewrite HH2, Zcompare_refl.
+generalize (Hrec n2 v); rewrite HH2, Z.compare_refl.
 unfold v; rewrite spec_compare; case Z.compare_spec; auto.
 intros HH4; contradict HH3; auto with zarith.
 intros HH4; contradict HH3; auto with zarith.
@@ -497,7 +497,7 @@ Inductive CpSpec (i j : number) : comparison -> Prop :=
 Lemma cp_spec i j : CpSpec i j (cp_num i j).
 Proof.
 generalize (cpr_correct i j Eq).
-unfold cp_num; case Zcompare_spec; intros H1 H2; rewrite H2;
+unfold cp_num; case Z.compare_spec; intros H1 H2; rewrite H2;
   constructor; auto.
 Qed.
 
@@ -509,7 +509,7 @@ Fixpoint eq_num (n1 n2: number) :=
              | b :: n4 => match a ?= b with
                           | Eq => eq_num n3 n4
                           | _  => false
-                        end 
+                        end
              end
   end.
 
@@ -527,18 +527,18 @@ rewrite spec_compare; case Z.compare_spec; nrom; intros H1;
     intros HH;
      generalize (base_lexi_order _ _ [n1] [n2] _
                       (phi_bounded a) (phi_bounded b)); nrom;
-    rewrite HH, Zcompare_refl; intros (H3,H4); contradict H1; auto with zarith).
+    rewrite HH, Z.compare_refl; intros (H3,H4); contradict H1; auto with zarith).
 generalize (Hrec n2); case eq_num; intros H2.
 apply Zcompare_Eq_eq;
   generalize (base_lexi_order _ _ [n1] [n2] _
                     (phi_bounded a) (phi_bounded b)); nrom;
-  case Zcompare; auto.
+  case Z.compare; auto.
 intros [H3 | (H3, H4)]; contradict H3; auto with zarith.
 intros [H3 | (H3, H4)]; contradict H3; auto with zarith.
 intros HH;
   generalize (base_lexi_order _ _ [n1] [n2] _
                     (phi_bounded a) (phi_bounded b)); nrom;
-  rewrite HH, Zcompare_refl; intros (H3,H4); case H2; auto.
+  rewrite HH, Z.compare_refl; intros (H3,H4); case H2; auto.
 Qed.
 
 Fixpoint decr_num (n: number): number :=
@@ -557,7 +557,7 @@ Proof.
 induction n as [ | a n Hrec]; nrom; auto with zarith.
 unfold decr_num; fold decr_num.
 case (phi_bounded a); nrom; intros Ha1 Ha2.
-rewrite spec_compare; case Z.compare_spec; 
+rewrite spec_compare; case Z.compare_spec;
   nrom; try rewrite spec_Bm1; nrom; auto with zarith.
 intros H1 H2; rewrite H1 in H2 |- *; rewrite Hrec;
  auto with zarith; try ring.
@@ -596,7 +596,7 @@ with sub1_num (n1 n2 : number) :=
 Notation "a - b" := (sub_num a b).
 Notation "a -1 b" := (sub1_num a b) (at level 40).
 
-Lemma sub_cp a b :  
+Lemma sub_cp a b :
   match (a - b) ?= a with
   | Gt => (phi (a - b) = phi a - phi b + wB)%Z
   | _  => (phi (a - b) = phi a - phi b)%Z
@@ -618,7 +618,7 @@ rewrite spec_compare; case Z.compare_spec; intros Hc;
   auto with zarith.
 Qed.
 
-Lemma sub1_cp a b :  
+Lemma sub1_cp a b :
   match (a - (1 + b)) ?= a with
   | Lt => (phi (a - (1 + b)) = phi a - (1 + phi b))%Z
   | _  => (phi (a - (1 + b)) = phi a - (1 + phi b) + wB)%Z
@@ -650,13 +650,13 @@ rewrite spec_compare; case Z.compare_spec; intros Hc;
   auto with zarith.
 Qed.
 
-Lemma sub_sub1_correct m n : 
+Lemma sub_sub1_correct m n :
    (([n] <= [m])%Z -> [m - n] = ([m] - [n])%Z)
 /\ ([n] <  [m] -> [m -1 n] = [m] - (1 + [n]))%Z.
 Proof.
 generalize n; clear n.
 induction m as [ | a m Hrec]; nrom; auto.
-intros n; induction n as [ | b n Hrec]; 
+intros n; induction n as [ | b n Hrec];
   unfold sub_num, sub1_num; fold sub_num;
   fold sub1_num; nrom; auto with zarith.
 generalize (phi_pos (b::n)); nrom; auto with zarith.
@@ -672,7 +672,7 @@ assert (H4: ([n] <= [m])%Z).
   nrom;
   case (Zle_lt_or_eq _ _ H1); intros H4.
     red in H4; rewrite H4; auto with zarith.
-  rewrite H4, Zcompare_refl; auto with zarith.
+  rewrite H4, Z.compare_refl; auto with zarith.
 generalize (sub_cp a b); rewrite spec_compare; case Z.compare_spec; nrom; intros HH0 HH1;
   rewrite HH1; try rewrite H2; auto; try ring.
 rewrite H3; try ring.
@@ -688,13 +688,13 @@ generalize HH1; rewrite spec_sub; nrom.
     rewrite Zmod_small; auto with zarith.
 case (Zle_lt_or_eq _ _ H1); intros H7.
 red in H7; rewrite H7; auto with zarith.
-rewrite H7, Zcompare_refl; auto with zarith.
+rewrite H7, Z.compare_refl; auto with zarith.
 generalize (base_lexi_order _ _ [n] [m] _ (phi_bounded b) (phi_bounded a)); nrom.
 red in H1; rewrite H1.
 intros [H2 | (H2, H3)].
 case (Hrec n); intros H3 H4.
 generalize (sub1_cp a b); rewrite spec_compare; case Z.compare_spec; nrom; intros HH0 HH1;
-  rewrite HH1; try rewrite H3; try rewrite H4; 
+  rewrite HH1; try rewrite H3; try rewrite H4;
   auto with zarith; try ring.
 assert (Ha: (phi (a - (1 + b)) < phi a)%Z).
   case (phi_bounded a); nrom; intros H1a H2a.
@@ -711,11 +711,11 @@ case (phi_bounded a); nrom; intros H1a H2a;
   try ring.
 Qed.
 
-Lemma sub_correct m n : 
+Lemma sub_correct m n :
   ([n] <= [m])%Z -> [m - n] = ([m] - [n])%Z.
 Proof. intros H; case (sub_sub1_correct m n); auto with zarith. Qed.
 
-Lemma sub1_correct m n : 
+Lemma sub1_correct m n :
   ([n] < [m])%Z -> [m -1 n] = ([m] - [n] - 1)%Z.
 Proof. intros H; case (sub_sub1_correct m n); auto with zarith. Qed.
 
@@ -826,7 +826,7 @@ generalize (base_lexi_order (phi xl) 1 (phi xh) (wB - 2) wB
              (phi_bounded xl) HH1).
 case (Zle_lt_or_eq _ _ HH); intros HH2.
 red in HH2; rewrite HH2; auto with zarith.
-rewrite HH2, Zcompare_refl; auto with zarith.
+rewrite HH2, Z.compare_refl; auto with zarith.
 Qed.
 
 Definition scal_num (a : int31) (n : number) : number :=
@@ -860,7 +860,7 @@ rewrite add_correct, Hrec, Zmult_plus_distr_r, Zplus_assoc, HH;
 Qed.
 
 Fixpoint exp_num (m : number) (n : nat) : number :=
-  match n with 
+  match n with
   | O    => 1 :: nil
   | S n1 => prod_num m (exp_num m n1)
   end.
@@ -898,14 +898,14 @@ rewrite phi_head_tail.
 nrom; case (phi_bounded (nhead M)); nrom; intros H1a H2a.
 case (Zle_lt_or_eq _ _ H1a); intros H3a.
 assert (Hms := phi_pos (ntail M)).
-apply Zlt_le_trans with (phi (nhead M) + wB * 0)%Z; auto with zarith.
+apply Z.lt_le_trans with (phi (nhead M) + wB * 0)%Z; auto with zarith.
 generalize Hmm'; rewrite spec_mul; nrom.
 rewrite <-H3a, Zmult_0_l, Zmod_0_l; auto with zarith.
 simpl; auto with zarith.
 Qed.
 
 Fixpoint reduce_aux_num (n : nat) (t : number)  :=
-  match n with 
+  match n with
   |    O => t
   | S n1 =>
      match t with
@@ -970,7 +970,7 @@ Lemma reduce_aux_le n t :
   ([t] < [M] * (Zpower_nat wB n) -> [reduce_aux_num n t] < 2 * [M])%Z .
 Proof.
 intros Ht.
-assert (HH: (exists U, [reduce_aux_num n t] * Zpower_nat wB n = [t] + U * [M] 
+assert (HH: (exists U, [reduce_aux_num n t] * Zpower_nat wB n = [t] + U * [M]
                     /\ 0 <= U < Zpower_nat wB n)%Z).
 generalize t; clear t Ht; induction n as [ | n Hrec]; intros t.
 assert (HM := phi_pos M).
@@ -978,7 +978,7 @@ simpl reduce_aux_num; repeat rewrite Zpower_nat_0;
   repeat rewrite Zmult_1_r; auto with zarith.
 exists 0%Z; auto with zarith.
 repeat rewrite Zpower_nat_S.
-assert (HH2 := Zpower_base_pos n). 
+assert (HH2 := Zpower_base_pos n).
 simpl reduce_aux_num; case t; nrom.
 exists 0%Z; split; auto with zarith.
 split; try apply Zmult_lt_0_compat; auto with zarith.
@@ -986,20 +986,20 @@ red; auto.
 intros a t1; nrom.
 case (Hrec (shift_num (add_num (a :: t1) (scal_num (a * m') M)))).
 intros U (H1U, H2U); exists (phi(a * m') + wB * U)%Z; split.
-rewrite (Zmult_comm wB), Zmult_assoc, H1U, 
+rewrite (Zmult_comm wB), Zmult_assoc, H1U,
          shift_correct, add_correct, scal_correct; nrom.
 rewrite Zmult_plus_distr_l, reduce_aux_step; ring.
 case (phi_bounded (a * m')); nrom; intros H1am H2am; auto with zarith.
 split; auto with zarith.
-apply Zlt_le_trans with (wB + wB * U)%Z; auto with zarith.
+apply Z.lt_le_trans with (wB + wB * U)%Z; auto with zarith.
 replace (wB * Zpower_nat wB n)%Z with
         (wB + wB * (Zpower_nat wB n - 1))%Z; auto with zarith; ring.
-apply Zmult_gt_0_lt_reg_r with (1 := Zlt_gt _ _ (Zpower_base_pos n)).
+apply Zmult_gt_0_lt_reg_r with (1 := Z.lt_gt _ _ (Zpower_base_pos n)).
 case HH; intros U (H1U, H2U).
 rewrite H1U.
 assert (U * [M] < [M] * Zpower_nat wB n)%Z; auto with zarith.
 rewrite Zmult_comm; apply Zmult_gt_0_lt_compat_l; auto with zarith.
-apply Zlt_gt; apply M_pos.
+apply Z.lt_gt; apply M_pos.
 replace (2 * [M] * Zpower_nat wB n)%Z with
        ([M] * Zpower_nat wB n + [M] * Zpower_nat wB n)%Z; auto with zarith;
   ring.
@@ -1008,7 +1008,7 @@ Qed.
 Definition reduce_num (n : nat) (t : number) : number :=
   let res := reduce_aux_num n t in
   match cp_num res M with
-  | Lt => res 
+  | Lt => res
   | _ => sub_num res M
   end.
 
@@ -1026,7 +1026,7 @@ rewrite Zopp_mult_distr_l, Z_mod_plus; auto with zarith.
 Qed.
 
 Lemma reduce_bound n t :
-  ([t] < [M] * (Zpower_nat wB n) -> 
+  ([t] < [M] * (Zpower_nat wB n) ->
   0 <= [reduce_num n t] < [M])%Z.
 Proof.
 intros Ht; split.
@@ -1063,14 +1063,14 @@ Qed.
 Fixpoint reduce_amd_aux_num (n : nat) (t1 t2 res : number) {struct n} :=
   match n with
   | O    => add_num res (prod_num t1 t2)
-  | S n1 => 
+  | S n1 =>
     match t1 with
     |     nil => reduce_aux_num n res
     | a :: t3 =>
       let res1 := add_num res (scal_num a t2) in
-      match res1 with 
+      match res1 with
       | nil    => reduce_amd_aux_num n1 t3 t2 nil
-      | b :: _ => 
+      | b :: _ =>
         reduce_amd_aux_num n1 t3 t2
             (shift_num (add_num res1 (scal_num (b * m') M)))
       end
@@ -1078,7 +1078,7 @@ Fixpoint reduce_amd_aux_num (n : nat) (t1 t2 res : number) {struct n} :=
   end.
 
 Lemma reduce_amd_aux_correct n t1 t2 res :
- (([reduce_amd_aux_num n t1 t2 res] * Zpower_nat wB n) mod [M] = 
+ (([reduce_amd_aux_num n t1 t2 res] * Zpower_nat wB n) mod [M] =
   ([t1] * [t2] + [res]) mod [M])%Z.
 Proof.
 generalize t1 t2 res; clear t1 t2 res.
@@ -1103,8 +1103,8 @@ apply f_equal2 with (f := Zmod); auto.
 rewrite Hv; ring.
 Qed.
 
-Lemma reduce_amd_aux_le n t1 t2 res : 
-  ([t1] < Zpower_nat wB n -> [t2] < [M] -> 
+Lemma reduce_amd_aux_le n t1 t2 res :
+  ([t1] < Zpower_nat wB n -> [t2] < [M] ->
   [res] <  2 * [M]  - 1 -> [reduce_amd_aux_num n t1 t2 res] < 2 * [M])%Z.
 Proof.
 generalize t1 t2 res; clear t1 t2 res.
@@ -1117,11 +1117,11 @@ replace [t1] with 0%Z; auto with zarith.
 destruct t1 as [ | a t3].
 intros _ Ht2 Hres.
 apply reduce_aux_le.
-apply Zlt_le_trans with (1 := Hres).
-apply Zle_trans with (2 * [M])%Z; auto with zarith.
+apply Z.lt_le_trans with (1 := Hres).
+apply Z.le_trans with (2 * [M])%Z; auto with zarith.
 rewrite Zmult_comm.
 apply Zmult_le_compat_l.
-apply Zle_trans with wB; try (red; discriminate).
+apply Z.le_trans with wB; try (red; discriminate).
 rewrite <- (Zmult_1_r wB) at 1; rewrite Zpower_nat_S.
 apply Zmult_le_compat_l.
 generalize (Zpower_base_pos n1); auto with zarith.
@@ -1134,12 +1134,12 @@ unfold v; rewrite add_correct, scal_correct; auto.
 generalize Hv; destruct v as [ | b v1]; nrom; clear Hv; intros Hv.
 apply Hrec; auto with zarith.
 apply Zmult_lt_reg_r with wB; auto with zarith; try (red; auto; fail).
-repeat rewrite <- (Zmult_comm wB); apply Zle_lt_trans with (2 := Ht3).
+repeat rewrite <- (Zmult_comm wB); apply Z.le_lt_trans with (2 := Ht3).
 case (phi_bounded a); auto with zarith.
 nrom; generalize M_pos; auto with zarith.
 apply Hrec; auto with zarith.
 apply Zmult_lt_reg_r with wB; auto with zarith; try (red; auto; fail).
-repeat rewrite <- (Zmult_comm wB); apply Zle_lt_trans with (2 := Ht3).
+repeat rewrite <- (Zmult_comm wB); apply Z.le_lt_trans with (2 := Ht3).
 case (phi_bounded a); auto with zarith.
 rewrite shift_correct, add_correct, scal_correct; nrom.
 rewrite Hv.
@@ -1148,7 +1148,7 @@ repeat apply Zplus_le_0_compat; repeat apply Zmult_le_0_compat;
   try apply phi_pos; try (red; discriminate).
 case (phi_bounded a); nrom; intros H1a H2a.
 case (phi_bounded (b * m')); nrom; intros H1bm H2bm.
-apply Zle_lt_trans with
+apply Z.le_lt_trans with
   (((2 * [M] - 2) + (wB - 1) * ([M] - 1) + (wB - 1) * [M])%Z).
 repeat apply Zplus_le_compat; auto with zarith.
 apply Zmult_le_compat; auto with zarith.
@@ -1161,12 +1161,12 @@ Qed.
 Definition reduce_mult_num (n: nat) (t1 t2 : number) :=
   let res := reduce_amd_aux_num n t1 t2 nil in
   match cp_num res M with
-  | Lt => res 
+  | Lt => res
   | _ => sub_num res M
   end.
 
 Lemma reduce_mult_correct n t1 t2 :
- ([reduce_mult_num n t1 t2] * (Zpower_nat wB n) mod [M] = 
+ ([reduce_mult_num n t1 t2] * (Zpower_nat wB n) mod [M] =
   ([t1] * [t2])  mod [M])%Z.
 Proof.
 assert (H:= M_pos).
@@ -1180,8 +1180,8 @@ rewrite (Zmult_comm [M]); unfold Zminus.
 rewrite Zopp_mult_distr_l, Z_mod_plus; auto with zarith.
 Qed.
 
-Lemma reduce_mult_bound n t1 t2 : 
-  ([t1] < Zpower_nat wB n -> [t2] < [M] -> 
+Lemma reduce_mult_bound n t1 t2 :
+  ([t1] < Zpower_nat wB n -> [t2] < [M] ->
   0 <= [reduce_mult_num n t1 t2] < [M])%Z.
 Proof.
 intros Ht1 Ht2; split.
@@ -1201,13 +1201,13 @@ Proof.
 unfold r_square.
 rewrite num_phi; auto with zarith.
 apply Z_mod_lt; auto with zarith.
-apply Zlt_gt; apply M_pos.
+apply Z.lt_gt; apply M_pos.
 case (Z_mod_lt (Zpower_nat wB n * Zpower_nat wB n) [M]);
   auto with zarith.
-apply Zlt_gt; apply M_pos.
+apply Z.lt_gt; apply M_pos.
 Qed.
 
-Definition encode n z : number := 
+Definition encode n z : number :=
   reduce_mult_num n (Z_to_num (z mod [M])) (r_square n).
 
 Definition decode n m :=  [reduce_num n m].
@@ -1226,7 +1226,7 @@ Lemma reduce_bound_small t :
   (0 <= [t] < [M] -> 0 <= [reduce_num n t] < [M])%Z.
 Proof.
 intros Ht; apply reduce_bound.
-case Ht; intros _ Ht1; apply Zlt_le_trans with (1 := Ht1).
+case Ht; intros _ Ht1; apply Z.lt_le_trans with (1 := Ht1).
 rewrite <-(Zmult_1_r [M]) at 1.
 apply Zmult_le_compat_l; auto with zarith.
 Qed.
@@ -1234,7 +1234,7 @@ Qed.
 Hint Resolve reduce_bound_small add_mod_bound sub_mod_bound.
 
 Lemma reduce_mult_bound_small t1 t2 :
-  (0 <= [t1] < [M] -> 0 <= [t2] < [M] -> 
+  (0 <= [t1] < [M] -> 0 <= [t2] < [M] ->
    0 <= [reduce_mult_num n t1 t2] < [M])%Z.
 Proof.
 intros Ht1 Ht2; apply reduce_mult_bound; auto with zarith.
@@ -1270,7 +1270,7 @@ Qed.
 
 Hint Resolve encode_bound.
 
-Lemma decode_encode p : 
+Lemma decode_encode p :
   (0 <= p < [M])%Z -> decode n (encode n p) = p.
 Proof.
 intros Hp.
@@ -1280,7 +1280,7 @@ assert (F1 : (0 <= [Z_to_num (p mod [M])] < [M])%Z).
   rewrite Zmod_small; auto with zarith.
   case (Z.mod_pos_bound p [M]); auto with zarith.
 assert (F2: ([Z_to_num (p mod [M])] < Zpower_nat wB n)%Z).
-  apply (Zlt_trans _ [M]); auto with zarith.
+  apply (Z.lt_trans _ [M]); auto with zarith.
 assert (F3: ([r_square n] < [M])%Z).
   case (r_square_lt n); auto.
 generalize (reduce_mult_bound _ _ _ F2 F3); intros F4.
@@ -1293,7 +1293,7 @@ rewrite reduce_mult_correct.
 unfold r_square.
 rewrite !num_phi; auto with zarith.
 rewrite Zmod_mod, <-Zmult_mod, Zmult_assoc; auto.
-case (Z.mod_pos_bound (Zpower_nat wB n * Zpower_nat wB n) [M]); 
+case (Z.mod_pos_bound (Zpower_nat wB n * Zpower_nat wB n) [M]);
   auto with zarith.
 case (Z.mod_pos_bound (p mod [M]) [M]); auto with zarith.
 case (Z.mod_pos_bound p [M]); auto with zarith.
@@ -1301,8 +1301,8 @@ intros; apply reduce_bound_small.
 rewrite Zmod_mod; auto with zarith.
 Qed.
 
-Lemma decode_encode_add p1 p2 : 
-  (0 <= p1 < [M])%Z -> (0 <= p2 < [M])%Z -> 
+Lemma decode_encode_add p1 p2 :
+  (0 <= p1 < [M])%Z -> (0 <= p2 < [M])%Z ->
   decode n (add_mod M (encode n p1) (encode n p2)) = ((p1 + p2) mod [M])%Z.
 Proof.
 intros Hp1 Hp2.
@@ -1315,8 +1315,8 @@ rewrite <-Zplus_mod, Zmod_mod, Zmult_plus_distr_l; auto with zarith.
 unfold decode; auto with zarith.
 Qed.
 
-Lemma decode_encode_sub p1 p2 : 
-  (0 <= p1 < [M])%Z -> (0 <= p2 < [M])%Z -> 
+Lemma decode_encode_sub p1 p2 :
+  (0 <= p1 < [M])%Z -> (0 <= p2 < [M])%Z ->
   decode n (sub_mod M (encode n p1) (encode n p2)) = ((p1 - p2) mod [M])%Z.
 Proof.
 intros Hp1 Hp2.
@@ -1329,9 +1329,9 @@ rewrite <-Zminus_mod, Zmod_mod, Zmult_minus_distr_r; auto with zarith.
 unfold decode; auto with zarith.
 Qed.
 
-Lemma decode_encode_mult p1 p2 : 
-  (0 <= p1 < [M])%Z -> (0 <= p2 < [M])%Z -> 
-  decode n (reduce_mult_num n (encode n p1) (encode n p2)) 
+Lemma decode_encode_mult p1 p2 :
+  (0 <= p1 < [M])%Z -> (0 <= p2 < [M])%Z ->
+  decode n (reduce_mult_num n (encode n p1) (encode n p2))
      = ((p1 * p2) mod [M])%Z.
 Proof.
 intros Hp1 Hp2.

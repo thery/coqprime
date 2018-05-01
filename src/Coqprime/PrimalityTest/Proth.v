@@ -7,11 +7,11 @@
 (*************************************************************)
 
 (**********************************************************************
-    Proth.v                        
-                                                                     
-    Proth's Test 
-                                                                 
-    Definition: ProthTest              
+    Proth.v
+
+    Proth's Test
+
+    Definition: ProthTest
  **********************************************************************)
 Require Import ZArith.
 Require Import ZCAux.
@@ -31,9 +31,9 @@ intros p1 _ Hv1; contradict Hv1; auto with zarith.
 intros   p (Hv1, Hv2); contradict Hv2; auto with zarith.
 apply PocklingtonCorollary1 with (F1 := 2 ^ k) (R1 := h); auto with zarith.
 ring.
-apply Zlt_le_trans with ((h + 1) * 2 ^ k); auto with zarith.
+apply Z.lt_le_trans with ((h + 1) * 2 ^ k); auto with zarith.
 rewrite Zmult_plus_distr_l; apply Zplus_lt_compat_l.
-rewrite Zmult_1_l; apply Zlt_le_trans with 2; auto with zarith.
+rewrite Zmult_1_l; apply Z.lt_le_trans with 2; auto with zarith.
 intros p H3 H4.
 generalize H2; replace (h * 2 ^ k + 1 - 1) with (h * 2 ^k); auto with zarith; clear H2; intros H2.
 exists a; split; auto; split.
@@ -48,7 +48,7 @@ rewrite <- Zpower_mod; auto with zarith.
 rewrite Zmod_small; auto with zarith.
 simpl; unfold Zpower_pos; simpl; auto with zarith.
 apply Z_div_pos; auto with zarith.
-apply Zdivide_trans with (2 ^ k).
+apply Z.divide_trans with (2 ^ k).
 apply Zpower_divide; auto with zarith.
 apply Zdivide_factor_l; auto with zarith.
 apply Zis_gcd_gcd; auto with zarith.
@@ -60,27 +60,27 @@ apply prime_2.
 assert (Hd2: (x | 2)).
 replace 2 with ((a ^ (h * 2 ^ k / 2) + 1) - (a ^ (h * 2 ^ k/ 2) - 1)); auto with zarith.
 apply Zdivide_minus_l; auto.
-apply Zdivide_trans with (1 := HD2).
+apply Z.divide_trans with (1 := HD2).
 apply Zmod_divide; auto with zarith.
 pattern 2 at 2; rewrite <- Hd1; auto.
 replace 1 with ((h * 2 ^k + 1) - (h * 2 ^ k)); auto with zarith.
 apply Zdivide_minus_l; auto.
-apply Zdivide_trans with (1 := Hd2); auto.
-apply Zdivide_trans with (2 ^ k).
+apply Z.divide_trans with (1 := Hd2); auto.
+apply Z.divide_trans with (2 ^ k).
 apply Zpower_divide; auto with zarith.
 apply Zdivide_factor_l; auto with zarith.
 Qed.
 
 
 Definition proth_test h k a :=
-  let n := h * 2 ^ k + 1 in 
-   if (Z_lt_dec 1  a) then 
+  let n := h * 2 ^ k + 1 in
+   if (Z_lt_dec 1  a) then
       if (Z_lt_dec 0 h) then
         if (Z_lt_dec h (2 ^k)) then
-            if Z_eq_dec (Zpow_mod a  ((n - 1) / 2) n) (n - 1) then true
-            else false else false else false else false. 
+            if Z.eq_dec (Zpow_mod a  ((n - 1) / 2) n) (n - 1) then true
+            else false else false else false else false.
 
- 
+
 Theorem ProthTestOp: forall h k a, proth_test h k a = true -> prime (h * 2 ^ k + 1).
 intros h k a; unfold proth_test.
 repeat match goal with |- context[if ?X then _ else _] => case X end; try (intros; discriminate).
@@ -113,7 +113,7 @@ Theorem prime65537:  prime 65537.
 exact (ProthTestOp 1 16 3 (refl_equal _)).
 Qed.
 
-(* Too tough !! 
+(* Too tough !!
 Theorem prime4294967297:  prime 4294967297.
 exact (ProthTestOp 1 32 3 (refl_equal _)).
 Qed.

@@ -7,9 +7,9 @@
 (*************************************************************)
 
 (***********************************************************************
-      Cyclic.v                                                                                       
-                                                                                                         
-      Proof that an abelien ring is cyclic                                 
+      Cyclic.v
+
+      Proof that an abelien ring is cyclic
  ************************************************************************)
 Require Import ZCAux.
 Require Import List.
@@ -50,14 +50,14 @@ Hypothesis op_internal: forall a, In a support -> In (op a) support.
 Hypothesis plus_op_zero: forall a, In a support -> plus a (op a) = zero.
 Hypothesis mult_integral: forall a b, In a support -> In b support -> mult a b = zero -> a = zero \/ b = zero.
 
-Definition IA := (IGroup A mult support e A_dec support_ulist e_in_support mult_internal 
+Definition IA := (IGroup A mult support e A_dec support_ulist e_in_support mult_internal
                              mult_assoc
                              e_is_zero_l e_is_zero_r).
 
 Hint Resolve (fun x => isupport_incl _ mult support e A_dec x).
 
-Theorem gpow_evaln: forall n, 0 < n -> 
-  exists p, (length p <=  Zabs_nat n)%nat /\  (forall i, In i p -> In i support) /\
+Theorem gpow_evaln: forall n, 0 < n ->
+  exists p, (length p <=  Z.abs_nat  n)%nat /\  (forall i, In i p -> In i support) /\
   forall x, In x IA.(s) -> eval A plus mult zero (zero::p) x = gpow x IA n.
 intros n Hn; generalize Hn; pattern n; apply natlike_ind; auto with zarith.
 intros H1; contradict H1; auto with zarith.
@@ -69,7 +69,7 @@ rewrite Zabs_nat_Zsucc; auto with arith zarith.
 split.
 intros i [Hi | Hi]; try rewrite <- Hi; auto.
 intros x1 Hx1; simpl.
-rewrite Hp3; repeat rewrite plus_zero; unfold Zsucc; try rewrite gpow_add; auto with zarith.
+rewrite Hp3; repeat rewrite plus_zero; unfold Z.succ ; try rewrite gpow_add; auto with zarith.
 rewrite gpow_1; try apply mult_comm; auto.
 apply  (fun x => isupport_incl _ mult support e A_dec x); auto.
 change (In (gpow x1 IA x) IA.(s)).
@@ -92,7 +92,7 @@ intros l n; elim l; simpl; auto.
 intros H; left; intros a H1; case H1.
 intros a l1 Rec H.
 case (A_dec (gpow a IA n) e); intros H2.
-case Rec; try intros H3. 
+case Rec; try intros H3.
 apply incl_tran with (2 := H); auto with datatypes.
 left; intros a1 H4; case H4; auto.
 intros H5; rewrite <- H5; auto.
@@ -105,20 +105,20 @@ Defined.
 Theorem prime_power_div: forall p q i, prime p -> 0 <= q -> 0 <= i -> (q | p ^ i)  -> exists j, 0 <= j <= i /\ q = p ^ j.
 intros p q i Hp Hq Hi H.
 assert (Hp1: 0 < p).
-apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
 pattern q; apply prime_div_induction with (p ^ i); auto with zarith.
 exists 0; rewrite Zpower_0_r; auto with zarith.
 intros p1 i1 Hp2 Hi1 H1.
 case Zle_lt_or_eq with (1 := Hi1); clear Hi1; intros Hi1; subst.
 assert (Heq: p1 = p).
 apply prime_div_Zpower_prime with i; auto.
-apply Zdivide_trans with (2 := H1).
+apply Z.divide_trans  with (2 := H1).
 apply Zpower_divide; auto with zarith.
 exists i1; split; auto; try split; auto with zarith.
 case (Zle_or_lt i1 i); auto; intros H2.
 absurd (p1 ^ i1 <= p  ^ i).
 apply Zlt_not_le; rewrite Heq; apply Zpower_lt_monotone; auto with zarith.
-apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
 apply Zdivide_le; auto with zarith.
 rewrite Heq; auto.
 exists 0; repeat rewrite Zpower_exp_0; auto with zarith.
@@ -129,7 +129,7 @@ inversion Hpq as [ H0 H1 H2].
 absurd (p | 1).
 intros H3; absurd (1 < p).
 apply Zle_not_lt; apply Zdivide_le; auto with zarith.
-apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
 apply H2; apply Zpower_divide; auto with zarith.
 exists j1; rewrite Zpower_0_r; auto with zarith.
 exists j2; rewrite Zpower_0_r; auto with zarith.
@@ -146,7 +146,7 @@ case (check_list_gpow IA.(s) i); try intros H; auto with datatypes.
 case (gpow_evaln i); auto; intros p (Hp1, (Hp2, Hp3)).
 absurd ((op e) = zero).
 intros H1; case e_not_zero.
-rewrite <- (plus_op_zero e); try rewrite H1; auto. 
+rewrite <- (plus_op_zero e); try rewrite H1; auto.
 rewrite plus_comm; auto.
 apply (root_max_is_zero _ (fun x => In x support) plus mult op zero) with (l := IA.(s)) (p := op e :: p); auto with datatypes.
 simpl; intros x [Hx | Hx]; try rewrite <- Hx; auto.
@@ -159,9 +159,9 @@ apply eval_P; auto.
 simpl; apply lt_le_S; apply le_lt_trans with (1 := Hp1).
 apply inj_lt_inv.
 rewrite inj_Zabs_nat; auto with zarith.
-rewrite Zabs_eq; auto with zarith.
+rewrite Z.abs_eq ; auto with zarith.
 Qed.
- 
+
 Theorem divide_g_order_e_order: forall n, 0 <= n -> (n | g_order IA) -> exists a, In a IA.(s) /\ e_order A_dec  a IA = n.
 intros n Hn H.
 assert (Hg: 0 < g_order IA).
@@ -180,14 +180,14 @@ apply IA.(e_in_s).
 match goal with |- (_ <= ?X) => assert (0 < X) end; try apply e_order_pos; auto with zarith.
 intros p i Hp Hi K.
 assert (Hp1: 0 < p).
-apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
 assert (Hi1: 0 < p ^ i).
 apply Zpower_gt_0; auto.
 case Zle_lt_or_eq with (1 := Hi); clear Hi; intros Hi; subst.
 case (not_all_solutions (g_order IA / p)).
 apply Zdivide_Zdiv_lt_pos; auto with zarith.
-apply Zlt_le_trans with 2; try apply prime_ge_2; auto with zarith.
-apply Zdivide_trans with (2 := K).
+apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
+apply Z.divide_trans  with (2 := K).
 apply Zpower_divide; auto.
 intros a (Ha1, Ha2).
 exists (gpow a IA (g_order IA  / p ^ i)); split.

@@ -7,11 +7,11 @@
 (*************************************************************)
 
 (**********************************************************************
-    LucasLehamer.v                        
-                                                                     
+    LucasLehamer.v
+
     Build the sequence for the primality test of Mersenne numbers
-                                                                 
-    Definition: LucasLehmer              
+
+    Definition: LucasLehmer
   **********************************************************************)
 Require Import ZArith.
 Require Import ZCAux.
@@ -27,7 +27,7 @@ Require Import IGroup.
 
 Open Scope Z_scope.
 
-(************************************** 
+(**************************************
   The seeds of the serie
  **************************************)
 
@@ -43,13 +43,13 @@ Theorem w_mult_v : pmult w v = (1, 0).
 simpl; auto.
 Qed.
 
-(************************************** 
+(**************************************
   Definition of the power function for pairs p^n
  **************************************)
 
 Definition ppow p n := match n with  Zpos q => iter_pos _ (pmult p) (1, 0) q | _ => (1, 0) end.
 
-(************************************** 
+(**************************************
   Some properties of ppow
  **************************************)
 
@@ -66,7 +66,7 @@ Qed.
 Theorem ppow_op: forall a b p, iter_pos _ (pmult a) b p = pmult (iter_pos _ (pmult a) (1, 0) p) b.
 intros a b p; generalize b; elim p; simpl; auto; clear  b p.
 intros p Rec b.
-rewrite (Rec b). 
+rewrite (Rec b).
 try rewrite (fun x y => Rec (pmult x y)); try rewrite (fun x y => Rec (iter_pos _ x y p)); auto.
 repeat rewrite pmult_assoc; auto.
 intros p Rec b.
@@ -118,13 +118,13 @@ rewrite (fun x y => pmult_comm (iter_pos _ x y p3) p); auto.
 rewrite (pmult_assoc m); try apply pmult_comm; auto.
 Qed.
 
-(************************************** 
+(**************************************
   We can now define our series of pairs s
  **************************************)
 
 Definition s n := pplus (ppow w (2 ^ n)) (ppow v (2 ^ n)).
 
-(************************************** 
+(**************************************
   Some properties of s
  **************************************)
 
@@ -149,7 +149,7 @@ repeat rewrite <- ppow_mult; auto with zarith.
 rewrite (pmult_comm v w); rewrite w_mult_v.
 rewrite ppow_1.
 repeat rewrite tpower_1.
-rewrite pplus_comm; repeat rewrite <- pplus_assoc; 
+rewrite pplus_comm; repeat rewrite <- pplus_assoc;
 rewrite pplus_comm; repeat rewrite <- pplus_assoc.
 simpl; case (ppow (7, -4) (2 ^n)); simpl; intros z1 z2; eq_tac; auto with zarith.
 Qed.
@@ -157,7 +157,7 @@ Qed.
 Theorem sn_snd: forall n, snd (s n) = 0.
 intros n; case n; simpl; auto.
 intros p; pattern p; apply Pind; auto.
-intros p1 H; rewrite Zpos_succ_morphism; unfold Zsucc.
+intros p1 H; rewrite Zpos_succ_morphism; unfold Z.succ.
 rewrite sn_aux; auto with zarith.
 generalize H; case (s (Zpos p1)); simpl.
 intros x y H1; rewrite H1; auto with zarith.
@@ -201,7 +201,7 @@ Section Lucas.
 
 Variable p: Z.
 
-(************************************** 
+(**************************************
   Definition of the mersenne number
  **************************************)
 
@@ -209,14 +209,14 @@ Definition Mp := 2^p -1.
 
 Theorem mersenne_pos:  1 < p -> 1 < Mp.
 intros H; unfold Mp; assert (2 < 2 ^p); auto with zarith.
-apply Zlt_le_trans with (2^2); auto with zarith.
+apply Z.lt_le_trans with (2^2); auto with zarith.
 refine (refl_equal _).
 apply Zpower_le_monotone; auto with zarith.
 Qed.
 
 Hypothesis p_pos2: 2 < p.
 
-(************************************** 
+(**************************************
   We suppose that the mersenne number divides s
  **************************************)
 
@@ -224,7 +224,7 @@ Hypothesis Mp_divide_sn: (Mp  | fst (s (p - 2))).
 
 Variable q: Z.
 
-(************************************** 
+(**************************************
   We take a divisor of Mp and shows that Mp <= q^2, hence Mp is prime
  **************************************)
 
@@ -233,10 +233,10 @@ Hypothesis q_divide_Mp: (q | Mp).
 Hypothesis q_pos2: 2 < q.
 
 Theorem q_pos: 1 < q.
-apply Zlt_trans with (2 := q_pos2); auto with zarith.
+apply Z.lt_trans with (2 := q_pos2); auto with zarith.
 Qed.
 
-(************************************** 
+(**************************************
   The definition of the groups of inversible pairs
  **************************************)
 
@@ -275,7 +275,7 @@ Qed.
 
 Theorem order_lt:  g_order pgroup < q * q.
 unfold g_order, pgroup, PGroup; simpl.
-rewrite <- (Zabs_eq (q * q)); auto with zarith.
+rewrite <- (Z.abs_eq (q * q)); auto with zarith.
 rewrite <- (inj_Zabs_nat (q * q)); auto with zarith.
 rewrite <- mL_length; auto with zarith.
 apply inj_lt; apply isupport_length_strict with (0, 0).
@@ -285,18 +285,18 @@ intros a _; left; rewrite zpmult_0_l; auto with zarith.
 intros; discriminate.
 Qed.
 
-(************************************** 
+(**************************************
   The power function zpow: a^n
  **************************************)
 
-Definition zpow a := gpow a pgroup. 
+Definition zpow a := gpow a pgroup.
 
-(************************************** 
+(**************************************
   Some properties of zpow
  **************************************)
 
-Theorem zpow_def: 
-  forall a b, In a pgroup.(FGroup.s) -> 0 <= b -> 
+Theorem zpow_def:
+  forall a b, In a pgroup.(FGroup.s) -> 0 <= b ->
      zpow a b = ((fst (ppow a b)) mod q, (snd (ppow a b)) mod q).
 generalize q_pos; intros HM.
 generalize q_pos2; intros HM2.
@@ -304,7 +304,7 @@ assert (H0: 0 < q); auto with zarith.
 intros a b Ha Hb; generalize Hb; pattern b; apply natlike_ind; auto.
 intros _; repeat rewrite Zmod_small; auto with zarith.
 rewrite ppow_0; simpl; auto with zarith.
-unfold zpow; intros n1 H Rec _; unfold Zsucc.
+unfold zpow; intros n1 H Rec _; unfold Z.succ.
 rewrite gpow_add; auto with zarith.
 rewrite ppow_add; simpl; try rewrite pmult_1_r; auto with zarith.
 rewrite Rec; unfold zpmult; auto with zarith.
@@ -362,7 +362,7 @@ rewrite Zpower_exp; try rewrite Zpower_exp_1; auto with zarith.
 unfold zpow; rewrite gpow_gpow; auto with zarith.
 generalize zpow_w_n_minus_1; unfold zpow; intros H1; rewrite H1; clear H1.
 simpl; unfold zpmult, pmult.
-repeat (rewrite Zmult_0_l || rewrite Zmult_0_r || rewrite Zplus_0_l || 
+repeat (rewrite Zmult_0_l || rewrite Zmult_0_r || rewrite Zplus_0_l ||
               rewrite Zplus_0_r || rewrite Zmult_1_r).
 eq_tac; auto.
 pattern (-1 mod q) at 1; rewrite <- (Zmod_mod (-1) q); auto with zarith.
@@ -371,7 +371,7 @@ rewrite Zmod_small; auto with zarith.
 apply w_in_pgroup.
 Qed.
 
-(************************************** 
+(**************************************
   As e = (1, 0), the previous equation implies that the order of the group divide 2^p
  **************************************)
 
@@ -385,7 +385,7 @@ apply Zlt_le_weak; apply Zpower_gt_0; auto with zarith.
 exact zpow_w_n.
 Qed.
 
-(************************************** 
+(**************************************
   So it is less than equal
  **************************************)
 
@@ -396,19 +396,19 @@ apply Zpower_gt_0; auto with zarith.
 apply e_order_divide_pow.
 Qed.
 
-(************************************** 
+(**************************************
   So order(w) must be 2^q
  **************************************)
 
 Theorem e_order_eq_pow:  exists q, (e_order P_dec w pgroup)  = 2 ^ q.
-case (Zdivide_power_2 (e_order P_dec w pgroup) 2 p); auto with zarith. 
+case (Zdivide_power_2 (e_order P_dec w pgroup) 2 p); auto with zarith.
 apply Zlt_le_weak; apply e_order_pos.
 apply prime_2.
 apply e_order_divide_pow; auto.
 intros x H; exists x; auto with zarith.
 Qed.
 
-(************************************** 
+(**************************************
   Buth this q can only be p otherwise it would contradict w^2^(p -1) = (-1, 0)
  **************************************)
 
@@ -449,7 +449,7 @@ apply (gpow_e_order_is_e _ P_dec _ w pgroup).
 apply w_in_pgroup.
 Qed.
 
-(************************************** 
+(**************************************
   We have then the expected conclusion
  **************************************)
 
@@ -457,12 +457,12 @@ Theorem q_more_than_square:  Mp <  q * q.
 unfold Mp.
 assert (2 ^ p <= q * q); auto with zarith.
 rewrite <- e_order_eq_p.
-apply Zle_trans with (g_order pgroup).
+apply Z.le_trans with (g_order pgroup).
 apply Zdivide_le; auto with zarith.
 apply Zlt_le_weak; apply e_order_pos; auto with zarith.
 2: apply e_order_divide_order.
 2: apply Zlt_le_weak; apply order_lt.
-apply Zlt_le_trans with 2; auto with zarith.
+apply Z.lt_le_trans with 2; auto with zarith.
 replace 2 with (Z_of_nat (length ((1, 0)::w::nil))); auto.
 unfold g_order; apply inj_le.
 apply ulist_incl_length.
@@ -483,20 +483,20 @@ Qed.
 
 End Lucas.
 
-(************************************** 
+(**************************************
   We build the sequence in Z
  **************************************)
 
 Definition SS p :=
   let n := Mp p in
   match p - 2 with
-    Zpos p1 => iter_pos _ (fun x => Zmodd (Zsquare x - 2) n) (Zmodd 4 n) p1
+    Zpos p1 => iter_pos _ (fun x => Zmodd (Z.square x - 2) n) (Zmodd 4 n) p1
   | _ => (Zmodd 4 n)
   end.
 
-Theorem SS_aux_correct: 
+Theorem SS_aux_correct:
   forall p z1 z2 n, 0 <= n -> 0 < z1 -> z2 = fst (s n) mod z1 ->
-        iter_pos _ (fun x => Zmodd (Zsquare x - 2) z1) z2 p = fst (s (n + Zpos p)) mod z1.
+        iter_pos _ (fun x => Zmodd (Z.square x - 2) z1) z2 p = fst (s (n + Zpos p)) mod z1.
 intros p; pattern p; apply Pind.
 simpl.
 intros z1 z2 n Hn H H1; rewrite sn; auto; rewrite H1;  rewrite Zmodd_correct; rewrite Zsquare_correct; simpl.
@@ -525,7 +525,7 @@ cut (0 <= n - 2); auto with zarith.
 case (n - 2).
 intros _; rewrite Zmodd_correct; rewrite s0; auto.
 intros p1 H2; rewrite SS_aux_correct with (n := 0); auto with zarith.
-apply Zle_lt_trans with 1; try apply mersenne_pos; auto with zarith.
+apply Z.le_lt_trans with 1; try apply mersenne_pos; auto with zarith.
 rewrite Zmodd_correct; rewrite s0; auto.
 intros p1 H2; case H2; auto.
 Qed.
@@ -540,12 +540,12 @@ Qed.
 Theorem LucasLehmer:  forall p, 2 < p -> SS p = 0 -> prime (Mp p).
 intros p H H1; case (prime_dec (Mp p)); auto; intros H2.
 case Zdivide_div_prime_le_square with (2 := H2).
-apply mersenne_pos; apply Zlt_trans with 2; auto with zarith.
+apply mersenne_pos; apply Z.lt_trans with 2; auto with zarith.
 intros q (H3, (H4, H5)).
 contradict H5; apply Zlt_not_le.
 apply q_more_than_square; auto.
 apply SS_prop_cor; auto.
-apply Zlt_trans with 2; auto with zarith.
+apply Z.lt_trans with 2; auto with zarith.
 case (Zle_lt_or_eq 2 q); auto.
 apply prime_ge_2; auto.
 intros H5; subst.
@@ -558,16 +558,16 @@ pattern 2 at 2; rewrite <- Zpower_1_r; rewrite <- Zpower_exp; auto with zarith.
 replace (p - 1 + 1) with p; auto with zarith.
 Qed.
 
-(************************************** 
+(**************************************
   The test
  **************************************)
 
 Definition lucas_test  n :=
-   if Z_lt_dec 2 n then if Z_eq_dec (SS n) 0 then true else false else false.
+   if Z_lt_dec 2 n then if Z.eq_dec (SS n) 0 then true else false else false.
 
 Theorem LucasTest: forall n, lucas_test n = true -> prime (Mp n).
 intros n; unfold lucas_test; case (Z_lt_dec 2 n); intros H1; try (intros; discriminate).
-case (Z_eq_dec (SS n) 0); intros H2; try (intros; discriminate).
+case (Z.eq_dec (SS n) 0); intros H2; try (intros; discriminate).
 intros _; apply LucasLehmer; auto.
 Qed.
 
@@ -594,4 +594,3 @@ Qed.
 Theorem prime524287: prime 524287.
 exact (LucasTest 19 (refl_equal _)).
 Qed.
-
