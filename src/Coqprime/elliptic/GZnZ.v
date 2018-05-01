@@ -7,14 +7,16 @@
 
 Require Import ZArith Znumtheory.
 Require Import Eqdep_dec.
+Require Import List.
+Require Import UList.
 
 Section ZnZ.
 
 Variable n: Z.
 Hypothesis n_pos: 0 < n.
 
-Structure znz: Set:= 
- mkznz {val: Z; 
+Structure znz: Set:=
+ mkznz {val: Z;
         inZnZ: val = Zmod val n}.
 
 Theorem znz_inj: forall a b, a = b -> val a = val b.
@@ -23,7 +25,7 @@ Qed.
 
 Theorem Zeq_iok: forall x y, x = y -> Zeq_bool x y = true.
 intros x y H; subst.
-unfold Zeq_bool; rewrite Zcompare_refl; auto.
+unfold Zeq_bool; rewrite Z.compare_refl; auto.
 Qed.
 
 Lemma modz: forall x,
@@ -50,7 +52,7 @@ Proof.
 intros x1 x2 H1 H2 H3.
 subst x1.
 rewrite (fun H => eq_proofs_unicity H H1 H2); auto.
-intros x y; case (Z_eq_dec x y); auto.
+intros x y; case (Z.eq_dec x y); auto.
 Qed.
 
 Lemma znz1: forall x, x mod 1 = 0.
@@ -59,7 +61,7 @@ Qed.
 
 Definition RZnZ:  ring_theory zero one add mul sub opp (@eq znz).
 split; auto.
-intros p; case p; intros x H; 
+intros p; case p; intros x H;
    refine (zirr _ _ _ _ _); simpl; auto.
 intros [x Hx] [y Hy].
   refine (zirr _ _ _ _ _); simpl.
@@ -92,26 +94,22 @@ intros [x Hx] [y Hy] [z Hz].
   rewrite <- Zmult_mod; auto.
   rewrite (Zplus_mod ((x*z) mod n)); auto.
   repeat rewrite Zmod_mod; auto.
-  rewrite <- Zplus_mod; auto. 
-  apply f_equal2 with (f := Zmod); auto; ring. 
+  rewrite <- Zplus_mod; auto.
+  apply f_equal2 with (f := Zmod); auto; ring.
 intros [x Hx] [y Hy].
   refine (zirr _ _ _ _ _); simpl.
   rewrite Zplus_mod; auto.
   repeat rewrite Zmod_mod; auto.
-  rewrite <- Zplus_mod; auto. 
+  rewrite <- Zplus_mod; auto.
 intros [x Hx].
   refine (zirr _ _ _ _ _); simpl.
   rewrite Zplus_mod; auto.
   repeat rewrite Zmod_mod; auto.
-  rewrite <- Zplus_mod; auto. 
-  apply f_equal2 with (f := Zmod); auto; ring. 
+  rewrite <- Zplus_mod; auto.
+  apply f_equal2 with (f := Zmod); auto; ring.
 Defined.
 
 Add Ring RZnZ : RZnZ.
-
-
-Require Import List.
-Require Import UList.
 
 (* It is finite *)
 Fixpoint mklist (n: nat): list nat :=
@@ -139,22 +137,22 @@ intros H1; absurd (m < m)%nat; auto with arith.
 apply mklist_lt; auto.
 Qed.
 
-Theorem nat_z_kt: forall x, (x < Zabs_nat n)%nat -> (Z_of_nat x) = (Z_of_nat x) mod n.
+Theorem nat_z_kt: forall x, (x < Z.abs_nat n)%nat -> (Z_of_nat x) = (Z_of_nat x) mod n.
 intros x H; rewrite Zmod_small; split; auto with zarith.
-replace n with (Z_of_nat (Zabs_nat n)).
+replace n with (Z_of_nat (Z.abs_nat n)).
 apply inj_lt; auto.
 rewrite inj_Zabs_nat; auto with zarith.
-rewrite Zabs_eq; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
 Qed.
 
-Definition mkzlist: 
-  forall (l: list nat), (forall x, In x l -> (x < Zabs_nat n)%nat) -> list znz.
+Definition mkzlist:
+  forall (l: list nat), (forall x, In x l -> (x < Z.abs_nat n)%nat) -> list znz.
 fix 1; intros l; case l.
   intros; exact nil.
 intros n1 l1 Hn.
-  assert (F1: forall x, In x l1 -> (x < Zabs_nat n)%nat).
+  assert (F1: forall x, In x l1 -> (x < Z.abs_nat n)%nat).
     intros; apply Hn; simpl; auto.
-  assert (F2: (n1 < Zabs_nat n)%nat).
+  assert (F2: (n1 < Z.abs_nat n)%nat).
     apply Hn; simpl; auto.
   exact (cons (mkznz _ (nat_z_kt _ F2)) (mkzlist _ F1)).
 Defined.
@@ -174,12 +172,12 @@ right; apply (Hrec1 _ _ _ H4).
 Qed.
 
 Theorem mkzlist_in:
-   forall l a Ha Hl, In (Zabs_nat a) l -> In (mkznz a Ha) (mkzlist l Hl).
+   forall l a Ha Hl, In (Z.abs_nat a) l -> In (mkznz a Ha) (mkzlist l Hl).
 intros l1; elim l1; simpl; auto; clear l1.
 intros a1 l1 Hrec1 a2 l2 Hl2 [H4 | H4]; auto.
   left; apply zirr; auto.
   rewrite H4; rewrite inj_Zabs_nat; auto.
-  rewrite Zabs_eq; auto with zarith.
+  rewrite Z.abs_eq; auto with zarith.
   case (Z_mod_lt a2 n); auto with zarith.
 Qed.
 
@@ -198,10 +196,10 @@ intros a l H1 H2 Hrec H3; constructor; auto.
 Qed.
 
 Definition all_znz: list znz :=
-  (mkzlist (mklist (Zabs_nat n)) (mklist_lt _)).
+  (mkzlist (mklist (Z.abs_nat n)) (mklist_lt _)).
 
 
-Lemma all_znz_length: length all_znz = (Zabs_nat n).
+Lemma all_znz_length: length all_znz = (Z.abs_nat n).
 Proof.
 unfold all_znz; rewrite mkzlist_length.
 rewrite mklist_length; auto.
@@ -218,11 +216,11 @@ unfold all_znz; apply mkzlist_in.
 apply lt_mklist_lt.
 case (Z_mod_lt z1 n); auto with zarith.
 rewrite <- Hz1; intros H1 H2.
-case (le_or_lt (Zabs_nat n) (Zabs_nat z1)); auto; intros H3.
+case (le_or_lt (Z.abs_nat n) (Z.abs_nat z1)); auto; intros H3.
 absurd (z1 < n); auto; apply Zle_not_lt.
-rewrite <- Zabs_eq; auto.
+rewrite <- Z.abs_eq; auto.
 rewrite <- inj_Zabs_nat; auto.
-rewrite <- (Zabs_eq n); auto with zarith.
+rewrite <- (Z.abs_eq n); auto with zarith.
 rewrite <- (inj_Zabs_nat n); auto.
 apply inj_le; auto.
 Qed.
@@ -268,7 +266,7 @@ case (Zle_lt_or_eq _ _ H1); auto with zarith.
 rewrite <- Hn; intros H3;
   case H; apply zirr; rewrite <- H3; auto.
 red in F1.
-case (Zis_gcd_unique _ _ _ _ Hv F1); 
+case (Zis_gcd_unique _ _ _ _ Hv F1);
   auto with zarith;
  intros; subst w.
 rewrite <- H0.

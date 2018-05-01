@@ -7,11 +7,11 @@
 (*************************************************************)
 
 (**********************************************************************
-    Pepin.v                        
-                                                                     
-    Pepin's Test for Fermat Number 
-                                                                 
-    Definition: PepinTest              
+    Pepin.v
+
+    Pepin's Test for Fermat Number
+
+    Definition: PepinTest
   **********************************************************************)
 Require Import ZArith.
 Require Import ZCAux.
@@ -22,7 +22,7 @@ Open Scope Z_scope.
 Definition FermatNumber n := 2^(2^(Z_of_nat n)) + 1.
 
 Theorem Fermat_pos: forall n, 1 < FermatNumber n.
-unfold FermatNumber; intros n; apply Zle_lt_trans with (2 ^ 2 ^(Z_of_nat n)); auto with zarith.
+unfold FermatNumber; intros n; apply Z.le_lt_trans with (2 ^ 2 ^(Z_of_nat n)); auto with zarith.
 rewrite <- (Zpower_0_r 2); auto with zarith.
 apply Zpower_le_monotone; try split; auto with zarith.
 Qed.
@@ -33,7 +33,7 @@ assert (Hn: 1 < Fn).
 unfold Fn; apply Fermat_pos.
 apply PocklingtonCorollary1 with (F1 := 2^(2^(Z_of_nat n))) (R1 := 1); auto with zarith.
 2: unfold Fn, FermatNumber; auto with zarith.
-apply Zlt_le_trans with (2 ^ 1); auto with zarith.
+apply Z.lt_le_trans with (2 ^ 1); auto with zarith.
 rewrite Zpower_1_r; auto with zarith.
 apply Zpower_le_monotone; try split; auto with zarith.
 rewrite <- (Zpower_0_r 2); apply Zpower_le_monotone; try split; auto with zarith.
@@ -42,7 +42,7 @@ assert (H1: 2 <= 2 ^ 2 ^ Z_of_nat n).
 pattern 2 at 1; rewrite <- (Zpower_1_r 2); auto with zarith.
 apply Zpower_le_monotone; split; auto with zarith.
 rewrite <- (Zpower_0_r 2); apply Zpower_le_monotone; try split; auto with zarith.
-apply Zlt_le_trans with  (2 * 2 ^2 ^Z_of_nat n).
+apply Z.lt_le_trans with  (2 * 2 ^2 ^Z_of_nat n).
 assert (tmp: forall p, 2 * p = p + p); auto with zarith.
 apply Zmult_le_compat_r; auto with zarith.
 assert (Hd: (2 | Fn - 1)).
@@ -73,18 +73,18 @@ apply prime_2.
 assert (Hd2: (x | 2)).
 replace 2 with ((3 ^ ((Fn - 1) / 2) + 1) - (3 ^ ((Fn - 1) / 2) - 1)); auto with zarith.
 apply Zdivide_minus_l; auto.
-apply Zdivide_trans with (1 := HD2).
+apply Z.divide_trans with (1 := HD2).
 apply Zmod_divide; auto with zarith.
 rewrite <- Hd1; auto.
 replace 1 with (Fn - (Fn - 1)); auto with zarith.
 apply Zdivide_minus_l; auto.
-apply Zdivide_trans with (1 := Hd2); auto.
+apply Z.divide_trans with (1 := Hd2); auto.
 Qed.
 
 (* An optimized version with Zpow_mod *)
 
 Definition pepin_test n :=
-  let Fn := FermatNumber n in if  Z_eq_dec (Zpow_mod 3  ((Fn - 1) / 2) Fn)  (Fn - 1) then true else false.
+  let Fn := FermatNumber n in if  Z.eq_dec (Zpow_mod 3  ((Fn - 1) / 2) Fn)  (Fn - 1) then true else false.
 
 Theorem PepinTestOp: forall n, pepin_test n = true -> prime (FermatNumber n).
 intros n; unfold pepin_test.
@@ -116,7 +116,7 @@ Theorem prime65537:  prime 65537.
 exact (PepinTestOp 4 (refl_equal _)).
 Qed.
 
-(* Too tough !! 
+(* Too tough !!
 Theorem prime4294967297:  prime 4294967297.
 refine (PepinTestOp 5 (refl_equal _)).
 Qed.

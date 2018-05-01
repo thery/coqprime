@@ -31,13 +31,13 @@ Fixpoint mk_op (w : Type) (op : ZnZ.Ops w) (n : nat) {struct n} :
   | S n1 => mk_zn2z_ops_karatsuba (mk_op op n1)
   end.
 
-Theorem mk_op_digits: forall w (op: ZnZ.Ops w) n, 
+Theorem mk_op_digits: forall w (op: ZnZ.Ops w) n,
   (Zpos (ZnZ.digits (mk_op op n)) = 2 ^ Z_of_nat n * Zpos (ZnZ.digits op))%Z.
 intros w op n; elim n; simpl mk_op; auto; clear n.
 intros n Rec; simpl ZnZ.digits.
 rewrite Zpos_xO; rewrite Rec.
 rewrite Zmult_assoc; apply f_equal2 with (f := Zmult); auto.
-rewrite inj_S; unfold Zsucc; rewrite Zplus_comm.
+rewrite inj_S; unfold Z.succ; rewrite Zplus_comm.
 rewrite Zpower_exp; auto with zarith.
 Qed.
 
@@ -46,14 +46,14 @@ Theorem digits_pos: forall w (op: ZnZ.Ops w) n,
 intros w op n H.
 rewrite mk_op_digits.
 rewrite <- (Zmult_1_r 1).
-apply Zle_lt_trans with (2 ^ (Z_of_nat n) * 1)%Z.
+apply Z.le_lt_trans with (2 ^ (Z_of_nat n) * 1)%Z.
 apply Zmult_le_compat_r; auto with zarith.
 rewrite <- (Zpower_0_r 2).
 apply Zpower_le_monotone; auto with zarith.
 apply Zmult_lt_compat_l; auto with zarith.
 Qed.
 
-Fixpoint mk_spec (w : Type) (op : ZnZ.Ops w) (op_spec : ZnZ.Specs op) 
+Fixpoint mk_spec (w : Type) (op : ZnZ.Ops w) (op_spec : ZnZ.Specs op)
     (H: (1 < Zpos (ZnZ.digits op))%Z)  (n : nat)
             {struct n} : ZnZ.Specs (mk_op op n) :=
   match n return (ZnZ.Specs (mk_op op n)) with
@@ -64,7 +64,7 @@ Fixpoint mk_spec (w : Type) (op : ZnZ.Ops w) (op_spec : ZnZ.Specs op)
   end.
 
 (* ** Operators ** *)
-Definition w31_1_op := mk_zn2z_ops int31_ops.           
+Definition w31_1_op := mk_zn2z_ops int31_ops.
 Definition w31_2_op := mk_zn2z_ops w31_1_op.
 Definition w31_3_op := mk_zn2z_ops w31_2_op.
 Definition w31_4_op := mk_zn2z_ops_karatsuba w31_3_op.
@@ -193,7 +193,7 @@ auto with zarith.
 Defined.
 
 
-Theorem cmk_op_digits: forall n, 
+Theorem cmk_op_digits: forall n,
   (Zpos (ZnZ.digits (cmk_op n)) = 2 ^ (Z_of_nat n) * 31)%Z.
 do 15 (intros n; case n; clear n; [try reflexivity | idtac]).
 intros n; unfold cmk_op; lazy beta.
