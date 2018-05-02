@@ -17,7 +17,7 @@ Require Import ZArith ZCAux.
 (* Make the words *)
 
 Definition mk_word: forall (w: Type) (n:nat), Type.
-fix 2.
+fix mk_word 2.
 intros w n; case n; simpl.
 exact int31.
 intros n1; exact (zn2z (mk_word w n1)).

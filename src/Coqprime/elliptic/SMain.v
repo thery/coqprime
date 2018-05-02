@@ -1584,7 +1584,7 @@ Qed.
 
 Definition mk_lelt:
   forall l, (forall x y: K, In (x, y) l -> In_curve x y) -> list elt.
-fix 1; intros l;  case l.
+fix mk_lelt 1; intros l;  case l.
   intros _; exact (@nil _).
 intros a l1; case a; intros x y H.
 assert (F1: y^2 = x^3 + A * x + B); auto.

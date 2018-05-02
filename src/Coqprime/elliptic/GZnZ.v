@@ -147,7 +147,7 @@ Qed.
 
 Definition mkzlist:
   forall (l: list nat), (forall x, In x l -> (x < Z.abs_nat n)%nat) -> list znz.
-fix 1; intros l; case l.
+fix mkzlist 1; intros l; case l.
   intros; exact nil.
 intros n1 l1 Hn.
   assert (F1: forall x, In x l1 -> (x < Z.abs_nat n)%nat).
