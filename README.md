@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/thery/coqprime.svg?branch=master)](https://travis-ci.org/thery/coqprime)
+
 # coqprime
 
 CoqPrime is a library built on top of the Coq proof system to certify primality using Pocklington certificate and Elliptic Curve Certificate. It is a nice illustration of what we can do with safe computation inside a prover. The library consists of 4 main parts:
