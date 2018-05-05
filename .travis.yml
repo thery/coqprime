@@ -20,10 +20,6 @@ env:
   - NJOBS=3
   - COQ_VER="8.8.0"
 
-notifications:
-  email:
-  - false
-
 install:
 - export OPAMROOT=$HOME/.opam
 - opam init -j ${NJOBS}  -n -y
