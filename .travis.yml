@@ -18,13 +18,16 @@ addons:
 env:
   global:
   - NJOBS=3
-  - COQ_VER="8.8.0"
+  matrix:
+  - COQ_VER="8.8.1" REPO_NAME="coq-released"  REPO_URL="http://coq.inria.fr/opam/released"
+  - COQ_VER="dev"   REPO_NAME="coq-extra-dev" REPO_URL="https://coq.inria.fr/opam/extra-dev"
 
 install:
 - export OPAMROOT=$HOME/.opam
 - opam init -j ${NJOBS}  -n -y
 - eval $(opam config env)
-- opam repo add coq-released http://coq.inria.fr/opam/released || echo "coq-released registered"
+- opam repo add coq-core-dev https://coq.inria.fr/opam/core-dev || echo "coq-core-dev registered"
+- opam repo add "${REPO_NAME}" "${REPO_URL}" || echo "${REPO_NAME} registered"
 - opam install coq.${COQ_VER} -y
 - opam install coq-bignums -y
 
@@ -32,4 +35,3 @@ script:
  - ./configure.sh
  - make -j ${NJOBS}
  - make install
-
