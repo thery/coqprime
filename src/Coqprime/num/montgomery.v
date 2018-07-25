@@ -196,7 +196,6 @@ rewrite Zpos_xI; change wB with (2 * Zpower_nat 2 30)%Z; ring.
 generalize (phi_bounded (2 * i)); auto with zarith.
 intros HH H2i; rewrite (Hrec _ _ (S n)); auto with zarith.
 rewrite Zpos_xI, H2i, (Hij i j n), Hi, Zpower_nat_S; auto with zarith.
-ring.
 rewrite (Hij i j n), H2i, Zpower_nat_S, <- Hi; auto with zarith.
 generalize (Hi0 i n Hi); rewrite spec_compare; case Z.compare_spec; nrom.
 intros HH Hn; rewrite Hi, Hn; auto with zarith.
@@ -205,7 +204,6 @@ rewrite Zpos_xO; change wB with (2 * Zpower_nat 2 30)%Z; ring.
 generalize (phi_bounded (2 * i)); auto with zarith.
 intros HH H2i; rewrite (Hrec _ _ (S n)); auto with zarith.
 rewrite Zpos_xO, H2i, Hi, Zpower_nat_S; auto with zarith.
-ring.
 case (phi_bounded i); intros Hi1 H2.
 rewrite H2i, Zpower_nat_S, <- Hi; auto with zarith.
 rewrite phi_cons, (Hij i j n); nrom; auto with zarith.
@@ -228,7 +226,6 @@ Lemma num_phi z :  (0 <= z)%Z -> [Z_to_num z] = z.
 Proof.
 destruct z as [|p|p]; intros Hp; auto with zarith.
 apply positive_phi.
-contradict Hp; auto with zarith.
 Qed.
 
 Lemma add_cp a b :
@@ -431,13 +428,11 @@ case (Zle_or_lt n2 n1); intros H1; auto.
 case (Zle_lt_or_eq _ _ H1); clear H1; intros H1; auto.
 assert (0 <= wB * (n1 - n2 - 1))%Z; auto with zarith.
 assert (wB + wB * (n1 - n2 -1) < (b - a))%Z; auto with zarith.
-repeat rewrite Zmult_minus_distr_l; rewrite Zmult_1_r; auto with zarith.
 rewrite H1 in HH; auto with zarith.
 case (Zle_or_lt n1 n2); intros H1; auto.
 case (Zle_lt_or_eq _ _ H1); clear H1; intros H1; auto.
 assert (0 <= wB * (n2 - n1 - 1))%Z; auto with zarith.
 assert (wB + wB * (n2 - n1 -1) < (a - b))%Z; auto with zarith.
-repeat rewrite Zmult_minus_distr_l; rewrite Zmult_1_r; auto with zarith.
 rewrite H1 in HH; auto with zarith.
 Qed.
 
@@ -1000,9 +995,6 @@ rewrite H1U.
 assert (U * [M] < [M] * Zpower_nat wB n)%Z; auto with zarith.
 rewrite Zmult_comm; apply Zmult_gt_0_lt_compat_l; auto with zarith.
 apply Z.lt_gt; apply M_pos.
-replace (2 * [M] * Zpower_nat wB n)%Z with
-       ([M] * Zpower_nat wB n + [M] * Zpower_nat wB n)%Z; auto with zarith;
-  ring.
 Qed.
 
 Definition reduce_num (n : nat) (t : number) : number :=
@@ -1342,7 +1334,6 @@ apply (eq_Tn_correct _ _ n).
 rewrite reduce_mult_correct.
 rewrite !encode_correct; auto with zarith.
 rewrite <-Zmult_mod; apply f_equal2 with (f := Zmod); auto with zarith.
-ring.
 unfold decode; auto with zarith.
 Qed.
 
