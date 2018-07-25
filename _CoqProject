@@ -1,4 +1,4 @@
--R src ''
+-R src/Coqprime Coqprime
 
 src/Coqprime/Tactic/Tactic.v
 src/Coqprime/N/NatAux.v
