@@ -227,31 +227,25 @@ Qed.
 Theorem support_aux_ulist:
   forall n m, 0 <= m -> (forall p, 0 <= p < m -> gpow (1 + p) <> G.(e)) -> ulist (support_aux (gpow m) n).
 intros n; elim n; auto; clear n.
-intros m _ _; auto.
-simpl; apply ulist_cons; auto.
+  intros m _ _; auto.
+  simpl; apply ulist_cons; auto.
 intros n1 Rec m Hm H.
 simpl; case (A_dec (op a (gpow m)) G.(e)); auto.
 intros He; apply ulist_cons; auto.
-intros H1; case  (support_aux_gpow n1 (1 + m) (gpow m)); auto with zarith.
-rewrite gpow_add; try rewrite gpow_1; auto with zarith.
-intros p (Hp1, Hp2).
-assert (H2: gpow (1 + Z_of_nat p) = G.(e)).
-apply gpow_i with m; auto with zarith.
-rewrite Hp2; eq_tac; auto with zarith.
-case (Zle_or_lt m  (Z_of_nat p)); intros H3; auto.
-2: case (H (Z_of_nat p)); auto with zarith.
-case (support_aux_not_e (S n1) m (gpow (1 + Z_of_nat p))); auto.
-rewrite gpow_add; auto with zarith; simpl; rewrite e_is_zero_r; auto.
-case (A_dec (op a (gpow m)) G.(e)); auto.
-intros _; rewrite <- gpow_1; repeat rewrite <- gpow_add; auto with zarith.
-replace (1 + Z_of_nat p) with ((1 + m) + (Z_of_nat (p - Z.abs_nat m))); auto with zarith.
-apply support_aux_in; auto with zarith.
-rewrite inj_minus1; auto with zarith.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-apply inj_le_rev.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
+  intros H1; case  (support_aux_gpow n1 (1 + m) (gpow m)); auto with zarith.
+    rewrite gpow_add; try rewrite gpow_1; auto with zarith.
+  intros p (Hp1, Hp2).
+  assert (H2: gpow (1 + Z_of_nat p) = G.(e)).
+    apply gpow_i with m; auto with zarith.
+    rewrite Hp2; eq_tac; auto with zarith.
+  case (Zle_or_lt m  (Z_of_nat p)); intros H3; auto.
+    2: case (H (Z_of_nat p)); auto with zarith.
+  case (support_aux_not_e (S n1) m (gpow (1 + Z_of_nat p))); auto.
+  rewrite gpow_add; auto with zarith; simpl; rewrite e_is_zero_r; auto.
+  case (A_dec (op a (gpow m)) G.(e)); auto.
+  intros _; rewrite <- gpow_1; repeat rewrite <- gpow_add; auto with zarith.
+  replace (1 + Z_of_nat p) with ((1 + m) + (Z_of_nat (p - Z.abs_nat m))); auto with zarith.
+  apply support_aux_in; auto with zarith.
 rewrite <- gpow_1; repeat rewrite <- gpow_add; auto with zarith.
 apply (Rec (1 + m)); auto with zarith.
 intros p H1; case (Zle_lt_or_eq p m); intros; subst; auto with zarith.
@@ -319,23 +313,18 @@ generalize gpow_in; intros Hp.
 intros a1 H1.
 case support_gpow with (1 := H1); auto.
 intros p1 ((H2, H3), H4); case Zle_lt_or_eq with (1 := H2); clear H2; intros H2; subst.
-2: rewrite gpow_0; rewrite i_e; apply support_in_e.
+  2: rewrite gpow_0; rewrite i_e; apply support_in_e.
 replace (G.(i) (gpow p1)) with (gpow (Z_of_nat (length support - Z.abs_nat p1))).
-apply support_in; auto with zarith.
+  apply support_in; auto with zarith.
 rewrite inj_minus1.
+  2: apply inj_le_rev; rewrite inj_Zabs_nat; auto with zarith.
 rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-apply inj_le_rev; rewrite inj_Zabs_nat; auto with zarith.
 rewrite Z.abs_eq; auto with zarith.
 apply g_cancel_l with (g:= G) (a := gpow p1); sauto.
 rewrite <- gpow_add; auto with zarith.
-replace (p1 + Z_of_nat (length support - Z.abs_nat p1)) with (Z_of_nat (length support)).
+replace (p1 + (Z_of_nat (length support) - p1)) with
+        (Z_of_nat (length support)); auto with zarith.
 rewrite gpow_length_support_is_e; sauto.
-rewrite inj_minus1; auto with zarith.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-apply inj_le_rev; rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 (**************************************
@@ -393,44 +382,33 @@ generalize gpow_in; intros Hp.
 generalize e_order_pos; intros Hp1.
 intros n Hn; generalize Hn; pattern n; apply Z_lt_induction; auto; clear n Hn.
 intros n Rec Hn H.
-case (Zle_or_lt  e_order n); intros H1.
-case (Rec (n - e_order)); auto with zarith.
-apply g_cancel_l with (g:= G) (a := gpow e_order); sauto.
-rewrite G.(e_is_zero_r); auto with zarith.
-rewrite <- gpow_add; try (rewrite gpow_e_order_is_e; rewrite <- H; eq_tac); auto with zarith.
-intros k Hk; exists (1 + k).
-rewrite Zmult_plus_distr_l; rewrite <- Hk; auto with zarith.
+  case (Zle_or_lt  e_order n); intros H1.
+  case (Rec (n - e_order)); auto with zarith.
+    apply g_cancel_l with (g:= G) (a := gpow e_order); sauto.
+    rewrite G.(e_is_zero_r); auto with zarith.
+    rewrite <- gpow_add; try (rewrite gpow_e_order_is_e; rewrite <- H; eq_tac); auto with zarith.
+  intros k Hk; exists (1 + k).
+  rewrite Zmult_plus_distr_l; rewrite <- Hk; auto with zarith.
 case (Zle_lt_or_eq 0 n); auto with arith; intros H2; subst.
-contradict H; apply support_not_e.
-generalize H1; unfold e_order, support.
-case (Z.abs_nat (g_order G)); simpl; auto.
-intros H3; contradict H3; auto with zarith.
-intros n1; case (A_dec (op a G.(e)) G.(e)); simpl; intros _ H3.
-contradict H3; auto with zarith.
-generalize H3; clear H3.
-assert (tmp: forall p, Zpos (P_of_succ_nat p) = 1 + Z_of_nat p).
-intros p1; apply trans_equal with (Z_of_nat (S p1)); auto; rewrite inj_S; auto with zarith.
-rewrite tmp; clear tmp; intros H3.
-change (In (gpow n) (support_aux (gpow 1) n1)).
-replace n with (1 + Z_of_nat (Z.abs_nat n - 1)).
-apply support_aux_in; auto with zarith.
-rewrite <- (fun x => Zabs_nat_Z_of_nat (@length A x)).
-replace (Z.abs_nat n - 1)%nat  with (Z.abs_nat (n - 1)).
-apply Zabs_nat_lt; split; auto with zarith.
-rewrite G.(e_is_zero_r) in H3; try rewrite gpow_1; auto with zarith.
-apply inj_eq_rev; rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-rewrite inj_minus1; auto with zarith.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-apply inj_le_rev; rewrite inj_Zabs_nat; simpl; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-rewrite inj_minus1; auto with zarith.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-rewrite Zplus_comm; simpl; auto with zarith.
-apply inj_le_rev; rewrite inj_Zabs_nat; simpl; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
+  contradict H; apply support_not_e.
+  generalize H1; unfold e_order, support.
+  case (Z.abs_nat (g_order G)); simpl; auto.
+    intros H3; contradict H3; auto with zarith.
+  intros n1; case (A_dec (op a G.(e)) G.(e)); simpl; intros _ H3.
+    contradict H3; auto with zarith.
+  generalize H3; clear H3.
+  assert (tmp: forall p, Zpos (P_of_succ_nat p) = 1 + Z_of_nat p).
+    intros p1; apply trans_equal with (Z_of_nat (S p1)); auto; rewrite inj_S; auto with zarith.
+  rewrite tmp; clear tmp; intros H3.
+  change (In (gpow n) (support_aux (gpow 1) n1)).
+  replace n with (1 + Z_of_nat (Z.abs_nat n - 1)).
+    apply support_aux_in; auto with zarith.
+    rewrite <- (fun x => Zabs_nat_Z_of_nat (@length A x)).
+    replace (Z.abs_nat n - 1)%nat  with (Z.abs_nat (n - 1)).
+      apply Zabs_nat_lt; split; auto with zarith.
+      rewrite G.(e_is_zero_r) in H3; try rewrite gpow_1; auto with zarith.
+    apply inj_eq_rev; rewrite inj_Zabs_nat; auto with zarith.
+  rewrite inj_minus1; auto with zarith.
 exists 0; auto with arith.
 Qed.
 
@@ -580,13 +558,11 @@ assert (F2: 1 <= q).
       auto with zarith.
   assert (F2: 0 <= (- q) * e_order Adec a G); auto with zarith.
     apply Zmult_le_0_compat; auto with zarith.
-    apply Zlt_le_weak; apply e_order_pos.
-  generalize F2; rewrite Zopp_mult_distr_l_reverse;
-      rewrite <- Hq; auto with zarith.
+  apply Zlt_le_weak; apply e_order_pos.
 case (Zle_lt_or_eq _ _ F2); intros H3; subst; auto with zarith.
 case (prime_dec q); intros Hq.
   case (H q); auto with zarith.
-    rewrite Zmult_comm; rewrite Z_div_mult; auto with zarith.
+  rewrite Zmult_comm; rewrite Z_div_mult; auto with zarith.
   apply gpow_e_order_is_e; auto.
 case (Zdivide_div_prime_le_square _ H3 Hq); intros r (Hr1, (Hr2, Hr3)).
 case (H _ Hr1); auto.

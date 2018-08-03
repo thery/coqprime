@@ -320,11 +320,8 @@ Proof.
  destruct (Z.div_eucl a b) as (q2, r2).
  assert (H2 := div_eucl_spec a b).
  assert (Z_of_N (fst (a / b)%P) = q2 /\ Z_of_N (snd (a/b)%P) = r2).
- destruct H1;destruct H2.
- apply mod_unique with b;mauto.
- split;mauto.
- unfold Z.le;destruct (snd (a / b)%P);intro;discriminate.
- rewrite <- H0;symmetry;rewrite Zmult_comm;trivial.
+   destruct H1;destruct H2.
+   apply mod_unique with b;mauto.
  destruct H0;auto.
 Qed.
 Hint Rewrite Pmod_Zmod : zmisc.
@@ -408,7 +405,6 @@ Proof.
  replace ((snd a - 1)+1) with (Zpos (snd a)); mauto.
  rewrite <- IHl;repeat rewrite Zmult_assoc; mauto.
  destruct (snd a - 1);trivial.
- assert (1 < snd a); auto with zarith.
 Qed.
 Hint Rewrite mkProd_pred_mkProd : zmisc.
 
@@ -647,12 +643,12 @@ Proof.
   simpl Z.of_N in H12.
   rewrite H2; rewrite H12; mauto.
   rewrite <- Zpower_mult; mauto.
-  clear H12.
+ clear H12.
  intros H14.
  match type of H14 with _ -> _ -> _ -> ?X =>
   assert (H12:X); try apply H14; clear H14
  end; mauto.
- rewrite Zmod_small; mauto.
+   rewrite Zmod_small; mauto.
  assert (1 < mkProd dec).
   assert (H14 := Zlt_0_pos (mkProd dec)).
   assert (1 <= mkProd dec); mauto.
@@ -661,15 +657,13 @@ Proof.
  simpl in H8.
  assert (Z_of_N s = R1 / (2 * mkProd dec) /\ Zpos r =  R1 mod (2 * mkProd dec)).
   apply mod_unique with (2 * mkProd dec);auto with zarith.
- revert H8; mauto.
- apply Z_mod_lt; mauto.
+   apply Z_mod_lt; mauto.
  rewrite <- Z_div_mod_eq; mauto; rewrite H7.
  simpl fst; simpl snd; simpl Z_of_N.
  ring.
  destruct H15 as (H15,Heqr).
  apply PocklingtonExtra with (F1:=mkProd dec) (R1:=R1) (m:=1);
   auto with zmisc zarith.
- rewrite H2; mauto.
  apply is_even_Zeven; auto.
  apply is_odd_Zodd; auto.
  intros p; case p; clear p.

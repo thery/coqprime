@@ -30,44 +30,41 @@ intros (Hv1, Hv2); contradict Hv2; auto with zarith.
 intros p1 _ Hv1; contradict Hv1; auto with zarith.
 intros   p (Hv1, Hv2); contradict Hv2; auto with zarith.
 apply PocklingtonCorollary1 with (F1 := 2 ^ k) (R1 := h); auto with zarith.
-ring.
-apply Z.lt_le_trans with ((h + 1) * 2 ^ k); auto with zarith.
-rewrite Zmult_plus_distr_l; apply Zplus_lt_compat_l.
-rewrite Zmult_1_l; apply Z.lt_le_trans with 2; auto with zarith.
+  apply Z.lt_le_trans with ((h + 1) * 2 ^ k); auto with zarith.
 intros p H3 H4.
 generalize H2; replace (h * 2 ^ k + 1 - 1) with (h * 2 ^k); auto with zarith; clear H2; intros H2.
 exists a; split; auto; split.
-pattern (h * 2 ^k) at 1; rewrite (Zdivide_Zdiv_eq  2 (h * 2 ^ k)); auto with zarith.
-rewrite (Zmult_comm 2); rewrite Zpower_mult; auto with zarith.
-rewrite Zpower_mod; auto with zarith.
-assert (tmp: forall p, p = (p + 1) -1); auto with zarith; rewrite (fun x => (tmp (a ^ x))).
-rewrite Zminus_mod; auto with zarith.
-rewrite H2.
-rewrite (Zmod_small 1); auto with zarith.
-rewrite <- Zpower_mod; auto with zarith.
-rewrite Zmod_small; auto with zarith.
-simpl; unfold Zpower_pos; simpl; auto with zarith.
-apply Z_div_pos; auto with zarith.
-apply Z.divide_trans with (2 ^ k).
-apply Zpower_divide; auto with zarith.
-apply Zdivide_factor_l; auto with zarith.
+  pattern (h * 2 ^k) at 1; rewrite (Zdivide_Zdiv_eq  2 (h * 2 ^ k)); auto with zarith.
+    rewrite (Zmult_comm 2); rewrite Zpower_mult; auto with zarith.
+      rewrite Zpower_mod; auto with zarith.
+      assert (tmp: forall p, p = (p + 1) -1); auto with zarith; rewrite (fun x => (tmp (a ^ x))).
+      rewrite Zminus_mod; auto with zarith.
+      rewrite H2.
+      rewrite (Zmod_small 1); auto with zarith.
+      rewrite <- Zpower_mod; auto with zarith.
+      rewrite Zmod_small; auto with zarith.
+    simpl; unfold Zpower_pos; simpl; auto with zarith.
+    apply Z_div_pos; auto with zarith.
+  apply Z.divide_trans with (2 ^ k).
+    apply Zpower_divide; auto with zarith.
+  apply Zdivide_factor_l; auto with zarith.
 apply Zis_gcd_gcd; auto with zarith.
 apply Zis_gcd_intro; auto with zarith.
 intros x HD1 HD2.
 assert (Hd1: p = 2).
-apply prime_div_Zpower_prime with (4 := H4); auto with zarith.
-apply prime_2.
+  apply prime_div_Zpower_prime with (4 := H4); auto with zarith.
+  apply prime_2.
 assert (Hd2: (x | 2)).
-replace 2 with ((a ^ (h * 2 ^ k / 2) + 1) - (a ^ (h * 2 ^ k/ 2) - 1)); auto with zarith.
-apply Zdivide_minus_l; auto.
-apply Z.divide_trans with (1 := HD2).
-apply Zmod_divide; auto with zarith.
-pattern 2 at 2; rewrite <- Hd1; auto.
+  replace 2 with ((a ^ (h * 2 ^ k / 2) + 1) - (a ^ (h * 2 ^ k/ 2) - 1)); auto with zarith.
+  apply Zdivide_minus_l; auto.
+    apply Z.divide_trans with (1 := HD2).
+    apply Zmod_divide; auto with zarith.
+  pattern 2 at 2; rewrite <- Hd1; auto.
 replace 1 with ((h * 2 ^k + 1) - (h * 2 ^ k)); auto with zarith.
 apply Zdivide_minus_l; auto.
 apply Z.divide_trans with (1 := Hd2); auto.
 apply Z.divide_trans with (2 ^ k).
-apply Zpower_divide; auto with zarith.
+  apply Zpower_divide; auto with zarith.
 apply Zdivide_factor_l; auto with zarith.
 Qed.
 
