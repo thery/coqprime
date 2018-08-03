@@ -53,36 +53,12 @@ apply permutation_sym; apply permutation_rev.
 rewrite Zprogression_opp; auto with zarith.
 replace (n + Z_of_nat (pred (Z.abs_nat  ((1 + m) - n)))) with m; auto.
 replace (Z.abs_nat  ((1 + m) - n)) with (S (Z.abs_nat  (m - n))); auto with zarith.
-simpl.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-replace ((1 + m) - n) with (1 + (m - n)); auto with zarith.
-cut (0 <= m - n); auto with zarith; unfold Z.abs_nat .
-case (m - n); auto with zarith.
-intros p; case p; simpl; auto with zarith.
-intros p1 Hp1; rewrite nat_of_P_xO; rewrite nat_of_P_xI;
- rewrite nat_of_P_succ_morphism.
-simpl; repeat rewrite plus_0_r.
-repeat rewrite <- plus_n_Sm; simpl; auto.
-intros p H3; contradict H3; auto with zarith.
 intros H1 H2; apply iter_permutation; auto with zarith.
 apply permutation_trans
      with (rev (progression Z.succ m (Z.abs_nat  ((1 + n) - m)))).
 rewrite Zprogression_opp; auto with zarith.
 replace (m + Z_of_nat (pred (Z.abs_nat  ((1 + n) - m)))) with n; auto.
 replace (Z.abs_nat  ((1 + n) - m)) with (S (Z.abs_nat  (n - m))); auto with zarith.
-simpl.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
-replace ((1 + n) - m) with (1 + (n - m)); auto with zarith.
-cut (0 <= n - m); auto with zarith; unfold Z.abs_nat .
-case (n - m); auto with zarith.
-intros p; case p; simpl; auto with zarith.
-intros p1 Hp1; rewrite nat_of_P_xO; rewrite nat_of_P_xI;
- rewrite nat_of_P_succ_morphism.
-simpl; repeat rewrite plus_0_r.
-repeat rewrite <- plus_n_Sm; simpl; auto.
-intros p H3; contradict H3; auto with zarith.
 apply permutation_rev.
 Qed.
 
@@ -103,19 +79,8 @@ apply Z.lt_trans with ( 1 := H1 ); auto with zarith.
 replace (Z.abs_nat  ((1 + p) - (m + 1)))
      with (minus (Z.abs_nat  ((1 + p) - n)) (Z.abs_nat  ((1 + m) - n))).
 apply iter_progression_app; auto with zarith.
-apply inj_le_rev.
-(repeat rewrite inj_Zabs_nat); auto with zarith.
-(repeat rewrite Z.abs_eq); auto with zarith.
 rewrite next_n_Z; auto with zarith.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
 apply inj_eq_rev; auto with zarith.
-rewrite inj_minus1; auto with zarith.
-(repeat rewrite inj_Zabs_nat); auto with zarith.
-(repeat rewrite Z.abs_eq); auto with zarith.
-apply inj_le_rev.
-(repeat rewrite inj_Zabs_nat); auto with zarith.
-(repeat rewrite Z.abs_eq); auto with zarith.
 subst m.
 rewrite Zsum_nn; auto with zarith.
 unfold Zsum; generalize (Zle_cases n p); generalize (Zle_cases (n + 1) p);
@@ -124,9 +89,6 @@ intros H1 H2.
 replace (Z.abs_nat  ((1 + p) - n)) with (S (Z.abs_nat  (p - n))); auto with zarith.
 replace (n + 1) with (Z.succ n); auto with zarith.
 replace ((1 + p) - Z.succ n) with (p - n); auto with zarith.
-apply inj_eq_rev; auto with zarith.
-rewrite inj_S; (repeat rewrite inj_Zabs_nat); auto with zarith.
-(repeat rewrite Z.abs_eq); auto with zarith.
 Qed.
 
 Lemma Zsum_S_left:
@@ -160,11 +122,7 @@ replace (Z.abs_nat   ((1 + n) - (m - 1))) with (S (Z.abs_nat   (n - (m - 1)))).
 rewrite Zplus_comm.
 replace (Z.abs_nat   ((1 + n) - m)) with (Z.abs_nat  (n - (m - 1))); auto with zarith.
 pattern m at 4; replace m with (Z.succ (m - 1)); auto with zarith.
-apply f_equal with ( f := Z.abs_nat  ); auto with zarith.
 apply inj_eq_rev; auto with zarith.
-rewrite inj_S.
-(repeat rewrite inj_Zabs_nat); auto with zarith.
-(repeat rewrite Z.abs_eq); auto with zarith.
 Qed.
 
 
@@ -181,8 +139,6 @@ apply Zprogression_le_init with ( 1 := H1 ).
 cut (a < Z.succ m); auto with zarith.
 replace (Z.succ m) with (n + Z_of_nat (Z.abs_nat  ((1 + m) - n))); auto with zarith.
 apply Zprogression_le_end; auto with zarith.
-rewrite inj_Zabs_nat; auto with zarith.
-(repeat rewrite Z.abs_eq); auto with zarith.
 Qed.
 
 Lemma Zsum_add:
@@ -211,8 +167,6 @@ apply Zprogression_le_init with ( 1 := H3 ).
 cut (x < Z.succ m); auto with zarith.
 replace (Z.succ m) with (n + Z_of_nat (Z.abs_nat  ((1 + m) - n))); auto with zarith.
 apply Zprogression_le_end; auto with zarith.
-rewrite inj_Zabs_nat; auto with zarith.
-(repeat rewrite Z.abs_eq); auto with zarith.
 Qed.
 
 
@@ -254,7 +208,6 @@ cut (exists r , r = Z.abs_nat  ((1 + q) - p) );
 generalize p; elim r; auto with zarith.
 intros n H p0; replace (Z_of_nat (S n)) with (Z_of_nat n + 1); auto with zarith.
 simpl; rewrite H; ring.
-rewrite inj_S; auto with zarith.
 Qed.
 
 Theorem Zsum_Zsum_f:
@@ -292,8 +245,6 @@ apply Zprogression_le_init with ( 1 := H1 ); auto.
 cut (x < m + 1); auto with zarith.
 replace (m + 1) with (n + Z_of_nat (Z.abs_nat  ((1 + m) - n))); auto with zarith.
 apply Zprogression_le_end; auto with zarith.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem iter_le:
@@ -321,11 +272,8 @@ apply Zprogression_le_init with ( 1 := H1 ); auto.
 cut (x < m + 1); auto with zarith.
 replace (m + 1) with (n + Z_of_nat (Z.abs_nat  ((1 + m) - n))); auto with zarith.
 apply Zprogression_le_end with ( 1 := H1 ); auto with arith.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
 apply in_Zprogression.
 rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem Zsum_minus:

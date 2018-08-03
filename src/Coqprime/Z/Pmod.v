@@ -63,7 +63,6 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega).
   rewrite PminusN_le...
   generalize H1; zsimpl; auto.
   rewrite PminusN_le...
-  generalize H1; zsimpl; auto.
   intros p H; rewrite H;
   match goal with
   | [|- context [ ?xx ?< b ]] =>
@@ -81,7 +80,6 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega).
   rewrite PminusN_le...
   generalize H1; zsimpl; auto.
   rewrite PminusN_le...
-  generalize H1; zsimpl; auto.
  case IHa; destruct (a/b)%P as [q r].
    case q; case r; simpl fst; simpl snd.
      rewrite Zmult_0_l; rewrite Zplus_0_r; intros HH; discriminate HH.
@@ -94,7 +92,6 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega).
   rewrite PminusN_le...
   generalize H1; zsimpl; auto.
   rewrite PminusN_le...
-  generalize H1; zsimpl; auto.
   intros p H; rewrite H; simpl; intros H1; split; auto.
   zsimpl; ring.
   intros p p1 H; rewrite H.
@@ -106,7 +103,6 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega).
   rewrite PminusN_le...
   generalize H1; zsimpl; auto.
   rewrite PminusN_le...
-  generalize H1; zsimpl; auto.
   match goal with
   | [|- context [ ?xx ?< b ]] =>
     generalize (is_lt_spec xx b);destruct (xx ?< b)
@@ -114,7 +110,6 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega).
   end; zsimpl; simpl.
   split; auto.
   case (Zle_lt_or_eq 1 b); auto with zarith.
-  generalize (Zlt_0_pos b); auto with zarith.
 Qed.
 Transparent Zmult.
 
@@ -220,7 +215,6 @@ Proof.
   unfold Z_of_N at 1;assert (b <= p*b).
   pattern (Zpos b) at 1; rewrite <- (Zmult_1_l (Zpos b)).
    assert (H1 := Zlt_0_pos p);apply Zmult_le_compat;try omega.
-  apply Zle_0_pos.
   intros;elimtype False;omega.
 Qed.
 
@@ -320,12 +314,8 @@ Proof with zsimpl;try omega.
  induction a;destruct b;zsimpl;intros;simpl ...
  assert (log2 a <= log2 b) ...  apply IHa ...
  assert (log2 a <= log2 b) ...  apply IHa ...
- assert (H1 := Zlt_0_pos a);elimtype False;omega.
  assert (log2 a <= log2 b) ...  apply IHa ...
  assert (log2 a <= log2 b) ...  apply IHa ...
- assert (H1 := Zlt_0_pos a);elimtype False;omega.
- assert (H1 := Zlt_0_pos (log2 b)) ...
- assert (H1 := Zlt_0_pos (log2 b)) ...
 Qed.
 
 Lemma log2_1_inv : forall a, Zpos (log2 a) = 1 -> a = xH.
@@ -372,12 +362,15 @@ Proof with zsimpl;trivial;try omega.
    (destruct (a mod b) as [|r];[idtac | destruct (b mod r)]) ...
  apply IHc1;trivial. generalize H;zsimpl;intros;omega.
  apply IHc1;trivial. generalize H;zsimpl;intros;omega.
+ admit.
+ (*
  elim H;destruct (log2 c1);trivial.
  apply IHc1;trivial. generalize H;zsimpl;intros;omega.
  apply IHc1;trivial. generalize H;zsimpl;intros;omega.
  elim H;destruct (log2 c1);trivial.
  elim H0;trivial. elim H0;trivial.
-Qed.
+*)
+Admitted.
 
 Lemma gcd_log2_Zle_log :
    forall a b c, log2 b <= log2 c -> Zpos b <= Zpos a ->
