@@ -13,6 +13,7 @@ Theorem plength_correct: forall p, (Zpos p < 2 ^ Zpos (plength p))%Z.
 assert (F: (forall p, 2 ^ (Zpos (Pos.succ p)) = 2 * 2 ^ Zpos p)%Z).
 intros p; replace (Zpos (Pos.succ p)) with (1 + Zpos p)%Z.
 rewrite Zpower_exp; auto with zarith.
+red; intros; discriminate.
 rewrite Zpos_succ_morphism; unfold Z.succ; auto with zarith.
 intros p; elim p; simpl plength; auto.
 intros p1 Hp1; rewrite F; repeat rewrite Zpos_xI.
