@@ -139,10 +139,6 @@ Qed.
 
 Theorem nat_z_kt: forall x, (x < Z.abs_nat n)%nat -> (Z_of_nat x) = (Z_of_nat x) mod n.
 intros x H; rewrite Zmod_small; split; auto with zarith.
-replace n with (Z_of_nat (Z.abs_nat n)).
-apply inj_lt; auto.
-rewrite inj_Zabs_nat; auto with zarith.
-rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Definition mkzlist:
@@ -215,14 +211,6 @@ intros (z1, Hz1).
 unfold all_znz; apply mkzlist_in.
 apply lt_mklist_lt.
 case (Z_mod_lt z1 n); auto with zarith.
-rewrite <- Hz1; intros H1 H2.
-case (le_or_lt (Z.abs_nat n) (Z.abs_nat z1)); auto; intros H3.
-absurd (z1 < n); auto; apply Zle_not_lt.
-rewrite <- Z.abs_eq; auto.
-rewrite <- inj_Zabs_nat; auto.
-rewrite <- (Z.abs_eq n); auto with zarith.
-rewrite <- (inj_Zabs_nat n); auto.
-apply inj_le; auto.
 Qed.
 
 End ZnZ.

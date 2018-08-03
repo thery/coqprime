@@ -62,11 +62,8 @@ Proof with zsimpl;auto with zarith.
     assert (H1 := IHp q1);destruct (Pminus_mask p1 q1)
   | _ => idtac
   end;simpl ...
- inversion H1 ...   inversion H1 ...
- rewrite Psucc_Zplus in H1 ...
  clear IHp;induction p;simpl ...
   rewrite IHp;destruct (Pdouble_minus_one p) ...
- assert (H:= Zlt_0_pos q) ...   assert (H:= Zlt_0_pos q) ...
 Qed.
 
 Definition PminusN x y :=
@@ -81,11 +78,11 @@ Proof.
  assert (H := Pminus_mask_spec y x);destruct (Pminus_mask y x).
  rewrite H;unfold Z_of_N;auto with zarith.
  rewrite H;unfold Z_of_N;auto with zarith.
- elimtype False;omega.
+ elimtype False;lia.
 Qed.
 
 Lemma Ppred_Zminus : forall p, 1< Zpos p ->  (p-1)%Z = Pos.pred p.
-Proof. destruct p;simpl;trivial. intros;elimtype False;omega. Qed.
+Proof. destruct p;simpl;trivial. intros;elimtype False;lia. Qed.
 
 
 Local Open Scope positive_scope.
