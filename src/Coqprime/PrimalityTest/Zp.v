@@ -90,15 +90,19 @@ unfold mkZp; rewrite mkZp_aux_length.
 apply inj_eq_rev.
 rewrite inj_plus.
 simpl; repeat rewrite inj_Zabs_nat; auto with zarith.
+repeat rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem mkZp_in: forall p, 0 <= p < n -> In p mkZp.
 intros p (H1, H2); unfold mkZp; apply mkZp_aux_in.
 rewrite inj_Zabs_nat; auto with zarith.
+repeat rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem in_mkZp: forall p, In p mkZp ->  0 <= p < n.
 intros p H; case (in_mkZp_aux (Z.abs_nat  (n - 1)) p); auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+repeat rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem mkZp_ulist: ulist mkZp.
@@ -235,6 +239,7 @@ apply Zprogression_le_init with (1 := H0).
 replace n with (0 + Z_of_nat (Z.abs_nat n)).
 apply Zprogression_le_end with (1 := H0).
 rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
 intros a H; unfold Lrel; simpl.
 apply isupport_aux_is_in.
 simpl in H; apply  isupport_is_inv_true with (1 := H).

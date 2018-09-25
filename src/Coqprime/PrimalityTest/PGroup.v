@@ -151,6 +151,8 @@ simpl; intros [H1 | H1]; exists 0; auto with zarith; case H1.
 simpl; intros n Rec [H1 | H1]; auto.
 exists (Z_of_nat (S n)); auto with zarith.
 case Rec; auto; intros q ((H2, H3), H4); exists q; repeat split; auto with zarith.
+change (q <= Z_of_nat (S n)).
+rewrite inj_S; auto with zarith.
 Qed.
 
 Theorem mkLine_ulist: forall a n, ulist (mkLine a n).
@@ -201,6 +203,8 @@ case in_mkLine with (1 := H2).
 intros p2 (H3, H4); exists (Z_of_nat (S n)); exists p2; subst; simpl; auto with zarith.
 case Rec with (1 := H2); auto.
 intros p1 (p2, (H3, (H4, H5))); exists p1; exists p2; repeat split; auto with zarith.
+change (p1 <= Z_of_nat (S n)).
+rewrite inj_S; auto with zarith.
 Qed.
 
 Theorem mkRect_ulist: forall n m, ulist (mkRect n m).
@@ -229,6 +233,7 @@ Definition mL := mkRect (Z.abs_nat (m - 1)) (Z.abs_nat (m -1)).
 Theorem mL_length : length mL = Z.abs_nat (m * m).
 unfold mL; rewrite mkRect_length; simpl; apply inj_eq_rev.
 repeat (rewrite inj_mult || rewrite inj_plus || rewrite inj_Zabs_nat || rewrite Z.abs_eq); simpl; auto with zarith.
+eq_tac; auto with zarith.
 Qed.
 
 Theorem mL_in: forall p q, 0 <= p < m -> 0 <= q <  m -> (In (p, q) mL).

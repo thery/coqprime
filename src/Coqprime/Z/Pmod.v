@@ -49,7 +49,7 @@ Opaque Zmult.
 Lemma div_eucl_spec : forall a b,
           Zpos a = fst (a/b)%P * b + snd (a/b)%P
        /\ snd (a/b)%P < b.
-Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || lia).
+Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega).
  intros a b;generalize a;clear a;induction a;simpl;zsimpl.
  case IHa; destruct (a/b)%P as [q r].
    case q; case r; simpl fst; simpl snd.
@@ -63,6 +63,7 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || lia).
   rewrite PminusN_le...
   generalize H1; zsimpl; auto.
   rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
   intros p H; rewrite H;
   match goal with
   | [|- context [ ?xx ?< b ]] =>
@@ -80,6 +81,7 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || lia).
   rewrite PminusN_le...
   generalize H1; zsimpl; auto.
   rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
  case IHa; destruct (a/b)%P as [q r].
    case q; case r; simpl fst; simpl snd.
      rewrite Zmult_0_l; rewrite Zplus_0_r; intros HH; discriminate HH.
@@ -92,6 +94,7 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || lia).
   rewrite PminusN_le...
   generalize H1; zsimpl; auto.
   rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
   intros p H; rewrite H; simpl; intros H1; split; auto.
   zsimpl; ring.
   intros p p1 H; rewrite H.
@@ -103,6 +106,7 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || lia).
   rewrite PminusN_le...
   generalize H1; zsimpl; auto.
   rewrite PminusN_le...
+  generalize H1; zsimpl; auto.
   match goal with
   | [|- context [ ?xx ?< b ]] =>
     generalize (is_lt_spec xx b);destruct (xx ?< b)
@@ -110,6 +114,7 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || lia).
   end; zsimpl; simpl.
   split; auto.
   case (Zle_lt_or_eq 1 b); auto with zarith.
+  generalize (Zlt_0_pos b); auto with zarith.
 Qed.
 Transparent Zmult.
 
@@ -162,13 +167,13 @@ Lemma mod_a_a_0 : forall a, a mod a = N0.
 Proof.
  intros a;generalize (div_eucl_spec a a);rewrite <- Pmod_div_eucl.
  destruct (fst (a / a));unfold Z_of_N at 1.
- rewrite Zmult_0_l;intros (H1,H2);elimtype False;lia.
+ rewrite Zmult_0_l;intros (H1,H2);elimtype False;omega.
  assert (a<=p*a).
   pattern (Zpos a) at 1;rewrite <- (Zmult_1_l a).
   assert (H1:= Zlt_0_pos p);assert (H2:= Zle_0_pos a);
-   apply Zmult_le_compat;trivial;try lia.
+   apply Zmult_le_compat;trivial;try omega.
  destruct (a mod a)%P;auto with zarith.
- unfold Z_of_N;assert (H1:= Zlt_0_pos p0);intros (H2,H3);elimtype False;lia.
+ unfold Z_of_N;assert (H1:= Zlt_0_pos p0);intros (H2,H3);elimtype False;omega.
 Qed.
 
 Lemma mod_le_2r : forall (a b r: positive) (q:N),
@@ -176,25 +181,25 @@ Lemma mod_le_2r : forall (a b r: positive) (q:N),
 Proof.
  intros a b r q H0 H1 H2.
  assert (H3:=Zlt_0_pos a). assert (H4:=Zlt_0_pos b). assert (H5:=Zlt_0_pos r).
- destruct q as [|q].  rewrite Zmult_0_r in H0. elimtype False;lia.
+ destruct q as [|q].  rewrite Zmult_0_r in H0. elimtype False;omega.
  assert (H6:=Zlt_0_pos q).  unfold Z_of_N in H0.
- assert (Zpos r = a - b*q). lia.
+ assert (Zpos r = a - b*q). omega.
  simpl;zsimpl. pattern r at 2;rewrite H.
  assert (b <= b * q).
   pattern (Zpos b) at 1;rewrite <- (Zmult_1_r b).
-  apply Zmult_le_compat;try lia.
- apply Z.le_trans with (a - b * q + b). lia.
- apply Z.le_trans with (a - b + b);lia.
+  apply Zmult_le_compat;try omega.
+ apply Z.le_trans with (a - b * q + b). omega.
+ apply Z.le_trans with (a - b + b);omega.
 Qed.
 
 Lemma mod_lt : forall a b r, a mod b = Npos r -> r < b.
 Proof.
  intros a b r H;generalize (div_eucl_spec a b);rewrite <- Pmod_div_eucl;
-  rewrite H;simpl;intros (H1,H2);lia.
+  rewrite H;simpl;intros (H1,H2);omega.
 Qed.
 
 Lemma mod_le : forall a b r, a mod b = Npos r -> r <= b.
-Proof. intros a b r H;assert (H1:= mod_lt _ _ _ H);lia. Qed.
+Proof. intros a b r H;assert (H1:= mod_lt _ _ _ H);omega. Qed.
 
 Lemma mod_le_a : forall a b r, a mod b = r -> r <= a.
 Proof.
@@ -214,8 +219,9 @@ Proof.
   destruct (snd (a/b));simpl; intros H1 H2;inversion H1;trivial.
   unfold Z_of_N at 1;assert (b <= p*b).
   pattern (Zpos b) at 1; rewrite <- (Zmult_1_l (Zpos b)).
-   assert (H1 := Zlt_0_pos p);apply Zmult_le_compat;try lia.
-  intros;elimtype False;lia.
+   assert (H1 := Zlt_0_pos p);apply Zmult_le_compat;try omega.
+  apply Zle_0_pos.
+  intros;elimtype False;omega.
 Qed.
 
 Fixpoint gcd_log2 (a b c:positive) {struct c}: option positive :=
@@ -310,19 +316,23 @@ Lemma gcd_log2_1: forall a c, gcd_log2  a xH c = Some xH.
 Proof. destruct c;simpl;try rewrite mod1;trivial. Qed.
 
 Lemma log2_Zle :forall a b, Zpos a <= Zpos b -> log2 a <= log2 b.
-Proof with zsimpl;try lia.
+Proof with zsimpl;try omega.
  induction a;destruct b;zsimpl;intros;simpl ...
  assert (log2 a <= log2 b) ...  apply IHa ...
  assert (log2 a <= log2 b) ...  apply IHa ...
+ assert (H1 := Zlt_0_pos a);elimtype False;omega.
  assert (log2 a <= log2 b) ...  apply IHa ...
  assert (log2 a <= log2 b) ...  apply IHa ...
+ assert (H1 := Zlt_0_pos a);elimtype False;omega.
+ assert (H1 := Zlt_0_pos (log2 b)) ...
+ assert (H1 := Zlt_0_pos (log2 b)) ...
 Qed.
 
 Lemma log2_1_inv : forall a, Zpos (log2 a) = 1 -> a = xH.
 Proof.
  destruct a;simpl;zsimpl;intros;trivial.
- assert (H1:= Zlt_0_pos (log2 a));elimtype False;lia.
- assert (H1:= Zlt_0_pos (log2 a));elimtype False;lia.
+ assert (H1:= Zlt_0_pos (log2 a));elimtype False;omega.
+ assert (H1:= Zlt_0_pos (log2 a));elimtype False;omega.
 Qed.
 
 Lemma mod_log2 :
@@ -343,11 +353,11 @@ Proof.
  (CaseEq (a mod b);[intros Heq|intros r Heq];try (intro;discriminate));
  (CaseEq (b mod r);[intros Heq'|intros r' Heq'];try (intro;discriminate)).
  apply IHc. apply mod_le with b;trivial.
- generalize H0 (mod_log2 _ _ _ Heq' (mod_le _ _ _ Heq));zsimpl;intros;lia.
+ generalize H0 (mod_log2 _ _ _ Heq' (mod_le _ _ _ Heq));zsimpl;intros;omega.
  apply IHc. apply mod_le with b;trivial.
- generalize H0 (mod_log2 _ _ _ Heq' (mod_le _ _ _ Heq));zsimpl;intros;lia.
+ generalize H0 (mod_log2 _ _ _ Heq' (mod_le _ _ _ Heq));zsimpl;intros;omega.
  assert (Zpos (log2 b) = 1).
-  assert (H1 := Zlt_0_pos (log2 b));lia.
+  assert (H1 := Zlt_0_pos (log2 b));omega.
  rewrite (log2_1_inv _ H1) in Heq;rewrite mod1 in Heq;discriminate Heq.
 Qed.
 
@@ -357,13 +367,15 @@ Proof. intros;apply gcd_log2_None_aux;auto with zarith. Qed.
 Lemma gcd_log2_Zle :
    forall c1 c2 a b, log2 c1 <= log2 c2 ->
       gcd_log2 a b c1 <> None -> gcd_log2 a b c2 = gcd_log2 a b c1.
-Proof with zsimpl;trivial;try lia.
+Proof with zsimpl;trivial;try omega.
  induction c1;destruct c2;simpl;intros;
    (destruct (a mod b) as [|r];[idtac | destruct (b mod r)]) ...
- apply IHc1;trivial. generalize H;zsimpl;intros;lia.
- apply IHc1;trivial. generalize H;zsimpl;intros;lia.
- apply IHc1;trivial. generalize H;zsimpl;intros;lia.
- apply IHc1;trivial. generalize H;zsimpl;intros;lia.
+ apply IHc1;trivial. generalize H;zsimpl;intros;omega.
+ apply IHc1;trivial. generalize H;zsimpl;intros;omega.
+ elim H;destruct (log2 c1);trivial.
+ apply IHc1;trivial. generalize H;zsimpl;intros;omega.
+ apply IHc1;trivial. generalize H;zsimpl;intros;omega.
+ elim H;destruct (log2 c1);trivial.
  elim H0;trivial. elim H0;trivial.
 Qed.
 
@@ -404,13 +416,13 @@ Proof.
   assert (H4 := mod_le _ _ _ Hmod).
  rewrite (gcd_log2_Zle_log r p b);trivial.
  symmetry;apply H0;trivial.
- generalize (mod_log2 _ _ _ H1 H4);simpl;zsimpl;intros;lia.
+ generalize (mod_log2 _ _ _ H1 H4);simpl;zsimpl;intros;omega.
  CaseEq (xO b mod r)%P;intros. rewrite gcd_log2_mod0;trivial.
  assert (H2 := mod_le _ _ _ H1);assert (H3 := mod_lt _ _ _ Hmod);
   assert (H4 := mod_le _ _ _ Hmod).
  rewrite (gcd_log2_Zle_log r p b);trivial.
  symmetry;apply H0;trivial.
- generalize (mod_log2 _ _ _ H1 H4);simpl;zsimpl;intros;lia.
+ generalize (mod_log2 _ _ _ H1 H4);simpl;zsimpl;intros;omega.
  rewrite mod1 in Hmod;discriminate Hmod.
 Qed.
 
@@ -481,19 +493,19 @@ Lemma gcd_mod : forall a b r, (a mod b)%P = Npos r ->
                      gcd a b = gcd b r.
 Proof.
  intros a b r H;unfold gcd.
- assert (log2 r <= log2 (xO r)). simpl;zsimpl;lia.
+ assert (log2 r <= log2 (xO r)). simpl;zsimpl;omega.
  assert (H1 := mod_lt _ _ _ H).
  pattern (gcd_log2 b r (xO r)) at 1; rewrite gcd_log2_Zle_log;auto with zarith.
  destruct (Z_lt_le_dec a b) as [z|z].
  pattern (gcd_log2 a b (xO b)) at 1; rewrite gcd_log2_xO_Zlt;trivial.
  rewrite (lt_mod _ _ z) in H;inversion H.
- assert  (r <= b). lia.
+ assert  (r <= b). omega.
  generalize (gcd_log2_None _ _ H2).
  destruct (gcd_log2 b r r);intros;trivial.
- assert (log2 b <= log2 (xO b)). simpl;zsimpl;lia.
+ assert (log2 b <= log2 (xO b)). simpl;zsimpl;omega.
  pattern (gcd_log2 a b (xO b)) at 1; rewrite gcd_log2_Zle_log;auto with zarith.
  pattern (gcd_log2 a b b) at 1;rewrite (gcd_log2_mod _ _ z _ H).
- assert  (r <= b). lia.
+ assert  (r <= b). omega.
  generalize (gcd_log2_None _ _ H3).
  destruct (gcd_log2 b r r);intros;trivial.
 Qed.

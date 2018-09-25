@@ -246,6 +246,12 @@ case (A_dec (op a (gpow m)) G.(e)); auto.
 intros _; rewrite <- gpow_1; repeat rewrite <- gpow_add; auto with zarith.
 replace (1 + Z_of_nat p) with ((1 + m) + (Z_of_nat (p - Z.abs_nat m))); auto with zarith.
 apply support_aux_in; auto with zarith.
+rewrite inj_minus1; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
+apply inj_le_rev.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
 rewrite <- gpow_1; repeat rewrite <- gpow_add; auto with zarith.
 apply (Rec (1 + m)); auto with zarith.
 intros p H1; case (Zle_lt_or_eq p m); intros; subst; auto with zarith.
@@ -316,13 +322,20 @@ intros p1 ((H2, H3), H4); case Zle_lt_or_eq with (1 := H2); clear H2; intros H2;
 2: rewrite gpow_0; rewrite i_e; apply support_in_e.
 replace (G.(i) (gpow p1)) with (gpow (Z_of_nat (length support - Z.abs_nat p1))).
 apply support_in; auto with zarith.
-rewrite inj_minus1; auto with zarith.
+rewrite inj_minus1.
 rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
+apply inj_le_rev; rewrite inj_Zabs_nat; auto with zarith.
 rewrite Z.abs_eq; auto with zarith.
 apply g_cancel_l with (g:= G) (a := gpow p1); sauto.
 rewrite <- gpow_add; auto with zarith.
-replace (p1 + (Z.of_nat (length support) - p1)) with (Z_of_nat (length support)); auto with zarith.
+replace (p1 + Z_of_nat (length support - Z.abs_nat p1)) with (Z_of_nat (length support)).
 rewrite gpow_length_support_is_e; sauto.
+rewrite inj_minus1; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
+apply inj_le_rev; rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 (**************************************
@@ -406,7 +419,18 @@ replace (Z.abs_nat n - 1)%nat  with (Z.abs_nat (n - 1)).
 apply Zabs_nat_lt; split; auto with zarith.
 rewrite G.(e_is_zero_r) in H3; try rewrite gpow_1; auto with zarith.
 apply inj_eq_rev; rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
 rewrite inj_minus1; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
+apply inj_le_rev; rewrite inj_Zabs_nat; simpl; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
+rewrite inj_minus1; auto with zarith.
+rewrite inj_Zabs_nat; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
+rewrite Zplus_comm; simpl; auto with zarith.
+apply inj_le_rev; rewrite inj_Zabs_nat; simpl; auto with zarith.
+rewrite Z.abs_eq; auto with zarith.
 exists 0; auto with arith.
 Qed.
 
@@ -557,6 +581,8 @@ assert (F2: 1 <= q).
   assert (F2: 0 <= (- q) * e_order Adec a G); auto with zarith.
     apply Zmult_le_0_compat; auto with zarith.
     apply Zlt_le_weak; apply e_order_pos.
+  generalize F2; rewrite Zopp_mult_distr_l_reverse;
+      rewrite <- Hq; auto with zarith.
 case (Zle_lt_or_eq _ _ F2); intros H3; subst; auto with zarith.
 case (prime_dec q); intros Hq.
   case (H q); auto with zarith.

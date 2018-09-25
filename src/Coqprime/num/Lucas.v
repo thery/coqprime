@@ -39,6 +39,7 @@ Lemma b_pos: 0 < [|b|].
 rewrite b_p; auto with zarith.
 assert (2 ^ 0 < 2 ^ Zpos p); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
+rewrite Zpower_0_r in H; auto with zarith.
 Qed.
 
 Hint Resolve b_pos.
@@ -55,6 +56,7 @@ split; auto with zarith.
 rewrite b_p.
 assert (2 ^ 1 < 2 ^ Zpos p); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
+rewrite Zpower_1_r in H; auto with zarith.
 Qed.
 
 Lemma w2_b: [|w2|] = 2 mod [|b|].
@@ -186,6 +188,7 @@ rewrite H1; rewrite <- Zmult_mod; auto with zarith.
 rewrite <- Zminus_mod; auto with zarith.
 replace (z + Zpos (1 + p1)) with ((z + Zpos p1) + 1); auto with zarith.
 rewrite sn; simpl fst; try rewrite b_p; auto with zarith.
+rewrite Zpos_plus_distr; auto with zarith.
 Qed.
 
 Definition lucastest := [|lucastest_step w4 (Pminus p 2)|].
@@ -205,6 +208,7 @@ intros H.
 apply Zmod_divide.
 assert (H1: 2 ^ 1 < 2 ^ Zpos p); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
+rewrite Zpower_1_r in H1; auto with zarith.
 apply trans_equal with (2:= H); apply sym_equal; apply lucastest_prop; auto.
 Qed.
 
@@ -213,6 +217,7 @@ intros H1; case (prime_dec (2 ^ Zpos p - 1)); auto; intros H2.
 case Zdivide_div_prime_le_square with (2 := H2).
 assert (H3: 2 ^ 1 < 2 ^ Zpos p); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
+rewrite Zpower_1_r in H3; auto with zarith.
 intros q (H3, (H4, H5)).
 contradict H5; apply Zlt_not_le.
 generalize q_more_than_square; unfold Mp; intros tmp; apply tmp;
@@ -259,6 +264,9 @@ unfold op, base; rewrite cmk_op_digits.
 generalize (get_height_correct 31 p).
 replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
        ((Zpos (get_height 31 p) - 1) ); auto with zarith.
+rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
+rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
 Qed.
 
 Let lucas_f2 p : (2 < p)%positive -> @ZnZ.to_Z _ (op p) (b p) = 2 ^ (Zpos p) - 1.
@@ -267,6 +275,7 @@ unfold b; intros Hp.
 assert (F1: 0 < 2 ^ (Zpos p) - 1).
 assert (F2: 2 ^ 0 < 2 ^ (Zpos p)); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
+rewrite Zpower_0_r in F2; auto with zarith.
 case_eq (2 ^ (Zpos p) - 1); simpl ZnZ.to_Z.
 intros HH; contradict F1; rewrite HH; auto with zarith.
 2: intros p1 HH; contradict F1; rewrite HH;
@@ -289,6 +298,7 @@ rewrite lucas_f2; auto.
 assert (F2: 2 ^ 1 < 2 ^ (Zpos p)); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
 assert (2 < Z.pos p); auto with zarith.
+rewrite Zpower_1_r in F2; auto with zarith.
 unfold zp.
 apply ZnZ.of_Z_correct.
 split; auto with zarith.
@@ -321,6 +331,7 @@ assert (F0 : 1 < ZnZ.to_Z (b p)).
 replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1); auto with zarith.
 assert (2 ^ 1 <  2 ^ Z.pos p); auto with zarith.
 apply Zpower_lt_monotone; auto with zarith.
+replace (2 ^ 1) with 2 in H0; auto with zarith.
 rewrite <-(lucas_f2 H); auto.
 assert (F1 : ZnZ.to_Z ZnZ.one = 1).
 rewrite w1_b with (p := p) (b := b p); auto.
@@ -358,6 +369,7 @@ replace (2 + 2) with (2 ^ 2); auto with zarith.
 replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1); auto with zarith.
 assert (2 ^ 3 <=  2 ^ Z.pos p); auto with zarith.
 apply Zpower_le_monotone; auto with zarith.
+replace (2 ^ 3) with 8 in H0; auto with zarith.
 replace (2 ^ 2) with 4; auto with zarith.
 rewrite <-(lucas_f2 H); auto.
 generalize F0.
@@ -388,6 +400,7 @@ assert (2 ^ Zpos p <= base (ZnZ.digits o)); auto with zarith.
 apply Zpower_le_monotone; auto with zarith.
 assert (F := lucas_f1 H); auto with zarith.
 rewrite <-(lucas_f2 H); auto.
+intros p3 [[]]; unfold Z.le; simpl; auto.
 unfold lucastest_step.
 rewrite Pos.iter_add; auto.
 change (@ZnZ.to_Z _ o (lucastest_step o m (lucastest_step o m (znz_of_Z o z) p1) p2) = z2).

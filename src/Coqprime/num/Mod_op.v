@@ -435,11 +435,13 @@ Notation "[[ x ]]" :=
  rewrite Zmult_1_r; apply Zpower_le_monotone; auto with zarith.
  assert (F2: [|n|] < Zpos (xO (ZnZ.digits w_op))).
  rewrite (Zpos_xO (ZnZ.digits w_op)); rewrite F0; auto with zarith.
+ pattern [|n|]; rewrite <- Zplus_0_r; auto with zarith.
+ apply Zplus_lt_compat; auto with zarith.
  change
   ([[DoubleLift.ww_add_mul_div w0 wWW wW0 w0W
               ww_compare w_add_mul_div
               ww_sub w_zdigits low (w0W n) w2 W0]] = 2 ^ [|n|] * [[w2]]).
- erewrite (DoubleLift.spec_ww_add_mul_div ); auto with zarith.
+ rewrite (DoubleLift.spec_ww_add_mul_div ); auto with zarith.
  2: apply ZnZ.spec_to_Z; auto.
  2: refine (spec_ww_to_Z _ _ _); auto.
  2: apply ZnZ.spec_to_Z; auto.
@@ -451,7 +453,7 @@ Notation "[[ x ]]" :=
  2: apply ZnZ.spec_compare; auto.
  2: apply ZnZ.spec_add_mul_div; auto.
  2: refine (spec_ww_sub _ _ _ _ _ _ _ _ _ _
-                _ _ _ _ _ _ _ _ _); auto.
+                _ _ _ _ _ _ _ _ _ _ _); auto.
  2: apply ZnZ.spec_to_Z; auto.
  2: apply ZnZ.spec_WW; auto.
  2: apply ZnZ.spec_opp_c; auto.
@@ -509,6 +511,7 @@ Notation "[[ x ]]" :=
  apply Z.le_lt_trans with (2 := U2); auto with zarith.
  apply Zdiv_le_upper_bound; auto with zarith.
  apply Z.le_trans with ([|w2|] * (2 ^ 0)); auto with zarith.
+ simpl Zpower; rewrite Zmult_1_r; auto with zarith.
  apply Zmult_le_compat_l; auto with zarith.
  apply Zpower_le_monotone; auto with zarith.
  case (ZnZ.spec_to_Z n); auto with zarith.
@@ -637,6 +640,7 @@ Notation "[[ x ]]" :=
  rewrite Zmod_small; auto with zarith.
  split; auto with zarith.
  apply Zdiv_lt_upper_bound; auto with zarith.
+ rewrite Zmult_comm; auto with zarith.
  Qed.
 
  Let _square_mod x :=
@@ -738,6 +742,7 @@ Notation "[[ x ]]" :=
  rewrite Zmod_small; auto with zarith.
  split; auto with zarith.
  apply Zdiv_lt_upper_bound; auto with zarith.
+ rewrite Zmult_comm; auto with zarith.
  Qed.
 
  Let _power_mod :=
@@ -820,6 +825,9 @@ Notation "[[ x ]]" :=
  Theorem p_p1: Zpos p + Zpos p1 = Zpos (xO w_digits).
  unfold p1.
  rewrite Zpos_minus; auto with zarith.
+ rewrite Zmax_right; auto with zarith.
+ rewrite Zpos_xO; auto with zarith.
+ assert (0 < Zpos w_digits); auto with zarith.
  Qed.
 
  Let zp1 := ww_sub ww_zdigits (WW w0 zp).
@@ -850,7 +858,7 @@ Notation "[[ x ]]" :=
  Let spec_ww_compare := spec_ww_compare _ _ _ _ ZnZ.spec_0
       ZnZ.spec_to_Z ZnZ.spec_compare.
  Let spec_ww_sub :=
-         spec_ww_sub w0 wWW w_opp_c w_opp_carry
+         spec_ww_sub w0 zp wWW zp1 w_opp_c w_opp_carry
               w_sub_c w_opp w_sub w_sub_carry w_digits w_to_Z
              ZnZ.spec_0
              ZnZ.spec_to_Z
@@ -875,6 +883,7 @@ Notation "[[ x ]]" :=
  rewrite Zmod_small; auto with zarith.
  rewrite <- p_p1; auto with zarith.
  unfold ww_digits; split; auto with zarith.
+ rewrite <- p_p1; auto with zarith.
  assert (0 < Zpos p1); auto with zarith.
  apply Z.le_lt_trans with (Zpos (xO w_digits)); auto with zarith.
  assert (0 < Zpos p); auto with zarith.
@@ -986,10 +995,10 @@ Notation "[[ x ]]" :=
    rewrite zp1_b; rewrite <- p_p1; auto with zarith.
    assert (0 <= Zpos p); auto with zarith.
  generalize (@DoubleLift.spec_ww_add_mul_div w w0 wWW wW0 w0W
-    ww_compare w_add_mul_div ww_sub w_digits _ w_zdigits low w_to_Z
+    ww_compare w_add_mul_div ww_sub w_digits w_zdigits low w_to_Z
     ZnZ.spec_0 ZnZ.spec_to_Z spec_ww_to_Z
     ZnZ.spec_WW ZnZ.spec_WO ZnZ.spec_OW
-    spec_ww_compare (refl_equal _) ZnZ.spec_add_mul_div spec_ww_sub
+    spec_ww_compare ZnZ.spec_add_mul_div spec_ww_sub
     ZnZ.spec_zdigits spec_low W0 x zp1 Hp).
   unfold add_mul_div;
     case DoubleLift.ww_add_mul_div; autorewrite with w_rewrite; auto.
@@ -1006,6 +1015,8 @@ Notation "[[ x ]]" :=
  apply Z.lt_le_trans with (base (ww_digits (ZnZ.digits w_op))); auto with zarith.
    case (spec_ww_to_Z x); auto with zarith.
  unfold base; apply Zpower_le_monotone; auto with zarith.
+ split; auto with zarith.
+ assert (0 < Zpos p); auto with zarith.
  intros w2 w3; rewrite Zmult_0_l; rewrite Zplus_0_l.
  rewrite zp1_b.
  generalize mmul_aux0; unfold w_digits; intros tmp; rewrite tmp;
@@ -1032,6 +1043,8 @@ Notation "[[ x ]]" :=
  apply Z.lt_le_trans with (base (ww_digits (ZnZ.digits w_op))); auto with zarith.
    case (spec_ww_to_Z x); auto with zarith.
  unfold base; apply Zpower_le_monotone; auto with zarith.
+ split; auto with zarith.
+ assert (0 < Zpos p); auto with zarith.
  Qed.
 
  Theorem mmul_aux5:forall xh xl,
@@ -1055,10 +1068,10 @@ Notation "[[ x ]]" :=
    rewrite zp1_b; rewrite <- p_p1; auto with zarith.
    assert (0 <= Zpos p); auto with zarith.
  generalize (@DoubleLift.spec_ww_add_mul_div w w0 wWW wW0 w0W
-    ww_compare w_add_mul_div ww_sub w_digits _ w_zdigits low w_to_Z
+    ww_compare w_add_mul_div ww_sub w_digits w_zdigits low w_to_Z
     ZnZ.spec_0 ZnZ.spec_to_Z spec_ww_to_Z
     ZnZ.spec_WW ZnZ.spec_WO ZnZ.spec_OW
-    spec_ww_compare (refl_equal _) ZnZ.spec_add_mul_div spec_ww_sub
+    spec_ww_compare ZnZ.spec_add_mul_div spec_ww_sub
     ZnZ.spec_zdigits spec_low W0 (WW xh xl) zp1 Hp).
   unfold add_mul_div;
     case DoubleLift.ww_add_mul_div; autorewrite with w_rewrite; auto.

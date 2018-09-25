@@ -249,20 +249,20 @@ Proof with auto with zarith.
  intros b q1 r1 q2 r2 H1 H2 H3.
  assert (r2 = (b * q1 + r1) -b*q2).  rewrite H3;ring.
  assert (b*(q2 - q1) = r1 - r2 ).  rewrite H;ring.
- assert (-b < r1 - r2 < b). lia.
+ assert (-b < r1 - r2 < b). omega.
  destruct (Ztrichotomy q1 q2) as [H5 | [H5 | H5]].
-  assert (q2 - q1 >= 1).  lia.
+  assert (q2 - q1 >= 1).  omega.
   assert (r1- r2 >= b).
   rewrite <- H0.
   pattern b at 2; replace b with (b*1).
-  apply Zmult_ge_compat_l; lia.  ring.
-  elimtype False; lia.
+  apply Zmult_ge_compat_l; omega.  ring.
+  elimtype False; omega.
   split;trivial. rewrite H;rewrite H5;ring.
   assert (r1- r2 <= -b).
   rewrite <- H0.
   replace (-b) with (b*(-1)); try (ring;fail).
-  apply Zmult_le_compat_l; lia.
-  elimtype False; lia.
+  apply Zmult_le_compat_l; omega.
+  elimtype False; omega.
 Qed.
 
 Lemma Zge_0_pos : forall p:positive, p>= 0.
@@ -322,6 +322,9 @@ Proof.
  assert (Z_of_N (fst (a / b)%P) = q2 /\ Z_of_N (snd (a/b)%P) = r2).
  destruct H1;destruct H2.
  apply mod_unique with b;mauto.
+ split;mauto.
+ unfold Z.le;destruct (snd (a / b)%P);intro;discriminate.
+ rewrite <- H0;symmetry;rewrite Zmult_comm;trivial.
  destruct H0;auto.
 Qed.
 Hint Rewrite Pmod_Zmod : zmisc.
@@ -400,11 +403,12 @@ Proof.
  rewrite Zmult_assoc. rewrite times_Zmult.
  rewrite (Zmult_comm (pow (fst a) (Pos.pred (snd a)) * mkProd_pred l)).
  rewrite Zmult_assoc. rewrite pow_Zpower.  rewrite <-Ppred_Zminus;trivial.
- rewrite <- Zpower_Zsucc; try lia.
+ rewrite <- Zpower_Zsucc; try omega.
  replace (Z.succ (snd a - 1)) with ((snd a - 1)+1).
  replace ((snd a - 1)+1) with (Zpos (snd a)); mauto.
  rewrite <- IHl;repeat rewrite Zmult_assoc; mauto.
  destruct (snd a - 1);trivial.
+ assert (1 < snd a); auto with zarith.
 Qed.
 Hint Rewrite mkProd_pred_mkProd : zmisc.
 
@@ -503,24 +507,24 @@ Lemma lt_square : forall x y, 0 < x  -> x < y -> x*x < y*y.
 Proof.
  intros; apply Z.lt_trans with (x*y).
  apply Zmult_lt_compat_l;trivial.
- apply Zmult_lt_compat_r;trivial. lia.
+ apply Zmult_lt_compat_r;trivial. omega.
 Qed.
 
 Lemma le_square : forall x y, 0 <= x  -> x <= y -> x*x <= y*y.
 Proof.
  intros; apply Z.le_trans with (x*y).
  apply Zmult_le_compat_l;trivial.
- apply Zmult_le_compat_r;trivial. lia.
+ apply Zmult_le_compat_r;trivial. omega.
 Qed.
 
 Lemma borned_square : forall x y, 0 <= x -> 0 <= y ->
                              x*x < y*y < (x+1)*(x+1) -> False.
 Proof.
  intros;destruct (Z_lt_ge_dec x y) as [z|z].
- assert (x + 1 <= y). lia.
- assert (0 <= x+1). lia.
- assert (H4 := le_square _ _ H3 H2). lia.
- assert (H4 := le_square _ _ H0 (Z.ge_le _ _ z)). lia.
+ assert (x + 1 <= y). omega.
+ assert (0 <= x+1). omega.
+ assert (H4 := le_square _ _ H3 H2). omega.
+ assert (H4 := le_square _ _ H0 (Z.ge_le _ _ z)). omega.
 Qed.
 
 Lemma not_square : forall (sqrt:positive) n, sqrt * sqrt < n < (sqrt+1)*(sqrt + 1) -> ~(isSquare n).
@@ -636,7 +640,7 @@ Proof.
  destruct prod as [|prod];try discriminate H0.
  destruct aNm1 as [|aNm1];try discriminate H0;elimif.
  simpl in H3; simpl in H2.
- rewrite <- Ppred_Zminus in H2;try lia.
+ rewrite <- Ppred_Zminus in H2;try omega.
  rewrite <- Zmult_assoc;rewrite mkProd_pred_mkProd.
  intros H12;assert (a^(N-1) mod N = 1).
   pattern 1 at 2;rewrite <- H9;symmetry.
@@ -657,6 +661,7 @@ Proof.
  simpl in H8.
  assert (Z_of_N s = R1 / (2 * mkProd dec) /\ Zpos r =  R1 mod (2 * mkProd dec)).
   apply mod_unique with (2 * mkProd dec);auto with zarith.
+ revert H8; mauto.
  apply Z_mod_lt; mauto.
  rewrite <- Z_div_mod_eq; mauto; rewrite H7.
  simpl fst; simpl snd; simpl Z_of_N.
@@ -664,6 +669,7 @@ Proof.
  destruct H15 as (H15,Heqr).
  apply PocklingtonExtra with (F1:=mkProd dec) (R1:=R1) (m:=1);
   auto with zmisc zarith.
+ rewrite H2; mauto.
  apply is_even_Zeven; auto.
  apply is_odd_Zodd; auto.
  intros p; case p; clear p.

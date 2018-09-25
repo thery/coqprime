@@ -226,6 +226,7 @@ rewrite Zpos_xI.
 assert (tmp: forall x, (2 * x = x + x)%Z); auto with zarith; rewrite tmp;
   clear tmp.
 repeat rewrite Zpower_exp; auto with zarith.
+rewrite Zpower_1_r; try ring; auto with misc.
 rewrite Zmod_mod; auto with zarith.
 rewrite Rec; auto with zmisc.
 rewrite Zmod_mod; auto with zarith.
@@ -381,6 +382,9 @@ assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
   set (p := plength N).
   replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
        ((Zpos (get_height 31 p) - 1) ); auto with zarith.
+  rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
+  rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+  generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
 assert (F1: ZnZ.to_Z (ZnZ.of_Z N) = N).
 rewrite ZnZ.of_Z_correct; auto with zarith.
 assert (F2: 1 < ZnZ.to_Z (ZnZ.of_Z N)).
@@ -393,6 +397,8 @@ rewrite ZnZ.of_Z_correct; auto with zarith.
 assert (F6: N - 1 = (R1 * mkProd_pred dec)%positive * mkProd' dec).
 rewrite Zpos_mult.
 rewrite <- Zmult_assoc; rewrite mkProd_pred_mkProd; auto with zarith.
+simpl in H1; rewrite Zpos_mult in H1; rewrite <- H1; rewrite Ppred_Zminus;
+  auto with zarith.
 assert (m_spec: mod_spec w_op (znz_of_Z w_op N)
                   (make_mod_op w_op (znz_of_Z w_op N))).
 apply make_mod_spec; auto with zarith.
@@ -428,10 +434,15 @@ match goal with H: (?X ?< ?Y) = true |- _ =>
 end.
 assert (U1: N - 1 = mkProd dec * R1).
 rewrite <- Ppred_Zminus in H1; auto with zarith.
+rewrite H1; simpl.
+repeat rewrite Zpos_mult; auto with zarith.
 assert (HH:Z_of_N s = R1 / (2 * mkProd dec) /\ Zpos r =  R1 mod (2 * mkProd dec)).
 apply mod_unique with (2 * mkProd dec);auto with zarith.
 apply Z_mod_lt; auto with zarith.
 rewrite <- Z_div_mod_eq; auto with zarith.
+rewrite H3.
+rewrite (Zpos_xO (mkProd dec)).
+simpl Z_of_N; ring.
 case HH; clear HH; intros HH1 HH2.
 apply PocklingtonExtra with (F1:=mkProd dec) (R1:=R1) (m:=1);
   auto with zmisc zarith.
@@ -668,6 +679,9 @@ assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
   set (p := plength N).
   replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
        ((Zpos (get_height 31 p) - 1) ); auto with zarith.
+  rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
+  rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+  generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
 assert (F1: ZnZ.to_Z (ZnZ.of_Z N) = N).
 rewrite ZnZ.of_Z_correct; auto with zarith.
 assert (F2: 1 < ZnZ.to_Z (ZnZ.of_Z N)).
@@ -680,6 +694,8 @@ rewrite ZnZ.of_Z_correct; auto with zarith.
 assert (F6: N - 1 = (R1 * mkProd_pred dec)%positive * mkProd' dec).
 rewrite Zpos_mult.
 rewrite <- Zmult_assoc; rewrite mkProd_pred_mkProd; auto with zarith.
+simpl in H1; rewrite Zpos_mult in H1; rewrite <- H1; rewrite Ppred_Zminus;
+  auto with zarith.
 assert (m_spec: mod_spec w_op (znz_of_Z w_op N)
                   (make_mod_op w_op (znz_of_Z w_op N))).
 apply make_mod_spec; auto with zarith.
@@ -708,6 +724,8 @@ intros; discriminate.
 intros If6 _.
 assert (U1: N - 1 = mkProd dec * R1).
 rewrite <- Ppred_Zminus in H1; auto with zarith.
+rewrite H1; simpl.
+repeat rewrite Zpos_mult; auto with zarith.
 apply PocklingtonCorollary1 with (F1:=mkProd dec) (R1:=R1);
   auto with zmisc zarith.
 case (Zle_lt_or_eq 1 (mkProd dec)); auto with zarith.
