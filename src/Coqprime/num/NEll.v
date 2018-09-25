@@ -296,10 +296,7 @@ apply Z.le_trans with (1 * base (ZnZ.digits op) + 0); auto with zarith.
 apply Zplus_le_compat; auto.
 apply Zmult_gt_0_le_compat_r; auto with zarith.
   case (ZnZ.spec_to_Z (snd v)); auto with zarith.
-  case p1; red; simpl; intros; discriminate.
-  case (ZnZ.spec_to_Z (snd v)); auto with zarith.
 intros p Hp; case (Z_mod_lt x exx.(vN)); auto with zarith.
-rewrite Hp; intros HH; case HH; auto.
 Qed.
 
 
@@ -329,10 +326,7 @@ apply Z.le_trans with (1 * base (ZnZ.digits op) + 0); auto with zarith.
 apply Zplus_le_compat; auto.
 apply Zmult_gt_0_le_compat_r; auto with zarith.
   case (ZnZ.spec_to_Z (snd v)); auto with zarith.
-  case p1; red; simpl; intros; discriminate.
-  case (ZnZ.spec_to_Z (snd v)); auto with zarith.
 intros p Hp; case (Z_mod_lt x exx.(vN)); auto with zarith.
-rewrite Hp; intros HH; case HH; auto.
 Qed.
 
 
@@ -943,9 +937,6 @@ assert (H0: N < base (ZnZ.digits op)).
   set (p := plength N).
   replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
        ((Zpos (get_height 31 p) - 1) ); auto with zarith.
-  rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
-  rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
-  generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
 assert (mspec: mod_spec op (zN exx op) mop).
   unfold mop; apply make_mod_spec; auto.
   rewrite ZnZ.of_Z_correct; auto with zarith.

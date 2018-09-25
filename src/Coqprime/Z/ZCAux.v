@@ -72,7 +72,6 @@ rewrite Zmult_comm; apply Z.lt_trans with 1; auto with zarith.
 apply Z.lt_le_trans with 2; auto with zarith; apply prime_ge_2; auto.
 intros H4 H5; rewrite Zmult_comm; apply H2; auto.
 apply Rec; try split; auto with zarith.
-rewrite Zmult_comm; auto.
 Qed.
 
 Theorem div_power_max: forall p q, 1 < p -> 0 < q -> exists n, 0 <= n /\ (p ^n | q)  /\ ~(p ^(1 + n) | q).
@@ -90,7 +89,6 @@ intros (q1, Hu); case Ha3; exists q1.
 apply Zmult_reg_r with p; auto with zarith.
 rewrite (Zmult_comm (q / p)); rewrite <- Zdivide_Zdiv_eq; auto with zarith.
 apply trans_equal with (1 := Hu); repeat rewrite Zpower_exp; try rewrite Zpower_exp_1; auto with zarith.
-ring.
 exists 0; repeat split; try rewrite Zpower_1_r; try rewrite Zpower_exp_0; auto with zarith.
 Qed.
 

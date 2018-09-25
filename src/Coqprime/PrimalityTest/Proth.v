@@ -30,10 +30,7 @@ intros (Hv1, Hv2); contradict Hv2; auto with zarith.
 intros p1 _ Hv1; contradict Hv1; auto with zarith.
 intros   p (Hv1, Hv2); contradict Hv2; auto with zarith.
 apply PocklingtonCorollary1 with (F1 := 2 ^ k) (R1 := h); auto with zarith.
-ring.
 apply Z.lt_le_trans with ((h + 1) * 2 ^ k); auto with zarith.
-rewrite Zmult_plus_distr_l; apply Zplus_lt_compat_l.
-rewrite Zmult_1_l; apply Z.lt_le_trans with 2; auto with zarith.
 intros p H3 H4.
 generalize H2; replace (h * 2 ^ k + 1 - 1) with (h * 2 ^k); auto with zarith; clear H2; intros H2.
 exists a; split; auto; split.

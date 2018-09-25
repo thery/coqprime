@@ -34,7 +34,6 @@ unfold Fn; apply Fermat_pos.
 apply PocklingtonCorollary1 with (F1 := 2^(2^(Z_of_nat n))) (R1 := 1); auto with zarith.
 2: unfold Fn, FermatNumber; auto with zarith.
 apply Z.lt_le_trans with (2 ^ 1); auto with zarith.
-rewrite Zpower_1_r; auto with zarith.
 apply Zpower_le_monotone; try split; auto with zarith.
 rewrite <- (Zpower_0_r 2); apply Zpower_le_monotone; try split; auto with zarith.
 unfold Fn, FermatNumber.
