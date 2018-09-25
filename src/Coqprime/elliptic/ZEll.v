@@ -1401,6 +1401,7 @@ Section pell.
       case Zmullp; try intros p1; red; simpl; intros; discriminate.
       apply Z.le_lt_trans with (4 * N).
       replace (2 * p * (2 * p))%Z with (4 * (p * p))%Z; auto with zarith.
+      ring.
       rewrite <- psplit_correct; rewrite HS1; simpl fst; simpl snd; auto.
       assert (tmp: forall x, x ^2 = x * x).
         intros x1; replace 2 with (1 + 1); auto; rewrite Zpower_exp.

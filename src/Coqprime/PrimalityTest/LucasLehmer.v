@@ -210,6 +210,7 @@ Definition Mp := 2^p -1.
 Theorem mersenne_pos:  1 < p -> 1 < Mp.
 intros H; unfold Mp; assert (2 < 2 ^p); auto with zarith.
 apply Z.lt_le_trans with (2^2); auto with zarith.
+refine (refl_equal _).
 apply Zpower_le_monotone; auto with zarith.
 Qed.
 
@@ -515,6 +516,7 @@ rewrite (Zplus_mod (fst (s (n1 + Zpos n)) * fst (s (n1 + Zpos n)))); auto with z
 eq_tac; auto.
 eq_tac; auto.
 apply sym_equal; apply Zmult_mod; auto.
+rewrite Zpos_plus_distr; auto with zarith.
 Qed.
 
 Theorem SS_prop: forall n, 1 < n -> SS n = fst(s (n -2)) mod (Mp n).
