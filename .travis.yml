@@ -19,7 +19,7 @@ env:
   global:
   - NJOBS=3
   matrix:
-  - COQ_VER="8.8.2" REPO_NAME="coq-released"  REPO_URL="http://coq.inria.fr/opam/released"
+  - COQ_VER="8.8.1" REPO_NAME="coq-released"  REPO_URL="http://coq.inria.fr/opam/released"
   - COQ_VER="dev"   REPO_NAME="coq-extra-dev" REPO_URL="https://coq.inria.fr/opam/extra-dev"
 
 install:
