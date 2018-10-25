@@ -82,3 +82,4 @@ Ltac eq_tac :=
 **************************************)
 
 Ltac sauto := (intros; apply sym_equal; auto; fail) || auto.
+
