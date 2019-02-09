@@ -24,23 +24,23 @@ let lemmaExp =regexp  "^Lemma"
 
 (* Conversion function *)
 let hexstring s =
-  let rec main rem s = 
+  let rec main rem s =
     if String.length s <= shift then
      (add_big_int
-       (mult_big_int 
+       (mult_big_int
          (power_int_positive_int 16 (String.length s))
           rem)
        (big_int_of_int (int_of_string ("0x" ^ s))))
     else
      main
      (add_big_int
-       (mult_big_int 
+       (mult_big_int
          (power_int_positive_int 16 shift)
           rem)
        (big_int_of_int (int_of_string ("0x" ^ (String.sub s 0 shift)))))
      (skip s shift) in
     let _ = string_match hexa s 0 in ();
-    let s1 = matched_string s in 
+    let s1 = matched_string s in
     if (String.contains s1 '-') then
       minus_big_int (main zero_big_int (skip s1 1))
     else
@@ -93,43 +93,43 @@ let name = ref "primo"
 
 
 let process_type() =
-  let elt = 
+  let elt =
   (if !ty != -1 then
     (if !ty = 4 then
       let n  = !n in
       let t  = !t in
       let j  = !j in
-      let a  = 
-           mult_big_int 
+      let a  =
+           mult_big_int
              (mult_big_int (big_int_of_int 3) j)
              (sub_big_int (big_int_of_int 1728) j) in
-      let b = 
-           mult_big_int 
+      let b =
+           mult_big_int
              (mult_big_int (big_int_of_int 2) j)
              (square_big_int (sub_big_int (big_int_of_int 1728) j)) in
       let l = mod_big_int
                (add_big_int (power_big_int_positive_int t 3)
                   (add_big_int  (mult_big_int a t) b))
                 n in
-      let a = mod_big_int 
+      let a = mod_big_int
                 (mult_big_int a (square_big_int l)) n in
-      let b = mod_big_int 
+      let b = mod_big_int
                 (mult_big_int b (power_big_int_positive_int l 3)) n in
       let x = mod_big_int (mult_big_int t l) n in
       let y = mod_big_int (square_big_int l) n in
        Elliptic (n, !s, !r, a, b, x, y)
      else if !ty = 3 then
       let n  = !n in
-      let t  = !t in 
+      let t  = !t in
       let a  = !a in
       let b =  !b in
       let l = mod_big_int
                (add_big_int (power_big_int_positive_int t 3)
                   (add_big_int  (mult_big_int a t) b))
                 n in
-      let a = mod_big_int 
+      let a = mod_big_int
                 (mult_big_int a (square_big_int l)) n in
-      let b = mod_big_int 
+      let b = mod_big_int
                 (mult_big_int b (power_big_int_positive_int l 3)) n in
       let x = mod_big_int (mult_big_int t l) n in
       let y = mod_big_int (square_big_int l) n in
@@ -138,14 +138,14 @@ let process_type() =
        Pocklington (!n, !b, !r)
      else if !ty = 0 then
        External !n
-     else 
+     else
        Error !ty)
   else Error 0)
   in (n := !r; elt)
 
 
 
-let parse f = 
+let parse f =
 n :=  zero_big_int;
 s :=  zero_big_int;
 r :=  zero_big_int;
@@ -159,56 +159,56 @@ sep := "";
 res := [];
 let ic = open_in f in
   let line = ref "" in
-  (try 
+  (try
     while true do
-    line := input_line ic; 
+    line := input_line ic;
 
     if string_match nhexa !line 0 then
  (
              n := hexstring (skip !line 3);
              r := !n)
-    else if string_match shexa !line 0 then 
+    else if string_match shexa !line 0 then
           s := (hexstring (skip !line 3))
-    else if string_match rhexa !line 0 then 
+    else if string_match rhexa !line 0 then
           r := (hexstring (skip !line 3))
-    else if string_match ahexa !line 0 then 
+    else if string_match ahexa !line 0 then
           a := (hexstring (skip !line 3))
-    else if string_match bhexa !line 0 then 
+    else if string_match bhexa !line 0 then
           b := (hexstring (skip !line 3))
-    else if string_match thexa !line 0 then 
+    else if string_match thexa !line 0 then
           t := (hexstring (skip !line 3))
-    else if string_match jhexa !line 0 then 
+    else if string_match jhexa !line 0 then
           j := (hexstring (skip !line 3))
-    else if string_match t0hexa !line 0 then 
+    else if string_match t0hexa !line 0 then
           (res := process_type() :: !res; ty := 0;
            res := process_type() :: !res)
-    else if string_match t1hexa !line 0 then 
+    else if string_match t1hexa !line 0 then
           (res := process_type() :: !res; ty := 1)
-    else if string_match t2hexa !line 0 then 
+    else if string_match t2hexa !line 0 then
           (res := process_type() :: !res; ty := 2;)
-    else if string_match t3hexa !line 0 then 
+    else if string_match t3hexa !line 0 then
           (res := process_type() :: !res; ty := 3)
-    else if string_match t4hexa !line 0 then 
+    else if string_match t4hexa !line 0 then
           (res := process_type() :: !res;ty := 4)
-    done                 
+    done
 
-  with e ->              
+  with e ->
     close_in_noerr ic);
    List.rev !res
 
 let rec gen_name k l =
   match l with
   [] -> ()
-| Elliptic (n, s, r, a, b, x, y) :: l1 -> 
-    print_string "Let p" ; print_int k; print_string " = "; 
+| Elliptic (n, s, r, a, b, x, y) :: l1 ->
+    print_string "Let p" ; print_int k; print_string " = ";
     print_string (string_of_big_int n); print_string ";"; print_newline();
     gen_name (k + 1) l1
 | Pocklington (n, b, r) :: l1 ->
-    print_string "Let p" ; print_int k; print_string " = "; 
+    print_string "Let p" ; print_int k; print_string " = ";
     print_string (string_of_big_int n); print_string ";"; print_newline();
     gen_name (k + 1) l1
 | External n :: l1 ->
-    print_string "Let p" ; print_int k; print_string " = "; 
+    print_string "Let p" ; print_int k; print_string " = ";
     print_string (string_of_big_int n); print_string ";"; print_newline();
     gen_name (k + 1) l1
 | _ :: l1 ->
@@ -225,17 +225,17 @@ let pef s =
 
 
 let print_header () =
-   pe "Require Import PocklingtonRefl.";
+   pe "From Coqprime Require Import PocklingtonRefl.";
    pe "Local Open Scope positive_scope."
 
-let split_begin k = 
+let split_begin k =
   if !split then
    (let fname = !fileout ^ "_" ^ (string_of_int k) ^ ".v" in
       co :=  open_out fname;
       print_header())
- 
 
-let split_close k = 
+
+let split_close k =
   if !split then
    (close_out !co)
 
@@ -267,19 +267,19 @@ let print_external k n =
   let fname = !fileout ^ "_" ^ (string_of_int k) ^ ".v" in
   let _ = Sys.command (Filename.dirname (Sys.executable_name)^
                 "/pocklington -o " ^ fname ^ " -n " ^ !name ^
-                 (string_of_int k)^ " " ^ 
+                 (string_of_int k)^ " " ^
                  (string_of_big_int n)) in
-  if (not !split) then 
+  if (not !split) then
   (let ic = open_in fname in
   let line = ref "" in
   let flag = ref false in
-  (try 
+  (try
     while true do
-    line := input_line ic; 
+    line := input_line ic;
     if string_match lemmaExp !line 0 then flag := true;
     if !flag then pe !line
     done
-  with e ->              
+  with e ->
     close_in_noerr ic);
   Sys.remove fname)
 
@@ -302,11 +302,11 @@ let print_pocklington k n b r =
    pe  "vm_cast_no_check (refl_equal true).";
    pe  "Time Qed.";
    split_close k
- 
+
 let rec print_goals k l =
   match l with
   [] -> ()
-| Elliptic (n, s, r, a, b, x, y) :: l1 -> 
+| Elliptic (n, s, r, a, b, x, y) :: l1 ->
     print_elliptic  k n s r a b x y;
     print_goals (k + 1) l1
 | Pocklington (n, b, r) :: l1 ->
@@ -323,21 +323,21 @@ let rec rprint_main k l =
   [] -> ()
 | Elliptic (n, s, r, a, b, x, y) :: l1 ->
     pef ("(");
-    pef (!name  ^ (string_of_int k) ^ " "); 
+    pef (!name  ^ (string_of_int k) ^ " ");
     rprint_main (k + 1) l1;
     pef (")");
 | Pocklington (n, b, r) :: l1 ->
     pef ("(");
-    pef (!name  ^ (string_of_int k)^ " "); 
+    pef (!name  ^ (string_of_int k)^ " ");
     rprint_main (k + 1) l1;
     pef (")");
 | External n :: l1 ->
-    pef (!name  ^ (string_of_int k)); 
+    pef (!name  ^ (string_of_int k));
     rprint_main k l1
 | _ :: l1 ->
     rprint_main k l1
 
-   
+
 let rec print_main l =
   match l with
   [] -> ()
@@ -370,8 +370,8 @@ let rec print_main l =
     pe ("Qed.")
 | _ :: l1 ->
     print_main l1
- 
-   
+
+
 let rec print_require k l =
   match l with
   [] -> ()
@@ -388,7 +388,7 @@ let rec print_require k l =
     print_require k l1
 
 
-   
+
 let rec print_make k l =
   match l with
   [] -> ()
@@ -405,7 +405,7 @@ let rec print_make k l =
     print_make k l1
 
 
-let _ =  
+let _ =
   let v = ref (Array.length Sys.argv) in
   let k = ref 1 in
   let flag = ref true in
@@ -413,8 +413,8 @@ let _ =
     if Sys.argv.(!k) = "-split" then
       (k := !k + 1; v := !v -1; split := true)
     else if  Sys.argv.(!k) = "-o" then
-      (k := !k + 2; v := !v - 2; 
-        (try 
+      (k := !k + 2; v := !v - 2;
+        (try
           fileout := Filename.chop_extension (Sys.argv.(!k - 1))
         with e -> fileout := Sys.argv.(!k - 1));
        fileoutflag := true)
@@ -425,7 +425,7 @@ let _ =
   if (!v) == 2 then
     (let p = parse Sys.argv.(!k) in
     if (not !fileoutflag) then
-        (try 
+        (try
           fileout := Filename.chop_extension (Sys.argv.(!k))
         with e -> fileout := Sys.argv.(!k));
     if (not !split) then
@@ -443,13 +443,6 @@ let _ =
     if (!split) then
      (let fname = !fileout ^ "_make" in
       co := open_out fname;
-      pe "-I ../Tactic";
-      pe "-I ../N";
-      pe "-I ../Z";
-      pe "-I ../PrimalityTest";
-      pe "-I ../List";
-      pe "-I ../elliptic";
-      pe "-I ../num";
       pe (!fileout ^ ".v");
       print_make 0 p);
     close_out !co)

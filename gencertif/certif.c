@@ -26,7 +26,7 @@ void my_set_verbose ()
 pock_certif_t pock_init (mpz_t N)
 {
   pock_certif_t res;
-  
+
   res = (pock_certif_t)malloc(sizeof(__pock_struct));
   res->_N = malloc(sizeof(mpz_t));
   mpz_init_set (res->_N, N);
@@ -55,9 +55,9 @@ void realloc_dec (pock_certif_t c)
   alloc = 2 * c->_allocated;
   odec = c->_dec;
   ndec = (mpz_ptr *)malloc(sizeof(mpz_ptr) * alloc);
-  
+
   for(i=0; i<used; i++) ndec[i] = odec[i];
-  
+
   c->_allocated = alloc;
   c->_dec = ndec;
   return;
@@ -67,7 +67,7 @@ void dec_add_ui (pock_certif_t c, unsigned long int ui)
 {
   mpz_ptr mpz_ui;
   int i,j, used;
-  mpz_ptr * p; 
+  mpz_ptr * p;
 
   if (ui == 2) {
     c->_pow2 ++;
@@ -77,11 +77,11 @@ void dec_add_ui (pock_certif_t c, unsigned long int ui)
     return;
   }
 
-  used = c->_used; 
-    
+  used = c->_used;
+
   /* realloc if necessary */
   if (c->_allocated <= used) realloc_dec(c);
-  
+
   /* Add ui in the dec, smaller elements first */
   p = c->_dec;
   i = 0;
@@ -104,7 +104,7 @@ void dec_add_mpz (pock_certif_t c, mpz_t n)
 {
   mpz_ptr new_n;
   int i,j, used;
-  mpz_ptr * p; 
+  mpz_ptr * p;
 
   if (mpz_cmp_ui(n, 2) == 0) {
     c->_pow2 ++;
@@ -114,11 +114,11 @@ void dec_add_mpz (pock_certif_t c, mpz_t n)
     return;
   }
 
-  used = c->_used; 
-    
+  used = c->_used;
+
   /* realloc if necessary */
   if (c->_allocated <= used) realloc_dec(c);
-  
+
   /* Add n in the dec, smaller elements first */
   p = c->_dec;
   i = 0;
@@ -152,7 +152,7 @@ int check_mpz(mpz_t N, mpz_t F1, mpz_t R1)
   mpz_mul (sum, sum, F1);      /* sum = 2*F1^3 + (r+1)*F1^2 + r*F1     */
   mpz_add_ui (sum, sum, 1);    /* sum = 2*F1^3 + (r+1)*F1^2 + r*F1 + 1 */
                                /*     = (F1+1)(2F1^2+(r-1)F1 + 1       */
- 
+
   res = mpz_cmp (N, sum) <= 0;
 
   mpz_clear(r);
@@ -172,14 +172,14 @@ void simplify_certif(pock_certif_t c)
 {
   mpz_t N, F1, R1, pi;
   int used, i, j;
-  mpz_ptr * ptr; 
+  mpz_ptr * ptr;
 
 
   mpz_init(pi);
   mpz_init_set(N,c->_N);
   mpz_init_set(F1,c->_F1);
   mpz_init_set(R1,c->_R1);
-  
+
   used = c->_used;
   i = used - 1;
   ptr = c->_dec;
@@ -189,16 +189,16 @@ void simplify_certif(pock_certif_t c)
     mpz_tdiv_q (F1, F1, pi);
     mpz_mul (R1, R1, pi);
 
-    if (check_mpz (N, F1, R1)) 
-      {  
+    if (check_mpz (N, F1, R1))
+      {
 	mpz_set(c->_F1, F1);
 	mpz_set(c->_R1, R1);
 	for(j = i + 1; j < used ; j++) ptr[j-1] = ptr[j];
 	used--;
 	c->_used = used;
       }
-    else 
-      {	
+    else
+      {
 	mpz_set (F1, c->_F1);
 	mpz_set (R1, c->_R1);
 	while(i > 0 && (mpz_cmp(ptr[i-1], ptr[i]) == 0)) i--;
@@ -210,24 +210,24 @@ void simplify_certif(pock_certif_t c)
   mpz_clear (N);
   mpz_clear (F1);
   mpz_clear (R1);
-  
+
   return;
-} 
+}
 
 void simplify_small_certif(pock_certif_t c)
 {
   mpz_t N, F1, R1, pi;
   int used, j;
-  mpz_ptr * ptr; 
+  mpz_ptr * ptr;
 
 
   mpz_init(pi);
   mpz_init_set(N,c->_N);
   mpz_init_set(F1,c->_F1);
   mpz_init_set(R1,c->_R1);
-  
+
   used = c->_used;
- 
+
   ptr = c->_dec;
 
   while (0 <used){
@@ -235,7 +235,7 @@ void simplify_small_certif(pock_certif_t c)
     mpz_tdiv_q (F1, F1, pi);
     mpz_mul (R1, R1, pi);
 
-    if (check_mpz (N, F1, R1)) 
+    if (check_mpz (N, F1, R1))
       {  /* remove pi */
 	mpz_set(c->_F1, F1);
 	mpz_set(c->_R1, R1);
@@ -244,7 +244,7 @@ void simplify_small_certif(pock_certif_t c)
 	c->_used = used;
       }
     else break;
-    
+
   }
 
 
@@ -252,10 +252,10 @@ void simplify_small_certif(pock_certif_t c)
   mpz_clear (F1);
   mpz_clear (R1);
   simplify_certif(c);
-  
+
   return;
 }
- 
+
 
 int is_witness(unsigned long int a, pock_certif_t c)
 {
@@ -273,7 +273,7 @@ int is_witness(unsigned long int a, pock_certif_t c)
   mpz_sub_ui (N1, N, 1);
 
   mpz_powm (aux, mpza, N1, N);
-  
+
   if (mpz_cmp_ui (aux, 1) != 0) {
     mpz_clear(exp);
     mpz_clear(aux);
@@ -286,7 +286,7 @@ int is_witness(unsigned long int a, pock_certif_t c)
   ptr = c->_dec;
   size = c->_used;
   res = 1;
-  
+
   if (c->_pow2 > 0) {
     mpz_tdiv_q_ui(exp, N1, 2);
     mpz_powm (aux, mpza, exp, N);
@@ -294,9 +294,9 @@ int is_witness(unsigned long int a, pock_certif_t c)
     mpz_gcd (aux, aux, N);
     if  (mpz_cmp_ui(aux, 1) != 0) res = 0;
   }
-  
+
   i = 0;
-  
+
   while (i < size && res) {
     if (flag_verbose) {
       mpz_out_str (stdout, 10,ptr[i]);
@@ -318,7 +318,7 @@ int is_witness(unsigned long int a, pock_certif_t c)
   mpz_clear(mpza);
 
   if (flag_verbose) printf("\n");
-    
+
   return res;
 }
 
@@ -328,12 +328,12 @@ void set_witness(pock_certif_t c)
   unsigned long int a = 2;
 
   while (!is_witness(a,c)) a++;
-  
+
   c->_a = a;
 
   return;
 }
- 
+
 void set_sqrt(pock_certif_t c)
 {
   mpz_t s;
@@ -371,7 +371,7 @@ void finalize_pock(pock_certif_t c)
 /*            Pre certificate                 */
 /**********************************************/
 
-char* mk_name(mpz_t t) 
+char* mk_name(mpz_t t)
 {
   int size;
   int filedes[2];
@@ -410,7 +410,7 @@ pre_certif_t mk_proof_certif(mpz_t N)
 
   return pre;
 }
-  
+
 pre_certif_t mk_lucas_certif(mpz_t N, unsigned long int n)
 {
   lucas_certif_t lucas;
@@ -427,9 +427,9 @@ pre_certif_t mk_lucas_certif(mpz_t N, unsigned long int n)
 
   return pre;
 }
-  
-  
-pre_certif_t mk_pock_certif(pock_certif_t c) 
+
+
+pre_certif_t mk_pock_certif(pock_certif_t c)
 {
   pre_certif_t pre;
 
@@ -464,7 +464,7 @@ certif_t init_certif()
   res->_allocated = ALLOCSIZE;
   res->_used = 0;
   res->_list = (pre_certif_t *)malloc(sizeof(pre_certif_t)*ALLOCSIZE);
- 
+
   return res;
 }
 
@@ -488,13 +488,13 @@ void realloc_list(certif_t  lc)
 
 int _2_is_in (certif_t lc)
 {
-   
-  if (lc->_used == 0) return 0; 
+
+  if (lc->_used == 0) return 0;
 
   return (mpz_cmp_ui(get_N(lc->_list[0]), 2) == 0);
 
 }
-  
+
 int is_in (mpz_t t, certif_t lc)
 {
   pre_certif_t * ptr;
@@ -511,7 +511,7 @@ int is_in (mpz_t t, certif_t lc)
   return 0;
 }
 
-  
+
 void add_pre(pre_certif_t pre, certif_t lc)
 {
   int i, j, used;
@@ -546,19 +546,19 @@ void print_pock_certif(FILE *out, pock_certif_t c)
   int i, pow, size;
   mpz_ptr *p;
   mpz_t last;
-  
+
   size = c->_used;
   p = c->_dec;
 
   fprintf(out, "(Pock_certif "); mpz_out_str (out, 10, c->_N);
   fprintf(out, " %lu ", c->_a);
 
-  fprintf(out, "("); 
-    
+  fprintf(out, "(");
+
   if (size > 0) {
     mpz_init_set(last,p[size-1]);
     pow = 1;
-    
+
     for(i = size - 2; i >= 0; i--) {
       if (mpz_cmp(last,p[i]) == 0) pow++;
       else {
@@ -572,12 +572,12 @@ void print_pock_certif(FILE *out, pock_certif_t c)
     fprintf(out,"(");
     mpz_out_str (out, 10, last);
     fprintf(out,", %i)::", pow);
-  } 
-    
+  }
+
   fprintf(out,"(2,%i)::nil) ", c->_pow2);
   mpz_out_str (out, 10, c->_sqrt);
   fprintf(out,")");
-  
+
 }
 
 
@@ -586,18 +586,18 @@ void print_pre_certif(FILE *out, pre_certif_t pre)
   mpz_ptr N;
   N = get_N(pre);
 
-  switch (pre->_kind) 
+  switch (pre->_kind)
     {
     case 0 :
       fprintf(out, "(Proof_certif ");mpz_out_str (out, 10, N);
       fprintf(out, " %s)", pre->_certif._proof->_lemma);
       break;
-    case 1: 
+    case 1:
       print_pock_certif(out, pre->_certif._pock);
       break;
     case 2:
       fprintf(out, "(Lucas_certif ");mpz_out_str (out, 10, N);
-      fprintf(out, " %lu)", pre->_certif._lucas->_n); 
+      fprintf(out, " %lu)", pre->_certif._lucas->_n);
     default : break;
     }
   return;
@@ -610,20 +610,20 @@ void print_lc(FILE *out, certif_t lc)
 
   size = lc->_used;
   p = lc->_list;
- 
+
   fprintf(out, "    (");
   for(i=size-1; i >= 0; i--) {
     print_pre_certif(out, p[i]);
     fprintf(out, " ::\n         ");
   }
   fprintf(out, " nil)");
- 
+
 }
 
 void print_lemma(FILE *out, char *name, pre_certif_t p, certif_t lc)
 {
 
-  fprintf(out, "Lemma %s", name); 
+  fprintf(out, "Lemma %s", name);
   fprintf(out, " : prime ");mpz_out_str (out, 10, get_N(p));
   fprintf(out, ".\n");
   fprintf(out, "Proof.\n");
@@ -631,7 +631,7 @@ void print_lemma(FILE *out, char *name, pre_certif_t p, certif_t lc)
 
   print_pre_certif(out, p);
   fprintf(out, "\n    ");
- 
+
 
   print_lc(out, lc);
   fprintf(out, ").\n");
@@ -642,10 +642,10 @@ void print_lemma(FILE *out, char *name, pre_certif_t p, certif_t lc)
 
 void print_prelude(FILE *out)
 {
-  fprintf(out,"Require Import List.\n");
-  fprintf(out,"Require Import ZArith.\n");
-  fprintf(out,"Require Import ZAux.\n\n");
-  fprintf(out,"Require Import PocklingtonCertificat.\n\n");
+  fprintf(out,"From Coqprime Require Import List.\n");
+  fprintf(out,"From Coqprime Require Import ZArith.\n");
+  fprintf(out,"From Coqprime Require Import ZAux.\n\n");
+  fprintf(out,"From Coqprime Require Import PocklingtonCertificat.\n\n");
 
   fprintf(out,"Open Local Scope positive_scope.\n\n");
 
@@ -655,15 +655,15 @@ void print_prelude(FILE *out)
 
 void print_file(char *filename, char *name, pre_certif_t p, certif_t lc)
 {
-  FILE * out; 
+  FILE * out;
 
   out = fopen(filename,"w+");
 
-  fprintf(out, "Require Import PocklingtonRefl.\n\n"); 
+  fprintf(out, "From Coqprime Require Import PocklingtonRefl.\n\n");
 
 /*  fprintf(out,"Set Virtual Machine.\n"); */
-  
-  fprintf(out,"Open Local Scope positive_scope.\n\n");
+
+  fprintf(out,"Local Open Scope positive_scope.\n\n");
 
   print_lemma(out, name, p, lc);
 
@@ -696,35 +696,35 @@ pock_certif_t read_file(char * filename, certif_t lc)
   mpz_set(q, n);
   mpz_sub_ui (q, q, 1);
 
-  
+
   while(fgetc(in) != EOF){
     if (mpz_inp_str(n,in,10)){
       mpz_out_str (stdout, 10, n);
-      fprintf(stdout, "\n"); 
-	
+      fprintf(stdout, "\n");
+
       mpz_tdiv_qr(q, r, q, n);
 
       if (mpz_cmp_ui (r, 0) != 0) {
 	mpz_out_str (stdout, 10, n);
-	fprintf(stdout, " is not a divisor\n"); 
+	fprintf(stdout, " is not a divisor\n");
 	fflush(stdout);
 	exit(1);
       }
 
       if (!mpz_probab_prime_p (n, 3)) {
 	mpz_out_str (stdout, 10, n);
-	fprintf(stdout, " is not prime \n"); 
+	fprintf(stdout, " is not prime \n");
 	fflush(stdout);
 	exit(1);
       }
-	
-	
+
+
       dec_add_mpz(c, n);
       i = getc(in);
       if (i=='*') add_pre(mk_proof_certif(n),lc);
       else ungetc(i, in);
     } else { break;
-      
+
       fprintf(stdout,"\nSyntax error\n");
       fflush(stdout);
       exit(1);
@@ -732,15 +732,13 @@ pock_certif_t read_file(char * filename, certif_t lc)
   }
 
   if (!check_pock(c)) {
-    fprintf(stdout, "Decomposition to small \n"); 
+    fprintf(stdout, "Decomposition to small \n");
     fflush(stdout);
     exit (1);
-    
+
   }
 
-  fclose(in); 
+  fclose(in);
 
   return c;
 }
-
-
