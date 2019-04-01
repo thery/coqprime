@@ -33,6 +33,5 @@ install:
 - opam install coq-bignums -y
 
 script:
- - ./configure.sh
  - make -j ${NJOBS}
  - make install
