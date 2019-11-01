@@ -1,8 +1,7 @@
-*.v.d
+*.d
 *.vo
 *.glob
 *.aux
 /Makefile.conf
+/Makefile.coq.conf
 *~
-.coqdeps.d
-
