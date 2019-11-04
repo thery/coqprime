@@ -113,7 +113,7 @@ Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || omega).
   | _ => idtac
   end; zsimpl; simpl.
   split; auto.
-  case (Zle_lt_or_eq 1 b); auto with zarith.
+  case (Zle_lt_or_eq 1 b). 2-3: auto with zarith.
   generalize (Zlt_0_pos b); auto with zarith.
 Qed.
 Transparent Zmult.

@@ -7,6 +7,7 @@
 (*************************************************************)
 
 Require Export ZArith.
+Require Import Lia.
 Local Open Scope Z_scope.
 
 Coercion Zpos : positive >-> Z.
@@ -55,18 +56,11 @@ Lemma Pminus_mask_spec :
     | IsPos k => Zpos p = q + k
     | IsNeq   => p < q
     end.
-Proof with zsimpl;auto with zarith.
- induction p;destruct q;simpl;zsimpl;
-  match goal with
-  | [|- context [(Pminus_mask ?p1 ?q1)]] =>
-    assert (H1 := IHp q1);destruct (Pminus_mask p1 q1)
-  | _ => idtac
-  end;simpl ...
- inversion H1 ...   inversion H1 ...
- rewrite Psucc_Zplus in H1 ...
- clear IHp;induction p;simpl ...
-  rewrite IHp;destruct (Pdouble_minus_one p) ...
- assert (H:= Zlt_0_pos q) ...   assert (H:= Zlt_0_pos q) ...
+Proof.
+  intros p q;
+  case (Pos.sub_mask_spec p q).
+  lia.
+  all: intros r <-; lia.
 Qed.
 
 Definition PminusN x y :=

@@ -321,8 +321,8 @@ Proof.
  assert (H2 := div_eucl_spec a b).
  assert (Z_of_N (fst (a / b)%P) = q2 /\ Z_of_N (snd (a/b)%P) = r2).
  destruct H1;destruct H2.
- apply mod_unique with b;mauto.
- split;mauto.
+ apply mod_unique with b. 2: mauto.
+ split. 2: mauto.
  unfold Z.le;destruct (snd (a / b)%P);intro;discriminate.
  rewrite <- H0;symmetry;rewrite Zmult_comm;trivial.
  destruct H0;auto.
@@ -394,19 +394,19 @@ Hint Rewrite pow_mod_pred_spec : zmisc.
 Lemma mkProd_pred_mkProd : forall l,
    (mkProd_pred l)*(mkProd' l) = mkProd l.
 Proof.
- induction l;simpl;intros; mauto.
+ induction l;simpl;intros; autorewrite with zmisc. reflexivity.
  generalize (pos_eq_1_spec (snd a)); destruct  (snd a ?= 1)%P;intros.
- rewrite H; mauto.
+ rewrite H. autorewrite with zmisc.
  replace (mkProd_pred l * (fst a * mkProd' l)) with
      (fst a *(mkProd_pred l * mkProd' l));try ring.
   rewrite IHl; mauto.
  rewrite Zmult_assoc. rewrite times_Zmult.
  rewrite (Zmult_comm (pow (fst a) (Pos.pred (snd a)) * mkProd_pred l)).
  rewrite Zmult_assoc. rewrite pow_Zpower.  rewrite <-Ppred_Zminus;trivial.
- rewrite <- Zpower_Zsucc; try omega.
+ rewrite <- Zpower_Zsucc.
  replace (Z.succ (snd a - 1)) with ((snd a - 1)+1).
- replace ((snd a - 1)+1) with (Zpos (snd a)); mauto.
- rewrite <- IHl;repeat rewrite Zmult_assoc; mauto.
+ replace ((snd a - 1)+1) with (Zpos (snd a)) by mauto.
+ rewrite <- IHl. repeat rewrite Zmult_assoc. mauto.
  destruct (snd a - 1);trivial.
  assert (1 < snd a); auto with zarith.
 Qed.
@@ -642,33 +642,33 @@ Proof.
  simpl in H3; simpl in H2.
  rewrite <- Ppred_Zminus in H2;try omega.
  rewrite <- Zmult_assoc;rewrite mkProd_pred_mkProd.
- intros H12;assert (a^(N-1) mod N = 1).
+ intros H12;assert (a^(N-1) mod N = 1). {
   pattern 1 at 2;rewrite <- H9;symmetry.
   simpl Z.of_N in H12.
-  rewrite H2; rewrite H12; mauto.
-  rewrite <- Zpower_mult; mauto.
+  rewrite H2; rewrite H12 by mauto.
+  rewrite <- Zpower_mult; mauto. }
   clear H12.
  intros H14.
  match type of H14 with _ -> _ -> _ -> ?X =>
   assert (H12:X); try apply H14; clear H14
- end; mauto.
+ end. 1, 3: mauto.
  rewrite Zmod_small; mauto.
- assert (1 < mkProd dec).
+ assert (1 < mkProd dec). {
   assert (H14 := Zlt_0_pos (mkProd dec)).
-  assert (1 <= mkProd dec); mauto.
-  destruct (Zle_lt_or_eq _ _ H15); mauto.
-  inversion H16. rewrite <- H18 in H5;discriminate H5.
+  assert (1 <= mkProd dec) by mauto.
+  destruct (Zle_lt_or_eq _ _ H15). mauto.
+  inversion H16. rewrite <- H18 in H5;discriminate H5. }
  simpl in H8.
- assert (Z_of_N s = R1 / (2 * mkProd dec) /\ Zpos r =  R1 mod (2 * mkProd dec)).
-  apply mod_unique with (2 * mkProd dec);auto with zarith.
+ assert (Z_of_N s = R1 / (2 * mkProd dec) /\ Zpos r =  R1 mod (2 * mkProd dec)). {
+  apply mod_unique with (2 * mkProd dec).
  revert H8; mauto.
  apply Z_mod_lt; mauto.
- rewrite <- Z_div_mod_eq; mauto; rewrite H7.
+ rewrite <- Z_div_mod_eq by mauto; rewrite H7.
  simpl fst; simpl snd; simpl Z_of_N.
- ring.
+ ring. }
  destruct H15 as (H15,Heqr).
- apply PocklingtonExtra with (F1:=mkProd dec) (R1:=R1) (m:=1);
-  auto with zmisc zarith.
+ apply PocklingtonExtra with (F1:=mkProd dec) (R1:=R1) (m:=1).
+  1-2, 7-8: auto with zmisc zarith.
  rewrite H2; mauto.
  apply is_even_Zeven; auto.
  apply is_odd_Zodd; auto.
@@ -677,18 +677,18 @@ Proof.
  apply not_prime_0.
  2: intros p (V1, _); contradict V1; apply Zle_not_lt; red; simpl; intros;
      discriminate.
- intros p Hprime Hdec; exists (Zpos a);repeat split; auto with zarith.
- apply Zis_gcd_gcd; auto with zarith.
+ intros p Hprime Hdec; exists (Zpos a);repeat split. 1-2: auto with zarith.
+ apply Zis_gcd_gcd. auto with zarith.
  change (rel_prime (a ^ ((N - 1) / p) - 1) N).
  match type of H12 with _ = ?X mod _ =>
-   apply rel_prime_div with (p := X); auto with zarith
+   apply rel_prime_div with (p := X)
  end.
- apply rel_prime_mod_rev; auto with zarith.
+ apply rel_prime_mod_rev. auto with zarith.
  red.
  pattern 1 at 3; rewrite <- H10; rewrite <- H12.
  apply Pmod.gcd_Zis_gcd.
  destruct (in_mkProd_prime_div_in _ Hprime _ H Hdec) as (q,Hin).
- revert H2; mauto; intro H2.
+ revert H2; autorewrite with zmisc; intro H2.
  rewrite <- H2.
  match goal with |- context [fold_left ?f _ _] =>
    apply (ListAux.fold_left_invol_in _ _ f (fun k => Z.divide (a ^ ((N - 1) / p) - 1) k))

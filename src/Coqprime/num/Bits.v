@@ -12,7 +12,7 @@ Fixpoint plength (p: positive) : positive :=
 Theorem plength_correct: forall p, (Zpos p < 2 ^ Zpos (plength p))%Z.
 assert (F: (forall p, 2 ^ (Zpos (Pos.succ p)) = 2 * 2 ^ Zpos p)%Z).
 intros p; replace (Zpos (Pos.succ p)) with (1 + Zpos p)%Z.
-rewrite Zpower_exp; auto with zarith.
+rewrite Zpower_exp. 1-2: auto with zarith.
 red; intros; discriminate.
 rewrite Zpos_succ_morphism; unfold Z.succ; auto with zarith.
 intros p; elim p; simpl plength; auto.

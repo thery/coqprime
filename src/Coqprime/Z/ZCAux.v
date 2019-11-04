@@ -71,7 +71,7 @@ case (Zmult_interval q q2).
 rewrite Zmult_comm; apply Z.lt_trans with 1; auto with zarith.
 apply Z.lt_le_trans with 2; auto with zarith; apply prime_ge_2; auto.
 intros H4 H5; rewrite Zmult_comm; apply H2; auto.
-apply Rec; try split; auto with zarith.
+apply Rec. split. 1, 3: auto with zarith.
 rewrite Zmult_comm; auto.
 Qed.
 
@@ -83,15 +83,16 @@ case (Zdivide_Zdiv_lt_pos p q); auto with zarith; intros H4 H5.
 case (Rec (Z.div q p)); auto with zarith.
 intros n (Ha1, (Ha2, Ha3)); exists (n + 1); split; auto with zarith; split.
 case Ha2; intros q1 Hq; exists q1.
-rewrite Zpower_exp; try rewrite Zpower_1_r; auto with zarith.
+rewrite Zpower_exp by auto with zarith. rewrite Zpower_1_r by auto with zarith.
 rewrite  Zmult_assoc; rewrite <- Hq.
 rewrite Zmult_comm; apply Zdivide_Zdiv_eq; auto with zarith.
 intros (q1, Hu); case Ha3; exists q1.
 apply Zmult_reg_r with p; auto with zarith.
-rewrite (Zmult_comm (q / p)); rewrite <- Zdivide_Zdiv_eq; auto with zarith.
-apply trans_equal with (1 := Hu); repeat rewrite Zpower_exp; try rewrite Zpower_exp_1; auto with zarith.
+rewrite (Zmult_comm (q / p)); rewrite <- Zdivide_Zdiv_eq by auto with zarith.
+apply trans_equal with (1 := Hu).
+rewrite !Zpower_exp by auto with zarith.
 ring.
-exists 0; repeat split; try rewrite Zpower_1_r; try rewrite Zpower_exp_0; auto with zarith.
+exists 0; repeat split; try rewrite Zpower_1_r; auto with zarith.
 Qed.
 
 Theorem prime_div_induction:
