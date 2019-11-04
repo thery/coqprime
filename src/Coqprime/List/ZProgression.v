@@ -8,6 +8,7 @@
 
 Require Export Iterator.
 Require Import ZArith.
+Require Import Lia.
 Require Export UList.
 Open Scope Z_scope.
 
@@ -15,7 +16,7 @@ Theorem next_n_Z: forall n m,  next_n Z.succ n m = n + Z_of_nat m.
 intros n m; generalize n; elim m; clear n m.
 intros n; simpl; auto with zarith.
 intros m H n.
-replace (n + Z_of_nat (S m)) with (Z.succ n + Z_of_nat m); auto with zarith.
+replace (n + Z_of_nat (S m)) with (Z.succ n + Z_of_nat m).
 rewrite <- H; auto with zarith.
 rewrite inj_S; auto with zarith.
 Qed.
@@ -29,8 +30,8 @@ simpl; intros; apply f_equal2 with ( f := @cons Z ); auto with zarith.
 intros m1 Hm1 n1.
 apply trans_equal with (cons n1 (progression Z.succ (Z.succ n1) (S m1))); auto.
 rewrite Hm1.
-replace (Z.succ n1 + Z_of_nat m1) with (n1 + Z_of_nat (S m1)); auto with zarith.
-replace (Z_of_nat (S m1)) with (1 + Z_of_nat m1); auto with zarith.
+replace (Z.succ n1 + Z_of_nat m1) with (n1 + Z_of_nat (S m1)). auto.
+replace (Z_of_nat (S m1)) with (1 + Z_of_nat m1). auto with zarith.
 rewrite inj_S; auto with zarith.
 Qed.
 
@@ -43,8 +44,8 @@ simpl; intros; apply f_equal2 with ( f := @cons Z ); auto with zarith.
 intros m1 Hm1 n1.
 apply trans_equal with (cons n1 (progression Z.pred (Z.pred n1) (S m1))); auto.
 rewrite Hm1.
-replace (Z.pred n1 - Z_of_nat m1) with (n1 - Z_of_nat (S m1)); auto with zarith.
-replace (Z_of_nat (S m1)) with (1 + Z_of_nat m1); auto with zarith.
+replace (Z.pred n1 - Z_of_nat m1) with (n1 - Z_of_nat (S m1)). auto.
+replace (Z_of_nat (S m1)) with (1 + Z_of_nat m1). auto with zarith.
 rewrite inj_S; auto with zarith.
 Qed.
 
@@ -76,13 +77,11 @@ Theorem Zprogression_le_end:
  forall n m p, In p (progression Z.succ n m) ->  (p < n + Z_of_nat m).
 intros n m; generalize n; elim m; clear n m; auto.
 intros; contradiction.
-intros m H n p H1; simpl in H1 |-; case H1; clear H1; intros H1;
- auto with zarith.
-subst n; auto with zarith.
-apply Z.le_lt_trans  with (p + 0); auto with zarith.
-apply Zplus_lt_compat_l; red; simpl; auto with zarith.
-apply Z.lt_le_trans with (Z.succ n + Z_of_nat m); auto with zarith.
-rewrite inj_S; rewrite Zplus_succ_comm; auto with zarith.
+intros m H n p H1; simpl in H1 |-; case H1; clear H1; intros H1.
+lia.
+apply Z.lt_le_trans with (Z.succ n + Z_of_nat m).
+apply H; assumption.
+lia.
 Qed.
 
 Theorem ulist_Zprogression: forall a n,  ulist (progression Z.succ a n).
@@ -97,7 +96,7 @@ Theorem in_Zprogression:
 intros a b n; generalize a b; elim n; clear a b n; auto with zarith.
 simpl; auto with zarith.
 intros n H a b.
-replace (a + Z_of_nat (S n)) with (Z.succ a + Z_of_nat n); auto with zarith.
+replace (a + Z_of_nat (S n)) with (Z.succ a + Z_of_nat n).
 intros [H1 H2]; simpl; auto with zarith.
 case (Zle_lt_or_eq _ _ H1); auto with zarith.
 rewrite inj_S; auto with zarith.

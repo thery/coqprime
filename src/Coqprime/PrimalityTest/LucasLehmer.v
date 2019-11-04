@@ -208,8 +208,8 @@ Variable p: Z.
 Definition Mp := 2^p -1.
 
 Theorem mersenne_pos:  1 < p -> 1 < Mp.
-intros H; unfold Mp; assert (2 < 2 ^p); auto with zarith.
-apply Z.lt_le_trans with (2^2); auto with zarith.
+intros H; unfold Mp; enough (2 < 2 ^p) by auto with zarith.
+apply Z.lt_le_trans with (2^2).
 refine (refl_equal _).
 apply Zpower_le_monotone; auto with zarith.
 Qed.
@@ -508,11 +508,11 @@ apply sym_equal; apply Zmult_mod; auto.
 intros n Rec z1 z2 n1 Hn1 H1 H2.
 rewrite Pplus_one_succ_l; rewrite iter_pos_plus.
 rewrite Rec with (n0 := n1); auto.
-replace (n1 + Zpos (1 + n)) with ((n1 + Zpos n) + 1); auto with zarith.
+replace (n1 + Zpos (1 + n)) with ((n1 + Zpos n) + 1).
 rewrite sn; simpl; try rewrite Zmodd_correct; try rewrite Zsquare_correct; simpl; auto with zarith.
 unfold Zminus; rewrite Zplus_mod; auto.
 unfold Zmodd.
-rewrite (Zplus_mod (fst (s (n1 + Zpos n)) * fst (s (n1 + Zpos n)))); auto with zarith.
+rewrite (Zplus_mod (fst (s (n1 + Zpos n)) * fst (s (n1 + Zpos n)))).
 eq_tac; auto.
 eq_tac; auto.
 apply sym_equal; apply Zmult_mod; auto.

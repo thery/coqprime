@@ -226,13 +226,13 @@ unfold r; apply Z_mod_lt; auto with zarith.
 assert (L11: 2 * s  = c * d).
 apply Zmult_reg_r with F1; auto with zarith.
 apply trans_equal with (R1 - (c + d)).
-rewrite L10; rewrite (Z_div_mod_eq R1 (2 * F1)); auto with zarith.
+rewrite L10; rewrite (Z_div_mod_eq R1 (2 * F1)). 2: auto with zarith.
 unfold s, r; ring.
 rewrite L6; ring.
 case H8; intro H10.
-absurd (0 < c * d); auto with zarith.
+absurd (0 < c * d). auto with zarith.
 apply Zmult_lt_O_compat; auto with zarith.
-case H10; exists (c - d); auto with zarith.
+case H10; exists (c - d).
 rewrite <- L10.
 replace (8 * s) with (4 * (2 * s)); auto with zarith; try rewrite L11; ring.
 Qed.

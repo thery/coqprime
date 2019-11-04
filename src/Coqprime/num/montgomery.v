@@ -83,9 +83,9 @@ Proof. auto. Qed.
 Lemma Zpower_nat_pos u n : (0 < u -> 0  < Zpower_nat u n)%Z.
 Proof.
 intros Hu.
-induction n; simpl; try rewrite Zpower_nat_S;
-   try rewrite Zpower_nat_0; auto with zarith.
-apply Zmult_lt_0_compat; auto.
+induction n. reflexivity.
+rewrite Zpower_nat_S.
+apply Zmult_lt_0_compat; assumption.
 Qed.
 
 Lemma Zpower_base_pos n : (0  < Zpower_nat wB n)%Z.
@@ -195,7 +195,7 @@ rewrite (Hrec 1 0 0%nat); nrom; auto with zarith.
 rewrite Zpos_xI; change wB with (2 * Zpower_nat 2 30)%Z; ring.
 generalize (phi_bounded (2 * i)); auto with zarith.
 intros HH H2i; rewrite (Hrec _ _ (S n)); auto with zarith.
-rewrite Zpos_xI, H2i, (Hij i j n), Hi, Zpower_nat_S; auto with zarith.
+rewrite Zpos_xI, H2i, (Hij i j n), Hi, Zpower_nat_S by auto with zarith.
 ring.
 rewrite (Hij i j n), H2i, Zpower_nat_S, <- Hi; auto with zarith.
 generalize (Hi0 i n Hi); rewrite spec_compare; case Z.compare_spec; nrom.
@@ -204,7 +204,7 @@ rewrite (Hrec 1 0 0%nat); nrom; auto with zarith.
 rewrite Zpos_xO; change wB with (2 * Zpower_nat 2 30)%Z; ring.
 generalize (phi_bounded (2 * i)); auto with zarith.
 intros HH H2i; rewrite (Hrec _ _ (S n)); auto with zarith.
-rewrite Zpos_xO, H2i, Hi, Zpower_nat_S; auto with zarith.
+rewrite Zpos_xO, H2i, Hi, Zpower_nat_S by auto with zarith.
 ring.
 case (phi_bounded i); intros Hi1 H2.
 rewrite H2i, Zpower_nat_S, <- Hi; auto with zarith.
@@ -226,7 +226,7 @@ Qed.
 
 Lemma num_phi z :  (0 <= z)%Z -> [Z_to_num z] = z.
 Proof.
-destruct z as [|p|p]; intros Hp; auto with zarith.
+destruct z as [|p|p]; intros Hp. auto with zarith.
 apply positive_phi.
 contradict Hp; auto with zarith.
 Qed.
@@ -379,15 +379,15 @@ induction n as [ | a n Hrec].
 simpl; auto.
 case (phi_bounded a); nrom; intros Ha1 Ha2.
 unfold zerop_num; fold zerop_num.
-rewrite spec_compare; case Z.compare_spec; nrom; auto with zarith.
-generalize Hrec; case zerop_num; auto with zarith.
+rewrite spec_compare; case Z.compare_spec; nrom. 2: auto with zarith.
+generalize Hrec; case zerop_num.
 intros H1 H2; rewrite H1, H2; ring.
 intros H1 H2; rewrite H2.
 rewrite Zplus_0_l; intros HH; case (Zmult_integral _ _ HH);
   auto with zarith.
 generalize (phi_pos n); intros H1 H2 H3.
-assert (0 < phi a + wB * [n])%Z; auto with zarith.
-apply Z.lt_le_trans with (phi a); auto with zarith.
+enough (0 < phi a + wB * [n])%Z by auto with zarith.
+apply Z.lt_le_trans with (phi a). auto with zarith.
 assert (0 <= wB * [n])%Z; auto with zarith.
 Qed.
 
@@ -417,26 +417,26 @@ case Z.compare_spec; intros HH.
 case (Zle_or_lt n1 n2); intros H1.
 case (Zle_lt_or_eq _ _ H1); clear H1; intros H1; auto.
 assert (HH1: (wB + wB * (n2 - n1 -1) = (a - b))%Z).
-replace a with ((a + wB * n1) - wB * n1)%Z; try ring.
+replace a with ((a + wB * n1) - wB * n1)%Z by ring.
 rewrite HH; ring.
 assert (Hu: (0 <= wB * (n2 - n1 - 1))%Z); auto with zarith.
 split; auto.
-replace a with ((a + wB * n1) - wB * n1)%Z; try ring.
+replace a with ((a + wB * n1) - wB * n1)%Z by ring.
 rewrite HH, H1; ring.
 assert (wB + wB * (n1 - n2 -1) = (b - a))%Z.
-replace b with ((b + wB * n2) - wB * n2)%Z; try ring.
+replace b with ((b + wB * n2) - wB * n2)%Z by ring.
 rewrite <-HH; ring.
 assert (Hu: (0 <= wB * (n1 - n2 - 1))%Z); auto with zarith.
 case (Zle_or_lt n2 n1); intros H1; auto.
 case (Zle_lt_or_eq _ _ H1); clear H1; intros H1; auto.
-assert (0 <= wB * (n1 - n2 - 1))%Z; auto with zarith.
-assert (wB + wB * (n1 - n2 -1) < (b - a))%Z; auto with zarith.
+assert (0 <= wB * (n1 - n2 - 1))%Z by auto with zarith.
+enough (wB + wB * (n1 - n2 -1) < (b - a))%Z by auto with zarith.
 repeat rewrite Zmult_minus_distr_l; rewrite Zmult_1_r; auto with zarith.
 rewrite H1 in HH; auto with zarith.
 case (Zle_or_lt n1 n2); intros H1; auto.
 case (Zle_lt_or_eq _ _ H1); clear H1; intros H1; auto.
-assert (0 <= wB * (n2 - n1 - 1))%Z; auto with zarith.
-assert (wB + wB * (n2 - n1 -1) < (a - b))%Z; auto with zarith.
+assert (0 <= wB * (n2 - n1 - 1))%Z by auto with zarith.
+enough (wB + wB * (n2 - n1 -1) < (a - b))%Z by auto with zarith.
 repeat rewrite Zmult_minus_distr_l; rewrite Zmult_1_r; auto with zarith.
 rewrite H1 in HH; auto with zarith.
 Qed.
@@ -980,8 +980,8 @@ exists 0%Z; auto with zarith.
 repeat rewrite Zpower_nat_S.
 assert (HH2 := Zpower_base_pos n).
 simpl reduce_aux_num; case t; nrom.
-exists 0%Z; split; auto with zarith.
-split; try apply Zmult_lt_0_compat; auto with zarith.
+exists 0%Z; split. auto with zarith.
+split. auto with zarith. apply Zmult_lt_0_compat. 2: assumption.
 red; auto.
 intros a t1; nrom.
 case (Hrec (shift_num (add_num (a :: t1) (scal_num (a * m') M)))).
@@ -989,17 +989,18 @@ intros U (H1U, H2U); exists (phi(a * m') + wB * U)%Z; split.
 rewrite (Zmult_comm wB), Zmult_assoc, H1U,
          shift_correct, add_correct, scal_correct; nrom.
 rewrite Zmult_plus_distr_l, reduce_aux_step; ring.
-case (phi_bounded (a * m')); nrom; intros H1am H2am; auto with zarith.
-split; auto with zarith.
-apply Z.lt_le_trans with (wB + wB * U)%Z; auto with zarith.
+case (phi_bounded (a * m')); nrom; intros H1am H2am.
+split. auto with zarith.
+apply Z.lt_le_trans with (wB + wB * U)%Z. auto with zarith.
 replace (wB * Zpower_nat wB n)%Z with
-        (wB + wB * (Zpower_nat wB n - 1))%Z; auto with zarith; ring.
+        (wB + wB * (Zpower_nat wB n - 1))%Z by ring; auto with zarith.
 apply Zmult_gt_0_lt_reg_r with (1 := Z.lt_gt _ _ (Zpower_base_pos n)).
 case HH; intros U (H1U, H2U).
 rewrite H1U.
-assert (U * [M] < [M] * Zpower_nat wB n)%Z; auto with zarith.
-rewrite Zmult_comm; apply Zmult_gt_0_lt_compat_l; auto with zarith.
+assert (U * [M] < [M] * Zpower_nat wB n)%Z.
+rewrite Zmult_comm; apply Zmult_gt_0_lt_compat_l.
 apply Z.lt_gt; apply M_pos.
+auto with zarith.
 replace (2 * [M] * Zpower_nat wB n)%Z with
        ([M] * Zpower_nat wB n + [M] * Zpower_nat wB n)%Z; auto with zarith;
   ring.
@@ -1340,9 +1341,10 @@ apply (eq_Tn_correct _ _ n).
 unfold decode; rewrite reduce_correct.
 apply (eq_Tn_correct _ _ n).
 rewrite reduce_mult_correct.
-rewrite !encode_correct; auto with zarith.
-rewrite <-Zmult_mod; apply f_equal2 with (f := Zmod); auto with zarith.
+rewrite !encode_correct by auto with zarith.
+rewrite <-Zmult_mod. apply f_equal2 with (f := Zmod).
 ring.
+reflexivity.
 unfold decode; auto with zarith.
 Qed.
 
