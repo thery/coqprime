@@ -280,10 +280,10 @@ generalize (Z_mod_lt x exx.(vN)).
 case_eq (x mod exx.(vN)).
 intros _ _.
 simpl; unfold z2Z; rewrite ZnZ.spec_0; auto.
-intros p Hp HH; case HH; auto with zarith; clear HH.
+intros p Hp HH; case HH. auto with zarith. clear HH.
 intros _ HH1.
 case (ZnZ.spec_to_Z zN).
-generalize  z2ZN; unfold z2Z; intros HH; rewrite HH; auto.
+generalize  z2ZN; unfold z2Z; intros HH; rewrite HH.
 intros _ H0.
 set (v := ZnZ.of_pos p); generalize HH1.
 rewrite (ZnZ.spec_of_pos p); fold v.
@@ -292,13 +292,13 @@ case (fst v).
 intros p1 H1.
 contradict H0; apply Zle_not_lt.
 apply Zlt_le_weak; apply Z.le_lt_trans with (2:= H1).
-apply Z.le_trans with (1 * base (ZnZ.digits op) + 0); auto with zarith.
-apply Zplus_le_compat; auto.
-apply Zmult_gt_0_le_compat_r; auto with zarith.
+apply Z.le_trans with (1 * base (ZnZ.digits op) + 0). auto with zarith.
+apply Zplus_le_compat.
+apply Zmult_gt_0_le_compat_r.
   case (ZnZ.spec_to_Z (snd v)); auto with zarith.
   case p1; red; simpl; intros; discriminate.
   case (ZnZ.spec_to_Z (snd v)); auto with zarith.
-intros p Hp; case (Z_mod_lt x exx.(vN)); auto with zarith.
+intros p Hp; case (Z_mod_lt x exx.(vN)). auto with zarith.
 rewrite Hp; intros HH; case HH; auto.
 Qed.
 
@@ -312,10 +312,10 @@ intros _ _.
 simpl; unfold z2Z; rewrite ZnZ.spec_0; auto.
 intros p H1 H2.
 case (ZnZ.spec_to_Z zN).
-generalize  z2ZN; unfold z2Z; intros HH; rewrite HH; auto.
+generalize  z2ZN; unfold z2Z; intros HH; rewrite HH.
 intros _ H0.
 case H2; auto with zarith; clear H2; intros _ H2.
-rewrite Zmod_small; auto.
+rewrite Zmod_small. reflexivity.
 set (v := ZnZ.of_pos p).
 split.
   case (ZnZ.spec_to_Z (snd v)); auto.
@@ -325,13 +325,13 @@ case (fst v).
 intros p1 H.
 contradict H0; apply Zle_not_lt.
 apply Zlt_le_weak; apply Z.le_lt_trans with (2:= H).
-apply Z.le_trans with (1 * base (ZnZ.digits op) + 0); auto with zarith.
-apply Zplus_le_compat; auto.
-apply Zmult_gt_0_le_compat_r; auto with zarith.
+apply Z.le_trans with (1 * base (ZnZ.digits op) + 0). auto with zarith.
+apply Zplus_le_compat.
+apply Zmult_gt_0_le_compat_r.
   case (ZnZ.spec_to_Z (snd v)); auto with zarith.
   case p1; red; simpl; intros; discriminate.
   case (ZnZ.spec_to_Z (snd v)); auto with zarith.
-intros p Hp; case (Z_mod_lt x exx.(vN)); auto with zarith.
+intros p Hp; case (Z_mod_lt x exx.(vN)). auto with zarith.
 rewrite Hp; intros HH; case HH; auto.
 Qed.
 
@@ -938,13 +938,13 @@ assert (H0: N < base (ZnZ.digits op)).
   apply Z.lt_le_trans with (1 := plength_correct N).
   unfold op, base.
   rewrite cmk_op_digits.
-  apply Zpower_le_monotone; split; auto with zarith.
+  apply Zpower_le_monotone; split. auto with zarith.
   generalize (get_height_correct 31 (plength N)); unfold n.
   set (p := plength N).
   replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
-       ((Zpos (get_height 31 p) - 1) ); auto with zarith.
-  rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
-  rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
+       ((Zpos (get_height 31 p) - 1) ). auto with zarith.
+  rewrite pred_of_minus; rewrite inj_minus1.
+  rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; reflexivity.
   generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
 assert (mspec: mod_spec op (zN exx op) mop).
   unfold mop; apply make_mod_spec; auto.
