@@ -36,8 +36,8 @@ Hypothesis p_more_1: 2 < Zpos p.
 Hypothesis b_p: [|b|] = 2 ^ Zpos p - 1.
 
 Lemma b_pos: 0 < [|b|].
-rewrite b_p; auto with zarith.
-assert (2 ^ 0 < 2 ^ Zpos p); auto with zarith.
+rewrite b_p.
+assert (2 ^ 0 < 2 ^ Zpos p).
 apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_0_r in H; auto with zarith.
 Qed.
@@ -54,8 +54,8 @@ rewrite ZnZ.spec_1; simpl; auto.
 rewrite Zmod_small; auto with zarith.
 split; auto with zarith.
 rewrite b_p.
-assert (2 ^ 1 < 2 ^ Zpos p); auto with zarith.
-apply Zpower_lt_monotone; auto with zarith.
+assert (H : 2 ^ 1 < 2 ^ Zpos p)
+by (apply Zpower_lt_monotone; auto with zarith).
 rewrite Zpower_1_r in H; auto with zarith.
 Qed.
 
@@ -168,10 +168,10 @@ unfold square_m2.
 rewrite <- b_p in H.
 generalize (square_mod_spec m_op_spec _ _ H); intros H1.
 rewrite (sub_mod_spec m_op_spec _ _ _ _ H1 w2_b).
-rewrite H1; rewrite w2_b; auto with zarith.
-rewrite H; rewrite <- Zmult_mod; auto with zarith.
-rewrite <- Zminus_mod; auto with zarith.
-rewrite sn; simpl; auto with zarith.
+rewrite H1; rewrite w2_b.
+rewrite H; rewrite <- Zmult_mod.
+rewrite <- Zminus_mod.
+rewrite sn by assumption; simpl.
 rewrite b_p; auto.
 intros p1 Rec w1 z Hz Hw1.
 rewrite Pplus_one_succ_l; rewrite iter_pos_plus;
@@ -183,10 +183,10 @@ generalize (Rec _ _ Hz Hw1); intros H1.
 rewrite <- b_p in H1.
 generalize (square_mod_spec m_op_spec _ _ H1); intros H2.
 rewrite (sub_mod_spec m_op_spec _ _ _ _ H2 w2_b).
-rewrite H2; rewrite w2_b; auto with zarith.
-rewrite H1; rewrite <- Zmult_mod; auto with zarith.
-rewrite <- Zminus_mod; auto with zarith.
-replace (z + Zpos (1 + p1)) with ((z + Zpos p1) + 1); auto with zarith.
+rewrite H2; rewrite w2_b.
+rewrite H1; rewrite <- Zmult_mod.
+rewrite <- Zminus_mod.
+replace (z + Zpos (1 + p1)) with ((z + Zpos p1) + 1).
 rewrite sn; simpl fst; try rewrite b_p; auto with zarith.
 rewrite Zpos_plus_distr; auto with zarith.
 Qed.
@@ -206,7 +206,7 @@ Qed.
 Theorem lucastest_prop_cor: lucastest = 0 -> (2 ^ Zpos p - 1 | fst(s (Zpos p - 2)))%Z.
 intros H.
 apply Zmod_divide.
-assert (H1: 2 ^ 1 < 2 ^ Zpos p); auto with zarith.
+assert (H1: 2 ^ 1 < 2 ^ Zpos p).
 apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_1_r in H1; auto with zarith.
 apply trans_equal with (2:= H); apply sym_equal; apply lucastest_prop; auto.
@@ -215,7 +215,7 @@ Qed.
 Theorem lucastest_prime:  lucastest = 0 -> prime (2 ^ Zpos p - 1).
 intros H1; case (prime_dec (2 ^ Zpos p - 1)); auto; intros H2.
 case Zdivide_div_prime_le_square with (2 := H2).
-assert (H3: 2 ^ 1 < 2 ^ Zpos p); auto with zarith.
+assert (H3: 2 ^ 1 < 2 ^ Zpos p).
 apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_1_r in H3; auto with zarith.
 intros q (H3, (H4, H5)).
@@ -263,8 +263,8 @@ intros Hp.
 unfold op, base; rewrite cmk_op_digits.
 generalize (get_height_correct 31 p).
 replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
-       ((Zpos (get_height 31 p) - 1) ); auto with zarith.
-rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
+       ((Zpos (get_height 31 p) - 1) ). auto with zarith.
+rewrite pred_of_minus; rewrite inj_minus1.
 rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
 generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
 Qed.
@@ -273,7 +273,7 @@ Let lucas_f2 p : (2 < p)%positive -> @ZnZ.to_Z _ (op p) (b p) = 2 ^ (Zpos p) - 1
 Proof.
 unfold b; intros Hp.
 assert (F1: 0 < 2 ^ (Zpos p) - 1).
-assert (F2: 2 ^ 0 < 2 ^ (Zpos p)); auto with zarith.
+assert (F2: 2 ^ 0 < 2 ^ (Zpos p)).
 apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_0_r in F2; auto with zarith.
 case_eq (2 ^ (Zpos p) - 1); simpl ZnZ.to_Z.
@@ -295,14 +295,14 @@ assert (F1 : ZnZ.Specs (op p)).
   apply cmk_spec; auto.
 apply mmake_mod_spec with (p := p); auto.
 rewrite lucas_f2; auto.
-assert (F2: 2 ^ 1 < 2 ^ (Zpos p)); auto with zarith.
-apply Zpower_lt_monotone; auto with zarith.
+assert (F2: 2 ^ 1 < 2 ^ (Zpos p)).
+apply Zpower_lt_monotone. auto with zarith.
 assert (2 < Z.pos p); auto with zarith.
 rewrite Zpower_1_r in F2; auto with zarith.
 unfold zp.
 apply ZnZ.of_Z_correct.
-split; auto with zarith.
-apply Z.le_lt_trans with (1 := lucas_f1 Hp); auto with zarith.
+split. auto with zarith.
+apply Z.le_lt_trans with (1 := lucas_f1 Hp).
 unfold base; apply Zpower2_lt_lin; auto with zarith.
 Qed.
 
@@ -328,8 +328,8 @@ unfold lucas, lucas_step, lucastest.
 set (o := cmk_op _).
 set (m := mmake_mod_op _ _ _).
 assert (F0 : 1 < ZnZ.to_Z (b p)).
-replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1); auto with zarith.
-assert (2 ^ 1 <  2 ^ Z.pos p); auto with zarith.
+replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1).
+assert (2 ^ 1 <  2 ^ Z.pos p).
 apply Zpower_lt_monotone; auto with zarith.
 replace (2 ^ 1) with 2 in H0; auto with zarith.
 rewrite <-(lucas_f2 H); auto.
@@ -349,31 +349,30 @@ apply cmk_spec; auto.
 apply lucas_f2; auto.
 apply lucas_f3; auto.
 rewrite (add_mod_spec (lucas_f3 H) _ _ 2 2); auto.
-match goal with |- ?X < ?Y => assert (0 <= X < Y) end; auto with zarith.
+match goal with |- ?X < ?Y => enough (0 <= X < Y) by auto with zarith end.
 apply Z.mod_pos_bound; auto with zarith.
 rewrite (add_mod_spec (lucas_f3 H) _ _ 2 2); auto.
 replace ((ZnZ.to_Z (add_mod m ZnZ.one ZnZ.one))) with (2 mod ZnZ.to_Z (b p)).
-rewrite <-Z.add_mod; auto with zarith.
+rewrite <-Z.add_mod.
 rewrite Z.mod_small.
 simpl.
 apply sym_equal.
 apply (@ZnZ.of_pos_correct _ o).
 apply cmk_spec; auto.
-replace 4 with (2 ^ 2); auto with zarith.
-apply Zpower_lt_monotone; auto with zarith.
-split; auto with zarith.
-assert (F := lucas_f1 H); auto with zarith.
+change 4 with (2 ^ 2).
+apply Zpower_lt_monotone. auto with zarith.
+split. auto with zarith.
+assert (F := lucas_f1 H).
 unfold op in F; simpl in F; unfold o; auto with zarith.
-split; auto with zarith.
-replace (2 + 2) with (2 ^ 2); auto with zarith.
-replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1); auto with zarith.
-assert (2 ^ 3 <=  2 ^ Z.pos p); auto with zarith.
+split. auto with zarith.
+change (2 + 2) with (2 ^ 2).
+replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1).
+assert (2 ^ 3 <=  2 ^ Z.pos p).
 apply Zpower_le_monotone; auto with zarith.
-replace (2 ^ 3) with 8 in H0; auto with zarith.
-replace (2 ^ 2) with 4; auto with zarith.
+change (2 ^ 3) with 8 in H0.
+change (2 ^ 2) with 4; auto with zarith.
 rewrite <-(lucas_f2 H); auto.
 generalize F0.
-auto with zarith.
 set (u := ZnZ.to_Z _).
 auto with zarith.
 Qed.
@@ -390,14 +389,14 @@ set (o := cmk_op _).
 set (m := mmake_mod_op _ _ _).
 assert (F1 : forall z3, 0 <= z3 < ZnZ.to_Z (b p) -> ZnZ.to_Z (znz_of_Z o z3) = z3).
 intro z3.
-case z3; simpl; auto with zarith.
+case z3; simpl.
 rewrite ZnZ.spec_0; auto.
 intros p3 [H3 H4].
 apply ZnZ.of_pos_correct.
 apply Z.lt_le_trans with (1 := H4).
 replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1).
-assert (2 ^ Zpos p <= base (ZnZ.digits o)); auto with zarith.
-apply Zpower_le_monotone; auto with zarith.
+enough (2 ^ Zpos p <= base (ZnZ.digits o)) by auto with zarith.
+apply Zpower_le_monotone. auto with zarith.
 assert (F := lucas_f1 H); auto with zarith.
 rewrite <-(lucas_f2 H); auto.
 intros p3 [[]]; unfold Z.le; simpl; auto.
@@ -407,12 +406,12 @@ change (@ZnZ.to_Z _ o (lucastest_step o m (lucastest_step o m (znz_of_Z o z) p1)
 assert (F :  ZnZ.to_Z (lucastest_step  o m (znz_of_Z o z) p1) =
             ZnZ.to_Z (znz_of_Z o z1)).
 unfold lucas_step in H1; fold o in H1; fold m in H1; rewrite H1.
-rewrite F1; auto.
+rewrite F1. reflexivity.
 rewrite <- H1.
 apply (lucastest_bounded A1 H (lucas_f2 H) (lucas_f3 H)).
 rewrite F1.
 rewrite (lucas_f2 H); auto with zarith.
-replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1); auto with zarith.
+replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1). auto with zarith.
 rewrite <-(lucas_f2 H); auto with zarith.
 rewrite lucastest_eq with (p := p) (b := b p) (6 := F); auto.
 apply lucas_f2; auto.
@@ -420,9 +419,9 @@ apply lucas_f3; auto.
 assert (0 <=  ZnZ.to_Z (lucastest_step o m (znz_of_Z o z) p1) < ZnZ.to_Z (b p)).
 apply (lucastest_bounded A1 H (lucas_f2 H) (lucas_f3 H)).
 rewrite F1.
-replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1); auto with zarith.
+replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1). auto with zarith.
 rewrite <-(lucas_f2 H); auto with zarith.
-replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1); auto with zarith.
+replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1). auto with zarith.
 rewrite <-(lucas_f2 H); auto with zarith.
 auto with zarith.
 Qed.
