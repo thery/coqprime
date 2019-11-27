@@ -1,8 +1,16 @@
 *.d
 *.vo
 *.vos
+*.vok
 *.glob
 *.aux
+.coq-native/
+.csdp.cache
+.lia.cache
+.nia.cache
+.nlia.cache
+.nra.cache
 /Makefile.conf
 /Makefile.coq.conf
+/Makefile.coq
 *~
