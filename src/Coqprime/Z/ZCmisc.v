@@ -81,9 +81,9 @@ Qed.
 Lemma Ppred_Zminus : forall p, 1< Zpos p ->  (p-1)%Z = Pos.pred p.
 Proof. destruct p;simpl;trivial. intros;elimtype False;omega. Qed.
 
-
 Local Open Scope positive_scope.
 
+Declare Scope P_scope.
 Delimit Scope P_scope with P.
 Local Open Scope P_scope.
 

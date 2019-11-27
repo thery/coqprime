@@ -168,7 +168,7 @@ Notation "[[ x ]]" :=
  case (ZnZ.spec_to_Z n); auto with zarith.
  Qed.
 
- Hint Resolve Zpower_n Zmult_lt_0_compat Zpower_gt_0.
+ Hint Resolve Zpower_n Zmult_lt_0_compat Zpower_gt_0 : core.
 
  Variable m_op : mod_op.
 
@@ -916,7 +916,7 @@ Notation "[[ x ]]" :=
         end
   end.
 
- Hint Unfold w_digits.
+ Hint Unfold w_digits : core.
 
  Lemma WW_0: forall x y, [[WW x y]] = 0 -> [|x|] = 0 /\ [|y|] =0.
  intros x y; simpl; case (ZnZ.spec_to_Z x); intros H1 H2;

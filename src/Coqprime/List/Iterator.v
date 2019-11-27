@@ -20,7 +20,7 @@ Hypothesis g_trans : forall a b c,  g a (g b c) = g (g a b) c.
 Hypothesis g_sym : forall a b,  g a b = g b a.
  
 Definition iter := fold_right (fun a r => g (f a) r) zero.
-Hint Unfold iter .
+Hint Unfold iter : core.
  
 Theorem iter_app: forall l1 l2,  iter (app l1 l2) = g (iter l1) (iter l2).
 intros l1; elim l1; simpl; auto.
@@ -85,9 +85,9 @@ End Iterator.
 Arguments iter [A B].
 Arguments progression [A].
 Arguments next_n [A].
-Hint Unfold iter .
-Hint Unfold progression .
-Hint Unfold next_n .
+Hint Unfold iter : core.
+Hint Unfold progression : core.
+Hint Unfold next_n : core.
  
 Theorem iter_ext:
  forall (A B : Set) zero (f1 : A ->  B) f2 g l,

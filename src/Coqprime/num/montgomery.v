@@ -47,7 +47,7 @@ Eval vm_compute in
 Eval vm_compute in
   positive_to_num 2147483648.
 
-Let wB := (2^ Z_of_nat size)%Z.
+Local Definition wB := (2^ Z_of_nat size)%Z.
 Definition mphi (n : number) :=
   fold_right (fun i r => phi i + wB * r )%Z 0%Z n.
 
@@ -1232,7 +1232,7 @@ rewrite <-(Zmult_1_r [M]) at 1.
 apply Zmult_le_compat_l; auto with zarith.
 Qed.
 
-Hint Resolve reduce_bound_small add_mod_bound sub_mod_bound.
+Hint Resolve reduce_bound_small add_mod_bound sub_mod_bound : core.
 
 Lemma reduce_mult_bound_small t1 t2 :
   (0 <= [t1] < [M] -> 0 <= [t2] < [M] ->
@@ -1241,7 +1241,7 @@ Proof.
 intros Ht1 Ht2; apply reduce_mult_bound; auto with zarith.
 Qed.
 
-Hint Resolve reduce_mult_bound_small.
+Hint Resolve reduce_mult_bound_small : core.
 
 Lemma encode_correct z :
   (0 <= z < [M] -> [encode n z] = (z * Zpower_nat wB n) mod [M])%Z.
@@ -1269,7 +1269,7 @@ rewrite encode_correct; auto with zarith.
 apply Z_mod_lt; auto with zarith.
 Qed.
 
-Hint Resolve encode_bound.
+Hint Resolve encode_bound : core.
 
 Lemma decode_encode p :
   (0 <= p < [M])%Z -> decode n (encode n p) = p.

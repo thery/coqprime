@@ -42,7 +42,7 @@ apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_0_r in H; auto with zarith.
 Qed.
 
-Hint Resolve b_pos.
+Hint Resolve b_pos : core.
 
 Variable m_op: mod_op w.
 Variable m_op_spec: mod_spec w_op b m_op.

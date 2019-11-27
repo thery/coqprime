@@ -26,7 +26,7 @@ Definition Zsum :=
    if Zle_bool n m
      then iter 0 f Zplus (progression Z.succ n (Z.abs_nat  ((1 + m) - n)))
      else iter 0 f Zplus (progression Z.pred n (Z.abs_nat  ((1 + n) - m))).
-Hint Unfold Zsum .
+Hint Unfold Zsum : core.
 
 Lemma Zsum_nn: forall n f,  Zsum n n f = f n.
 intros n f; unfold Zsum; rewrite Zle_bool_refl.

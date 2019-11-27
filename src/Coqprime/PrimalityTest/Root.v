@@ -73,7 +73,7 @@ intros p a Pa; elim p; simpl; auto with datatypes.
 intros a1 l1 Rec H; apply Pplus; auto.
 Qed.
 
-Hint Resolve eval_P.
+Hint Resolve eval_P : core.
 
 Theorem div_P: forall p a, P a -> (forall i, In i p -> P i) -> (forall i, In i (fst (div p a)) -> P i) /\ P (snd (div p a)).
 intros p a Pa; elim p; auto with datatypes.

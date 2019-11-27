@@ -107,7 +107,7 @@ Let Keqe := (Eq_ext kplus kmul kopp).
 Let AFth :=  Field_theory.F2AF Ksth Keqe Eth.(Kfth).
 Let Kmorph := InitialRing.gen_phiZ_morph Ksth Keqe (F_R Eth.(Kfth)).
 
-Hint Resolve one_not_zero two_not_zero.
+Hint Resolve one_not_zero two_not_zero : core.
 
 Theorem Kdiv1: forall r, r /1 = r.
 Proof.
@@ -127,7 +127,7 @@ Theorem Kdiff_2_0: (2:K) <> 0.
 Proof.
 simpl; auto.
 Qed.
-Hint Resolve Kdiff_2_0.
+Hint Resolve Kdiff_2_0 : core.
 
 Theorem Keq_minus_eq: forall x y, x - y = 0 -> x = y.
 Proof.
@@ -146,7 +146,7 @@ Proof.
 intros x y H H1; case H; apply Keq_minus_eq; auto.
 Qed.
 
-Hint Resolve Kdiff_diff_minus_eq.
+Hint Resolve Kdiff_diff_minus_eq : core.
 
 Theorem Kmult_integral: forall x y, x * y = 0 -> x = 0 \/ y = 0.
 Proof.
@@ -164,7 +164,7 @@ Proof.
 intros x y H H1 H2.
 case (Kmult_integral H2); auto.
 Qed.
-Hint Resolve Kmult_integral_contrapositive.
+Hint Resolve Kmult_integral_contrapositive : core.
 
 Theorem Kmult_eq_compat_l: forall x y z, y = z -> x * y = x * z.
 intros x y z H; rewrite H; auto.

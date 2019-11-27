@@ -26,7 +26,7 @@ Variable eqA_dec : forall (a b : A),  ({ a = b }) + ({ a <> b }).
 Inductive ulist : list A ->  Prop :=
   ulist_nil: ulist nil
  | ulist_cons: forall a l, ~ In a l -> ulist l ->  ulist (a :: l) .
-Hint Constructors ulist .
+Hint Constructors ulist : core.
 (* Inversion theorem *)
  
 Theorem ulist_inv: forall a l, ulist (a :: l) ->  ulist l.
@@ -256,7 +256,7 @@ Qed.
  
 End UniqueList.
 Arguments ulist [A].
-Hint Constructors ulist .
+Hint Constructors ulist : core.
  
 Theorem ulist_map:
  forall (A B : Set) (f : A ->  B) l,

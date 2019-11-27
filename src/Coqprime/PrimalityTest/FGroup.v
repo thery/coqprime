@@ -57,7 +57,7 @@ Definition g_order  (A: Set) (op: A -> A -> A) (g: FGroup op)  := Z_of_nat (leng
 Unset Implicit Arguments.
 
 Hint Resolve unique_s internal e_in_s e_is_zero_l e_is_zero_r i_internal
-  i_is_inverse_l i_is_inverse_r assoc.
+  i_is_inverse_l i_is_inverse_r assoc : core.
 
 
 Section FGroup.

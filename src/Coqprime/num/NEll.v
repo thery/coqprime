@@ -207,7 +207,7 @@ Lemma vN_pos: 0 < exx.(vN).
 red; simpl; auto.
 Qed.
 
-Hint Resolve vN_pos.
+Hint Resolve vN_pos : core.
 
 Lemma nplusz: forall x y, wft x -> wft y ->
       z2Z (x ++ y) = ZEll.nplus (vN exx) (z2Z x) (z2Z y).
@@ -266,7 +266,7 @@ rewrite Zmod_mod; auto.
 apply (nmulz Hx Hy).
 Qed.
 
-Hint Resolve nmulw nplusw nsubw.
+Hint Resolve nmulw nplusw nsubw : core.
 
 
 Definition wfe p := match p with
@@ -356,7 +356,7 @@ Proof.
 red; unfold A; apply z2Zx1.
 Qed.
 
-Hint Resolve c0w c2w c3w Aw.
+Hint Resolve c0w c2w c3w Aw : core.
 
 Ltac nw :=
   repeat (apply nplusw || apply nsubw || apply nmulw || apply c2w ||
@@ -704,7 +704,7 @@ Proof.
 red; unfold B; apply z2Zx1.
 Qed.
 
-Hint Resolve f4 f27 Bw.
+Hint Resolve f4 f27 Bw : core.
 
 Lemma mww: forall x y, ZEll.nmul (vN exx) (x mod (vN exx) ) y = ZEll.nmul (vN exx) x y.
 intros x  y; unfold ZEll.nmul; rewrite Zmodml; auto.
