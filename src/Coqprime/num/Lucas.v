@@ -9,7 +9,7 @@
 Set Implicit Arguments.
 
 Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms Cyclic31 Int31.
+Require Import CyclicAxioms Cyclic63 Int63.
 From Bignums Require Import DoubleCyclic BigN.
 Require Import ZCAux.
 Require Import W.
@@ -244,7 +244,7 @@ Definition znz_of_Z (w: Type) (op: ZnZ.Ops w) z :=
  end.
 
 Definition lucas p :=
- let op := cmk_op (Peano.pred (nat_of_P (get_height 31 p))) in
+ let op := cmk_op (Peano.pred (nat_of_P (get_height 63 p))) in
  let b := znz_of_Z op (Zpower 2 (Zpos p) - 1) in
  let zp := znz_of_Z op (Zpos p) in
  let mod_op := mmake_mod_op op b zp in
@@ -252,7 +252,7 @@ Definition lucas p :=
 
 Section LucasStep.
 
-Let op p  := cmk_op (Peano.pred (nat_of_P (get_height 31 p))).
+Let op p  := cmk_op (Peano.pred (nat_of_P (get_height 63 p))).
 Let b p := znz_of_Z (op p) (2 ^ (Zpos p) - 1).
 Let zp p := znz_of_Z (op p) (Zpos p).
 Let mod_op p := mmake_mod_op (op p) (b p) (zp p).
@@ -261,12 +261,12 @@ Let lucas_f1 p : (2 < p)%positive -> Zpos p <= Zpos (ZnZ.digits (op p)).
 Proof.
 intros Hp.
 unfold op, base; rewrite cmk_op_digits.
-generalize (get_height_correct 31 p).
-replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
-       ((Zpos (get_height 31 p) - 1) ). auto with zarith.
+generalize (get_height_correct 63 p).
+replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
+       ((Zpos (get_height 63 p) - 1) ). auto with zarith.
 rewrite pred_of_minus; rewrite inj_minus1.
 rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
-generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
+generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 Qed.
 
 Let lucas_f2 p : (2 < p)%positive -> @ZnZ.to_Z _ (op p) (b p) = 2 ^ (Zpos p) - 1.
@@ -315,7 +315,7 @@ apply (lucastest_prime A1 Hp (lucas_f2 Hp) (lucas_f3 Hp) H).
 Qed.
 
 Definition lucas_step p x p1 :=
- let op := cmk_op (Peano.pred (nat_of_P (get_height 31 p))) in
+ let op := cmk_op (Peano.pred (nat_of_P (get_height 63 p))) in
  let b := znz_of_Z op (Zpower 2 (Zpos p) - 1) in
  let zp := znz_of_Z op (Zpos p) in
  let mod_op := mmake_mod_op op b zp in

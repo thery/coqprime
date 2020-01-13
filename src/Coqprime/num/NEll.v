@@ -8,7 +8,7 @@
 
 
 Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms Cyclic31 Int31.
+Require Import CyclicAxioms Cyclic63 Int63.
 From Bignums Require Import DoubleCyclic BigN.
 Require Import W.
 Require Import Mod_op.
@@ -877,7 +877,7 @@ Qed.
 
 Definition ell_test (N S: positive) (l: List.list (positive * positive))
                       (A B x y: Z) :=
-  let op := cmk_op (Peano.pred (nat_of_P (get_height 31 (plength N)))) in
+  let op := cmk_op (Peano.pred (nat_of_P (get_height 63 (plength N)))) in
   let mop := make_mod_op op (ZnZ.of_Z N) in
     if isM2 N then
     match (4 * N) ?= (ZEll.Zmullp l - 1) ^ 2  with
@@ -927,7 +927,7 @@ end; intros H3.
 match goal with |- context[?x ?= ?y] =>
   generalize (Zcompare_correct x y); case Z.compare; auto
 end; intros H4.
-set (n := Peano.pred (nat_of_P (get_height 31 (plength N)))).
+set (n := Peano.pred (nat_of_P (get_height 63 (plength N)))).
 set (op := cmk_op n).
 set (mop := make_mod_op op (ZnZ.of_Z N)).
 set (exx := mkEx N S1 l A1 B1 x y).
@@ -939,13 +939,13 @@ assert (H0: N < base (ZnZ.digits op)).
   unfold op, base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split. auto with zarith.
-  generalize (get_height_correct 31 (plength N)); unfold n.
+  generalize (get_height_correct 63 (plength N)); unfold n.
   set (p := plength N).
-  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
-       ((Zpos (get_height 31 p) - 1) ). auto with zarith.
+  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
+       ((Zpos (get_height 63 p) - 1) ). auto with zarith.
   rewrite pred_of_minus; rewrite inj_minus1.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; reflexivity.
-  generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
+  generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 assert (mspec: mod_spec op (zN exx op) mop).
   unfold mop; apply make_mod_spec; auto.
   rewrite ZnZ.of_Z_correct; auto with zarith.

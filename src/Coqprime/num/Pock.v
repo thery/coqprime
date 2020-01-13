@@ -13,7 +13,7 @@ Require Import ZCAux.
 Require Import LucasLehmer.
 Require Import Pocklington.
 Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms Cyclic31 Int31.
+Require Import CyclicAxioms Cyclic63 Int63.
 From Bignums Require Import DoubleCyclic BigN.
 Require Import Pmod.
 Require Import Mod_op.
@@ -283,7 +283,7 @@ Definition test_pock N a dec sqrt :=
             match r' with
             | Npos r =>
               if (a ?< N) then
-              let op := cmk_op (Peano.pred (nat_of_P (get_height 31 (plength N)))) in
+              let op := cmk_op (Peano.pred (nat_of_P (get_height 63 (plength N)))) in
               let wN := znz_of_Z op (Zpos N) in
               let wa := znz_of_Z op (Zpos a) in
               let w1 := znz_of_Z op 1 in
@@ -368,7 +368,7 @@ match goal with H: (?X ?< ?Y) = true |- _ =>
   generalize (is_lt_spec X Y); rewrite H; clear H; intros H
 end.
 2: intros; discriminate.
-set (bb := Peano.pred (nat_of_P (get_height 31 (plength N)))).
+set (bb := Peano.pred (nat_of_P (get_height 63 (plength N)))).
 set (w_op := cmk_op bb).
 assert (op_spec: ZnZ.Specs w_op).
 unfold bb, w_op; apply cmk_spec; auto.
@@ -377,13 +377,13 @@ assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
   unfold w_op, DoubleType.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
-  generalize (get_height_correct 31 (plength N)); unfold bb.
+  generalize (get_height_correct 63 (plength N)); unfold bb.
   set (p := plength N).
-  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
-       ((Zpos (get_height 31 p) - 1) ). auto with zarith.
+  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
+       ((Zpos (get_height 63 p) - 1) ). auto with zarith.
   rewrite pred_of_minus; rewrite inj_minus1.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
-  generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
+  generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 assert (F1: ZnZ.to_Z (ZnZ.of_Z N) = N).
 rewrite ZnZ.of_Z_correct; auto with zarith.
 assert (F2: 1 < ZnZ.to_Z (ZnZ.of_Z N)).
@@ -582,7 +582,7 @@ Definition test_spock N a dec :=
           if (1 ?< a) then
             if (a ?< N) then
               if (N ?< F1 * F1) then
-              let op := cmk_op (Peano.pred (nat_of_P (get_height 31 (plength N)))) in
+              let op := cmk_op (Peano.pred (nat_of_P (get_height 63 (plength N)))) in
               let wN := znz_of_Z op (Zpos N) in
               let wa := znz_of_Z op (Zpos a) in
               let w1 := znz_of_Z op 1 in
@@ -636,7 +636,7 @@ match goal with H: (?X ?< ?Y) = true |- _ =>
 end.
 2: intros; discriminate.
 (*
-set (bb := pred (nat_of_P (get_height 31 (plength N)))).
+set (bb := pred (nat_of_P (get_height 63 (plength N)))).
 set (w_op := cmk_op bb).
 assert (op_spec: znz_spec w_op).
 unfold bb, w_op; apply cmk_spec; auto.
@@ -645,15 +645,15 @@ assert (F0: N < Basic_type.base (znz_digits w_op)).
   unfold w_op, Basic_type.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
-  generalize (get_height_correct 31 (plength N)); unfold bb.
+  generalize (get_height_correct 63 (plength N)); unfold bb.
   set (p := plength N).
-  replace (Z_of_nat (pred (nat_of_P (get_height 31 p)))) with
-       ((Zpos (get_height 31 p) - 1) ); auto with zarith.
+  replace (Z_of_nat (pred (nat_of_P (get_height 63 p)))) with
+       ((Zpos (get_height 63 p) - 1) ); auto with zarith.
   rewrite pred_of_minus; rewrite inj_minus1; auto with zarith.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
-  generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
+  generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 *)
-set (bb := Peano.pred (nat_of_P (get_height 31 (plength N)))).
+set (bb := Peano.pred (nat_of_P (get_height 63 (plength N)))).
 set (w_op := cmk_op bb).
 assert (op_spec: ZnZ.Specs w_op).
 unfold bb, w_op; apply cmk_spec; auto.
@@ -674,13 +674,13 @@ assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
   unfold w_op, DoubleType.base.
   rewrite cmk_op_digits.
   apply Zpower_le_monotone; split; auto with zarith.
-  generalize (get_height_correct 31 (plength N)); unfold bb.
+  generalize (get_height_correct 63 (plength N)); unfold bb.
   set (p := plength N).
-  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 31 p)))) with
-       ((Zpos (get_height 31 p) - 1) ). auto with zarith.
+  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
+       ((Zpos (get_height 63 p) - 1) ). auto with zarith.
   rewrite pred_of_minus; rewrite inj_minus1.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
-  generalize (lt_O_nat_of_P (get_height 31 p)); auto with zarith.
+  generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 assert (F1: ZnZ.to_Z (ZnZ.of_Z N) = N).
 rewrite ZnZ.of_Z_correct; auto with zarith.
 assert (F2: 1 < ZnZ.to_Z (ZnZ.of_Z N)).
