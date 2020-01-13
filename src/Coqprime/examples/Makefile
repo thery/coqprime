@@ -112,7 +112,7 @@ endif
 VFILES:=../examples/russell2.v\
   ../examples/russell1.v\
   ../examples/prime329719147332060395689499.v\
-  ../examples/prime216656403549020227250327256032933021325435259861468456540459488823774358486649614451547405419273433458932168893949521787.v\
+  ../examples/prime21665NNNN21787.v\
   ../examples/TestLucas.v\
   ../examples/PocklingtonRefl.v\
   ../examples/BasePrimes.v
