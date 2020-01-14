@@ -10,19 +10,20 @@ CPOCK=certif.c factorize.c pocklington.c
 
 OPOCK=$(CPOCK:.c=.o)
 
+all:   
+	make pock
+	make first
+	make o2v
+
 pock: $(OPOCK)
 	$(CC) -g -O2  -o pocklington $(OPOCK) -lecm -lgmp -lm 
 
 first: $(OFIRSTPRIMES)
 	$(CC) -g -O2 -o firstprimes $(OFIRSTPRIMES) -lecm -lgmp -lm
 
-all:   
-	make pock
-	make first
-	make o2v
 
 clean:
-	rm -f *~ *.o pocklington firstprimes o2v
+	rm -f *~ *.o *.cmo *.cmi pocklington firstprimes o2v 
 
 
 .SUFFIXES: .v .vo .c .o

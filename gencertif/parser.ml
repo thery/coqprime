@@ -258,7 +258,7 @@ let print_elliptic k n s r a  b x y  =
    pe ("      " ^ (string_of_big_int x));
    pe ("      " ^ (string_of_big_int y) ^ ")");
    pe  "     ((Proof_certif _ H) :: nil)).";
-   pe  "vm_cast_no_check (refl_equal true).";
+   pe  "native_cast_no_check (refl_equal true).";
    pe  "Time Qed.";
    split_close k
 
@@ -299,7 +299,7 @@ let print_pocklington k n b r =
    pe ("   " ^ (string_of_big_int b));
    pe ("   ((" ^ (string_of_big_int r)  ^ ", 1)::nil))" );
    pe  "   ((Proof_certif _ H) :: nil)).";
-   pe  "vm_cast_no_check (refl_equal true).";
+   pe  "native_cast_no_check (refl_equal true).";
    pe  "Time Qed.";
    split_close k
 
