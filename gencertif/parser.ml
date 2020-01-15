@@ -7,45 +7,23 @@ let shift = 6
 let skip s n =
      (String.sub s n (String.length s - n))
 
-let nhexa =regexp  "^N\\$="
-let shexa =regexp  "^S\\$="
-let rhexa =regexp  "^R\\$="
-let ahexa =regexp  "^A\\$="
-let bhexa =regexp  "^B\\$="
-let thexa =regexp  "^T\\$="
-let jhexa =regexp  "^J\\$="
-let t0hexa =regexp  "^Type=0"
-let t1hexa =regexp  "^Type=1"
-let t2hexa =regexp  "^Type=2"
-let t3hexa =regexp  "^Type=3"
-let t4hexa =regexp  "^Type=4"
-let hexa = regexp "-?[ABCDEF0123456789]*"
+let nhexa =regexp  "^N="
+let shexa =regexp  "^S="
+let whexa =regexp  "^W="
+let ahexa =regexp  "^A="
+let bhexa =regexp  "^B="
+let thexa =regexp  "^T="
+let jhexa =regexp  "^J="
+let hexa = regexp "-?\\$?[ABCDEF0123456789]*"
 let lemmaExp =regexp  "^Lemma"
 
 (* Conversion function *)
 let hexstring s =
-  let rec main rem s =
-    if String.length s <= shift then
-     (add_big_int
-       (mult_big_int
-         (power_int_positive_int 16 (String.length s))
-          rem)
-       (big_int_of_int (int_of_string ("0x" ^ s))))
-    else
-     main
-     (add_big_int
-       (mult_big_int
-         (power_int_positive_int 16 shift)
-          rem)
-       (big_int_of_int (int_of_string ("0x" ^ (String.sub s 0 shift)))))
-     (skip s shift) in
-    let _ = string_match hexa s 0 in ();
-    let s1 = matched_string s in
-    if (String.contains s1 '-') then
-      minus_big_int (main zero_big_int (skip s1 1))
-    else
-      main zero_big_int s1
-
+  if (String.contains s '$') then
+    if (String.contains s '-') then
+        big_int_of_string ("-0x" ^ (skip s 2)) else
+    big_int_of_string ("0x" ^ (skip s 1))
+  else big_int_of_string s
 
 let rec comp2 r =
    let (q, r) = quomod_big_int r (big_int_of_int 2) in
@@ -64,19 +42,20 @@ let gsqr n1 r =
 
 type certif =
 
-(* Elliptic (n, s, r, a, b, x y) *)
-  Elliptic of big_int * big_int * big_int * big_int * big_int * big_int * big_int
-(* Pocklington (n, b, r) *)
+(* Elliptic (n, s, r, a, b, x, y) *)
+  Elliptic of 
+     big_int * big_int * big_int * big_int * big_int * big_int * big_int
+(* Pocklington (n, b, r)          *)
 | Pocklington of big_int * big_int * big_int
-(* External n *)
+(* External n                     *)
 | External of big_int
-(* Error t *)
+(* Error t                        *)
 | Error of int;;
-
 
 let n = ref zero_big_int
 let s = ref zero_big_int
 let r = ref zero_big_int
+let w = ref zero_big_int
 let a = ref zero_big_int
 let b = ref zero_big_int
 let t = ref zero_big_int
@@ -90,15 +69,17 @@ let split = ref false
 let fileout = ref "a"
 let fileoutflag = ref false
 let name = ref "primo"
-
+let debug = ref false
 
 let process_type() =
   let elt =
   (if !ty != -1 then
     (if !ty = 4 then
       let n  = !n in
+      let s = !s in
       let t  = !t in
       let j  = !j in
+      let w = !w in
       let a  =
            mult_big_int
              (mult_big_int (big_int_of_int 3) j)
@@ -117,10 +98,13 @@ let process_type() =
                 (mult_big_int b (power_big_int_positive_int l 3)) n in
       let x = mod_big_int (mult_big_int t l) n in
       let y = mod_big_int (square_big_int l) n in
-       Elliptic (n, !s, !r, a, b, x, y)
+      (r := div_big_int (sub_big_int (add_big_int n (big_int_of_int 1)) w) s;
+       Elliptic (n, s, !r, a, b, x, y))
      else if !ty = 3 then
       let n  = !n in
       let t  = !t in
+      let s = !s in
+      let w = !w in
       let a  = !a in
       let b =  !b in
       let l = mod_big_int
@@ -133,12 +117,9 @@ let process_type() =
                 (mult_big_int b (power_big_int_positive_int l 3)) n in
       let x = mod_big_int (mult_big_int t l) n in
       let y = mod_big_int (square_big_int l) n in
-       Elliptic (n, !s, !r, a, b, x, y)
-     else if !ty = 1 then
-       Pocklington (!n, !b, !r)
-     else if !ty = 0 then
-       External !n
-     else
+      (r := div_big_int (sub_big_int (add_big_int n (big_int_of_int 1)) w) s;
+       Elliptic (n, s, !r, a, b, x, y))
+      else
        Error !ty)
   else Error 0)
   in (n := !r; elt)
@@ -162,39 +143,58 @@ let ic = open_in f in
   (try
     while true do
     line := input_line ic;
-
+    (if !debug then 
+      (print_string "line="; print_string !line; print_newline()));
     if string_match nhexa !line 0 then
- (
-             n := hexstring (skip !line 3);
+            (
+             n := hexstring (skip !line 2);
+             (if !debug then
+                (print_string "n="; print_string (string_of_big_int !n);
+                 print_newline()));
              r := !n)
     else if string_match shexa !line 0 then
-          s := (hexstring (skip !line 3))
-    else if string_match rhexa !line 0 then
-          r := (hexstring (skip !line 3))
+          (s := (hexstring (skip !line 2)); ty := 4;
+           (if !debug then
+              (print_string "s="; print_string (string_of_big_int !s);
+               print_newline()));
+          )
+    else if string_match whexa !line 0 then
+          (w := (hexstring (skip !line 2));
+           (if !debug then 
+              (print_string "w="; print_string (string_of_big_int !w);
+               print_newline()));
+          )
     else if string_match ahexa !line 0 then
-          a := (hexstring (skip !line 3))
+          (a := (hexstring (skip !line 2)); ty := 3;
+           (if !debug then
+              (print_string "a="; print_string (string_of_big_int !a);
+               print_newline()));
+          )
     else if string_match bhexa !line 0 then
-          b := (hexstring (skip !line 3))
-    else if string_match thexa !line 0 then
-          t := (hexstring (skip !line 3))
+          (b := (hexstring (skip !line 2));
+           (if !debug then
+              (print_string "b="; print_string (string_of_big_int !b);
+               print_newline()));
+          )
     else if string_match jhexa !line 0 then
-          j := (hexstring (skip !line 3))
-    else if string_match t0hexa !line 0 then
-          (res := process_type() :: !res; ty := 0;
-           res := process_type() :: !res)
-    else if string_match t1hexa !line 0 then
-          (res := process_type() :: !res; ty := 1)
-    else if string_match t2hexa !line 0 then
-          (res := process_type() :: !res; ty := 2;)
-    else if string_match t3hexa !line 0 then
-          (res := process_type() :: !res; ty := 3)
-    else if string_match t4hexa !line 0 then
-          (res := process_type() :: !res;ty := 4)
+          (j := (hexstring (skip !line 2));
+           (if !debug then
+              (print_string "j="; print_string (string_of_big_int !j);
+               print_newline()));
+          )
+    else if string_match thexa !line 0 then
+          (t := (hexstring (skip !line 2));
+           (if !debug then
+              (print_string "t="; print_string (string_of_big_int !t);
+               print_newline()));
+           res := process_type() :: !res; ty := -1)
     done
-
   with e ->
     close_in_noerr ic);
-   List.rev !res
+  (if !debug then 
+      (print_string "external=";
+       print_string (string_of_big_int !r); print_newline()));
+  List.rev (External !r :: !res)
 
 let rec gen_name k l =
   match l with
@@ -446,5 +446,5 @@ let _ =
       pe (!fileout ^ ".v");
       print_make 0 p);
     close_out !co)
-  else print_string "o2v [-split] [-o file.out] [-n name] file.in ";
-       print_newline()
+  else (print_string "o2v [-split] [-o file.out] [-n name] file.in ";
+        print_newline())
