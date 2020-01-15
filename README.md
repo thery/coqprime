@@ -12,7 +12,8 @@ CoqPrime is a library built on top of the Coq proof system to certify primality 
 
 * This version is compatible with primo version 4.3.1.
   You need to set the flag ```Elliptic curve tests only```
-  in the ```SetUp```. Also, you must add in the configuration file ```primo.ini```, the lines
+  in the ```SetUp```. Also, you must add in the configuration file ```primo.ini``` (this file is generated
+  after the first invocation of primo), the lines
 
   ```
   [Undocumented]
