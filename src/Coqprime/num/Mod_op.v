@@ -944,8 +944,9 @@ Notation "[[ x ]]" :=
 
  Theorem mmul_aux0: Zpos (xO w_digits) - Zpos p1 = Zpos p.
  unfold w_digits.
- apply trans_equal with (Zpos p + Zpos p1 - Zpos p1); auto with zarith.
+ apply trans_equal with (Zpos p + Zpos p1 - Zpos p1).
  rewrite p_p1; auto with zarith.
+ auto with zarith.
  Qed.
 
  Theorem mmul_aux1: 2 ^ Zpos w_digits =
