@@ -12,33 +12,34 @@ CoqPrime is a library built on top of the Coq proof system to certify primality 
 
 Here are the benchmark for some Mersenne numbers
 
-| # |	     n |	digits |	years |	discoverer                   |	checking time |
----------------------------------------------------------------------------------
-| 8 |	    31 |	    10 |   1772 |	Euler                        |           < 1s |
-| 9 |    	61 |      19 |	 1883 |	Pervushin                    |           < 1s |
-|10 |	    89 |      27 |	 1911 |	Powers                       |           < 1s |
-|11 |	   107 | 	    33 |	 1914 |	Powers                       |           < 1s |
-|12 |	   127 |  	  39 |   1876 | Lucas                        |           < 1s |	
-|13 |    521 |  	 157 |	 1952 | Robinson                     |           < 1s |
-|14 |	   607 |  	 183 |   1952 | Robinson 	                   |           < 1s |
-|15 |	  1279 |  	 386 |   1952 | Robinson 	                   |           < 1s |
-|16 | 	2203 |  	 664 |   1952 | Robinson 	                   |           < 1s |
-|17 |	  2281 |  	 687 |   1952 | Robinson 	                   |           < 1s |
-|18 |	  3217 |  	 969 |   1957 | Riesel 	                     |           < 1s |
-|19 |	  4253 |  	1281 |   1961 | Hurwitz 	                   |             2s |
-|20 |	  4423 |  	1332 |   1961 | Hurwitz 	                   |             2s |
-|21 |	  9689 | 	  2917 |   1963 | Gillies                      |       	    10s |
-|22 |	  9941 |	  2993 |   1963 | Gillies                      |            10s |
-|23 |	 11213 |	  3376 |   1963 | Gillies                      |            13s |
-|24 |	 19937 |  	6002 |   1971 | Tuckerman                    |            58s |
-|25 |  21701 |  	6533 |   1978 | Noll            & Nickel     |            74s |
-|26 |  23209 |  	6987 |   1979 | Noll            & Nickel     |            86s |
-|27 |  44497 |   13395 |   1979 | Nelson          & Slowinski  |           475s |
-|28 |	 86243 |   25962 |   1982 | David Slowinski              |            ??s |
-|29 |	110503 |   33265 |   1988 | Walter Colquitt & Luke Welsh |            ??s |
-|30 |	132049 |   39751 |   1983 | David Slowinski              |            ??s |
-|31 |	216091 |   65050 |   1985 | David Slowinski              |            ??s |
----------------------------------------------------------------------------------
+
+|  #  |	     n |	digits  |	years  |	discoverer                   |	checking time  |
+| ---:| ------:| -------:| ------:| ----------------------------:| --------------:|
+|  8  |	    31 |	    10  |   1772 |	Euler                        |           < 1s |
+|  9  |    	61 |      19 |	 1883  |	Pervushin                    |           < 1s |
+| 10  |	    89 |      27 |	 1911  |	Powers                       |           < 1s |
+| 11  |	   107 | 	    33 |	 1914  |	Powers                       |           < 1s |
+| 12  |	   127 |   	  39 |   1876 | Lucas                        |           < 1s |	
+| 13  |    521 |   	 157 |	 1952  | Robinson                     |           < 1s |
+| 14  |	   607 |   	 183 |   1952 | Robinson 	                   |           < 1s |
+| 15  |	  1279 |  	  386 |   1952 | Robinson 	                   |           < 1s |
+| 16  | 	 2203 |  	  664 |   1952 | Robinson 	                   |           < 1s |
+| 17  |	  2281 |  	  687 |   1952 | Robinson 	                   |           < 1s |
+| 18  |	  3217 |  	  969 |   1957 | Riesel 	                     |           < 1s |
+| 19  |	  4253 |  	 1281 |   1961 | Hurwitz 	                    |             2s |
+| 20  |	  4423 |  	 1332 |   1961 | Hurwitz 	                    |             2s |
+| 21  |	  9689 | 	  2917 |   1963 | Gillies                      |       	    10s |
+| 22  |	  9941 |	   2993 |   1963 | Gillies                      |            10s |
+| 23  |	 11213 |	   3376 |   1963 | Gillies                      |            13s |
+| 24  |	 19937 |  	 6002 |   1971 | Tuckerman                    |            58s |
+| 25  |  21701 |  	 6533 |   1978 | Noll            & Nickel     |            74s |
+| 26  |  23209 |  	 6987 |   1979 | Noll            & Nickel     |            86s |
+| 27  |  44497 |   13395 |   1979 | Nelson          & Slowinski  |           475s |
+| 28  |	 86243 |   25962 |   1982 | David Slowinski              |            ??s |
+| 29  |	110503 |   33265 |   1988 | Walter Colquitt & Luke Welsh |            ??s |
+| 30  |	132049 |   39751 |   1983 | David Slowinski              |            ??s |
+| 31  |	216091 |   65050 |   1985 | David Slowinski              |            ??s |
+| --- | ------ | ------- | ------ | ---------------------------- | -------------- |
 
 If you have a number you really want to be sure that it is prime :smile: what should you do?
 If your number has less than 100 decimal digits: 
