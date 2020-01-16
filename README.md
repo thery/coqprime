@@ -203,7 +203,7 @@ Qed.
 - Compile the file with coqc
 
 Proving the primality of a number of about 1200 decimal digits takes about 9 hours but can
-be easy parallelize using the ```-split``` command of ```o2v``` (for example, it takes 15m on a 20-core machime).
+be easy parallelized using the ```-split``` command of ```o2v``` (for example, it takes 15m on a 20-core machime).
 
 If you are too lazy to install the Coq system, or have no spare cpu-time, you can put your prime number in an issue, 
 we will do the job for you. 
