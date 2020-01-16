@@ -22,12 +22,12 @@ Here are the benchmark for some Mersenne numbers
 | 21  |	  9689 | 	  2917 |   1963 | Gillies                      |       	    10s |
 | 22  |	  9941 |	   2993 |   1963 | Gillies                      |            10s |
 | 23  |	 11213 |	   3376 |   1963 | Gillies                      |            13s |
-| 24  |	 19937 |  	 6002 |   1971 | Tuckerman                    |             1m |
+| 24  |	 19937 |  	 6002 |   1971 | Tuckerman                    |          1m00s |
 | 25  |  21701 |  	 6533 |   1978 | Noll            & Nickel     |          1m20s |
 | 26  |  23209 |  	 6987 |   1979 | Noll            & Nickel     |          1m30s |
-| 27  |  44497 |   13395 |   1979 | Nelson          & Slowinski  |             8m |
+| 27  |  44497 |   13395 |   1979 | Nelson          & Slowinski  |          8m00s |
 | 28  |	 86243 |   25962 |   1982 | David Slowinski              |         45m20s |
-| 29  |	110503 |   33265 |   1988 | Walter Colquitt & Luke Welsh |            ??s |
+| 29  |	110503 |   33265 |   1988 | Walter Colquitt & Luke Welsh |       1h22m20s |
 | 30  |	132049 |   39751 |   1983 | David Slowinski              |            ??s |
 | 31  |	216091 |   65050 |   1985 | David Slowinski              |            ??s |
 
