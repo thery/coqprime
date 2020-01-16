@@ -39,7 +39,6 @@ Here are the benchmark for some Mersenne numbers
 | 29  |	110503 |   33265 |   1988 | Walter Colquitt & Luke Welsh |            ??s |
 | 30  |	132049 |   39751 |   1983 | David Slowinski              |            ??s |
 | 31  |	216091 |   65050 |   1985 | David Slowinski              |            ??s |
-| --- | ------ | ------- | ------ | ---------------------------- | -------------- |
 
 If you have a number you really want to be sure that it is prime :smile: what should you do?
 If your number has less than 100 decimal digits: 
