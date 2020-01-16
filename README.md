@@ -15,15 +15,6 @@ Here are the benchmark for some Mersenne numbers
 
 |  #  |	     n |	digits  |	years  |	discoverer                   |	checking time  |
 | ---:| ------:| -------:| ------:| ----------------------------:| --------------:|
-|  8  |	    31 |	    10  |   1772 |	Euler                        |           < 1s |
-|  9  |    	61 |      19 |	 1883  |	Pervushin                    |           < 1s |
-| 10  |	    89 |      27 |	 1911  |	Powers                       |           < 1s |
-| 11  |	   107 | 	    33 |	 1914  |	Powers                       |           < 1s |
-| 12  |	   127 |   	  39 |   1876 | Lucas                        |           < 1s |	
-| 13  |    521 |   	 157 |	 1952  | Robinson                     |           < 1s |
-| 14  |	   607 |   	 183 |   1952 | Robinson 	                   |           < 1s |
-| 15  |	  1279 |  	  386 |   1952 | Robinson 	                   |           < 1s |
-| 16  | 	 2203 |  	  664 |   1952 | Robinson 	                   |           < 1s |
 | 17  |	  2281 |  	  687 |   1952 | Robinson 	                   |           < 1s |
 | 18  |	  3217 |  	  969 |   1957 | Riesel 	                     |           < 1s |
 | 19  |	  4253 |  	 1281 |   1961 | Hurwitz 	                    |             2s |
@@ -31,11 +22,11 @@ Here are the benchmark for some Mersenne numbers
 | 21  |	  9689 | 	  2917 |   1963 | Gillies                      |       	    10s |
 | 22  |	  9941 |	   2993 |   1963 | Gillies                      |            10s |
 | 23  |	 11213 |	   3376 |   1963 | Gillies                      |            13s |
-| 24  |	 19937 |  	 6002 |   1971 | Tuckerman                    |            58s |
-| 25  |  21701 |  	 6533 |   1978 | Noll            & Nickel     |            74s |
-| 26  |  23209 |  	 6987 |   1979 | Noll            & Nickel     |            86s |
-| 27  |  44497 |   13395 |   1979 | Nelson          & Slowinski  |           475s |
-| 28  |	 86243 |   25962 |   1982 | David Slowinski              |            ??s |
+| 24  |	 19937 |  	 6002 |   1971 | Tuckerman                    |             1m |
+| 25  |  21701 |  	 6533 |   1978 | Noll            & Nickel     |          1m20s |
+| 26  |  23209 |  	 6987 |   1979 | Noll            & Nickel     |          1m30s |
+| 27  |  44497 |   13395 |   1979 | Nelson          & Slowinski  |             8m |
+| 28  |	 86243 |   25962 |   1982 | David Slowinski              |         45m20s |
 | 29  |	110503 |   33265 |   1988 | Walter Colquitt & Luke Welsh |            ??s |
 | 30  |	132049 |   39751 |   1983 | David Slowinski              |            ??s |
 | 31  |	216091 |   65050 |   1985 | David Slowinski              |            ??s |
@@ -44,7 +35,7 @@ If you have a number you really want to be sure that it is prime :smile: what sh
 If your number has less than 100 decimal digits: 
 
 - Download and compile the library
-- Generate the cerficate for your prime number. For example for 1234567891, the command pocklington 1234567891 generates the   file
+- Generate the certificate for your prime number. For example for 1234567891, the command ```pocklington 1234567891``` generates the  file
 
 ```
 From Coqprime Require Import PocklingtonRefl.
@@ -65,8 +56,8 @@ Qed.
 If your number has more than 100 decimal digits
 
 - Download and compile the library
-- Configure ```primo``` to generate Coq-friendly certificate:
-    - set the flag ```Elliptic curve tests only```in the ```SetUp```.
+- Configure ```primo``` to generate Coq-friendly certificates :
+    - Set the flag ```Elliptic curve tests only```in the ```SetUp``` tab.
     - Add in the configuration file ```primo.ini``` (this file is generated after the first invocation of primo), the lines
       ```
       [Undocumented]
@@ -86,7 +77,7 @@ TestCount=3
 Status=Candidate certified prime
 
 [Comments]
-Put here any comment...
+Certificate for 1234567890123456789012353
 
 [Running Times (Wall-Clock)]
 1stPhase=0.06s
@@ -211,8 +202,8 @@ Qed.
 
 - Compile the file with coqc
 
-Proving the primality of a number of about 1200 decimal digits takes about an 9 hour but can
-be easy parallelize using the ```-split``` command of ```o2v```.
+Proving the primality of a number of about 1200 decimal digits takes about 9 hours but can
+be easy parallelize using the ```-split``` command of ```o2v``` (for example, it takes 15m on a 20-core machime).
 
 If you are too lazy to install the Coq system, or have no spare cpu-time, you can put your prime number in an issue, 
 we will do the job for you. 
