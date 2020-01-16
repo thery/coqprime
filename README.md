@@ -28,7 +28,7 @@ Here are the benchmarks for some Mersenne numbers
 | 27  |  44497 |   13395 |   1979 | Nelson          & Slowinski  |          8m00s |
 | 28  |	 86243 |   25962 |   1982 | David Slowinski              |         45m20s |
 | 29  |	110503 |   33265 |   1988 | Walter Colquitt & Luke Welsh |       1h22m20s |
-| 30  |	132049 |   39751 |   1983 | David Slowinski              |            ??s |
+| 30  |	132049 |   39751 |   1983 | David Slowinski              |       2h11m43s |
 | 31  |	216091 |   65050 |   1985 | David Slowinski              |            ??s |
 
 If you have a number you really want to be sure that it is prime :smile: what should you do?
@@ -62,6 +62,7 @@ If your number has more than 100 decimal digits
       ```
       [Undocumented]
       SHB=FALSE
+      LTM=32
        ```
 
 - Use ```primo``` to generate a cerficiate file.out. Here is a certificate for 1234567890123456789012353.
