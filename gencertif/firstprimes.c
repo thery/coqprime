@@ -11159,7 +11159,7 @@ void print_trivial_lemma(FILE* out, pock_certif_t c)
     fprintf(out, ") :: ");
   }
   fprintf(out, "(Proof_certif 2 prime2) :: nil)).\n");
-  fprintf(out,"  vm_cast_no_check (refl_equal true).\n");
+  fprintf(out,"  native_cast_no_check (refl_equal true).\n");
   if (time) fprintf(out,"Time ");
   fprintf(out,"Qed.\n\n");
 }

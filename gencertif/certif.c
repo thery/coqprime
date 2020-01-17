@@ -635,7 +635,7 @@ void print_lemma(FILE *out, char *name, pre_certif_t p, certif_t lc)
 
   print_lc(out, lc);
   fprintf(out, ").\n");
-  fprintf(out," vm_cast_no_check (refl_equal true).\n");
+  fprintf(out," native_cast_no_check (refl_equal true).\n");
   fprintf(out,"Qed.\n\n");
 }
 
