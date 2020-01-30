@@ -18,3 +18,12 @@ numspec:
         * -dec file : generate certificate for the number given in file,
 	     the file should also contain a partial factorization of the
 	     predecessor.
+	     
+	     
+o2v [-split] [-n name] [-o file] file.out
+
+options are:
+	-split : generate one file per certificate
+        -o file : set the output in file "file"
+	-o name : set the name of the final theorem "name"
+
