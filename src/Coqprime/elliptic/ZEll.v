@@ -519,6 +519,7 @@ Local Coercion Zpos : positive >-> Z.
   Notation "4" := (2 * 2).
   Notation "27" := (3 * 3 * 3).
 
+  Add Ring RFth : (F_R pKfth).
   Add Field KFth : pKfth.
 
 

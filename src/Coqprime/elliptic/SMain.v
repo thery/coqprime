@@ -93,6 +93,7 @@ Ltac kpow_tac t :=
  | _ => constr:(NotConstant)
  end.
 
+Add Ring Rfth :  (F_R (Eth.(Kfth))) (power_tac Kpower_theory [kpow_tac]).
 Add Field Kfth : Eth.(Kfth) (power_tac Kpower_theory [kpow_tac]).
 
 Let Kdiv_def := (Fdiv_def Eth.(Kfth)).

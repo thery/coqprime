@@ -11184,6 +11184,7 @@ main (int argc, char *argv[])
   if (argc <= 1) { 
     fprintf(stdout,"no option given\n");
     fflush(stdout);
+    exit(1);
   }
 
   if (strcmp (argv[1], "-o") == 0) 
@@ -11207,9 +11208,9 @@ main (int argc, char *argv[])
   if (max > MAXSIZE) max = MAXSIZE;
 
   out = fopen(filename,"w+");
-  fprintf(out, "Require Import PocklingtonRefl.\n\n"); 
+  fprintf(out, "From Coqprime Require Import PocklingtonRefl.\n\n"); 
    
-  fprintf(out,"Open Local Scope positive_scope.\n\n");
+  fprintf(out,"Local Open Scope positive_scope.\n\n");
 
   for(i = min; i < max; i++) {
     lc = init_certif();
