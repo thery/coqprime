@@ -455,7 +455,7 @@ Hint Resolve permutation_map : core.
   Permutation  of a map can be inverted
   *************************************)
 
-Let permutation_map_ex_aux :
+Local Definition permutation_map_ex_aux :
   forall (A B : Set) (f : A -> B) l1 l2 l3,
   permutation l1 l2 ->
   l1 = map f l3 -> exists l4, permutation l4 l3 /\ l2 = map f l4.
