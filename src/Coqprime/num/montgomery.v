@@ -554,11 +554,11 @@ Notation "a .-1" := (decr_num a) (at level 0).
 
 Lemma decr_correct n : (0 < [n])%Z -> ([n.-1] = [n] - 1)%Z.
 Proof.
-induction n as [ | a n Hrec]; nrom; auto with zarith.
+induction n as [ | a n Hrec]; nrom. auto with zarith.
 unfold decr_num; fold decr_num.
 case (phi_bounded a); nrom; intros Ha1 Ha2.
 rewrite spec_compare; case Z.compare_spec;
-  nrom; try rewrite spec_Bm1; nrom; auto with zarith.
+  nrom; try rewrite spec_Bm1; nrom. 2: auto with zarith.
 intros H1 H2; rewrite H1 in H2 |- *; rewrite Hrec;
  auto with zarith; try ring.
 apply Zmult_lt_0_reg_r with wB; auto with zarith.

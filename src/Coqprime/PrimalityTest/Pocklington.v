@@ -23,51 +23,51 @@ forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 ->
   forall n, prime n -> (n | N) -> n mod F1 = 1.
 intros N F1 R1 HF1 HR1 Neq Rec n Hn H.
 assert (HN: 1 < N).
-assert (0 < N - 1); auto with zarith.
-rewrite Neq; auto with zarith.
+cut (0 < N - 1). auto with zarith.
+rewrite Neq.
 apply Z.lt_le_trans with (1* R1); auto with zarith.
-assert (Hn1: 1 < n); auto with zarith.
+assert (Hn1: 1 < n).
 apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 assert (H1: (F1 | n - 1)).
-2: rewrite <- (Zmod_small 1 F1); auto with zarith.
+2: rewrite <- (Zmod_small 1 F1) by auto with zarith.
 2: case H1; intros k H1'.
-2: replace n with (1 + (n - 1)); auto with zarith.
+2: replace n with (1 + (n - 1)) by auto with zarith.
 2: rewrite H1'; apply Z_mod_plus; auto with zarith.
-apply Zdivide_Zpower; auto with zarith.
+apply Zdivide_Zpower. auto with zarith.
 intros p i Hp Hi HiF1.
-case (Rec p); auto.
+case (Rec p Hp).
 apply Z.divide_trans with (2 := HiF1).
 apply Zpower_divide; auto with zarith.
 intros a (Ha1, (Ha2, Ha3)).
 assert (HNn: a ^ (N - 1) mod n = 1).
-apply Zdivide_mod_minus; auto with zarith.
+apply Zdivide_mod_minus. auto with zarith.
 apply Z.divide_trans with (1 := H).
 apply Zmod_divide_minus; auto with zarith.
 assert (~(n | a)).
-intros H1; absurd (0 = 1); auto with zarith.
-rewrite <- HNn; auto.
-apply sym_equal; apply Zdivide_mod; auto with zarith.
+intros H1; absurd (0 = 1). auto with zarith.
+rewrite <- HNn.
+apply sym_equal; apply Zdivide_mod.
 apply Z.divide_trans with (1 := H1); apply Zpower_divide; auto with zarith.
 assert (Hr: rel_prime a n).
 apply rel_prime_sym; apply prime_rel_prime; auto.
 assert (Hz: 0 < Zorder a n).
 apply Zorder_power_pos; auto.
 apply Z.divide_trans with (Zorder a n).
-apply prime_divide_Zpower_Zdiv with (N - 1); auto with zarith.
+apply prime_divide_Zpower_Zdiv with (N - 1). 1-2: auto with zarith.
 apply Zorder_div_power; auto with zarith.
-intros H1; absurd (1 < n); auto; apply Zle_not_lt; apply Zdivide_le; auto with zarith.
-rewrite <- Ha3; apply Zdivide_Zgcd; auto with zarith.
-apply Zmod_divide_minus; auto with zarith.
+intros H1; absurd (1 < n); auto; apply Zle_not_lt; apply Zdivide_le. 1-2: auto with zarith.
+rewrite <- Ha3; apply Zdivide_Zgcd. 2: auto with zarith.
+apply Zmod_divide_minus. auto with zarith.
 case H1; intros t Ht; rewrite Ht.
 assert (Ht1: 0 <= t).
-apply Zmult_le_reg_r with (Zorder a n); auto with zarith.
+apply Zmult_le_reg_r with (Zorder a n). auto with zarith.
 rewrite Zmult_0_l; rewrite <- Ht.
-apply Z.ge_le; apply Z_div_ge0; auto with zarith.
+apply Z.ge_le; apply Z_div_ge0. 2: auto with zarith.
 apply Z.lt_gt; apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
-rewrite Zmult_comm; rewrite Zpower_mult; auto with zarith.
-rewrite Zpower_mod; auto with zarith.
-rewrite Zorder_power_is_1; auto with zarith.
-rewrite Zpower_1_l; auto with zarith.
+rewrite Zmult_comm. rewrite Zpower_mult by auto with zarith.
+rewrite Zpower_mod by auto with zarith.
+rewrite Zorder_power_is_1 by auto with zarith.
+rewrite Zpower_1_l by auto with zarith.
 apply Zmod_small; auto with zarith.
 apply Z.divide_trans with (1:= HiF1); rewrite Neq; apply Zdivide_factor_r.
 apply Zorder_div; auto.
@@ -79,8 +79,8 @@ forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 -> N < F1 * F1 ->
    prime N.
 intros N F1 R1 H H1 H2 H3 H4; case (prime_dec N); intros H5; auto.
 assert (HN: 1 < N).
-assert (0 < N - 1); auto with zarith.
-rewrite H2; auto with zarith.
+cut (0 < N - 1). auto with zarith.
+rewrite H2.
 apply Z.lt_le_trans with (1* R1); auto with zarith.
 case Zdivide_div_prime_le_square with (2:= H5); auto with zarith.
 intros n (Hn, (Hn1, Hn2)).
@@ -99,8 +99,8 @@ forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 ->
   forall n, 0 <= n -> (n | N) -> n mod F1 = 1.
 intros N F1 R1 H1 H2 H3 H4 n H5; pattern n; apply prime_induction; auto.
 assert (HN: 1 < N).
-assert (0 < N - 1); auto with zarith.
-rewrite H3; auto with zarith.
+cut (0 < N - 1). auto with zarith.
+rewrite H3.
 apply Z.lt_le_trans with (1* R1); auto with zarith.
 intros (u, Hu); contradict HN; subst; rewrite Zmult_0_r; auto with zarith.
 intro H6; rewrite Zmod_small; auto with zarith.
@@ -123,55 +123,55 @@ forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 -> Zeven F1 -> Zodd R1 ->
       N < (m * F1 + 1) * (2 * F1 * F1 + (r - m) * F1 + 1) ->
       (s = 0 \/ ~ isSquare (r * r - 8 * s)) -> prime N.
 intros N F1 R1 H1 H2 H3 OF1 ER1 H4 m H5 H6 s r H7 H8.
-case (prime_dec N); auto; intros H9.
+case (prime_dec N). auto. intros H9.
 assert (HN: 1 < N).
-assert (0 < N - 1); auto with zarith.
-rewrite H3; auto with zarith.
+cut (0 < N - 1). auto with zarith.
+rewrite H3.
 apply Z.lt_le_trans with (1* R1); auto with zarith.
-case  Zdivide_div_prime_le_square with N; auto.
+case  Zdivide_div_prime_le_square with N. 1-2: auto.
 intros X (Hx1, (Hx2, Hx3)).
 assert (Hx0: 1 < X).
 apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 pose (c := (X /  F1)).
-assert(Hc1: 0 <= c); auto with zarith.
+assert(Hc1: 0 <= c).
 apply Z.ge_le; unfold c; apply Z_div_ge0; auto with zarith.
 assert (Hc2: X = c * F1 + 1).
-rewrite (Z_div_mod_eq X F1); auto with zarith.
-eq_tac; auto.
+rewrite (Z_div_mod_eq X F1) by auto with zarith.
+eq_tac.
 rewrite (Zmult_comm F1); auto.
 apply PocklingtonCorollary2 with (R1 := R1) (4 := H4); auto with zarith.
 case Zle_lt_or_eq with (1 := Hc1); clear Hc1; intros Hc1.
 2: contradict Hx0; rewrite Hc2; try rewrite <- Hc1; auto with zarith.
 case (Zle_or_lt m c); intros Hc3.
-2: case Zle_lt_or_eq with (1 := H5); clear H5; intros H5; auto with zarith.
+2: case Zle_lt_or_eq with (1 := H5); clear H5; intros H5.
 2: case (H6 c); auto with zarith; rewrite <- Hc2; auto.
 2: contradict Hc3; rewrite <- H5; auto with zarith.
 pose (d := ((N / X) /  F1)).
-assert(Hd0: 0 <= N / X); try apply Z_div_pos; auto with zarith.
+assert(Hd0: 0 <= N / X) by (apply Z_div_pos; auto with zarith).
 (*
 apply Z.ge_le; unfold d; repeat apply Z_div_ge0; auto with zarith.
 *)
-assert(Hd1: 0 <= d); auto with zarith.
+assert(Hd1: 0 <= d).
 apply Z.ge_le; unfold d; repeat apply Z_div_ge0; auto with zarith.
 assert (Hd2: N / X =  d * F1 + 1).
-rewrite (Z_div_mod_eq (N / X) F1); auto with zarith.
-eq_tac; auto.
+rewrite (Z_div_mod_eq (N / X) F1) by auto with zarith.
+eq_tac.
 rewrite (Zmult_comm F1); auto.
-apply PocklingtonCorollary2 with (R1 := R1) (4 := H4); auto with zarith.
-exists X; auto with zarith.
+apply PocklingtonCorollary2 with (R1 := R1) (4 := H4). 1-4: auto with zarith.
+exists X.
 apply Zdivide_Zdiv_eq; auto with zarith.
 case Zle_lt_or_eq with (1  := Hd0); clear Hd0; intros Hd0.
-2: contradict HN; rewrite (Zdivide_Zdiv_eq X N); auto with zarith.
+2: contradict HN; rewrite (Zdivide_Zdiv_eq X N) by auto with zarith.
 2: rewrite <- Hd0; auto with zarith.
 case (Zle_lt_or_eq 1 (N / X)); auto with zarith; clear Hd0; intros Hd0.
-2: contradict H9; rewrite (Zdivide_Zdiv_eq X N); auto with zarith.
+2: contradict H9; rewrite (Zdivide_Zdiv_eq X N) by auto with zarith.
 2: rewrite <- Hd0; rewrite Zmult_1_r; auto with zarith.
 case Zle_lt_or_eq with (1 := Hd1); clear Hd1; intros Hd1.
 2: contradict Hd0; rewrite Hd2; try rewrite <- Hd1; auto with zarith.
 case (Zle_or_lt m d); intros Hd3.
-2: case Zle_lt_or_eq with (1 := H5); clear H5; intros H5; auto with zarith.
+2: case Zle_lt_or_eq with (1 := H5); clear H5; intros H5.
 2: case (H6 d); auto with zarith; rewrite <- Hd2; auto.
-2: exists X; auto with zarith.
+2: exists X.
 2: apply Zdivide_Zdiv_eq; auto with zarith.
 2: contradict Hd3; rewrite <- H5; auto with zarith.
 assert (L5: N = (c * F1 + 1) * (d * F1 + 1)).
@@ -192,20 +192,20 @@ case (Zeven_odd_dec d); intros HH2.
 apply Zeven_mult_Zeven_r; auto.
 contradict L6_1; apply Zeven_not_Zodd; apply Zodd_plus_Zodd; auto.
 assert ((c + d) mod (2 * F1) = r).
-rewrite <- Z_mod_plus with (b := Z.div2 (c * d)); auto with zarith.
+rewrite <- Z_mod_plus with (b := Z.div2 (c * d)) by auto with zarith.
 match goal with |- ?X mod _ = _ => replace X with R1 end; auto.
 rewrite L6; pattern (c * d) at 1.
 rewrite Zeven_div2 with (1 := L6_2); ring.
 assert (L9: c + d - r < 2 * F1).
 apply Zplus_lt_reg_r with (r - m).
-apply Zmult_lt_reg_r with (F1); auto with zarith.
+apply Zmult_lt_reg_r with (F1). auto with zarith.
 apply Zplus_lt_reg_r with 1.
 match goal with |-  ?X < ?Y =>
   replace Y with (2 * F1 * F1 + (r - m) * F1 + 1); try ring;
   replace X with ((((c + d) - m) * F1) + 1); try ring
 end.
-apply Zmult_lt_reg_r with (m * F1 + 1); auto with zarith.
-apply Z.lt_trans with (m * F1 + 0); auto with zarith.
+apply Zmult_lt_reg_r with (m * F1 + 1).
+apply Z.lt_trans with (m * F1 + 0). 2: auto with zarith.
 rewrite Zplus_0_r; apply Zmult_lt_O_compat; auto with zarith.
 repeat rewrite (fun x => Zmult_comm x (m * F1 + 1)).
 apply Z.le_lt_trans with (2 := H7).
@@ -215,16 +215,16 @@ match goal with |-  ?X <= ?Y =>
   replace Y with ((c * d) * F1 * F1 + (c + d) * F1 + 1); try ring
 end.
 repeat apply Zplus_le_compat_r.
-repeat apply Zmult_le_compat_r; auto with zarith.
-assert (tmp: forall p q, 0 <= p - q  -> q <= p); auto with zarith; try apply tmp.
+repeat (apply Zmult_le_compat_r; [ | auto with zarith ]).
+assert (tmp: forall p q, 0 <= p - q  -> q <= p) by auto with zarith; apply tmp.
 match goal with |-  _ <= ?X =>
   replace X with ((c - m) * (d - m)); try ring; auto with zarith
 end.
 assert (L10: c + d = r).
-apply Zmod_closeby_eq with (2 * F1); auto with zarith.
+apply Zmod_closeby_eq with (2 * F1). 1, 3-4: auto with zarith.
 unfold r; apply Z_mod_lt; auto with zarith.
 assert (L11: 2 * s  = c * d).
-apply Zmult_reg_r with F1; auto with zarith.
+apply Zmult_reg_r with F1. auto with zarith.
 apply trans_equal with (R1 - (c + d)).
 rewrite L10; rewrite (Z_div_mod_eq R1 (2 * F1)). 2: auto with zarith.
 unfold s, r; ring.
@@ -251,11 +251,11 @@ match goal with |-  ?X <= ?K * ((?Y + ?Z) + ?T) =>
    replace (K * ((Y + Z) + T)) with ((F1 * (Z + T) +  Y + Z + T) + X);[idtac | ring]
 end.
 apply Zplus_le_compat_r.
-case (Zle_lt_or_eq 0 r); unfold r; auto with zarith.
+case (Zle_lt_or_eq 0 r); unfold r.
 case (Z_mod_lt R1 (2 * F1)); auto with zarith.
 intros HH; repeat ((rewrite <- (Zplus_0_r 0); apply Zplus_le_compat)); auto with zarith.
 intros HH; contradict ER1; apply Zeven_not_Zodd.
-rewrite (Z_div_mod_eq R1 (2 * F1)); auto with zarith.
+rewrite (Z_div_mod_eq R1 (2 * F1)) by auto with zarith.
 rewrite <- HH; rewrite Zplus_0_r.
 rewrite <- Zmult_assoc; apply Zeven_2p.
 Qed.

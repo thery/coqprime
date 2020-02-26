@@ -18,9 +18,9 @@ Require Export Znumtheory.
 Require Export Tactic.
 
 Theorem Zdivide_div_prime_le_square:  forall x, 1 < x -> ~prime x -> exists p, prime p /\ (p | x) /\ p * p <= x.
-intros x Hx; generalize Hx; pattern x; apply Z_lt_induction; auto with zarith.
+intros x Hx; generalize Hx; pattern x; apply Z_lt_induction. 2: auto with zarith.
 clear x Hx; intros x Rec H H1.
-case (not_prime_divide x); auto.
+case (not_prime_divide x). 1-2: auto.
 intros x1 ((H2, H3), H4); case (prime_dec x1); intros H5.
 case (Zle_or_lt (x1 * x1) x); intros H6.
 exists x1; auto.
@@ -29,20 +29,20 @@ assert (Hx2: x2 <= x1).
 case (Zle_or_lt x2 x1); auto; intros H8; contradict H6; apply Zle_not_lt.
 apply Zmult_le_compat_r; auto with zarith.
 case (prime_dec x2); intros H7.
-exists x2; repeat (split; auto with zarith).
-apply Zmult_le_compat_l; auto with zarith.
+exists x2. apply (conj H7). split. auto with zarith.
+apply Zmult_le_compat_l. auto with zarith.
 apply Z.le_trans with 2%Z; try apply prime_ge_2; auto with zarith.
 case (Zle_or_lt 0 x2); intros H8.
-case Zle_lt_or_eq with (1 := H8); auto with zarith; clear H8; intros H8; subst; auto with zarith.
-case (Zle_lt_or_eq 1 x2); auto with zarith; clear H8; intros H8; subst; auto with zarith.
-case (Rec x2); try split; auto with zarith.
+case Zle_lt_or_eq with (1 := H8); clear H8; intros H8; subst. 2: auto with zarith.
+case (Zle_lt_or_eq 1 x2). auto with zarith. 1-2: clear H8; intros H8; subst. 2: auto with zarith.
+case (Rec x2). 1-3: auto with zarith.
 intros x3 (H9, (H10, H11)).
 exists x3; repeat (split; auto with zarith).
-contradict H; apply Zle_not_lt; auto with zarith.
+contradict H; apply Zle_not_lt.
 apply Z.le_trans with (0 * x1);  auto with zarith.
 case (Rec x1); try split; auto with zarith.
 intros x3 (H9, (H10, H11)).
-exists x3; repeat (split; auto with zarith).
+exists x3. apply (conj H9). split. 2: auto with zarith.
 apply Z.divide_trans with x1; auto with zarith.
 Qed.
 
