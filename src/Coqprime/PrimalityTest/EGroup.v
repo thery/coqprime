@@ -598,7 +598,7 @@ assert (F3: 0 < r).
   generalize (prime_ge_2 _ Hr1); auto with zarith.
 rewrite <- Zmult_assoc; rewrite Zmult_comm; rewrite <- Zmult_assoc;
   rewrite Zmult_comm; rewrite Z_div_mult; auto with zarith.
-rewrite gpow_gpow; auto with zarith.
+rewrite gpow_gpow. 2: auto with zarith.
   rewrite gpow_e_order_is_e; try rewrite gpow_e; auto.
   apply Zmult_le_reg_r with r; auto with zarith.
   apply Zlt_le_weak; apply e_order_pos.
