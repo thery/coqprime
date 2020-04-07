@@ -4,6 +4,7 @@
 *.vok
 *.glob
 *.aux
+*.v.timing
 .coq-native/
 .csdp.cache
 .lia.cache
