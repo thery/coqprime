@@ -260,9 +260,6 @@ apply trans_equal with (2 * q mod q).
 eq_tac; auto with zarith.
 apply Zdivide_mod; auto with zarith; exists 2; auto with zarith.
 apply is_inv_true with (2, q - 1); auto.
-apply mL_in; auto with zarith.
-intros; apply zpmult_1_l; auto with zarith.
-intros; apply zpmult_1_r; auto with zarith.
 rewrite zpmult_comm; auto.
 apply mL_in; auto with zarith.
 unfold w; apply mL_in; auto with zarith.
@@ -475,8 +472,6 @@ apply isupport_is_in; auto.
 apply is_inv_true with (1, 0); simpl; auto.
 intros; apply zpmult_1_l; auto with zarith.
 intros; apply zpmult_1_r; auto with zarith.
-rewrite zpmult_1_r; auto with zarith.
-rewrite zpmult_1_r; auto with zarith.
 exact w_in_pgroup.
 case H1.
 Qed.

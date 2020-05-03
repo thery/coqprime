@@ -169,9 +169,8 @@ Qed.
 Theorem inv_aux_inv: forall l a b, op a b = e -> op b a = e ->  (In a l) -> is_inv_aux l b = true.
 intros l a b; elim l; simpl.
 intros  _ _ H; case H.
-intros c l1 Rec H H0 H1; case H1; clear H1; intros H1; subst;  rewrite H.
-case (A_dec (op b a) e); case (A_dec e e); auto.
-intros H1 H2; contradict H2; rewrite H0; auto.
+intros c l1 Rec H H0 H1; case H1; clear H1; intros H1. subst c.
+case (A_dec (op b a) e); case (A_dec (op a b) e); auto.
 case (A_dec (op b c) e); case (A_dec (op c b) e); auto.
 Qed.
 

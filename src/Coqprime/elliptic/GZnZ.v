@@ -78,7 +78,7 @@ intros p; case p; intros x H.
    case (Zle_lt_or_eq 1 n); auto with zarith; intros Hz.
      rewrite (Zmod_small 1); auto with zarith.
      rewrite Zmult_1_l; auto.
-     subst n; rewrite znz1; rewrite H; rewrite znz1; auto.
+     clear p; subst n; rewrite znz1; rewrite H; rewrite znz1; auto.
 intros [x Hx] [y Hy].
   refine (zirr _ _ _ _ _); simpl.
   rewrite Zmult_comm; auto.
