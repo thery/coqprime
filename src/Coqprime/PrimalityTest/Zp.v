@@ -169,9 +169,6 @@ rewrite Z_mod_plus; auto with zarith.
 rewrite Zmod_small; auto with zarith.
 rewrite <- Hcd; ring.
 apply is_inv_true with (a := (c mod n)); auto.
-apply mkZp_in; auto with zarith.
-exact pmult_1_l.
-exact pmult_1_r.
 rewrite pmult_comm; auto.
 apply mkZp_in; auto with zarith.
 apply Z_mod_lt; auto with zarith.
