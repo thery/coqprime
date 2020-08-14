@@ -27,7 +27,7 @@ Open Scope Z_scope.
 
 Section test.
 
-Variable w: Type.
+Variable w: univ_of_cycles.
 Variable w_op: ZnZ.Ops w.
 Variable op_spec: ZnZ.Specs w_op.
 Variable p: positive.

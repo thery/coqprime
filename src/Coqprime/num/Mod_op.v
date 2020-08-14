@@ -14,6 +14,15 @@ Require Import CyclicAxioms Cyclic31.
 Require Import ZArith ZCAux.
 Import CyclicAxioms DoubleType DoubleBase.
 
+(* For backward compatibility. The intended value is Set,
+   but we use Type when compiling against an old version
+   of the standard library. *)
+Definition univ_of_cycles : Type.
+Proof.
+  first [let _ := constr:(word : Set -> nat -> Set) in exact Set | exact Type].
+Defined. 
+
+
 Theorem Zpos_pos: forall x, 0 < Zpos x.
 red; simpl; auto.
 Qed.
@@ -21,7 +30,7 @@ Hint Resolve Zpos_pos: zarith.
 
 Section Mod_op.
 
- Variable w : Type.
+ Variable w : univ_of_cycles.
 
  Record mod_op : Type := mk_mod_op {
    succ_mod   : w -> w;
