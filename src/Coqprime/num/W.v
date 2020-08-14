@@ -9,7 +9,7 @@
 Set Implicit Arguments.
 Require Import CyclicAxioms Cyclic63 Int63.
 From Bignums Require Import DoubleCyclic BigN.
-Require Import ZArith ZCAux.
+Require Import ZArith ZCAux Mod_op.
 
 (* ** Type of words ** *)
 
@@ -24,14 +24,14 @@ intros n1; exact (zn2z (mk_word w n1)).
 Defined.
 
 (* Make the op *)
-Fixpoint mk_op (w : Type) (op : ZnZ.Ops w) (n : nat) {struct n} :
+Fixpoint mk_op (w : univ_of_cycles) (op : ZnZ.Ops w) (n : nat) {struct n} :
   ZnZ.Ops (word w n) :=
   match n return (ZnZ.Ops (word w n)) with
   | O => op
   | S n1 => mk_zn2z_ops_karatsuba (mk_op op n1)
   end.
 
-Theorem mk_op_digits: forall w (op: ZnZ.Ops w) n,
+Theorem mk_op_digits: forall (w:univ_of_cycles) (op: ZnZ.Ops w) n,
   (Zpos (ZnZ.digits (mk_op op n)) = 2 ^ Z_of_nat n * Zpos (ZnZ.digits op))%Z.
 intros w op n; elim n; simpl mk_op; auto; clear n.
 intros n Rec; simpl ZnZ.digits.
@@ -41,7 +41,7 @@ rewrite inj_S; unfold Z.succ; rewrite Zplus_comm.
 rewrite Zpower_exp; auto with zarith.
 Qed.
 
-Theorem digits_pos: forall w (op: ZnZ.Ops w) n,
+Theorem digits_pos: forall (w:univ_of_cycles) (op: ZnZ.Ops w) n,
   (1 < Zpos (ZnZ.digits op) ->  1 < Zpos (ZnZ.digits (mk_op op n)))%Z.
 intros w op n H.
 rewrite mk_op_digits.
@@ -53,7 +53,7 @@ apply Zpower_le_monotone; auto with zarith.
 apply Zmult_lt_compat_l; auto with zarith.
 Qed.
 
-Fixpoint mk_spec (w : Type) (op : ZnZ.Ops w) (op_spec : ZnZ.Specs op)
+Fixpoint mk_spec (w : univ_of_cycles) (op : ZnZ.Ops w) (op_spec : ZnZ.Specs op)
     (H: (1 < Zpos (ZnZ.digits op))%Z)  (n : nat)
             {struct n} : ZnZ.Specs (mk_op op n) :=
   match n return (ZnZ.Specs (mk_op op n)) with
