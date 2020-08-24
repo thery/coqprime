@@ -51,7 +51,7 @@ Section NEll.
 Variable exx: ex.
 Variable exxs: ex_spec exx.
 
-Variable zZ: Type.
+Variable zZ: univ_of_cycles.
 Variable op: ZnZ.Ops zZ.
 Variable op_spec: ZnZ.Specs op.
 Definition z2Z z :=  ZnZ.to_Z z.
