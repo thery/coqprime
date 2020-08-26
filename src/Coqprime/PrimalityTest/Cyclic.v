@@ -54,7 +54,8 @@ Definition IA := (IGroup A mult support e A_dec support_ulist e_in_support mult_
                              mult_assoc
                              e_is_zero_l e_is_zero_r).
 
-Hint Resolve (fun x => isupport_incl _ mult support e A_dec x) : core.
+Definition isupport_incl_hint x := isupport_incl _ mult support e A_dec x.
+Hint Resolve isupport_incl_hint : core.
 
 Theorem gpow_evaln: forall n, 0 < n ->
   exists p, (length p <=  Z.abs_nat  n)%nat /\  (forall i, In i p -> In i support) /\

@@ -249,20 +249,20 @@ Proof with auto with zarith.
  intros b q1 r1 q2 r2 H1 H2 H3.
  assert (r2 = (b * q1 + r1) -b*q2).  rewrite H3;ring.
  assert (b*(q2 - q1) = r1 - r2 ).  rewrite H;ring.
- assert (-b < r1 - r2 < b). omega.
+ assert (-b < r1 - r2 < b). lia.
  destruct (Ztrichotomy q1 q2) as [H5 | [H5 | H5]].
-  assert (q2 - q1 >= 1).  omega.
+  assert (q2 - q1 >= 1).  lia.
   assert (r1- r2 >= b).
   rewrite <- H0.
   pattern b at 2; replace b with (b*1).
-  apply Zmult_ge_compat_l; omega.  ring.
-  elimtype False; omega.
+  apply Zmult_ge_compat_l; lia.  ring.
+  elimtype False; lia.
   split;trivial. rewrite H;rewrite H5;ring.
   assert (r1- r2 <= -b).
   rewrite <- H0.
   replace (-b) with (b*(-1)); try (ring;fail).
-  apply Zmult_le_compat_l; omega.
-  elimtype False; omega.
+  apply Zmult_le_compat_l; lia.
+  elimtype False; lia.
 Qed.
 
 Lemma Zge_0_pos : forall p:positive, p>= 0.
@@ -507,24 +507,24 @@ Lemma lt_square : forall x y, 0 < x  -> x < y -> x*x < y*y.
 Proof.
  intros; apply Z.lt_trans with (x*y).
  apply Zmult_lt_compat_l;trivial.
- apply Zmult_lt_compat_r;trivial. omega.
+ apply Zmult_lt_compat_r;trivial. lia.
 Qed.
 
 Lemma le_square : forall x y, 0 <= x  -> x <= y -> x*x <= y*y.
 Proof.
  intros; apply Z.le_trans with (x*y).
  apply Zmult_le_compat_l;trivial.
- apply Zmult_le_compat_r;trivial. omega.
+ apply Zmult_le_compat_r;trivial. lia.
 Qed.
 
 Lemma borned_square : forall x y, 0 <= x -> 0 <= y ->
                              x*x < y*y < (x+1)*(x+1) -> False.
 Proof.
  intros;destruct (Z_lt_ge_dec x y) as [z|z].
- assert (x + 1 <= y). omega.
- assert (0 <= x+1). omega.
- assert (H4 := le_square _ _ H3 H2). omega.
- assert (H4 := le_square _ _ H0 (Z.ge_le _ _ z)). omega.
+ assert (x + 1 <= y). lia.
+ assert (0 <= x+1). lia.
+ assert (H4 := le_square _ _ H3 H2). lia.
+ assert (H4 := le_square _ _ H0 (Z.ge_le _ _ z)). lia.
 Qed.
 
 Lemma not_square : forall (sqrt:positive) n, sqrt * sqrt < n < (sqrt+1)*(sqrt + 1) -> ~(isSquare n).
@@ -640,7 +640,7 @@ Proof.
  destruct prod as [|prod];try discriminate H0.
  destruct aNm1 as [|aNm1];try discriminate H0;elimif.
  simpl in H3; simpl in H2.
- rewrite <- Ppred_Zminus in H2;try omega.
+ rewrite <- Ppred_Zminus in H2;try lia.
  rewrite <- Zmult_assoc;rewrite mkProd_pred_mkProd.
  intros H12;assert (a^(N-1) mod N = 1). {
   pattern 1 at 2;rewrite <- H9;symmetry.
