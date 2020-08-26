@@ -22,7 +22,7 @@ Open Scope Z_scope.
 
 Section test.
 
-Variable w: Type.
+Variable w: univ_of_cycles.
 Variable w_op: ZnZ.Ops w.
 Variable op_spec: ZnZ.Specs w_op.
 Variable p: positive.
@@ -237,7 +237,7 @@ Qed.
 
 End test.
 
-Definition znz_of_Z (w: Type) (op: ZnZ.Ops w) z :=
+Definition znz_of_Z (w: univ_of_cycles) (op: ZnZ.Ops w) z :=
  match z with
  | Zpos p => snd (ZnZ.of_pos p)
  | _ => ZnZ.zero
