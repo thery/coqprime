@@ -621,7 +621,16 @@ pock_certif_t pock_certif (mpz_t t)
   mpz_init_set (tm1, c->_R1);
  
   /* compute the factorisation */
-  factorize(tm1, c);
+  int res = factorize(tm1, c);
+
+  if (flag_verbose) {
+    if (res) {
+       fprintf(stdout,"the certificate is valid");
+    } else {
+       fprintf(stdout,"the certificate is unvalid");
+    }
+    fprintf(stdout,"\n");fflush(stdout);
+  }
 
   mpz_clear(tm1);
 
