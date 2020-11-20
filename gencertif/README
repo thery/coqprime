@@ -27,3 +27,5 @@ options are:
         -o file : set the output in file "file"
 	-o name : set the name of the final theorem "name"
 
+WARNING : pocklington makes use of the gmp-ecm library. So you need
+   to have gmp-ecm-devel installed on your machine
