@@ -287,8 +287,8 @@ static double B1_table[] =
     11000000, 43000000, 110000000, 260000000, 850000000 };
 
 static int it_table[] =
- { 200, 214, 422, 30, 30,
-   20, 20, 20, 20, 20}; 
+ { 107, 261, 513, 1071, 2753,
+   5208, 8704, 20479, 47888, 78923}; 
 
 static int size_table[] =
   { 20, 25, 30, 35, 40,
@@ -298,6 +298,8 @@ int ecm_factorize(mpz_t n, pock_certif_t c);
 
 int my_ecm_factor(mpz_t n, pock_certif_t c, double B1, int iterate) 
 {
+  int iterate1 = iterate;
+  iterate = 1;
   int i, res, found;
   mpz_t f;
   gmp_randstate_t randstate;
@@ -305,11 +307,16 @@ int my_ecm_factor(mpz_t n, pock_certif_t c, double B1, int iterate)
 
   mpz_init(f);
   ecm_init(params);
-  /* if (flag_verbose) params->verbose = 1; */
+  if (flag_verbose) params->verbose = 1;
   gmp_randinit_default (randstate);
   gmp_randseed_ui (randstate, get_random_ul ());
-  if (B1 > 11000) params->B1done = 11000;
-  
+  if (B1 > 11000) {
+    params->B1done = 0;
+/*    mpz_set_si (params->B2min, -1); */
+    params->S = ECM_DEFAULT_S;
+    mpz_set_si (params->B2, ECM_DEFAULT_B2);
+    /* params->B2 =  B1 * 10; */
+  }
   res = 0;
   i = 0;
   iterate += 5;
@@ -361,6 +368,7 @@ int my_ecm_factor(mpz_t n, pock_certif_t c, double B1, int iterate)
 	  fflush(stdout);
 	}
       pp1_random_seed (params->x, n, randstate);
+      params->B1done = 0;
       found = ecm_factor(f, n, B1, params);
       if (found) {
 	mpz_tdiv_q(n, n, f);
@@ -398,11 +406,14 @@ int my_ecm_factor(mpz_t n, pock_certif_t c, double B1, int iterate)
       if (flag_verbose && i == 4) {
 	printf("using ecm with B1 = %1.0f ", B1); 
 	fflush(stdout);
-      } else {printf("#%i ", i-4); fflush(stdout);}
-
+      }
+      mpz_set_ui (params->sigma, 0); 
+/*
       mpz_urandomb (params->sigma, randstate, 32);
-      mpz_add_ui (params->sigma, params->sigma, 6);
-
+      mpz_add_ui (params->sigma, params->sigma, 6); 
+*/
+      params->B1done = 0;
+      params->k = iterate1;
       found = ecm_factor (f, n, B1, params);
      
       if (found > 0) { /* found a factor */
@@ -456,8 +467,11 @@ int ecm_factorize(mpz_t n, pock_certif_t c)
 
   for (iB1 = 0; !res && iB1 < 10 &&  mpz_cmp_ui (n, 1) != 0; iB1++) 
     {
-      if (flag_verbose) 
-	printf("Searching factor of %i digits\n", size_table[iB1]);
+      if (flag_verbose) {
+      	printf("Searching factor for ");
+        gmp_printf ("%Zd", n); 
+	      printf(" of %i digits\n", size_table[iB1]);
+      }
       res = my_ecm_factor(n, c, B1_table[iB1], it_table[iB1]);
     }
 
