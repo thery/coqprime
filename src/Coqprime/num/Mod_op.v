@@ -26,7 +26,7 @@ Defined.
 Theorem Zpos_pos: forall x, 0 < Zpos x.
 red; simpl; auto.
 Qed.
-Hint Resolve Zpos_pos: zarith.
+Global Hint Resolve Zpos_pos: zarith.
 
 Section Mod_op.
 

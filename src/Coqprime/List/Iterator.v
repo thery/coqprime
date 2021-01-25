@@ -85,9 +85,9 @@ End Iterator.
 Arguments iter [A B].
 Arguments progression [A].
 Arguments next_n [A].
-Hint Unfold iter : core.
-Hint Unfold progression : core.
-Hint Unfold next_n : core.
+Global Hint Unfold iter : core.
+Global Hint Unfold progression : core.
+Global Hint Unfold next_n : core.
  
 Theorem iter_ext:
  forall (A B : Set) zero (f1 : A ->  B) f2 g l,
