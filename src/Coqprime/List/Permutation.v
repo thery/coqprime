@@ -425,10 +425,10 @@ End permutation.
    Hints
    **************************************)
 
-Hint Constructors permutation : core.
-Hint Resolve permutation_refl : core.
-Hint Resolve permutation_app_comp : core.
-Hint Resolve permutation_app_swap : core.
+Global Hint Constructors permutation : core.
+Global Hint Resolve permutation_refl : core.
+Global Hint Resolve permutation_app_comp : core.
+Global Hint Resolve permutation_app_swap : core.
 
 (************************************** 
    Implicits
@@ -449,7 +449,7 @@ Theorem permutation_map :
 intros A B f l1 l2 H; elim H; simpl in |- *; auto.
 intros l0 l3 l4 H0 H1 H2 H3; apply permutation_trans with (2 := H3); auto.
 Qed.
-Hint Resolve permutation_map : core.
+Global Hint Resolve permutation_map : core.
  
 (************************************** 
   Permutation  of a map can be inverted

@@ -256,7 +256,7 @@ Qed.
  
 End UniqueList.
 Arguments ulist [A].
-Hint Constructors ulist : core.
+Global Hint Constructors ulist : core.
  
 Theorem ulist_map:
  forall (A B : Set) (f : A ->  B) l,

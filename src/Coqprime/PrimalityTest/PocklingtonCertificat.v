@@ -275,7 +275,8 @@ Proof.
  intros;simpl;apply Zge_0_pos.
 Qed.
 
-Hint Resolve Zpower_gt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak Zge_0_pos_add: zmisc.
+Global Hint Resolve Zpower_gt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak 
+  Zge_0_pos_add: zmisc.
 
 Hint Rewrite  Zpos_mult Zpower_mult Zpower_1_r Zmod_mod Zpower_exp
             times_Zmult square_Zmult Psucc_Zplus: zmisc.
@@ -287,7 +288,8 @@ Lemma mod_lt : forall a (b:positive), a mod b < b.
 Proof.
   intros a b;destruct (Z_mod_lt a b);mauto.
 Qed.
-Hint Resolve mod_lt : zmisc.
+
+Global Hint Resolve mod_lt : zmisc.
 
 Lemma Zmult_mod_l : forall (n:positive) a b, (a mod n * b) mod n = (a * b) mod n.
 Proof with mauto.
