@@ -22,9 +22,11 @@ Open Scope Z_scope.
 Definition FermatNumber n := 2^(2^(Z_of_nat n)) + 1.
 
 Theorem Fermat_pos: forall n, 1 < FermatNumber n.
-unfold FermatNumber; intros n; apply Z.le_lt_trans with (2 ^ 2 ^(Z_of_nat n)); auto with zarith.
-rewrite <- (Zpower_0_r 2); auto with zarith.
-apply Zpower_le_monotone; try split; auto with zarith.
+  unfold FermatNumber; intros n.
+  solve [ auto with zarith (* 8.14 *) |
+          (apply Z.le_lt_trans with (2 ^ 2 ^(Z_of_nat n)); auto with zarith;
+          rewrite <- (Zpower_0_r 2); auto with zarith;
+          apply Zpower_le_monotone; try split; auto with zarith)].
 Qed.
 
 Theorem PepinTest: forall n, let Fn := FermatNumber n in (3 ^ ((Fn - 1) / 2) + 1) mod Fn = 0 -> prime Fn.
