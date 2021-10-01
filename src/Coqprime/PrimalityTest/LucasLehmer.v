@@ -502,7 +502,7 @@ eq_tac; auto.
 apply sym_equal; apply Zmult_mod; auto.
 intros n Rec z1 z2 n1 Hn1 H1 H2.
 rewrite Pplus_one_succ_l; rewrite iter_pos_plus.
-rewrite Rec with (n0 := n1); auto.
+rewrite (Rec _ _ n1); auto.
 replace (n1 + Zpos (1 + n)) with ((n1 + Zpos n) + 1).
 rewrite sn; simpl; try rewrite Zmodd_correct; try rewrite Zsquare_correct; simpl; auto with zarith.
 unfold Zminus; rewrite Zplus_mod; auto.
