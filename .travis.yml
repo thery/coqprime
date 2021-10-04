@@ -1,4 +1,4 @@
-dist: trusty
+dist: bionic
 sudo: required
 language: c
 cache:
@@ -25,7 +25,7 @@ env:
 
 install:
 - export OPAMROOT=$HOME/.opam
-- opam init -j ${NJOBS} --compiler=${COMPILER}  -n -y
+- opam init -j ${NJOBS} --compiler=${COMPILER}  -n -y 
 - eval $(opam config env)
 - opam repo add coq-core-dev https://coq.inria.fr/opam/core-dev || echo "coq-core-dev registered"
 - opam repo add "${REPO_NAME}" "${REPO_URL}" || echo "${REPO_NAME} registered"
