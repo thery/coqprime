@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/thery/coqprime.svg?branch=master)](https://travis-ci.org/thery/coqprime)
+[![Build Status](https://travis-ci.com/thery/coqprime.svg?branch=master)](https://travis-ci.com/thery/coqprime)
 
 # coqprime
 
