@@ -502,7 +502,7 @@ Qed.
 Require Import ZArith.
 Require Import Znumtheory.
 
-Hint Rewrite  Zpos_mult times_Zmult square_Zmult Psucc_Zplus: zmisc.
+Global Hint Rewrite  Zpos_mult times_Zmult square_Zmult Psucc_Zplus: zmisc.
 
 Ltac mauto :=
   trivial;autorewrite with zmisc;trivial;auto with zarith.
