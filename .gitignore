@@ -15,3 +15,9 @@
 /Makefile.coq.conf
 /Makefile.coq
 *~
+gencertif/autom4te.cache
+gencertif/aclocal.m4
+gencertif/config.log
+gencertif/config.status
+gencertif/configure
+gencertif/Makefile
