@@ -502,6 +502,7 @@ Qed.
 Require Import ZArith.
 Require Import Znumtheory.
 
+#[export]
 Hint Rewrite  Zpos_mult times_Zmult square_Zmult Psucc_Zplus: zmisc.
 
 Ltac mauto :=
