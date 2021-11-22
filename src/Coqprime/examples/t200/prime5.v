@@ -1,7 +1,7 @@
 Require Import PocklingtonRefl.
 
 
-Open Local Scope positive_scope.
+Local Open Scope positive_scope.
 
 Lemma prime31030386103 : prime 31030386103.
 Proof.

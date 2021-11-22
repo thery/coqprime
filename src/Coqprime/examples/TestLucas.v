@@ -6,6 +6,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
+Require Import ZArith.
 From Coqprime Require Import Lucas.
 
 Eval native_compute in 2.
@@ -94,6 +95,7 @@ Time Eval native_compute in lucas 9689.
 
 Time Eval native_compute in 9941.
 
+(* 
 Time Eval native_compute in lucas 9941.
 
 Time Eval native_compute in 11213.
@@ -131,6 +133,7 @@ Time Eval native_compute in lucas 132049.
 Time Eval native_compute in 216091.
 
 Time Eval native_compute in lucas 216091.
+*)
 
 (*
      = 3

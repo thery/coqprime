@@ -1,6 +1,6 @@
 Require Import PocklingtonRefl.
 
-Open Local Scope positive_scope.
+Local Open Scope positive_scope.
 
 Time Eval native_compute in
 
