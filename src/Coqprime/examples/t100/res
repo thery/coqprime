@@ -1,4 +1,28 @@
-Error while reading ./prime1.v :
-File "./prime1.v", line 35, characters 19-20
-Error: The term "3" has type "positive" while it is expected to have type
- "dec_prime"
+COQDEP VFILES
+COQC prime1.v
+Finished transaction in 3.043 secs (3.027u,0.s) (successful)
+COQNATIVE prime1.vo
+COQC prime2.v
+Finished transaction in 2.792 secs (2.773u,0.002s) (successful)
+COQNATIVE prime2.vo
+COQC prime3.v
+Finished transaction in 3.938 secs (3.913u,0.s) (successful)
+COQNATIVE prime3.vo
+COQC prime4.v
+Finished transaction in 2.921 secs (2.899u,0.001s) (successful)
+COQNATIVE prime4.vo
+COQC prime5.v
+Finished transaction in 4.797 secs (4.755u,0.001s) (successful)
+COQNATIVE prime5.vo
+COQC prime6.v
+Finished transaction in 4.292 secs (4.259u,0.s) (successful)
+COQNATIVE prime6.vo
+COQC prime7.v
+Finished transaction in 3.235 secs (3.206u,0.001s) (successful)
+COQNATIVE prime7.vo
+COQC prime8.v
+Finished transaction in 1.606 secs (1.58u,0.002s) (successful)
+COQNATIVE prime8.vo
+COQC prime9.v
+Finished transaction in 2.498 secs (2.476u,0.s) (successful)
+COQNATIVE prime9.vo

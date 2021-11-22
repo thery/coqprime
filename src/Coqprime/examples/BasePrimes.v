@@ -8,7 +8,7 @@
 
 Require Import List.
 Require Import ZArith.
-Require Import ZCAux.
+From Coqprime Require Import ZCAux.
 
 Require Import Pock.
 

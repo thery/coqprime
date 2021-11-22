@@ -1,9 +1,28 @@
-Finished transaction in 11. secs (11.056319u,0.104984s)
-Finished transaction in 19. secs (18.998112u,0.141978s)
-Finished transaction in 19. secs (18.955118u,0.098985s)
-Finished transaction in 23. secs (22.623561u,0.102984s)
-Finished transaction in 10. secs (9.748518u,0.108984s)
-Finished transaction in 13. secs (12.378118u,0.109983s)
-Finished transaction in 25. secs (24.66225u,0.13498s)
-Finished transaction in 13. secs (13.128004u,0.126981s)
-Finished transaction in 14. secs (13.48095u,0.089987s)
+COQDEP VFILES
+COQC prime1.v
+Finished transaction in 0.379 secs (0.256u,0.s) (successful)
+COQNATIVE prime1.vo
+COQC prime2.v
+Finished transaction in 0.19 secs (0.124u,0.s) (successful)
+COQNATIVE prime2.vo
+COQC prime3.v
+Finished transaction in 0.386 secs (0.278u,0.s) (successful)
+COQNATIVE prime3.vo
+COQC prime4.v
+Finished transaction in 0.477 secs (0.457u,0.s) (successful)
+COQNATIVE prime4.vo
+COQC prime5.v
+Finished transaction in 0.142 secs (0.11u,0.s) (successful)
+COQNATIVE prime5.vo
+COQC prime6.v
+Finished transaction in 0.228 secs (0.178u,0.s) (successful)
+COQNATIVE prime6.vo
+COQC prime7.v
+Finished transaction in 0.407 secs (0.404u,0.s) (successful)
+COQNATIVE prime7.vo
+COQC prime8.v
+Finished transaction in 0.126 secs (0.125u,0.s) (successful)
+COQNATIVE prime8.vo
+COQC prime9.v
+Finished transaction in 0.268 secs (0.26u,0.001s) (successful)
+COQNATIVE prime9.vo
