@@ -230,30 +230,9 @@ int main(int argc, char *argv[]) {
   }
 
   if (defaultname) {
-    int size, len;
-    int filedes[2];
-    FILE *fnin;
-    FILE *fnout;
-    filename = "Prime.v";
-    pipe(filedes);
-    fnout = fdopen(filedes[1], "w");
-    fnin = fdopen(filedes[0], "r");
-    fprintf(fnout, "prime");
-    size = 5;
-    len = mpz_out_str(fnout, 10, t);
-    size += len;
-    fprintf(fnout, ".v");
-    fflush(fnout);
-    size += 2;
-    if (size > FILENAME_MAX - 1)
-      filename = "Prime.v";
-    else {
-      filename = (char *)malloc(size + 1);
-      fread(filename, 1, size, fnin);
-      filename[size] = '\0';
-    }
-    fclose(fnin);
-    fclose(fnout);
+    fprintf(stdout, "don't know where to generate the certificate\n");
+    fprintf(stdout, "please use the -o option \n");
+    exit(-1);
   }
 
   if (c != NULL) {
