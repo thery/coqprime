@@ -28,6 +28,7 @@ Proof. intros p;rewrite Zpos_xO;ring. Qed.
 Lemma Psucc_Zplus : forall p, Zpos (Pos.succ p) = p + 1.
 Proof. intros p;rewrite Zpos_succ_morphism; unfold Z.succ; trivial. Qed.
 
+#[export]
 Hint Rewrite Zpos_xI_add Zpos_xO_add Pplus_carry_spec
  Psucc_Zplus Zpos_plus : zmisc.
 
@@ -43,6 +44,7 @@ Proof.
  destruct p;trivial.  destruct p;trivial.
 Qed.
 
+#[export]
 Hint Rewrite Pminus_mask_carry_spec : zmisc.
 
 Ltac zsimpl := autorewrite with zmisc.
