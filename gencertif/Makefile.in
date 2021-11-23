@@ -1,0 +1,30 @@
+CFIRSTPRIMES=certif.c factorize.c firstprimes.c
+OFIRSTPRIMES=$(CFIRSTPRIMES:.c=.o)
+
+CPOCK=certif.c factorize.c pocklington.c
+OPOCK=$(CPOCK:.c=.o)
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+all: pock first o2v
+
+pock: $(OPOCK)
+	@CC@ @CPPFLAGS@ @LDFLAGS@ @CFLAGS@ -o pocklington $(OPOCK) @LIBS@
+
+first: $(OFIRSTPRIMES)
+	@CC@ @CPPFLAGS@ @LDFLAGS@ @CFLAGS@ -o firstprimes $(OFIRSTPRIMES) @LIBS@
+
+clean:
+	rm -f *~ *.o *.cmo *.cmi pocklington firstprimes o2v 
+
+.SUFFIXES: .c .o
+
+.c.o:
+	@CC@ @CPPFLAGS@ @CFLAGS@ -I$(GMPDIR) -I$(ECMDIR) -Wall -pedantic -c $<
+
+o2v: parser.ml
+	ocamlc -o o2v nums.cma str.cma parser.ml
+
+install: pocklington firstprimes o2v
+	cp pocklington firstprimes o2v @bindir@

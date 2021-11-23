@@ -27,5 +27,27 @@ options are:
         -o file : set the output in file "file"
 	-o name : set the name of the final theorem "name"
 
-WARNING : pocklington makes use of the gmp-ecm library. So you need
-   to have gmp-ecm-devel installed on your machine
+BUILD / INSTALL :
+
+The certificate generator is included in Coq Platform, which also contains
+opam files for the certificate generator and its dependencies. So installing
+Coq Platform might be the easiest way to install this.
+
+Otherwise please install these dependencies:
+
+	gmp     (version 6.2.1 or later)
+	gmp-ecm (version 7.0 or later)
+
+Please note that the gmp-ecm package provided by MacPorts is too old.
+
+After installing the dependencies, these commands should work:
+
+	cd gencertif
+	autoreconf -i -s
+	./configure --prefix <install-prefix> CPPFLAGS=-I%<include path> LDFLAGS=-L<library path>
+	make -j 4
+	make install
+
+The CPPFLAGS and LDFLAGS options to configure are only required if the headers/library
+for gmp and gmp-ecm are not in the default system include / library path.
+This is e.g. the case for macOS MacPorts.
