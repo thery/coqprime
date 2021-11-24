@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/thery/coqprime.svg?branch=master)](https://travis-ci.com/thery/coqprime)
+[![Build Status](https://github.com/thery/coqprime/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/thery/coqprime/actions/workflows/build.yml)
 
 # coqprime
 
