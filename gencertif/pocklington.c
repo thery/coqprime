@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
           filename = (char *)malloc(size);
           strcpy(filename, "lucas");
           strcat(filename, argv[2]);
-          strncat(filename, ".v", 2);
+          strcat(filename, ".v");
           defaultname = 0;
         }
         p = mk_lucas_certif(t, n);
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
           filename = (char *)malloc(size);
           strcpy(filename, "mersenne");
           strcat(filename, argv[2]);
-          strncat(filename, ".v", 2);
+          strcat(filename, ".v");
           defaultname = 0;
         }
         c = mersenne_certif(t, n);
@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
           size = strlen(argv[2]) + 3;
           filename = (char *)malloc(size);
           strcpy(filename, argv[2]);
-          strncat(filename, ".v", 2);
+          strcat(filename, ".v");
           defaultname = 0;
         }
         fprintf(stdout, "build certificate for\n");
@@ -230,9 +230,21 @@ int main(int argc, char *argv[]) {
   }
 
   if (defaultname) {
-    fprintf(stdout, "don't know where to generate the certificate\n");
-    fprintf(stdout, "please use the -o option \n");
-    exit(-1);
+    int size;
+    char *str;
+    size = mpz_sizeinbase (t, 10) + 9;
+    if (size > FILENAME_MAX - 1)
+      filename = "Prime.v";
+    else {
+      filename = (char *)malloc(size + 1);
+      strcpy(filename, "prime");
+      str = (char *) malloc (size);
+      str = mpz_get_str (str, 10, t);
+      strcat(filename, str);
+      strcat(filename, ".v");
+
+      free (str);
+    }
   }
 
   if (c != NULL) {

@@ -373,26 +373,18 @@ void finalize_pock(pock_certif_t c)
 
 char* mk_name(mpz_t t)
 {
+  char *str;
+  char *res;
   int size;
-  int filedes[2];
-  char * name;
-  FILE *fnin;
-  FILE *fnout;
-  pipe(filedes);
-  fnout = fdopen(filedes[1],"w");
-  fnin = fdopen(filedes[0], "r");
-  fprintf(fnout,"prime");
-  size = 5;
-  size += mpz_out_str (fnout, 10, t);
-  fflush(fnout);
-  name = (char *)malloc(size+1);
-  fread(name, 1, size, fnin);
-  name[size] = '\0';
-  fclose(fnin);
-  fclose(fnout);
-  return name;
+  size = mpz_sizeinbase (t, 10) + 2;
+  res = (char *) malloc (size + 7);
+  strcpy(res, "prime");
+  str = (char *) malloc (size);
+  str = mpz_get_str (str, 10, t);
+  strcat(res, str);
+  free (str);
+  return res;
 }
-
 
 pre_certif_t mk_proof_certif(mpz_t N)
 {
