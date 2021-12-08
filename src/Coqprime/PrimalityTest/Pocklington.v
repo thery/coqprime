@@ -259,3 +259,21 @@ rewrite (Z_div_mod_eq R1 (2 * F1)) by auto with zarith.
 rewrite <- HH; rewrite Zplus_0_r.
 rewrite <- Zmult_assoc; apply Zeven_2p.
 Qed.
+
+Lemma Pocklington_simple_computational N p (R1 := (N-1)/p) a :
+  prime p -> 0 < N -> 1 < p -> 0 < R1 -> N - 1 = p * R1 -> N < p * p -> 1 < a ->
+  Zpow_mod a (N - 1) N = 1 ->
+  Z.gcd (Zpow_mod a R1 N - 1) N = 1 ->
+  prime N.
+Proof.
+  intros.
+  rewrite Zpow_mod_correct in * by Lia.lia.
+  eapply Pocklington.PocklingtonCorollary1; revgoals; eauto; intros p' Hp' Hd.
+  eapply prime_div_prime in Hd; trivial; subst.
+  exists a; intuition idtac.
+  eapply Zgcd_1_rel_prime in H7.
+  eapply rel_prime_mod in H7; trivial.
+  rewrite Zminus_mod_idemp_l in H7.
+  eapply Zgcd_1_rel_prime.
+  eapply rel_prime_mod_rev; trivial.
+Qed.
