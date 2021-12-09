@@ -211,3 +211,10 @@ be easy parallelized using the ```-split``` command of ```o2v``` (for example, i
 
 If you are too lazy to install the Coq system, or have no spare cpu-time, you can put your prime number in an issue, 
 we will do the job for you. 
+
+## How to install it
+
+You can download the source and use `make`. There is also some `opam` packages :
+`coq-coqprime` for the library and `coq-coqprime-generator` for the certificate
+generator `pocklington`
+
