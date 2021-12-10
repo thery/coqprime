@@ -47,7 +47,7 @@ intros w op n H.
 rewrite mk_op_digits.
 rewrite <- (Zmult_1_r 1).
 apply Z.le_lt_trans with (2 ^ (Z_of_nat n) * 1)%Z.
-apply Zmult_le_compat_r;[| auto with zarith].
+apply Zmult_le_compat_r;[ | auto with zarith].
 rewrite <- (Zpower_0_r 2).
 apply Zpower_le_monotone; auto with zarith.
 apply Zmult_lt_compat_l; auto with zarith.
