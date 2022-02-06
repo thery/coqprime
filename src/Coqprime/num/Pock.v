@@ -463,17 +463,18 @@ intros p Hprime Hdec; exists (Zpos a);repeat split.
 auto with zarith.
 apply trans_equal with (2 := If6).
 rewrite H5.
-rewrite pow_mod_pred_spec with (2 := m_spec); [|auto with zarith|].
+rewrite pow_mod_pred_spec with (2 := m_spec).
+2: auto with zarith.
 rewrite F1.
 rewrite m_spec.(power_mod_spec) with (t := a).
 change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 rewrite F1; rewrite F4.
-rewrite <- Zpower_mod; [| auto with zarith].
-rewrite <- Zpower_mult; [|auto with zarith |auto with zarith].
+rewrite <- Zpower_mod; [idtac| auto with zarith].
+rewrite <- Zpower_mult; [idtac|auto with zarith |auto with zarith].
 rewrite mkProd_pred_mkProd.
 rewrite U1; rewrite Zmult_comm.
-rewrite Zpower_mult; [|auto with zarith| auto with zarith].
+rewrite Zpower_mult; [idtac|auto with zarith| auto with zarith].
 rewrite <- Zpower_mod; auto with zarith.
 change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 change (znz_of_Z w_op N) with (ZnZ.of_Z N).
@@ -492,7 +493,7 @@ match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
 rewrite Zmod_small; auto with zarith.
-rewrite m_spec.(power_mod_spec) with (t := a); auto with zarith.
+rewrite m_spec.(power_mod_spec) with (t := a).
 match goal with |- context[?X mod ?Y] =>
   case (Z_mod_lt X Y); auto with zarith
 end.
@@ -533,7 +534,7 @@ end.
 change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 repeat (rewrite F1 || rewrite F4); auto.
-rewrite Zmod_small; [auto with zarith|].
+rewrite Zmod_small; [auto with zarith|idtac].
 change (znz_of_Z w_op N) with (ZnZ.of_Z N); auto with zarith.
 change (znz_of_Z w_op a) with (ZnZ.of_Z a) in H6.
 change (znz_of_Z w_op N) with (ZnZ.of_Z N) in H6.
@@ -756,11 +757,11 @@ rewrite m_spec.(power_mod_spec) with (t := a).
 change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 change (znz_of_Z w_op a) with (ZnZ.of_Z a).
 rewrite F1; rewrite F4.
-rewrite <- Zpower_mod;[| auto with zarith].
-rewrite <- Zpower_mult;[|auto with zarith|auto with zarith].
+rewrite <- Zpower_mod;[idtac | auto with zarith].
+rewrite <- Zpower_mult;[idtac|auto with zarith|auto with zarith].
 rewrite mkProd_pred_mkProd.
 rewrite U1; rewrite Zmult_comm.
-rewrite Zpower_mult; [|auto with zarith|auto with zarith].
+rewrite Zpower_mult; [idtac|auto with zarith|auto with zarith].
 rewrite <- Zpower_mod; auto with zarith.
 change (znz_of_Z w_op N) with (ZnZ.of_Z N).
 change (znz_of_Z w_op a) with (ZnZ.of_Z a).
