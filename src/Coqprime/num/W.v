@@ -7,7 +7,7 @@
 (*************************************************************)
 
 Set Implicit Arguments.
-Require Import CyclicAxioms Cyclic63 Int63.
+Require Import CyclicAxioms Cyclic63 Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
 Require Import ZArith ZCAux Mod_op.
 

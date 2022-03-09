@@ -7,7 +7,7 @@ src/Coqprime/List/ListAux.v
 src/Coqprime/List/Permutation.v
 src/Coqprime/List/UList.v
 src/Coqprime/List/ZProgression.v
-src/Coqprime/Z/Pmod.v 
+src/Coqprime/Z/Pmod.v
 src/Coqprime/Z/ZCAux.v
 src/Coqprime/Z/Zmod.v
 src/Coqprime/Z/Ppow.v
@@ -31,6 +31,7 @@ src/Coqprime/elliptic/GZnZ.v
 src/Coqprime/elliptic/SMain.v
 src/Coqprime/elliptic/ZEll.v
 src/Coqprime/num/Bits.v
+src/Coqprime/num/Int63Compat.v
 src/Coqprime/num/Lucas.v
 src/Coqprime/num/NEll.v
 src/Coqprime/num/MEll.v
@@ -40,6 +41,3 @@ src/Coqprime/num/montgomery.v
 src/Coqprime/num/W.v
 src/Coqprime/examples/BasePrimes.v
 src/Coqprime/examples/PocklingtonRefl.v
-
-
-
