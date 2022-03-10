@@ -12,3 +12,5 @@ tests: all
 	@$(MAKE) -C tests -s all
 
 -include Makefile.coq
+
+include Makefile.coq.local-late

@@ -1,0 +1,77 @@
+# We only want to inlcude this file once; in older versions of Coq it
+# gets included only in Makefile, while in newer versions it is also
+# included in Makefile.coq at the bottom
+ifndef MAKEFILE_COQ_LOCAL_LATE
+MAKEFILE_COQ_LOCAL_LATE:=yes
+
+# The list of files that depend on the version of Coq
+COMPATIBILITY_FILES := \
+	src/Coqprime/num/Int63Compat.v \
+	#
+
+# The file holding the version of Coq this project was last built with, locally
+COQ_VERSION_FILE := .coq-version
+# The version of Coq this project was last built with, locally
+COQ_EXTENDED_VERSION_OLD := $(shell cat $(COQ_VERSION_FILE) 2>/dev/null)
+# Parse the version of Coq
+# If we only care about supporting newer versions of Coq, we might
+# want to copy Makefile.coq and use
+# $(shell $(COQC) --print-version | cut -d " " -f 1)
+# instead of this $(firstword $(subst ...)) construct
+COQ_VERSION_PREFIX := The Coq Proof Assistant, version
+COQ_VERSION := $(firstword $(subst $(COQ_VERSION_PREFIX),,$(shell $(COQBIN)coqc --version 2>/dev/null)))
+COQ_EXTENDED_VERSION := $(shell (true | $(COQBIN)coqtop 2>/dev/null; $(COQBIN)coqc --version 2>/dev/null))
+
+# Set up EXPECTED_EXT based on supported versions
+ifneq (,$(filter 8.11%,$(COQ_VERSION)))
+EXPECTED_EXT:=.v811
+else
+ifneq (,$(filter 8.12%,$(COQ_VERSION)))
+EXPECTED_EXT:=.v812
+else
+ifneq (,$(filter 8.13%,$(COQ_VERSION)))
+EXPECTED_EXT:=.v813
+else
+ifneq (,$(filter 8.14%,$(COQ_VERSION)))
+EXPECTED_EXT:=.v814
+else
+ifneq (,$(filter 8.15%,$(COQ_VERSION)))
+EXPECTED_EXT:=.v815
+else
+EXPECTED_EXT:=.v816
+endif
+endif
+endif
+endif
+endif
+
+# For ease of changing versions of Coq, invalidate the various build
+# outputs when the version of Coq changes
+.merlin: $(COQ_VERSION_FILE)
+
+$(VOFILES) $(CMOFILES) $(CMXFILES) $(OFILES) $(CMAFILES) $(CMIFILES) $(CMXSFILES): $(COQ_VERSION_FILE)
+
+# Copy the compatibility files when either the version changes or the
+# underlying contents changes
+$(COMPATIBILITY_FILES) : % : %$(EXPECTED_EXT) $(COQ_VERSION_FILE)
+	$(SHOW)'CP $@{$(EXPECTED_EXT),}'
+	$(HIDE)cp $< $@
+
+# ensure that the compat files exist before we call coqdep
+$(ALLDFILES): $(COMPATIBILITY_FILES) $(COQ_VERSION_FILE) _CoqProject
+
+# The version file is generated and should be removed by clean
+clean::
+	rm -f $(COQ_VERSION_FILE)
+
+# If the version of Coq does not match the version the project was
+# last built with locally (or the version file does not exist), then
+# we record the version info
+ifneq ($(COQ_EXTENDED_VERSION),$(COQ_EXTENDED_VERSION_OLD))
+$(COQ_VERSION_FILE):
+	$(SHOW)'echo $$COQ_VERSION_INFO ($(COQ_VERSION)) > $@'
+	$(HIDE)echo "$(COQ_EXTENDED_VERSION)" > $@
+.PHONY: $(COQ_VERSION_FILE)
+endif
+
+endif

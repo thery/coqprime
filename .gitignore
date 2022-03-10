@@ -14,6 +14,7 @@
 /Makefile.conf
 /Makefile.coq.conf
 /Makefile.coq
+/.coq-version
 *~
 gencertif/autom4te.cache
 gencertif/aclocal.m4
@@ -21,3 +22,4 @@ gencertif/config.log
 gencertif/config.status
 gencertif/configure
 gencertif/Makefile
+src/Coqprime/num/Int63Compat.v
