@@ -33,7 +33,7 @@ Here are the benchmarks for some Mersenne numbers
 | 31  |	216091 |   65050 |   1985 | David Slowinski              |       8h27m25s |
 
 If you have a number you really want to be sure that it is prime :smile: what should you do?
-If your number has less than 100 decimal digits: 
+If your number has less than 100 decimal digits:
 
 - Download and compile the library
 - Generate the certificate for your prime number. For example for 1234567891, the command ```pocklington 1234567891``` generates the  file
@@ -135,7 +135,7 @@ Lemma my_prime0:
   prime  1234567890123456789012353.
 Proof.
 intro H.
-apply (Pocklington_refl 
+apply (Pocklington_refl
      (Ell_certif
       1234567890123456789012353
       20
@@ -153,7 +153,7 @@ Lemma my_prime1:
   prime  61728394506095664626953.
 Proof.
 intro H.
-apply (Pocklington_refl 
+apply (Pocklington_refl
      (Ell_certif
       61728394506095664626953
       40474709184
@@ -171,7 +171,7 @@ Lemma my_prime2:
   prime  1525110266389.
 Proof.
 intro H.
-apply (Pocklington_refl 
+apply (Pocklington_refl
      (Ell_certif
       1525110266389
       397264
@@ -207,12 +207,13 @@ Qed.
 Proving the primality of a number of about 1200 decimal digits takes about 9 hours but can
 be easy parallelized using the ```-split``` command of ```o2v``` (for example, it takes 15m on a 20-core machime).
 
-If you are too lazy to install the Coq system, or have no spare cpu-time, you can put your prime number in an issue, 
-we will do the job for you. 
+If you are too lazy to install the Coq system, or have no spare cpu-time, you can put your prime number in an issue,
+we will do the job for you.
 
 ## How to install it
 
 You can download the source and use `make`. There is also some `opam` packages :
 `coq-coqprime` for the library and `coq-coqprime-generator` for the certificate
 generator `pocklington`
+
 
