@@ -34,8 +34,9 @@ options are:
 		 276602624281642239937218680557139826668747.
 		In the `dec` file you need to give a big enough partial decomposition containing 
 		 all the 2. For example the following one line is enough
-		 ```7237005577332262213973186563042994240857116359379907606001950938285454250989
- 276602624281642239937218680557139826668747 2 2```
+```
+7237005577332262213973186563042994240857116359379907606001950938285454250989276602624281642239937218680557139826668747 2 2
+```
 	     
 
 # o2v command 
@@ -54,7 +55,7 @@ The certificate generator is included in Coq Platform, which also contains
 opam files for the certificate generator and its dependencies. So installing
 Coq Platform might be the easiest way to install this.
 
-Otherwise please install these dependencies:
+Otherwise please install dependencies:
 
 ```
 	gmp     (version 6.2.1 or later)
