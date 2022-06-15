@@ -17,7 +17,16 @@ numspec:
 	     using Pocklington,
         * -dec file : generate certificate for the number given in file,
 	     the file should also contain a partial factorization of the
-	     predecessor.
+	     predecessor. An example of such file for the prime 
+		 7237005577332262213973186563042994240857116359379907606001950938285454250989
+		 is the following.
+		 Its factors are 
+		 2 × 2 × 3 × 11 × 198211423230930754013084525763697 × 
+		 276602624281642239937218680557139826668747.
+		 In the `dec` file you need to give a big enough partial decomposition containing 
+		 all the 2. For example the following one line is enough
+		 ```7237005577332262213973186563042994240857116359379907606001950938285454250989
+ 276602624281642239937218680557139826668747 2 2```
 	     
 	     
 o2v [-split] [-n name] [-o file] file.out
