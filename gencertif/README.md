@@ -4,37 +4,35 @@
 `pocklington [-v] [-o file] numspec`
 
 options are:
-
-	`-v` 		: verbose mode
-    `-o file` 	: set the output in file "file"
-
-`numspec`:
+- `-v` 			: verbose mode
+- `-o file` 	: set the output in file "file"
+- `numspec`:
 
 	* directly a prime number.
 
 	* `-next num`: generate certificate for the next prime number following
              `num`.
     
-	    * `-size s` : generate certificate for a prime number with a least `s`
+	* `-size s` : generate certificate for a prime number with a least `s`
 	     digits (in base 10).
     
-	    * `-proth k n` : generate certificate for the Proth number : k*2^n + 1.
+	* `-proth k n` : generate certificate for the Proth number : k*2^n + 1.
     
-	    * `-lucas n` : generate certificate for the Mersenne number 2^n - 1
-	     using Lucas test (more efficient).
+	* `-lucas n` : generate certificate for the Mersenne number 2^n - 1
+	    using Lucas test (more efficient).
     
-	    * `-mersenne n` : generate certificate for the Mersenne number 2^n - 1
-	     using Pocklington,
+	* `-mersenne n` : generate certificate for the Mersenne number 2^n - 1
+	   using Pocklington,
     
-	    * `-dec file` : generate certificate for the number given in file,
-	     the file should also contain a partial factorization of the
-	     predecessor. An example of such file for the prime 
-		 7237005577332262213973186563042994240857116359379907606001950938285454250989
-		 is the following.
-		 Its factors are 
+	* `-dec file` : generate certificate for the number given in file,
+	    the file should also contain a partial factorization of the
+	    predecessor. An example of such file for the prime 
+		7237005577332262213973186563042994240857116359379907606001950938285454250989
+		is the following.
+		Its factors are 
 		 2 × 2 × 3 × 11 × 198211423230930754013084525763697 × 
 		 276602624281642239937218680557139826668747.
-		 In the `dec` file you need to give a big enough partial decomposition containing 
+		In the `dec` file you need to give a big enough partial decomposition containing 
 		 all the 2. For example the following one line is enough
 		 ```7237005577332262213973186563042994240857116359379907606001950938285454250989
  276602624281642239937218680557139826668747 2 2```
@@ -46,11 +44,11 @@ options are:
 
 options are:
 
-	`-split`  : generate one file per certificate
-    `-o file` : set the output in file "file"
-	`-o name` : set the name of the final theorem "name"
+- `-split`  : generate one file per certificate
+- `-o file` : set the output in file "file"
+- `-o name` : set the name of the final theorem "name"
 
-# BUILD / INSTALL :`
+# BUILD / INSTALL :
 
 The certificate generator is included in Coq Platform, which also contains
 opam files for the certificate generator and its dependencies. So installing
