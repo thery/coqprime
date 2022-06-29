@@ -9,6 +9,9 @@
 Require Export ZArith Lia.
 Require Export ZCmisc.
 
+(* Compatibility with Coq versions not supporting hint localities *)
+Set Warnings "-unsupported-attributes".
+
 Local Open Scope positive_scope.
 
 Local Open Scope P_scope.
@@ -502,6 +505,7 @@ Qed.
 Require Import ZArith.
 Require Import Znumtheory.
 
+#[global]
 Hint Rewrite  Zpos_mult times_Zmult square_Zmult Psucc_Zplus: zmisc.
 
 Ltac mauto :=

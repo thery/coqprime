@@ -15,6 +15,9 @@ Require Import Pocklington.
 Require Import ZCmisc.
 Require Import Pmod.
 
+(* Compatibility with Coq versions not supporting hint localities *)
+Set Warnings "-unsupported-attributes".
+
 Definition dec_prime := list (positive * positive).
 
 Inductive singleCertif : Set :=
@@ -278,6 +281,7 @@ Qed.
 Global Hint Resolve Zpower_gt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak 
   Zge_0_pos_add: zmisc.
 
+#[global]
 Hint Rewrite  Zpos_mult Zpower_mult Zpower_1_r Zmod_mod Zpower_exp
             times_Zmult square_Zmult Psucc_Zplus: zmisc.
 
@@ -311,7 +315,9 @@ Proof with mauto.
  intros;rewrite Zminus_mod ... rewrite (Zminus_mod a) ...
 Qed.
 
+#[global]
 Hint Rewrite Zmult_mod_l Zmult_mod_r Zminus_mod_l Zminus_mod_r : zmisc.
+#[global]
 Hint Rewrite <- Zpower_mod : zmisc.
 
 Lemma Pmod_Zmod : forall a b, Z_of_N (a mod b)%P = a mod b.
@@ -329,6 +335,7 @@ Proof.
  rewrite <- H0;symmetry;rewrite Zmult_comm;trivial.
  destruct H0;auto.
 Qed.
+#[global]
 Hint Rewrite Pmod_Zmod : zmisc.
 
 Lemma Zpower_0 : forall p : positive, 0^p = 0.
@@ -342,6 +349,7 @@ Lemma pow_Zpower : forall a p, Zpos (pow a p) = a ^ p.
 Proof.
  induction p; mauto; simpl; mauto; rewrite IHp; mauto.
 Qed.
+#[global]
 Hint Rewrite pow_Zpower : zmisc.
 
 Lemma pow_mod_spec : forall n a m, Z_of_N (pow_mod a m n) = a^m mod n.
@@ -354,12 +362,14 @@ Proof.
  rewrite (Zmult_mod (a^m)(a^m)); auto with zmisc.
  rewrite <- IHm. destruct (pow_mod a m n);simpl; mauto.
 Qed.
+#[global]
 Hint Rewrite pow_mod_spec Zpower_0 : zmisc.
 
 Lemma Npow_mod_spec : forall a p n, Z_of_N (Npow_mod a p n) = a^p mod n.
 Proof.
  intros a p n;destruct a; mauto; simpl; mauto.
 Qed.
+#[global]
 Hint Rewrite Npow_mod_spec : zmisc.
 
 Lemma iter_Npow_mod_spec : forall n q p a,
@@ -370,6 +380,7 @@ Proof.
  rewrite (Zpower_mod (a ^ q ^ p)); mauto.
  mauto.
 Qed.
+#[global]
 Hint Rewrite iter_Npow_mod_spec : zmisc.
 
 Lemma fold_pow_mod_spec : forall (n:positive) l (a:N),
@@ -380,6 +391,7 @@ Proof.
   intros; mauto.
  rewrite IHl; mauto.
 Qed.
+#[global]
 Hint Rewrite fold_pow_mod_spec : zmisc.
 
 Lemma pow_mod_pred_spec : forall (n:positive) l (a:N),
@@ -391,6 +403,7 @@ Proof.
  simpl mkProd_pred.
  destruct (p ?= 1)%P; rewrite IHl; mauto; simpl.
 Qed.
+#[global]
 Hint Rewrite pow_mod_pred_spec : zmisc.
 
 Lemma mkProd_pred_mkProd : forall l,
@@ -412,6 +425,7 @@ Proof.
  destruct (snd a - 1);trivial.
  assert (1 < snd a); auto with zarith.
 Qed.
+#[global]
 Hint Rewrite mkProd_pred_mkProd : zmisc.
 
 Lemma lt_Zmod : forall p n, 0 <= p < n -> p mod n = p.
@@ -435,6 +449,7 @@ Proof.
  simpl in H;symmetry; apply (lt_Zmod (p-1) n).
  assert (1 < p); auto with zarith.
 Qed.
+#[global]
 Hint Rewrite Npred_mod_spec : zmisc.
 
 Lemma times_mod_spec : forall x y n, Z_of_N (times_mod x y n) = (x * y) mod n.
@@ -442,6 +457,7 @@ Proof.
  intros; destruct x; mauto.
  destruct y;simpl; mauto.
 Qed.
+#[global]
 Hint Rewrite times_mod_spec : zmisc.
 
 Lemma snd_all_pow_mod :
