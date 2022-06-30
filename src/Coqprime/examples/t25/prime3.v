@@ -16,14 +16,14 @@ Proof.
 Qed.
 
 Lemma prime3456789012345678901234573: prime  3456789012345678901234573.
-apply (Pocklington_refl 
+apply (Pocklington_refl
 
-(SPock_certif 
+(SPock_certif
 3456789012345678901234573
 2
 ((52460968938504569, 1)::nil))
 (
-(SPock_certif 
+(SPock_certif
 52460968938504569
 2
 ((793415879, 1)::nil))

@@ -11,4 +11,3 @@ Proof.
           nil)).
  vm_cast_no_check (refl_equal true).
 Qed.
-

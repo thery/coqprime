@@ -9,7 +9,7 @@ Require Import GenDivn1.
 
 
 Fixpoint plength (p: positive) : positive :=
-  match p with 
+  match p with
     xH => xH
   | xO p1 => Psucc (plength p1)
   | xI p1 => Psucc (plength p1)
@@ -345,7 +345,7 @@ Module Make (W0:W0Type).
 
  Definition add x y :=
   match x, y with
-  | N0 wx, N0 wy => w0_add wx wy 
+  | N0 wx, N0 wy => w0_add wx wy
   | N0 wx, N1 wy =>
     if w0_eq0 wx then y else w1_add (WW w_0 wx) wy
   | N0 wx, N2 wy =>
@@ -615,7 +615,7 @@ Module Make (W0:W0Type).
  Definition reduce_13 :=
   Eval lazy beta iota delta[reduce_n1] in
    reduce_n1 _ _ zero w12_eq0 reduce_12 (Nn 0).
- Definition reduce_n n := 
+ Definition reduce_n n :=
   Eval lazy beta iota delta[reduce_n] in
    reduce_n _ _ zero reduce_13 Nn n.
 
@@ -797,7 +797,7 @@ Module Make (W0:W0Type).
 
  Definition sub x y :=
   match x, y with
-  | N0 wx, N0 wy => w0_sub wx wy 
+  | N0 wx, N0 wy => w0_sub wx wy
   | N0 wx, N1 wy =>
     if w0_eq0 wx then zero else w1_sub (WW w_0 wx) wy
   | N0 wx, N2 wy =>
@@ -1304,8 +1304,8 @@ Module Make (W0:W0Type).
     compare_mn_1 w12 w12 W0 compare_12 (compare_12 W0) (comparen_12 0) (S n) wx wy
   | Nn n wx, Nn m wy =>
     match extend_to_max w12 n m wx wy with
-    | inl wx' => let op := make_op m in op.(znz_compare) wx' wy 
-    | inr wy' => let op := make_op n in op.(znz_compare) wx wy' 
+    | inl wx' => let op := make_op m in op.(znz_compare) wx' wy
+    | inr wy' => let op := make_op n in op.(znz_compare) wx wy'
     end
   end.
 
@@ -1475,7 +1475,7 @@ Module Make (W0:W0Type).
   | N0 wx, Nn n wy =>
     if w0_eq0 wx then zero
     else
-    let (w,r) := 
+    let (w,r) :=
       gen_mul_add_mn1 w_0 (fun r => extend11 w0 (WW w_0 r))
       w12_op.(znz_0W) w12_op.(znz_WW)
       (w0_mul_add_n1 12) (S n) wy wx w_0 in
@@ -1534,7 +1534,7 @@ Module Make (W0:W0Type).
     if w1_eq0 w then N12 r
     else Nn 0 (WW (extend11 w0 w) r)
   | N1 wx, Nn n wy =>
-    let (w,r) := 
+    let (w,r) :=
       gen_mul_add_mn1 W0 (fun r => extend11 w0 r)
       w12_op.(znz_0W) w12_op.(znz_WW)
       (w1_mul_add_n1 11) (S n) wy wx W0 in
@@ -2159,14 +2159,14 @@ Module Make (W0:W0Type).
   | Nn n wx, N0 wy =>
     if w0_eq0 wy then zero
     else
-    let (w,r) := 
+    let (w,r) :=
       gen_mul_add_mn1 w_0 (fun r => extend11 w0 (WW w_0 r))
       w12_op.(znz_0W) w12_op.(znz_WW)
       (w0_mul_add_n1 12) (S n) wx wy w_0 in
     if w0_eq0 w then Nn n r
     else Nn (S n) (WW (extend n w12 (extend12 w0 (WW w_0 w))) r)
-  | Nn n wx, N1 wy =>   
-    let (w,r) := 
+  | Nn n wx, N1 wy =>
+    let (w,r) :=
       gen_mul_add_mn1 W0 (fun r => extend11 w0 r)
       w12_op.(znz_0W) w12_op.(znz_WW)
       (w1_mul_add_n1 11) (S n) wx wy W0 in
@@ -3366,7 +3366,7 @@ Module Make (W0:W0Type).
     end
   end.
 
- Definition modulo x y := 
+ Definition modulo x y :=
   match compare x y with
   | Eq => zero
   | Lt => x

@@ -12,9 +12,9 @@ Definition zn2z_word_comm : forall w n, zn2z (word w n) = word (zn2z w) n.
 Defined.
 
 Fixpoint extend (n:nat) {struct n} : forall w:Set, zn2z w -> word w (S n) :=
- match n return forall w:Set, zn2z w -> word w (S n) with 
+ match n return forall w:Set, zn2z w -> word w (S n) with
  | O => fun w x => x
- | S m => 
+ | S m =>
    let aux := extend m in
    fun w x => WW W0 (aux w x)
  end.
@@ -24,7 +24,7 @@ Section ExtendMax.
  Variable w:Set.
 
  Definition Tmax n m :=
-  (  {p:nat| word (word w n) p = word w m} 
+  (  {p:nat| word (word w n) p = word w m}
     + {p:nat| word (word w m) p = word w n})%type.
 
  Definition max : forall n m, Tmax n m.
@@ -44,14 +44,14 @@ Section ExtendMax.
    exact (refl_equal (zn2z (word (word w m0) p))).
  Defined.
 
- Definition extend_to_max : 
-  forall n m (x:zn2z (word w n)) (y:zn2z (word w m)), 
+ Definition extend_to_max :
+  forall n m (x:zn2z (word w n)) (y:zn2z (word w m)),
         (zn2z (word w m) + zn2z (word w n))%type.
   intros n m x y.
-   case (max n m);intros (p, Heq). 
+   case (max n m);intros (p, Heq).
    left; case Heq;exact (extend p (word w n) x).
    right;case Heq;exact (extend p (word w m) y).
- Defined. 
+ Defined.
 
 End ExtendMax.
 
@@ -91,9 +91,9 @@ Section ReduceRec.
     | WW xh xl =>
       match xh with
       | W0 => @reduce_n m xl
-      | _ => @c (S m) x 
+      | _ => @c (S m) x
       end
-    end	
+    end
   end.
 
 End ReduceRec.
@@ -114,28 +114,28 @@ Section CompareRec.
  Variable compare_m : wm -> w -> comparison.
 
  Fixpoint compare0_mn (n:nat) : word wm n -> comparison :=
-  match n return word wm n -> comparison with 
-  | 0 => compare0_m 
+  match n return word wm n -> comparison with
+  | 0 => compare0_m
   | S m => fun x =>
     match x with
     | W0 => Eq
-    | WW xh xl => 
+    | WW xh xl =>
       match compare0_mn m xh with
-      | Eq => compare0_mn m xl 
+      | Eq => compare0_mn m xl
       | r  => Lt
       end
     end
   end.
 
  Fixpoint compare_mn_1 (n:nat) : word wm n -> w -> comparison :=
-  match n return word wm n -> w -> comparison with 
-  | 0 => compare_m 
-  | S m => fun x y => 
+  match n return word wm n -> w -> comparison with
+  | 0 => compare_m
+  | S m => fun x y =>
     match x with
     | W0 => compare w_0 y
-    | WW xh xl => 
+    | WW xh xl =>
       match compare0_mn m xh with
-      | Eq => compare_mn_1 m xl y 
+      | Eq => compare_mn_1 m xl y
       | r  => Gt
       end
     end

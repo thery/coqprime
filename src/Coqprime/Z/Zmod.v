@@ -54,28 +54,28 @@ Qed.
 
 
 Ltac is_ok t :=
-  match t with 
+  match t with
   | (?x mod _ + ?y mod _) mod _ => constr:(false)
   | (?x mod _ * (?y mod _)) mod _ => constr:(false)
   |  ?x mod _ => x
   end.
- 
+
 Ltac  rmod t :=
-  match t with 
-    (?x + ?y) mod _ => 
+  match t with
+    (?x + ?y) mod _ =>
      match (is_ok x) with
      | false => rmod x
-     | ?x1   =>  match (is_ok y) with 
+     | ?x1   =>  match (is_ok y) with
                 |false => rmod y
-                | ?y1 => 
+                | ?y1 =>
                    rewrite <- (Zplus_mod x1 y1)
                 |false => rmod y
                 end
      end
-  | (?x * ?y) mod _ => 
+  | (?x * ?y) mod _ =>
      match (is_ok x) with
      | false => rmod x
-     | ?x1 =>  match (is_ok y) with 
+     | ?x1 =>  match (is_ok y) with
                 |false => rmod y
                 | ?y1 => rewrite <- (Zmult_mod x1 y1)
                 end
@@ -97,4 +97,3 @@ rewrite Z_mod_same; try rewrite Zmult_0_l; auto with zarith.
 rewrite (Zmod_small 0); auto with zarith.
 rewrite Zplus_0_l; rewrite Zmod_mod; auto with zarith.
 Qed.
-

@@ -14,7 +14,7 @@ Proof.
 Qed.
 
 Lemma prime7890123456789012345678973: prime  7890123456789012345678973.
-apply (Pocklington_refl 
+apply (Pocklington_refl
 
 (Ell_certif
 7890123456789012345678973

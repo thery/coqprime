@@ -95,7 +95,7 @@ Time Eval native_compute in lucas 9689.
 
 Time Eval native_compute in 9941.
 
-(* 
+(*
 Time Eval native_compute in lucas 9941.
 
 Time Eval native_compute in 11213.
@@ -195,4 +195,3 @@ Finished transaction in 506. secs (494.09u,4.65s)
 Finished transaction in 572. secs (563.27u,5.45s)
 
 *)
-
