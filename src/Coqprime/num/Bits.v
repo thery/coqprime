@@ -1,3 +1,4 @@
+Set Loose Hint Behavior "Strict".
 Require Import ZArith Zpow_facts.
 
 Open Scope Z_scope.

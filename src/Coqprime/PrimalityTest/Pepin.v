@@ -13,6 +13,7 @@
 
     Definition: PepinTest
   **********************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import ZArith.
 Require Import ZCAux.
 Require Import Pocklington.

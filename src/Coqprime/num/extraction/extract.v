@@ -1,3 +1,4 @@
+Set Loose Hint Behavior "Strict".
 Require Import GenWord.
 Require Import Mod_op.
 Require Import Lucas.

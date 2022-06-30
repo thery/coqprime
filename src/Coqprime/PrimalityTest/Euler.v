@@ -11,6 +11,7 @@
     Definition of the Euler Totient function
 
 *************************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import ZArith.
 Require Export Znumtheory.
 Require Import Tactic.

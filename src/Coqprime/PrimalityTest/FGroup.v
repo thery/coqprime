@@ -13,6 +13,7 @@
                                                                      
     Definition: FGroup              
   **********************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import List.
 Require Import UList.
 Require Import Tactic.

@@ -6,6 +6,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
+Set Loose Hint Behavior "Strict".
 Require Import List.
 Require Import ZArith.
 Require Import Zorder.
@@ -14,7 +15,7 @@ Require Import LucasLehmer.
 Require Import Pocklington.
 Require Import ZArith Znumtheory Zpow_facts.
 Require Import CyclicAxioms Cyclic63 Int63Compat.
-From Bignums Require Import DoubleCyclic BigN.
+From Bignums Require Import BigNumPrelude DoubleCyclic BigN.
 Require Import Pmod.
 Require Import Mod_op.
 Require Import W.

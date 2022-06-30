@@ -1,4 +1,6 @@
-Require Import List ZArith Znumtheory Int31 Cyclic31.
+Set Loose Hint Behavior "Strict".
+Require Import Morphisms List ZArith Znumtheory Int31 Cyclic31.
+Local Existing Instance Z.le_wd.
 
 (* We are going to implement modular arithmetic with
    montgomery reduction

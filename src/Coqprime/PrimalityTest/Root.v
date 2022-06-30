@@ -11,6 +11,7 @@
                                                                                                          
       Proof that a polynomial has at most n roots                                 
 ************************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import ZArith.
 Require Import List.
 Require Import UList.

@@ -1,4 +1,5 @@
 -R src/Coqprime Coqprime
+-arg -w -arg -deprecated-hint-rewrite-without-locality,+deprecated-hint-without-locality,+deprecated-instance-without-locality
 
 src/Coqprime/Tactic/Tactic.v
 src/Coqprime/N/NatAux.v

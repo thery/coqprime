@@ -6,6 +6,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
+Set Loose Hint Behavior "Strict".
 Require Import ZArith.
 Require Export Znumtheory.
 Require Import Tactic.

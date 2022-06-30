@@ -6,6 +6,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
+Set Loose Hint Behavior "Strict".
 Set Implicit Arguments.
 
 Require Import ZArith Znumtheory Zpow_facts.

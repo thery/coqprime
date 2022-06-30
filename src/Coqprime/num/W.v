@@ -6,9 +6,10 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
+Set Loose Hint Behavior "Strict".
 Set Implicit Arguments.
 Require Import CyclicAxioms Cyclic63 Int63Compat.
-From Bignums Require Import DoubleCyclic BigN.
+From Bignums Require Import BigNumPrelude DoubleCyclic BigN.
 Require Import ZArith ZCAux Mod_op.
 
 (* ** Type of words ** *)

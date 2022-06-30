@@ -11,6 +11,7 @@
                                                                                                           
      Auxillary functions & Theorems                                              
   **********************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Export List.
 Require Export Arith.
 Require Export Tactic.

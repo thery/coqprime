@@ -6,13 +6,17 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
+Set Loose Hint Behavior "Strict".
 Set Implicit Arguments.
 
+From Bignums Require Import BigNumPrelude.
 From Bignums Require Import DoubleBase DoubleSub DoubleMul DoubleSqrt DoubleLift DoubleDivn1 DoubleDiv.
 From Bignums Require Import DoubleCyclic BigN.
+Require Import RelationClasses.
 Require Import CyclicAxioms Cyclic31.
 Require Import ZArith ZCAux.
 Import CyclicAxioms DoubleType DoubleBase.
+Local Existing Instance Z.le_preorder.
 
 (* For backward compatibility. The intended value is Set,
    but we use Type when compiling against an old version

@@ -14,6 +14,7 @@
 
     Definition: PGroup
  **********************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import ZArith.
 Require Import Znumtheory.
 Require Import Tactic.

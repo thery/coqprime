@@ -11,6 +11,7 @@
 
       Proof that an abelien ring is cyclic
  ************************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import ZCAux.
 Require Import List.
 Require Import Root.

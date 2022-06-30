@@ -9,6 +9,7 @@
 (***********************************************************************
     Summation.v from Z to Z
  *********************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import Arith.
 Require Import ArithRing.
 Require Import ListAux.

@@ -5,6 +5,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
+Set Loose Hint Behavior "Strict".
 Require Import ZArith Znumtheory.
 Require Import Eqdep_dec.
 Require Import List.

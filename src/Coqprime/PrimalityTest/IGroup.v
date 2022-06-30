@@ -13,6 +13,8 @@
                                                               
     Definition: ZpGroup              
   **********************************************************************)
+Set Loose Hint Behavior "Strict".
+Require Import Bool.
 Require Import ZArith.
 Require Import Tactic.
 Require Import Wf_nat.

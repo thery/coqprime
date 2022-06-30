@@ -11,6 +11,7 @@
                                                                      
     Defintion and properties of permutations                         
    **********************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Export List.
 Require Export ListAux.
  

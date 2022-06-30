@@ -13,6 +13,7 @@
                                                                                                          
       Definition: ulist                                                                         
 ************************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import List.
 Require Import Arith.
 Require Import Permutation.

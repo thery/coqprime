@@ -5,6 +5,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
+Set Loose Hint Behavior "Strict".
 Require Import Arith_base.
 Require Import Field_tac.
 Require Import Ring.

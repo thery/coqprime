@@ -14,6 +14,7 @@
                                                                      
     Definition: lagrange              
   **********************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import List.
 Require Import UList.
 Require Import ListAux.

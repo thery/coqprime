@@ -7,6 +7,7 @@
 (*************************************************************)
 
 
+Set Loose Hint Behavior "Strict".
 Require Import ZArith Znumtheory Zpow_facts.
 Require Import Int31 ZEll montgomery.
 

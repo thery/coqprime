@@ -7,9 +7,11 @@
 (*************************************************************)
 
 
+Set Loose Hint Behavior "Strict".
+Require Import Bool.
 Require Import ZArith Znumtheory Zpow_facts.
 Require Import CyclicAxioms Cyclic63 Int63Compat.
-From Bignums Require Import DoubleCyclic BigN.
+From Bignums Require Import BigNumPrelude DoubleCyclic BigN.
 Require Import W.
 Require Import Mod_op.
 Require Import ZEll.

@@ -11,6 +11,7 @@
 
     Given an element a, create the group {e, a, a^2, ..., a^n}
  **********************************************************************)
+Set Loose Hint Behavior "Strict".
 Require Import ZArith.
 Require Import Tactic.
 Require Import List.
