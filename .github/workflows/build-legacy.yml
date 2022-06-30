@@ -1,0 +1,24 @@
+name: CI (for fiat-crypto-legacy)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-legacy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        coq_version: ['8.7', '8.8', '8.9', '8.10']
+        ocaml_version: ['default']
+      fail-fast: false  # don't stop jobs if one fails
+    steps:
+      - uses: actions/checkout@v2
+      - uses: coq-community/docker-coq-action@v1
+        custom_script: |
+          opam install -y coq-bignums
+          make src/Coqprime/PrimalityTest/Zp.vo
+        with:
+          coq_version: ${{ matrix.coq_version }}
+          ocaml_version: ${{ matrix.ocaml_version }}
