@@ -18,6 +18,7 @@ jobs:
       - uses: coq-community/docker-coq-action@v1
         custom_script: |
           opam install -y coq-bignums
+          git ls-files "*.v" | xargs sed -i 's/#[global]//g'
           make src/Coqprime/PrimalityTest/Zp.vo
         with:
           coq_version: ${{ matrix.coq_version }}
