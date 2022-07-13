@@ -35012,4 +35012,3 @@ Proof.
         ((Proof_certif 4861 prime4861) :: (Proof_certif 2 prime2) :: nil)).
   enc (refl_equal true).
 Qed.
-

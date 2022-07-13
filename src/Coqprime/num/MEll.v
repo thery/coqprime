@@ -30,7 +30,7 @@ Local Coercion Zpos : positive >-> Z.
 Record ex_spec (exx: ex): Prop := mkExS {
   n2_div: ~(2 | exx.(vN));
   n_pos: 2 < exx.(vN);
- lprime: 
+ lprime:
   forall p : positive * positive, List.In p (vR exx) -> prime (fst p);
    lbig:
     4 * vN exx < (Zmullp (vR exx) - 1) ^ 2;
@@ -39,7 +39,7 @@ Record ex_spec (exx: ex): Prop := mkExS {
 }.
 
 (*
-Let is_even m := 
+Let is_even m :=
 Fixpoint invM_aux (n : nat) (m v: int31) : int31 :=
   match n with 0%nat => 0%int31 | S n =>
     if (iszero (Cyclic31.nshiftl 30 m)) then
@@ -49,7 +49,7 @@ Fixpoint invM_aux (n : nat) (m v: int31) : int31 :=
 
 Definition invM := invM_aux 31.
 
-Lemma invM_spec m v : 
+Lemma invM_spec m v :
   is_even v = false -> (v * (invM m v) = m)%int31.
 Proof. admit. Qed.
 
@@ -63,13 +63,13 @@ Variable add_mod sub_mod mult_mod : number -> number -> number.
 
 Notation "x ++ y " := (add_mod x y).
 Notation "x -- y" := (sub_mod x y) (at level 50, left associativity).
-Notation "x ** y" := 
+Notation "x ** y" :=
   (mult_mod x y) (at level 40, left associativity).
 Notation "x ?= y" := (eq_num x y).
 
 Variable A c0 c2 c3 : number.
 
-Definition mdouble : number -> melt -> (melt * number):= 
+Definition mdouble : number -> melt -> (melt * number):=
   fun (sc: number) (p1: melt) =>
  match p1 with
   mzero => (p1, sc)
@@ -124,14 +124,14 @@ Definition madd := fun (sc : number) (p1 p2 : melt) =>
              (z1 ** z2 ** l3), sc)
   end.
 
-Definition mopp p := 
+Definition mopp p :=
   match p with mzero => p | (mtriple x1 y1 z1) => (mtriple x1 (c0 -- y1) z1) end.
 
 End MEll.
 
 *)
 
-(* 
+(*
 
 Section Scal.
 
@@ -145,30 +145,30 @@ Fixpoint scalb (sc: number) (b:bool) (a: melt) (p: positive) {struct p}:
  match p with
    xH => if b then mdouble sc a else (a,sc)
  | xO p1 => let (a1, sc1) := scalb sc false a p1 in
-              if b then 
+              if b then
                 let (a2, sc2) := mdouble sc1 a1 in
                 madd sc2 a a2
               else mdouble sc1 a1
  | xI p1 => let (a1, sc1) := scalb sc true a p1 in
               if b then  mdouble sc1 a1
               else
-              let (a2, sc2) := mdouble sc1 a1 in 
+              let (a2, sc2) := mdouble sc1 a1 in
               madd sc2 (mopp a) a2
  end.
 
 Definition scal sc a p := scalb sc false a p.
 
 Definition scal_list sc a l :=
-  List.fold_left 
+  List.fold_left
   (fun (asc: melt * number) p1 => let (a,sc) := asc in scal sc a p1) l (a,sc).
 
 Variable mult_mod : number -> number -> number.
-Notation "x ** y" := 
+Notation "x ** y" :=
   (mult_mod x y) (at level 40, left associativity).
 
 Variable c0 : number.
 
-Fixpoint scalL (sc : number) (a: melt) (l: List.list positive) {struct l} : 
+Fixpoint scalL (sc : number) (a: melt) (l: List.list positive) {struct l} :
     (melt * number) :=
    match l with
      List.nil => (a,sc)
@@ -183,7 +183,7 @@ Fixpoint scalL (sc : number) (a: melt) (l: List.list positive) {struct l} :
 
 End Scal.
 
-Definition isM2 p := 
+Definition isM2 p :=
   match p with
     xH   => false
 |    xO _ => false
@@ -194,9 +194,9 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
                       (A B x y: Z) :=
     if isM2 N then
     match (4 * N) ?= (ZEll.Zmullp l - 1) ^ 2  with
-      Lt => 
+      Lt =>
        match y ^ 2 mod N ?= (x ^ 3 + A * x + B) mod N with
-       Eq => 
+       Eq =>
           let M := positive_to_num N in
           let m' := invM (0 - 1) (nhead M) in
           let n := length M in
@@ -234,7 +234,7 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
       | _  => false
        end
     | _  => false
-    end 
+    end
     else false.
 
 Time Eval vm_compute in (ell_test
@@ -284,11 +284,11 @@ Definition pp := mtriple xx yy c1.
 
 Notation "x ++ y " := (add_mod M x y).
 Notation "x -- y" := (sub_mod M x y) (at level 50, left associativity).
-Notation "x ** y" := 
+Notation "x ** y" :=
   (reduce_mult_num M m' n x y) (at level 40, left associativity).
 Notation "x ?= y" := (eq_num x y).
 
-Definition mdouble : number -> melt -> (melt * number):= 
+Definition mdouble : number -> melt -> (melt * number):=
   fun (sc: number) (p1: melt) =>
  match p1 with
   mzero => (p1, sc)
@@ -314,7 +314,7 @@ Print mdouble.
 Definition Ex := mkEx 101 99 nil 10 3 4 5.
 
 Check (
-  let v := Eval lazy compute in mdouble 
+  let v := Eval lazy compute in mdouble
  in
 
 Check (fun exx: ex => nN (mkMOp exx)).
@@ -357,7 +357,7 @@ Notation "x -- y" := (msub x y) (at level 50, left associativity).
 Notation "x ** y" := (mmult x y) (at level 40, left associativity).
 Notation "x ?= y" := (meq x y).
 
-Definition mdouble: number -> melt -> (melt * number):= 
+Definition mdouble: number -> melt -> (melt * number):=
   fun (sc: number) (p1: melt) =>
  match p1 with
   mzero => (p1, sc)
@@ -412,7 +412,7 @@ Definition madd := fun (sc : number) (p1 p2 : melt) =>
              (z1 ** z2 ** l3), sc)
   end.
 
-Definition mopp p := 
+Definition mopp p :=
   match p with mzero => p | (mtriple x1 y1 z1) => (mtriple x1 (c0 -- y1) z1) end.
 
 Fixpoint scalb (sc: number) (b:bool) (a: melt) (p: positive) {struct p}:
@@ -420,24 +420,24 @@ Fixpoint scalb (sc: number) (b:bool) (a: melt) (p: positive) {struct p}:
  match p with
    xH => if b then mdouble sc a else (a,sc)
  | xO p1 => let (a1, sc1) := scalb sc false a p1 in
-              if b then 
+              if b then
                 let (a2, sc2) := mdouble sc1 a1 in
                 madd sc2 a a2
               else mdouble sc1 a1
  | xI p1 => let (a1, sc1) := scalb sc true a p1 in
               if b then  mdouble sc1 a1
               else
-              let (a2, sc2) := mdouble sc1 a1 in 
+              let (a2, sc2) := mdouble sc1 a1 in
               madd sc2 (mopp a) a2
  end.
 
 Definition scal sc a p := scalb sc false a p.
 
 Definition scal_list sc a l :=
-  List.fold_left 
+  List.fold_left
   (fun (asc: melt * number) p1 => let (a,sc) := asc in scal sc a p1) l (a,sc).
 
-Fixpoint scalL (sc : number) (a: melt) (l: List.list positive) {struct l} : 
+Fixpoint scalL (sc : number) (a: melt) (l: List.list positive) {struct l} :
     (melt * number) :=
    match l with
      List.nil => (a,sc)
@@ -454,8 +454,8 @@ Definition zpow sc p n :=
   let (p,sc') := scal sc p n in
   (p, Zgcd (d sc') (exx.(vN))).
 
-Definition e2E n := 
-  match n with 
+Definition e2E n :=
+  match n with
     mzero => ZEll.nzero
   | mtriple x1 y1 z1 => ntriple (d x1) (d y1) (d z1)
   end.
@@ -467,7 +467,7 @@ Proof. red; simpl; auto. Qed.
 
 Hint Resolve vN_pos.
 
-Lemma mplusz x y : wft x -> wft y -> 
+Lemma mplusz x y : wft x -> wft y ->
       d (x ++ y) = nplus (exx.(vN)) (d x) (d y).
 Proof.
 intros Hx Hy.
@@ -493,7 +493,7 @@ apply (nplusz Hx Hy).
 admit.
 Qed.
 
-Lemma msubz x y : wft x -> wft y -> 
+Lemma msubz x y : wft x -> wft y ->
       d (x -- y) = ZEll.nsub (vN exx) (d x) (d y).
 Proof.
 intros Hx Hy.
@@ -518,7 +518,7 @@ apply (nsubz Hx Hy).
 admit.
 Qed.
 
-Lemma mmulz x y : wft x -> wft y -> 
+Lemma mmulz x y : wft x -> wft y ->
       d (x ** y) = ZEll.nmul (vN exx) (d x) (d y).
 Proof.
 intros Hx Hy.
@@ -643,7 +643,7 @@ Proof.
 destruct x as [ | x1 y1 z1]; auto.
 destruct y as [ | x2 y2 z2]; auto.
 (*
-  intros (wfx1,(wfy1, wfz1)) (wfx2,(wfy2, wfz2)) wfsc; 
+  intros (wfx1,(wfy1, wfz1)) (wfx2,(wfy2, wfz2)) wfsc;
     simpl; auto.
    case meq.
     2: repeat split; simpl; nw.
@@ -683,15 +683,15 @@ Qed.
  Qed.
 
 
-Ltac iftac t := 
-  match t with 
+Ltac iftac t :=
+  match t with
    context[if ?x ?= ?y then _ else _] =>
       case_eq (x ?= y)
   end.
 
 Ltac ftac := match goal with
-  |- context[?x = ?y] => (iftac x); 
-    let H := fresh "tmp" in 
+  |- context[?x = ?y] => (iftac x);
+    let H := fresh "tmp" in
      (try rewrite ztest; try rewrite zc0; intros H;
       repeat ((rewrite nmulz in H || rewrite nplusz in H || rewrite nsubz in H); auto);
       try (rewrite H; clear H))
@@ -742,7 +742,7 @@ intros x1 y1 z1 y; case y; clear; auto.
   wfe (fst (ndouble sc x)) /\  wft (snd (ndouble sc x)).
 Proof.
 intros x; case x; clear; auto.
-intros x1 y1 z1 sc (wfx1,(wfy1, wfz1)) wfsc; 
+intros x1 y1 z1 sc (wfx1,(wfy1, wfz1)) wfsc;
     simpl; auto.
   repeat (case neq; repeat split; simpl; nw; auto).
 Qed.
@@ -839,19 +839,19 @@ intros p Hrec b x sc H1 H2.
     generalize (Hrec true _ _ H1 H2); case scalb; simpl.
     case ZEll.scalb; intros r1 rc1; simpl.
     intros a2 sc2 (H3, H4) (H5, H6); subst r1 rc1.
-    generalize (ndouble_wf _ H5 H6); 
+    generalize (ndouble_wf _ H5 H6);
       generalize (ndouble_correct _ H5 H6); case ndouble; simpl.
     case ZEll.ndouble; intros r1 rc1; simpl.
     intros a3 sc3 (H7,H8) (H9,H10); subst r1 rc1.
     replace (ZEll.nopp (vN exx) (e2E x)) with
       (e2E (nopp x)).
-    apply nadd_correct; auto. 
+    apply nadd_correct; auto.
     generalize H1; case x; auto.
     intros x1 y1 z1 [HH1 [HH2 HH3]]; split; auto.
     rewrite nopp_correct; auto.
     apply f_equal2 with (f := ZEll.nopp); auto.
     generalize H1; case x; simpl; auto; clear x H1.
-    intros x1 y1 z1 [HH1 [HH2 HH3]]; 
+    intros x1 y1 z1 [HH1 [HH2 HH3]];
       apply f_equal3 with (f := ZEll.ntriple); auto.
     repeat rewrite nsubz; auto.
     rewrite zc0.
@@ -871,7 +871,7 @@ intros p Hrec b x sc H1 H2.
     generalize (Hrec false _ _ H1 H2); case scalb; simpl.
     case ZEll.scalb; intros r1 rc1; simpl.
     intros a2 sc2 (H3, H4) (H5, H6); subst r1 rc1.
-    generalize (ndouble_wf _ H5 H6); 
+    generalize (ndouble_wf _ H5 H6);
       generalize (ndouble_correct _ H5 H6); case ndouble; simpl.
     case ZEll.ndouble; intros r1 rc1; simpl.
     intros a3 sc3 (H7,H8) (H9,H10); subst r1 rc1.
@@ -881,7 +881,7 @@ intros p Hrec b x sc H1 H2.
     rewrite nopp_correct; auto.
     apply f_equal2 with (f := ZEll.nopp); auto.
     generalize H1; case x; simpl; auto; clear x H1.
-    intros x1 y1 z1 [HH1 [HH2 HH3]]; 
+    intros x1 y1 z1 [HH1 [HH2 HH3]];
       apply f_equal3 with (f := ZEll.ntriple); auto.
     repeat rewrite nsubz; auto.
     rewrite zc0.
@@ -912,7 +912,7 @@ Lemma scal_correct: forall n x sc,
   z2Z (snd (scal sc x n)) = snd (ZEll.scal exx.(vN) exx.(vA) (z2Z sc) (e2E x) n).
 Proof.
 intros n; exact (scalb_correct n false).
-Qed. 
+Qed.
 
 Lemma scal_list_correct: forall l x sc,
   wfe x -> wft sc ->
@@ -932,7 +932,7 @@ Lemma scal_list_wf: forall l x sc,
 Proof.
 intros l1; elim l1; simpl; auto.
 unfold scal_list; intros a l Hrec x sc H1 H2; simpl.
-generalize (@scal_wf a _ _ H1 H2); 
+generalize (@scal_wf a _ _ H1 H2);
   case (scal sc x a); simpl; intros x1 sc1 [H3 H4]; auto.
 Qed.
 
@@ -947,7 +947,7 @@ intros a1 sc1 (H3, H4); auto.
 generalize (scal_list_wf l2 _ H1 H4); case scal_list; simpl.
 intros a2 sc2; case a2; simpl; auto.
 intros x1 y1 z1 ((V1, (V2, V3)), V4); apply Hrec; auto.
-Qed. 
+Qed.
 
 Lemma scalL_correct: forall l x sc,
   wfe x -> wft sc ->
@@ -1000,7 +1000,7 @@ intros x; unfold ZEll.nmul.
 unfold B; rewrite z2Zx; rewrite Zmodmr; auto.
 Qed.
 
- Lemma  scalL_prime: 
+ Lemma  scalL_prime:
   let a := ntriple (Z2z (exx.(vx))) (Z2z (exx.(vy))) c1 in
   let isc := (Z2z 4) ** A ** A ** A  ++ (Z2z 27) ** B ** B in
   let (a1, sc1) := scal isc a exx.(vS) in
@@ -1020,7 +1020,7 @@ Qed.
   case_eq (scalL sc2 a2 R1); intros a3 sc3; case a3; auto.
   intros Ha3; case_eq (Zeq_bool (Zgcd (z2Z sc3) (vN exx)) 1); auto.
   intros H1.
-  assert (F0: 
+  assert (F0:
      (vy exx mod vN exx) ^ 2 mod vN exx =
        ((vx exx mod vN exx) ^ 3 + vA exx * (vx exx mod vN exx) +
         vB exx) mod vN exx).
@@ -1044,12 +1044,12 @@ Qed.
       rewrite Zmult_mod; auto; symmetry; rewrite Zmult_mod; auto; symmetry.
       apply f_equal2 with (f := Zmod); auto.
       rewrite Zmod_mod; auto.
-   generalize (@ZEll.scalL_prime exx.(vN) 
+   generalize (@ZEll.scalL_prime exx.(vN)
                (exx.(vx) mod exx.(vN))
                (exx.(vy) mod exx.(vN))
                exx.(vA)
-               exx.(vB) 
-               exxs.(n_pos) exxs.(n2_div) exx.(vR) 
+               exx.(vB)
+               exxs.(n_pos) exxs.(n2_div) exx.(vR)
                exxs.(lprime) exx.(vS) exxs.(lbig) F0); simpl.
 generalize (@scal_wf (vS exx) a isc) (@scal_correct (vS exx) a isc).
 unfold isc.
@@ -1097,7 +1097,7 @@ Qed.
 
 End NEll.
 
-Definition isM2 p := 
+Definition isM2 p :=
   match p with
     xH   => false
 |    xO _ => false
@@ -1119,9 +1119,9 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
                       (A B x y: Z) :=
     if isM2 N then
     match (4 * N) ?= (ZEll.Zmullp l - 1) ^ 2  with
-      Lt => 
+      Lt =>
        match y ^ 2 mod N ?= (x ^ 3 + A * x + B) mod N with
-       Eq => 
+       Eq =>
           let ex := mkEx N S l A B x y in
           let e2n := e ex in
           let a := mtriple (e2n x) (e2n y) (e2n 1)  in
@@ -1147,7 +1147,7 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
       | _  => false
        end
     | _  => false
-    end 
+    end
     else false.
 
 (*
@@ -1159,7 +1159,7 @@ Qed.
 
 Lemma ell_test_correct: forall (N S: positive) (l: List.list (positive * positive))
                       (A B x y: Z),
-  (forall p, List.In p l -> prime (fst p)) -> 
+  (forall p, List.In p l -> prime (fst p)) ->
   if ell_test N S l A B x y then prime N else True.
 intros N S1 l A1 B1 x y H; unfold ell_test.
 generalize (isM2_correct N); case isM2; auto.
@@ -1194,7 +1194,7 @@ assert (mspec: mod_spec op (zN exx op) mop).
   rewrite ZnZ.of_Z_correct; auto with zarith.
 generalize (@scalL_prime exx exxs _ op (cmk_spec n) mop mspec H0).
 lazy zeta.
-unfold c1, A, B,  nplus, nmul; 
+unfold c1, A, B,  nplus, nmul;
   simpl exx.(vA); simpl exx.(vB); simpl exx.(vx); simpl exx.(vy);
   simpl exx.(vS); simpl exx.(vR); simpl exx.(vN).
 case scal; intros a1 sc1.

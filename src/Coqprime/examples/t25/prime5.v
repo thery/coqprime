@@ -14,7 +14,7 @@ Proof.
 Qed.
 
 Lemma prime5678901234567890123456797: prime  5678901234567890123456797.
-apply (Pocklington_refl 
+apply (Pocklington_refl
 
 (Ell_certif
 5678901234567890123456797
@@ -25,7 +25,7 @@ apply (Pocklington_refl
 600
 14400)
 (
-(SPock_certif 
+(SPock_certif
 1379425596745957
 2
 ((7376765261, 1)::nil))

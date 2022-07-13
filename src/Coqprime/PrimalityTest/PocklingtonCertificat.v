@@ -275,7 +275,7 @@ Proof.
  intros;simpl;apply Zge_0_pos.
 Qed.
 
-Global Hint Resolve Zpower_gt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak 
+Global Hint Resolve Zpower_gt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak
   Zge_0_pos_add: zmisc.
 
 Hint Rewrite  Zpos_mult Zpower_mult Zpower_1_r Zmod_mod Zpower_exp

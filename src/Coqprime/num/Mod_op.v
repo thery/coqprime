@@ -20,7 +20,7 @@ Import CyclicAxioms DoubleType DoubleBase.
 Definition univ_of_cycles : Type.
 Proof.
   first [let _ := constr:(word : Set -> nat -> Set) in exact Set | exact Type].
-Defined. 
+Defined.
 
 
 Theorem Zpos_pos: forall x, 0 < Zpos x.
