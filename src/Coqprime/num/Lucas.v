@@ -334,7 +334,7 @@ apply Zpower_lt_monotone; auto with zarith.
 replace (2 ^ 1) with 2 in H0; auto with zarith.
 rewrite <-(lucas_f2 H); auto.
 assert (F1 : ZnZ.to_Z ZnZ.one = 1).
-rewrite w1_b with (p := p) (b := b p); [..|auto|].
+rewrite w1_b with (p := p) (b := b p); [..|auto| ].
 rewrite Z.mod_small; auto with zarith.
 apply cmk_spec; auto.
 rewrite <-(lucas_f2 H); auto.
@@ -344,7 +344,7 @@ intro H1; rewrite <-H1.
 assert (F3 : ZnZ.to_Z (add_mod m ZnZ.one ZnZ.one) = 2 mod ZnZ.to_Z (b p)).
 rewrite (add_mod_spec (lucas_f3 H) _ _ 1 1); auto.
 replace (ZnZ.to_Z ZnZ.one) with 1; auto.
-apply lucastest_eq with (p := p) (b := b p); [|auto|..].
+apply lucastest_eq with (p := p) (b := b p); [ |auto|..].
 apply cmk_spec; auto.
 apply lucas_f2; auto.
 apply lucas_f3; auto.
@@ -413,7 +413,7 @@ rewrite F1.
 rewrite (lucas_f2 H); auto with zarith.
 replace (ZnZ.to_Z (b p)) with (2 ^ Z.pos p - 1). auto with zarith.
 rewrite <-(lucas_f2 H); auto with zarith.
-rewrite lucastest_eq with (p := p) (b := b p) (6 := F); [auto..| | |].
+rewrite lucastest_eq with (p := p) (b := b p) (6 := F); [auto..| | | ].
 apply lucas_f2; auto.
 apply lucas_f3; auto.
 assert (0 <=  ZnZ.to_Z (lucastest_step o m (znz_of_Z o z) p1) < ZnZ.to_Z (b p)).
