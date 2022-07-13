@@ -299,7 +299,7 @@ generalize q_pos; intros HM.
 generalize q_pos2; intros HM2.
 assert (H0: 0 < q); auto with zarith.
 intros a b Ha Hb; generalize Hb; pattern b; apply natlike_ind; auto.
-intros _; repeat rewrite Zmod_small; auto with zarith.
+intros _; repeat rewrite Zmod_small; [auto with zarith..|].
 rewrite ppow_0; simpl; auto with zarith.
 unfold zpow; intros n1 H Rec _; unfold Z.succ.
 rewrite gpow_add; auto with zarith.

@@ -154,9 +154,9 @@ Qed.
 
 Lemma next_n_S: forall n m,  next_n S n m = plus n m.
 intros n m; generalize n; elim m; clear n m; simpl; auto with arith.
-intros m H n; case n; simpl; auto with arith.
-rewrite H; auto with arith.
-intros n1; rewrite H; simpl; auto with arith.
+intros m H n; case n; simpl.
+- rewrite H; auto with arith.
+- intros n1; rewrite H; simpl; auto with arith.
 Qed.
 
 Theorem progression_S_le_init:

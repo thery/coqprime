@@ -210,7 +210,7 @@ case (phi_bounded i); intros Hi1 H2.
 rewrite H2i, Zpower_nat_S, <- Hi; auto with zarith.
 rewrite phi_cons, (Hij i j n); nrom; auto with zarith.
 unfold positive_to_num.
-rewrite (H _ _ _ 0%nat); auto with zarith.
+rewrite (H _ _ _ 0%nat); [|auto with zarith|].
 nrom; ring.
 nrom; auto with zarith.
 Qed.

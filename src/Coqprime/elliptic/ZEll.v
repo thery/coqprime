@@ -386,12 +386,12 @@ Local Coercion Zpos : positive >-> Z.
  simpl.
  rewrite F2; simpl Pmult.
  generalize (Ppow (fst a) (snd a)).
- elim l; simpl; auto.
-   intros p; rewrite F2; auto.
- intros a1 l1 Hrec p; rewrite Hrec.
- symmetry; rewrite Hrec.
- symmetry; rewrite F1.
- rewrite (F2 p); rewrite (fun x => (F2 x 1%positive)); auto.
+ elim l; simpl.
+ - intros p; rewrite F2; auto.
+ - intros a1 l1 Hrec p; rewrite Hrec.
+   symmetry; rewrite Hrec.
+   symmetry; rewrite F1.
+   rewrite (F2 p); rewrite (fun x => (F2 x 1%positive)); auto.
  Qed.
 
  Fixpoint psplit l: positive * (List.list positive) := match l with
@@ -1351,6 +1351,7 @@ Section pell.
     assert (F3 :=
         @scalL_1 N A B N_lt_2 N_not_div_2 Rp _ Hp Hp1 R1 sc2 _ _ T2 Ni1).
     fold ppG in F3.
+
     rewrite <- psplit_correct in lR_big.
     rewrite HS1 in lR_big; simpl fst in lR_big; simpl snd in lR_big.
     assert (E2: e_order (ceqb pell) p1 ppG = (Zmullp lR)).

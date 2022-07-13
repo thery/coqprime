@@ -236,8 +236,9 @@ exists a1; exists (a :: l1); exists l2; exists l3; split; auto.
 simpl; apply ulist_cons; auto.
 contradict H1.
 replace (l1 ++ (a1 :: (l2 ++ (a1 :: l3))))
-     with ((l1 ++ (a1 :: l2)) ++ (a1 :: l3)); auto with datatypes.
-(repeat (rewrite <- ass_app; simpl)); auto.
+     with ((l1 ++ (a1 :: l2)) ++ (a1 :: l3)).
+- auto with datatypes.
+- (repeat (rewrite <- ass_app; simpl)); auto.
 Qed.
 
 Theorem incl_length_repetition:
