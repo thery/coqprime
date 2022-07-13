@@ -19,6 +19,7 @@ jobs:
         with:
           custom_script: |
             opam install -y coq-bignums
+            sudo chmod -R a+rw .
             git ls-files "*.v" | xargs sed -i 's/#[global]//g'
             make src/Coqprime/PrimalityTest/Zp.vo
           coq_version: ${{ matrix.coq_version }}
