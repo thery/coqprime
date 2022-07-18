@@ -47,7 +47,7 @@ options are:
 
 - `-split`  : generate one file per certificate
 - `-o file` : set the output in file "file"
-- `-o name` : set the name of the final theorem "name"
+- `-n name` : set the name of the final theorem "name"
 
 # BUILD / INSTALL :
 
