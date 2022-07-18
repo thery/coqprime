@@ -11204,7 +11204,7 @@ main (int argc, char *argv[])
     max = atoi(argv[2]);
   } else exit (1);
 
-  if (min < 1) min = 1;
+  if (min < 1) min = 0;
   if (max > MAXSIZE) max = MAXSIZE;
 
   out = fopen(filename,"w+");
@@ -11215,15 +11215,21 @@ main (int argc, char *argv[])
   char mynum[11];
 
   for(i = min; i < max; i++) {
-    char name[] = "myPrime";
-    sprintf(mynum, "%d", i);
-    strcat(name,mynum);
-    lc = init_certif();
-    mpz_set_ui(t, tprimes[i]);
-    c = pock_certif(t);
-    extend_lc (lc, c, tprimes[min], tprimes[max]);  
-    p = mk_pock_certif(c); 
-    print_lemma(out,name,p,lc);
+    if (i == 0) {
+      fprintf(out, "Lemma prime2 : prime 2.\n");
+      fprintf(out, "exact prime_2.\n");
+      fprintf(out, "Qed.\n\n");
+    } else {
+      char name[] = "prime";
+      sprintf(mynum, "%d", tprimes[i]);
+      strcat(name,mynum);
+      lc = init_certif();
+      mpz_set_ui(t, tprimes[i]);
+      c = pock_certif(t);
+      extend_lc (lc, c, tprimes[min], tprimes[max]); 
+      p = mk_pock_certif(c);
+      print_lemma(out,name,p,lc);
+    }
   }
 
   fclose(out);
