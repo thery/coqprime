@@ -11212,13 +11212,18 @@ main (int argc, char *argv[])
    
   fprintf(out,"Local Open Scope positive_scope.\n\n");
 
+  char mynum[11];
+
   for(i = min; i < max; i++) {
+    char name[] = "myPrime";
+    sprintf(mynum, "%d", i);
+    strcat(name,mynum);
     lc = init_certif();
     mpz_set_ui(t, tprimes[i]);
     c = pock_certif(t);
     extend_lc (lc, c, tprimes[min], tprimes[max]);  
     p = mk_pock_certif(c); 
-    print_lemma(out,"myPrime",p,lc);
+    print_lemma(out,name,p,lc);
   }
 
   fclose(out);
