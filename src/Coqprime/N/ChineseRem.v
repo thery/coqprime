@@ -135,7 +135,7 @@ Proof.
     clear H2 H3 u v.
     rewrite <- (Znat.Zabs2Nat.id (S a)).
     rewrite <- (Znat.Zabs2Nat.id c).
-    repeat rewrite Zabs2Nat.id. destruct H4. exists (Z.to_nat x). lia.
+    repeat rewrite Zabs2Nat.id. destruct H4. exists (Z.to_nat x). nia.
 Qed.
 
 Lemma coPrimeMult2 : 
@@ -854,7 +854,7 @@ Proof.
   + intros. destruct H. assert (Z.of_nat n = Z.of_nat q * Z.of_nat x)%Z by lia.
     assert (n = 0 \/ 0 < n) by lia. destruct H3.
     - lia.
-    - assert (1 < q < n \/ q = 1 \/ n <= q) by lia.
+    - assert (1 < q < n \/ q = 1 \/ n <= q) by nia.
       destruct H4 as [H4 | [H4 | H4]].
       * assert (1 <= Z.of_nat q < Z.of_nat n)%Z by lia.
         pose proof (H1 _ H5). subst. exfalso.
@@ -881,7 +881,7 @@ Proof.
     assert (divide (Z.to_nat W) n).
     { destruct H4. exists (Z.to_nat x). unfold W.
       pose proof (Z.gcd_nonneg n0 (Z.of_nat n)).
-      lia. }
+      nia. }
     apply H0 in H5. destruct H5.
     - assert (W = 1)%Z by lia.
       rewrite <- H6. apply Znumtheory.Zgcd_is_gcd.
@@ -940,8 +940,8 @@ Proof.
       apply primeDiv in H3.
       destruct H3 as [p [H3 H4]]. pose proof (H _ H3).
       exfalso. destruct H4. destruct H5.
-      * apply H5. destruct H0. exists (x0 * Z.to_nat x1). lia.
-      * apply H5. destruct H1. exists (x0 * Z.to_nat x1). lia.
+      * apply H5. destruct H0. exists (x0 * Z.to_nat x1). nia.
+      * apply H5. destruct H1. exists (x0 * Z.to_nat x1). mia.
 Qed.
 
 Lemma div_plus_r :
