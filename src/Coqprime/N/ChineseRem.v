@@ -941,7 +941,7 @@ Proof.
       destruct H3 as [p [H3 H4]]. pose proof (H _ H3).
       exfalso. destruct H4. destruct H5.
       * apply H5. destruct H0. exists (x0 * Z.to_nat x1). nia.
-      * apply H5. destruct H1. exists (x0 * Z.to_nat x1). mia.
+      * apply H5. destruct H1. exists (x0 * Z.to_nat x1). nia.
 Qed.
 
 Lemma div_plus_r :
