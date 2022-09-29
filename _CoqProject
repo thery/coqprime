@@ -2,6 +2,7 @@
 
 src/Coqprime/Tactic/Tactic.v
 src/Coqprime/N/NatAux.v
+src/Coqprime/N/ChineseRem.v
 src/Coqprime/List/Iterator.v
 src/Coqprime/List/ListAux.v
 src/Coqprime/List/Permutation.v
