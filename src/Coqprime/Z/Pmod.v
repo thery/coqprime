@@ -166,13 +166,13 @@ Lemma mod_a_a_0 : forall a, a mod a = N0.
 Proof.
  intros a;generalize (div_eucl_spec a a);rewrite <- Pmod_div_eucl.
  destruct (fst (a / a));unfold Z_of_N at 1.
- rewrite Zmult_0_l;intros (H1,H2);elimtype False;lia.
+ rewrite Zmult_0_l;intros (H1,H2);exfalso;lia.
  assert (a<=p*a).
   pattern (Zpos a) at 1;rewrite <- (Zmult_1_l a).
   assert (H1:= Zlt_0_pos p);assert (H2:= Zle_0_pos a);
    apply Zmult_le_compat;trivial;try lia.
  destruct (a mod a)%P;auto with zarith.
- unfold Z_of_N;assert (H1:= Zlt_0_pos p0);intros (H2,H3);elimtype False;lia.
+ unfold Z_of_N;assert (H1:= Zlt_0_pos p0);intros (H2,H3);exfalso;lia.
 Qed.
 
 Lemma mod_le_2r : forall (a b r: positive) (q:N),
@@ -180,7 +180,7 @@ Lemma mod_le_2r : forall (a b r: positive) (q:N),
 Proof.
  intros a b r q H0 H1 H2.
  assert (H3:=Zlt_0_pos a). assert (H4:=Zlt_0_pos b). assert (H5:=Zlt_0_pos r).
- destruct q as [|q].  rewrite Zmult_0_r in H0. elimtype False;lia.
+ destruct q as [|q].  rewrite Zmult_0_r in H0. exfalso;lia.
  assert (H6:=Zlt_0_pos q).  unfold Z_of_N in H0.
  assert (Zpos r = a - b*q). lia.
  simpl;zsimpl. pattern r at 2;rewrite H.
@@ -325,8 +325,8 @@ Qed.
 Lemma log2_1_inv : forall a, Zpos (log2 a) = 1 -> a = xH.
 Proof.
  destruct a;simpl;zsimpl;intros;trivial.
- assert (H1:= Zlt_0_pos (log2 a));elimtype False;lia.
- assert (H1:= Zlt_0_pos (log2 a));elimtype False;lia.
+ assert (H1:= Zlt_0_pos (log2 a));exfalso;lia.
+ assert (H1:= Zlt_0_pos (log2 a));exfalso;lia.
 Qed.
 
 Lemma mod_log2 :

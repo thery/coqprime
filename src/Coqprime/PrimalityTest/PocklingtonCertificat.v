@@ -259,13 +259,13 @@ Proof with auto with zarith.
   rewrite <- H0.
   pattern b at 2; replace b with (b*1).
   apply Zmult_ge_compat_l; lia.  ring.
-  elimtype False; lia.
+  exfalso; lia.
   split;trivial. rewrite H;rewrite H5;ring.
   assert (r1- r2 <= -b).
   rewrite <- H0.
   replace (-b) with (b*(-1)); try (ring;fail).
   apply Zmult_le_compat_l; lia.
-  elimtype False; lia.
+  exfalso; lia.
 Qed.
 
 Lemma Zge_0_pos : forall p:positive, p>= 0.
