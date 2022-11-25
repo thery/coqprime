@@ -81,11 +81,11 @@ Proof.
  assert (H := Pminus_mask_spec y x);destruct (Pminus_mask y x).
  rewrite H;unfold Z_of_N;auto with zarith.
  rewrite H;unfold Z_of_N;auto with zarith.
- elimtype False;lia.
+ exfalso;lia.
 Qed.
 
 Lemma Ppred_Zminus : forall p, 1< Zpos p ->  (p-1)%Z = Pos.pred p.
-Proof. destruct p;simpl;trivial. intros;elimtype False;lia. Qed.
+Proof. destruct p;simpl;trivial. intros;exfalso;lia. Qed.
 
 Local Open Scope positive_scope.
 
