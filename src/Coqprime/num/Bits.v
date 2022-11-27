@@ -51,7 +51,7 @@ assert (H1: Zpos q > 0); auto with zarith.
 assert (H1b: Zpos p >= 0).
   red; intros; discriminate.
 generalize (Z_div_ge0 (Zpos p) (Zpos q) H1 H1b).
-generalize (Z_div_mod_eq (Zpos p) (Zpos q) H1); case Z.div.
+generalize (Z_div_mod_eq_full (Zpos p) (Zpos q)); case Z.div.
   intros HH _; rewrite HH; rewrite Zmult_0_r; rewrite Zmult_1_r; simpl.
 case (Z_mod_lt (Zpos p) (Zpos q) H1); auto with zarith.
 intros q1 H2.

@@ -930,7 +930,7 @@ Local Coercion Zpos : positive >-> Z.
  field_simplify_eq; auto.
  unfold ninv, pkopp, GZnZ.opp, to_p, pK; apply zirr.
  simpl; rewrite <- Zmod_div_mod; auto with zarith.
- pattern y at 1; rewrite (Z_div_mod_eq y p); auto with zarith.
+ pattern y at 1; rewrite (Z_div_mod_eq_full y p).
  rewrite Zopp_plus_distr.
  rewrite Zopp_mult_distr_r.
  rewrite Zmult_comm; rewrite Zplus_comm;
@@ -1279,7 +1279,7 @@ Section pell.
     rewrite (Zmodml (27 * B)); auto.
     rewrite <- Zplus_mod; auto.
     rewrite Zmodml; auto; fold d; clear Hz1; intros Hz1.
-    rewrite (Z_div_mod_eq (z1 * d) N); auto with zarith.
+    rewrite (Z_div_mod_eq_full (z1 * d) N).
     rewrite (Zmult_comm z1).
     rewrite (Zmult_comm N).
     rewrite Zplus_assoc.

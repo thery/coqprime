@@ -434,7 +434,7 @@ Proof.
   assert ( 0 <= a mod b < b).
    apply Z_mod_lt; mauto.
   destruct (mod_unique b (a/b) (a mod b) 0 a H0 H); mauto.
-  rewrite <- Z_div_mod_eq; mauto.
+  rewrite <- Z_div_mod_eq_full; mauto.
 Qed.
 
 Lemma Npred_mod_spec : forall p n, Z_of_N p < Zpos n ->
@@ -681,7 +681,7 @@ Proof.
   apply mod_unique with (2 * mkProd dec).
  revert H8; mauto.
  apply Z_mod_lt; mauto.
- rewrite <- Z_div_mod_eq by mauto; rewrite H7.
+ rewrite <- Z_div_mod_eq_full; rewrite H7.
  simpl fst; simpl snd; simpl Z_of_N.
  ring. }
  destruct H15 as (H15,Heqr).

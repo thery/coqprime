@@ -967,7 +967,7 @@ Notation "[[ x ]]" :=
  Theorem mmul_aux2:forall x,
    x mod (2 ^ Zpos p - 1) =
     ((x / 2 ^ Zpos p) + (x mod 2 ^ Zpos p)) mod (2 ^ Zpos p - 1).
- intros x; pattern x at 1; rewrite Z_div_mod_eq with (b := 2 ^ Zpos p); auto with zarith.
+ intros x; pattern x at 1; rewrite Z_div_mod_eq_full with (b := 2 ^ Zpos p).
  match goal with |- (?X * ?Y + ?Z) mod (?X - 1) = ?T =>
   replace (X * Y + Z) with (Y * (X - 1) + (Y + Z)); try ring
  end.

@@ -176,7 +176,7 @@ apply is_inv_false.
 intros c H1; left; intros H2; contradict H.
 apply bezout_rel_prime.
 apply Bezout_intro with c  (- (Z.div (c * a) n)).
-pattern (c * a) at 1; rewrite (Z_div_mod_eq (c * a) n); auto with zarith.
+pattern (c * a) at 1; rewrite (Z_div_mod_eq_full (c * a) n).
 unfold pmult in H2; rewrite (Zmult_comm c); try rewrite H2.
 ring.
 Qed.

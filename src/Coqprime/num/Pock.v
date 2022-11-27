@@ -438,7 +438,7 @@ repeat rewrite Zpos_mult; auto with zarith.
 assert (HH:Z_of_N s = R1 / (2 * mkProd dec) /\ Zpos r =  R1 mod (2 * mkProd dec)).
 apply mod_unique with (2 * mkProd dec); [auto with zarith | | ].
 apply Z_mod_lt; auto with zarith.
-rewrite <- Z_div_mod_eq by auto with zarith.
+rewrite <- Z_div_mod_eq_full.
 rewrite H3.
 rewrite (Zpos_xO (mkProd dec)).
 simpl Z_of_N; ring.

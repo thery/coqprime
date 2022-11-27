@@ -88,7 +88,7 @@ Lemma Zmod_div_mod: forall n m a, 0 < n -> 0 < m ->
   (n | m) -> a mod n = (a mod m) mod n.
 Proof.
 intros n m a H1 H2 H3.
-pattern a at 1; rewrite (Z_div_mod_eq a m); auto with zarith.
+pattern a at 1; rewrite (Z_div_mod_eq_full a m).
 case H3; intros q Hq; pattern m at 1; rewrite Hq.
 rewrite (Zmult_comm q).
 rewrite Zplus_mod; auto.
