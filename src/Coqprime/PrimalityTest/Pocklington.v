@@ -136,7 +136,7 @@ pose (c := (X /  F1)).
 assert(Hc1: 0 <= c).
 apply Z.ge_le; unfold c; apply Z_div_ge0; auto with zarith.
 assert (Hc2: X = c * F1 + 1).
-rewrite (Z_div_mod_eq X F1) by auto with zarith.
+rewrite (Z_div_mod_eq_full X F1).
 eq_tac.
 rewrite (Zmult_comm F1); auto.
 apply PocklingtonCorollary2 with (R1 := R1) (4 := H4); auto with zarith.
@@ -154,7 +154,7 @@ apply Z.ge_le; unfold d; repeat apply Z_div_ge0; auto with zarith.
 assert(Hd1: 0 <= d).
 apply Z.ge_le; unfold d; repeat apply Z_div_ge0; auto with zarith.
 assert (Hd2: N / X =  d * F1 + 1).
-rewrite (Z_div_mod_eq (N / X) F1) by auto with zarith.
+rewrite (Z_div_mod_eq_full (N / X) F1).
 eq_tac.
 rewrite (Zmult_comm F1); auto.
 apply PocklingtonCorollary2 with (R1 := R1) (4 := H4). 1-4: auto with zarith.
@@ -226,7 +226,7 @@ unfold r; apply Z_mod_lt; auto with zarith.
 assert (L11: 2 * s  = c * d).
 apply Zmult_reg_r with F1. auto with zarith.
 apply trans_equal with (R1 - (c + d)).
-rewrite L10; rewrite (Z_div_mod_eq R1 (2 * F1)). 2: auto with zarith.
+rewrite L10; rewrite (Z_div_mod_eq_full R1 (2 * F1)).
 unfold s, r; ring.
 rewrite L6; ring.
 case H8; intro H10.
@@ -255,7 +255,7 @@ case (Zle_lt_or_eq 0 r); unfold r.
 case (Z_mod_lt R1 (2 * F1)); auto with zarith.
 intros HH; repeat ((rewrite <- (Zplus_0_r 0); apply Zplus_le_compat)); auto with zarith.
 intros HH; contradict ER1; apply Zeven_not_Zodd.
-rewrite (Z_div_mod_eq R1 (2 * F1)) by auto with zarith.
+rewrite (Z_div_mod_eq_full R1 (2 * F1)).
 rewrite <- HH; rewrite Zplus_0_r.
 rewrite <- Zmult_assoc; apply Zeven_2p.
 Qed.

@@ -537,7 +537,7 @@ rewrite <- (Z_mod_plus) with (b := -(-z2Z y1 /exx.(vN))); auto with zarith.
 rewrite <- Zopp_mult_distr_l.
 rewrite <- Zopp_plus_distr.
 rewrite Zmult_comm; rewrite Zplus_comm.
-rewrite <- Z_div_mod_eq; auto with zarith.
+rewrite <- Z_div_mod_eq_full.
 rewrite Z.opp_involutive; rewrite <- z2ZN.
 apply sym_equal; auto.
 Qed.
@@ -580,7 +580,7 @@ intros p Hrec b x sc H1 H2.
     rewrite <- Zopp_mult_distr_l.
     rewrite <- Zopp_plus_distr.
     rewrite Zmult_comm; rewrite Zplus_comm.
-    rewrite <- Z_div_mod_eq; auto with zarith.
+    rewrite <- Z_div_mod_eq_full.
     rewrite Z.opp_involutive; rewrite <- z2ZN.
     apply sym_equal; auto.
     generalize H1; case x; auto.
@@ -610,7 +610,7 @@ intros p Hrec b x sc H1 H2.
     rewrite <- Zopp_mult_distr_l.
     rewrite <- Zopp_plus_distr.
     rewrite Zmult_comm; rewrite Zplus_comm.
-    rewrite <- Z_div_mod_eq; auto with zarith.
+    rewrite <- Z_div_mod_eq_full.
     rewrite Z.opp_involutive; rewrite <- z2ZN.
     apply sym_equal; auto.
     generalize H1; case x; auto.
