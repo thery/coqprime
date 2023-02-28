@@ -18,7 +18,7 @@ Hypothesis n_pos: 0 < n.
 
 Structure znz: Set:=
  mkznz {val: Z;
-        inZnZ: val = Zmod val n}.
+        inZnZ: val = Z.modulo val n}.
 
 Theorem znz_inj: forall a b, a = b -> val a = val b.
 intros; subst; auto.
@@ -96,7 +96,7 @@ intros [x Hx] [y Hy] [z Hz].
   rewrite (Zplus_mod ((x*z) mod n)); auto.
   repeat rewrite Zmod_mod; auto.
   rewrite <- Zplus_mod; auto.
-  apply f_equal2 with (f := Zmod); auto; ring.
+  apply f_equal2 with (f := Z.modulo); auto; ring.
 intros [x Hx] [y Hy].
   refine (zirr _ _ _ _ _); simpl.
   rewrite Zplus_mod; auto.
@@ -107,7 +107,7 @@ intros [x Hx].
   rewrite Zplus_mod; auto.
   repeat rewrite Zmod_mod; auto.
   rewrite <- Zplus_mod; auto.
-  apply f_equal2 with (f := Zmod); auto; ring.
+  apply f_equal2 with (f := Z.modulo); auto; ring.
 Defined.
 
 Add Ring RZnZ : RZnZ.
@@ -212,7 +212,7 @@ unfold all_znz; apply mkzlist_in.
 apply lt_mklist_lt.
 case (Z_mod_lt z1 n). auto with zarith.
 rewrite <- Hz1; intros H1 H2.
-case (le_or_lt (Z.abs_nat n) (Z.abs_nat z1)); auto; intros H3.
+case (Nat.le_gt_cases (Z.abs_nat n) (Z.abs_nat z1)); auto; intros H3.
 absurd (z1 < n); auto; apply Zle_not_lt.
 rewrite <- Z.abs_eq; auto.
 rewrite <- inj_Zabs_nat; auto.

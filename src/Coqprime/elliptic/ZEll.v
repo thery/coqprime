@@ -32,10 +32,10 @@ Section Nell.
  Inductive nelt: Set :=
    nzero | ntriple: Z -> Z -> Z  -> nelt.
 
- Definition nplus x y := (Zmod (x + y) N).
- Definition nmul x y := (Zmod (x * y) N).
- Definition nsub x y := (Zmod (x - y) N).
- Definition ninv x := (Zmod (-x) N).
+ Definition nplus x y := (Z.modulo (x + y) N).
+ Definition nmul x y := (Z.modulo (x * y) N).
+ Definition nsub x y := (Z.modulo (x - y) N).
+ Definition ninv x := (Z.modulo (-x) N).
 
  Notation "x ++ y " := (nplus x y).
  Notation "x -- y" := (nsub x y) (at level 50, left associativity).
@@ -98,7 +98,7 @@ Section Nell.
              (z1 ** z2 ** l3), sc)
   end.
 
- Definition inversible n x := exists y, Zmod (x * y) n = 1%Z.
+ Definition inversible n x := exists y, Z.modulo (x * y) n = 1%Z.
 
 
  Lemma inversible_1: forall n, 1 < n -> inversible n 1.

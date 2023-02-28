@@ -143,7 +143,7 @@ case (ulist_incl_permutation l1 l2); auto.
 intros l3 H4.
 assert (H5: l3 = @nil A).
 generalize (permutation_length _ _ _ H4); rewrite length_app; rewrite H3.
-rewrite plus_comm; case l3; simpl; auto.
+rewrite Nat.add_comm; case l3; simpl; auto.
 intros a l H5; absurd (lt (length l2) (length l2)); auto with arith.
 pattern (length l2) at 2; rewrite H5; auto with arith.
 replace l1 with (app l1 l3); auto.
@@ -164,7 +164,7 @@ Theorem ulist_incl2_permutation:
  ulist l1 -> ulist l2 -> incl l1 l2 -> incl l2 l1  ->  permutation l1 l2.
 intros l1 l2 H1 H2 H3 H4.
 apply ulist_eq_permutation; auto.
-apply le_antisym; apply ulist_incl_length; auto.
+apply Nat.le_antisymm; apply ulist_incl_length; auto.
 Qed.
 
 
@@ -178,7 +178,8 @@ generalize Hl3; case l3; simpl; auto with arith.
 rewrite <- app_nil_end; auto.
 intros H2; case Hi0; auto.
 intros a HH; apply permutation_in with ( 1 := H2 ); auto.
-intros a l Hl0; (rewrite plus_comm; simpl; rewrite plus_comm; auto with arith).
+intros a l Hl0; (rewrite Nat.add_comm; simpl; 
+                 rewrite Nat.add_comm; auto with arith).
 Qed.
 
 Theorem in_inv_dec:

@@ -146,7 +146,7 @@ intros a l; case l; simpl; auto.
 intros a1 l1.
 match goal with |-  context[fst ?A]   => case A end; simpl; auto with zarith.
 intros p1 _ H H1.
-apply lt_n_S; apply H; intros; discriminate.
+apply (Nat.succ_lt_mono (length p1)); apply H; intros; discriminate.
 Qed.
 
 Theorem root_max:
@@ -174,7 +174,8 @@ apply trans_equal with (plus zero x1); auto.
 rewrite <- (plus_op_zero a); try rewrite <- plus_assoc; auto.
 rewrite (fun x => plus_comm (op x)); try rewrite H6; try rewrite plus_comm; auto.
 apply sym_equal; apply plus_zero; auto.
-apply lt_n_Sm_le;apply lt_le_trans with (length (a1 :: p2)); auto with zarith.
+apply Nat.lt_succ_r;apply Nat.lt_le_trans with (length (a1 :: p2)); 
+   auto with zarith.
 apply length_decrease; auto with datatypes.
 Qed.
 

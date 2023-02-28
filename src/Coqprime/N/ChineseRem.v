@@ -337,8 +337,9 @@ Lemma euclid_gcd1 :
     Zis_gcd r y (Z.of_nat d).
 Proof.
   intros. rewrite H0 in H. clear H0 x.
-  replace (q * y + r)%Z with (r - (- q) * y)%Z in H by lia.
-  apply Zis_gcd_sym in H. apply Zis_gcd_for_euclid in H. auto.
+  replace r with  (y * - q + (q * y + r))%Z by lia.
+  apply Zis_gcd_sym. 
+  apply Zis_gcd_for_euclid2; auto with zarith.
 Qed.
 
 Lemma euclid_gcd (d1 d2 : nat) (x y q r : Z) :

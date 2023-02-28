@@ -381,7 +381,7 @@ assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
   set (p := plength N).
   replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
        ((Zpos (get_height 63 p) - 1) ). auto with zarith.
-  rewrite pred_of_minus; rewrite inj_minus1.
+  rewrite <-  Nat.sub_1_r; rewrite inj_minus1.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
   generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 assert (F1: ZnZ.to_Z (ZnZ.of_Z N) = N).
@@ -687,7 +687,7 @@ assert (F0: N < DoubleType.base (ZnZ.digits w_op)).
   set (p := plength N).
   replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
        ((Zpos (get_height 63 p) - 1) ). auto with zarith.
-  rewrite pred_of_minus; rewrite inj_minus1.
+  rewrite <- Nat.sub_1_r; rewrite inj_minus1.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
   generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 assert (F1: ZnZ.to_Z (ZnZ.of_Z N) = N).

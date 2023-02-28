@@ -137,7 +137,7 @@ exists j2; rewrite Zpower_0_r; auto with zarith.
 Qed.
 
 Theorem inj_lt_inv: forall n m : nat, Z_of_nat n < Z_of_nat m -> (n < m)%nat.
-intros n m H; case (le_or_lt m n); auto; intros H1; contradict H.
+intros n m H; case (Nat.le_gt_cases m n); auto; intros H1; contradict H.
 apply Zle_not_lt; apply inj_le; auto.
 Qed.
 
@@ -157,7 +157,7 @@ intros tmp; rewrite tmp; clear tmp.
 rewrite H; auto; rewrite plus_comm; auto with datatypes.
 apply mult_internal; auto.
 apply eval_P; auto.
-simpl; apply lt_le_S; apply le_lt_trans with (1 := Hp1).
+simpl; apply Nat.le_succ_l; apply Nat.le_lt_trans with (1 := Hp1).
 apply inj_lt_inv.
 rewrite inj_Zabs_nat; auto with zarith.
 rewrite Z.abs_eq ; auto with zarith.
