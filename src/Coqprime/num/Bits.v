@@ -58,7 +58,7 @@ intros q1 H2.
 replace (Zpos p - Zpos q * Zpos q1) with (Zpos p mod Zpos q).
   2: pattern (Zpos p) at 2; rewrite H2; auto with zarith.
 generalize H2 (Z_mod_lt (Zpos p) (Zpos q) H1); clear H2;
-  case Zmod.
+  case Z.modulo.
   intros HH _; rewrite HH; auto with zarith.
   intros r1 HH (_,HH1); rewrite HH; rewrite Zpos_succ_morphism.
   unfold Z.succ; rewrite Zmult_plus_distr_r; auto with zarith.

@@ -208,12 +208,12 @@ intros n; elim n; simpl; auto; clear n.
 intros m p Hm H1; replace p with 0%nat.
 left; eq_tac; auto with zarith.
 generalize H1; case p; simpl; auto with arith.
-intros n H2; contradict H2; apply le_not_lt; auto with arith.
+intros n H2; contradict H2; apply Nat.le_ngt; auto with arith.
 intros n1 Rec m p Hm; case (A_dec (op a (gpow m)) G.(e)); simpl; intros H1 H2; auto.
 replace p with 0%nat.
 left; eq_tac; auto with zarith.
 generalize H2; case p; simpl; auto with arith.
-intros n H3; contradict H3; apply le_not_lt; auto with arith.
+intros n H3; contradict H3; apply Nat.le_ngt; auto with arith.
 generalize H2; case p; simpl; clear H2.
 rewrite Zplus_0_r; auto.
 intros n.

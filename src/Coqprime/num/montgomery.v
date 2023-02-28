@@ -160,14 +160,16 @@ assert (HH2 := Zpower_nat_pos _ (S n) HH1).
 rewrite spec_compare; case Z.compare_spec.
 rewrite spec_mul; nrom.
 rewrite Hi, <- Zpower_nat_S; auto with zarith.
-case (le_lt_or_eq n 30); auto with zarith; intros HH3.
+assert (H30 : (n <= 30)%nat) by auto with arith.
+apply Nat.lt_eq_cases in H30; case H30; auto with zarith; intros HH3.
 rewrite Zmod_small; auto with zarith.
 split; auto with zarith.
 change wB with (Zpower_nat 2 31); apply Zpower_nat_lt_compat; auto with zarith.
 intros HH; contradict HH.
 case (phi_bounded (2 * i)); nrom; auto with zarith.
 rewrite spec_mul; nrom; rewrite Hi, <- Zpower_nat_S; auto with zarith.
-case (le_lt_or_eq n 30); auto with zarith; intros HH3.
+assert (H30 : (n <= 30)%nat) by auto with arith.
+apply Nat.lt_eq_cases in H30; case H30; auto with zarith; intros HH3.
 rewrite Zmod_small; nrom; auto with zarith.
 split; auto with zarith.
 change wB with (Zpower_nat 2 31); apply Zpower_nat_lt_compat; auto with zarith.
@@ -645,7 +647,8 @@ rewrite spec_compare; case Z.compare_spec; intros Hc;
 assert (He: (phi(a - (1 + b)) = phi a - phi b - 1 + wB)%Z).
 rewrite <- (fun x y => Zmod_small (x + y) wB); auto with zarith.
 rewrite Zplus_mod, Z_mod_same_full, Zplus_0_r, Zmod_mod; auto with zarith.
-rewrite spec_sub, H1b; nrom; apply f_equal2 with (f := Zmod); auto with zarith.
+rewrite spec_sub, H1b; nrom; 
+  apply f_equal2 with (f := Z.modulo); auto with zarith.
 rewrite spec_compare; case Z.compare_spec; intros Hc;
   auto with zarith.
 Qed.
@@ -1094,13 +1097,13 @@ unfold v; rewrite add_correct, scal_correct; auto.
 generalize Hv; destruct v as [ | b v1]; nrom; clear Hv; intros Hv.
 rewrite Zpower_nat_S, (Zmult_comm wB), Zmult_assoc, Zmult_mod, Hrec.
 nrom; rewrite Zplus_0_r, <- Zmult_mod.
-apply f_equal2 with (f := Zmod); auto.
+apply f_equal2 with (f := Z.modulo); auto.
 rewrite <- Zminus_0_r, Hv; ring.
 rewrite Zpower_nat_S, (Zmult_comm wB), Zmult_assoc, Zmult_mod, Hrec.
 rewrite <- Zmult_mod, shift_correct, add_correct, scal_correct; nrom.
 rewrite Zmult_plus_distr_l, reduce_aux_step.
 rewrite Zplus_assoc, Z_mod_plus_full.
-apply f_equal2 with (f := Zmod); auto.
+apply f_equal2 with (f := Z.modulo); auto.
 rewrite Hv; ring.
 Qed.
 
@@ -1342,7 +1345,7 @@ unfold decode; rewrite reduce_correct.
 apply (eq_Tn_correct _ _ n).
 rewrite reduce_mult_correct.
 rewrite !encode_correct by auto with zarith.
-rewrite <-Zmult_mod. apply f_equal2 with (f := Zmod).
+rewrite <-Zmult_mod. apply f_equal2 with (f := Z.modulo).
 ring.
 reflexivity.
 unfold decode; auto with zarith.

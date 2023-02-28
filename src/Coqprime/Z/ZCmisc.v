@@ -60,7 +60,7 @@ Lemma Pminus_mask_spec :
     match Pminus_mask p q with
     | IsNul    => Zpos p =  Zpos q
     | IsPos k => Zpos p = q + k
-    | IsNeq   => p < q
+    | IsNeg   => p < q
     end.
 Proof.
   intros p q;

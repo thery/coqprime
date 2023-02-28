@@ -324,7 +324,7 @@ Lemma Pmod_Zmod : forall a b, Z_of_N (a mod b)%P = a mod b.
 Proof.
  intros a b; rewrite Pmod_div_eucl.
  assert (b>0). mauto.
- unfold Zmod; assert (H1 := Z_div_mod a b H).
+ unfold Z.modulo; assert (H1 := Z_div_mod a b H).
  destruct (Z.div_eucl a b) as (q2, r2).
  assert (H2 := div_eucl_spec a b).
  assert (Z_of_N (fst (a / b)%P) = q2 /\ Z_of_N (snd (a/b)%P) = r2).

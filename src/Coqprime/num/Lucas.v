@@ -264,7 +264,7 @@ unfold op, base; rewrite cmk_op_digits.
 generalize (get_height_correct 63 p).
 replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
        ((Zpos (get_height 63 p) - 1) ). auto with zarith.
-rewrite pred_of_minus; rewrite inj_minus1.
+rewrite <- Nat.sub_1_r; rewrite inj_minus1.
 rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; auto with zarith.
 generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 Qed.

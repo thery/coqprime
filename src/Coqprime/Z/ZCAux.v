@@ -182,17 +182,17 @@ match a with
     end
 end.
 
-Theorem Zmodd_correct: forall a b, Zmodd a b = Zmod a b.
-intros a b; unfold Zmod; case a; simpl; auto.
+Theorem Zmodd_correct: forall a b, Zmodd a b = Z.modulo a b.
+intros a b; unfold Z.modulo; case a; simpl; auto.
 intros p; case b; simpl; auto.
 intros p1; refine (Zmod_POS_correct _ _); auto.
 intros p1; rewrite Zmod_POS_correct; auto.
-case (Zdiv_eucl_POS p (Zpos p1)); simpl; intros z1 z2; case z2; auto.
+case (Z.pos_div_eucl p (Zpos p1)); simpl; intros z1 z2; case z2; auto.
 intros p; case b; simpl; auto.
 intros p1; rewrite Zmod_POS_correct; auto.
-case (Zdiv_eucl_POS p (Zpos p1)); simpl; intros z1 z2; case z2; auto.
+case (Z.pos_div_eucl p (Zpos p1)); simpl; intros z1 z2; case z2; auto.
 intros p1; rewrite Zmod_POS_correct; simpl; auto.
-case (Zdiv_eucl_POS p (Zpos p1)); auto.
+case (Z.pos_div_eucl p (Zpos p1)); auto.
 Qed.
 
 Theorem prime_divide_prime_eq:

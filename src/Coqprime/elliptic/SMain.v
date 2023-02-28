@@ -1538,10 +1538,10 @@ intros l; elim l; simpl; auto.
 intros a l1 H; case KLroot.
   intros k; case is_zero; simpl.
     apply le_n_S.
-    apply le_trans with (1 := H).
+    apply Nat.le_trans with (1 := H).
     rewrite <- plus_n_Sm; auto.
  rewrite <- plus_n_Sm; auto with arith.
-apply le_trans with (1 := H).
+apply Nat.le_trans with (1 := H).
 rewrite <- plus_n_Sm; auto.
 Qed.
 
@@ -1655,7 +1655,7 @@ apply ELK_ulist.
 Qed.
 
 Theorem FELLK_length:  (length FELLK <= 2 * length LK + 1)%nat.
-unfold FELLK; rewrite plus_comm; simpl.
+unfold FELLK; rewrite Nat.add_comm; simpl.
 rewrite mk_lelt_length.
 generalize ELK_length; simpl; auto with arith.
 Qed.

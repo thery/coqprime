@@ -178,7 +178,7 @@ Fixpoint mkRect (n m: nat) {struct n} : list (Z * Z) :=
 
 Theorem mkRect_length: forall n m, length (mkRect n m) = ((n + 1) * (m + 1))%nat.
 intros n; elim n; simpl; auto.
-intros n1; rewrite <- app_nil_end; rewrite mkLine_length; rewrite plus_0_r; auto.
+intros n1; rewrite <- app_nil_end; rewrite mkLine_length; rewrite Nat.add_0_r; auto.
 intros n1 Rec m1; rewrite length_app; rewrite Rec; rewrite mkLine_length; auto.
 Qed.
 
@@ -255,7 +255,8 @@ Qed.
   We define zpmult the multiplication of pairs module m
  **************************************)
 
-Definition zpmult (p q: Z * Z) := let (x ,y) := pmult p q in (Zmod x m, Zmod y m).
+Definition zpmult (p q: Z * Z) := 
+  let (x ,y) := pmult p q in (Z.modulo x m, Z.modulo y m).
 
 (**************************************
   Some properties of zpmult

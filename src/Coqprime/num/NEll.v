@@ -751,18 +751,18 @@ Qed.
       match goal with |- ?t1 = ?t2 => rmod t1; auto end.
       rewrite HH.
       rewrite Zplus_mod; auto; symmetry; rewrite Zplus_mod; auto; symmetry.
-      apply f_equal2 with (f := Zmod); auto.
+      apply f_equal2 with (f := Z.modulo); auto.
       apply f_equal2 with (f := Zplus); auto.
       rewrite Zplus_mod; auto; symmetry; rewrite Zplus_mod; auto; symmetry.
-      apply f_equal2 with (f := Zmod); auto.
+      apply f_equal2 with (f := Z.modulo); auto.
       apply f_equal2 with (f := Zplus); auto.
       rewrite Zmult_mod; auto; symmetry; rewrite Zmult_mod; auto; symmetry.
-      apply f_equal2 with (f := Zmod); auto.
+      apply f_equal2 with (f := Z.modulo); auto.
       apply f_equal2 with (f := Zmult); auto.
       rewrite Zmod_mod; auto.
       match goal with |- ?t1 = ?t2 => rmod t2; auto end.
       rewrite Zmult_mod; auto; symmetry; rewrite Zmult_mod; auto; symmetry.
-      apply f_equal2 with (f := Zmod); auto.
+      apply f_equal2 with (f := Z.modulo); auto.
       rewrite Zmod_mod; auto.
    generalize (@ZEll.scalL_prime exx.(vN)
                (exx.(vx) mod exx.(vN))
@@ -943,7 +943,7 @@ assert (H0: N < base (ZnZ.digits op)).
   set (p := plength N).
   replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
        ((Zpos (get_height 63 p) - 1) ). auto with zarith.
-  rewrite pred_of_minus; rewrite inj_minus1.
+  rewrite <- Nat.sub_1_r; rewrite inj_minus1.
   rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; reflexivity.
   generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
 assert (mspec: mod_spec op (zN exx op) mop).
