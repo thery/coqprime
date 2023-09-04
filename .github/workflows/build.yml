@@ -14,7 +14,7 @@ jobs:
         ocaml_version: ['default']
       fail-fast: false  # don't stop jobs if one fails
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: coq-community/docker-coq-action@v1
         with:
           opam_file: 'coq-coqprime.opam'
