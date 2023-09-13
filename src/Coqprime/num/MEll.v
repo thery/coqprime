@@ -8,7 +8,7 @@
 
 
 Require Import ZArith Znumtheory Zpow_facts.
-Require Import Int31 ZEll montgomery.
+Require Import Uint63 ZEll montgomery.
 
 Set Implicit Arguments.
 
