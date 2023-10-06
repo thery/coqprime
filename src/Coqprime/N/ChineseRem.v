@@ -7,6 +7,20 @@ Require Import NatAux ZCAux ZCmisc ZSum Pmod Ppow.
 
 Open Scope nat_scope.
 
+(** ** Remark
+
+Several definitions and theorems in this file are used by the library 
+    PRrepresentable of the [Goedel] project (maintained #<a href="/https://github.com/coq-community/hydra-battles">here</a>#
+%\href{https://github.com/coq-community/hydra-battles}{here}%).
+  This library is dedicated to  the proof that every primitive recursive function is 
+     representable in NN theory.
+  Goedel's beta function is a key tool in this proof. The key theorem [betaTheorem1] is proved 
+  with the help of the Chinese Remainder, thus [beta] is defined and studied in this library. 
+  
+ The following symbols are imported by PRrepresentable: [div_eucl], [uniqueRem], [rem], [coPrimeBeta], [gtBeta], [beta], [betaTheorem1] and  [betaTheorem].
+  
+*) 
+
 (* *  Compatibility Lemmas (to remove someday)
 
    These lemmas are deprecated since 8.16. 
@@ -74,8 +88,6 @@ Proof.
 Qed.
 
 Definition factorial (n : nat) : nat := prod n S.
-
-
 
 (** *  Relative primality *)
 
@@ -228,8 +240,7 @@ Proof.
   destruct (Zle_not_lt q (r1 - r2)); assumption.
 Qed.
 
-(** Imported by PRrepresentable *)
-
+  
 Lemma uniqueRem :
  forall r1 r2 b : nat,
  b > 0 ->
@@ -241,7 +252,7 @@ Proof.
   assert (x = x0). { nia. } nia.
 Qed.
 
-(** Imported by PRRepresentable *)
+
 Lemma div_eucl :
  forall b : nat,  b > 0 ->
  forall a : nat, {p : nat * nat | a = fst p * b + snd p /\ b > snd p}.
@@ -606,10 +617,6 @@ Proof.
       rewrite H5. rewrite H9. lia.
     + apply Z.divide_mul_l. exists x3. auto.
 Qed.
-
-
-
-
 
 Lemma coPrimeProd :
  forall (n : nat) (x : nat -> nat),
@@ -1044,8 +1051,23 @@ Proof.
 - auto.
 Qed.
 
-(** Imported by PRRepresentable *)
+
+(** * Goedel's beta function *)
+
+
+#[global] Notation rem a b Hposb :=
+  (snd (proj1_sig (div_eucl b Hposb a))).
+
 Definition coPrimeBeta (z c : nat) : nat := S (c * S z).
+
+
+Lemma gtBeta : forall z c : nat, coPrimeBeta z c > 0.
+Proof.
+  unfold coPrimeBeta in |- *; intros; apply Nat.lt_0_succ.
+Qed.
+
+
+Definition beta x y z := rem x (S (y * S z)) (gtBeta _ _).
 
 Lemma coPrimeSeq :
   forall c i j n : nat,
@@ -1069,11 +1091,7 @@ Proof.
     + assumption.
 Qed.
 
-(** Imported by PRRepresentable *)
-Lemma gtBeta : forall z c : nat, coPrimeBeta z c > 0.
-Proof.
-  unfold coPrimeBeta in |- *; intros; apply Nat.lt_0_succ.
-Qed.
+
 
 Fixpoint maxBeta (n: nat) (x: nat -> nat) :=
   match n with
@@ -1113,17 +1131,16 @@ Proof.
     + rewrite H0; exists 1; lia.
 Qed.
 
-(** Imported by PRRepresentable *)
 Theorem betaTheorem1 :
  forall (n : nat) (y : nat -> nat),
  {a : nat * nat |
  forall z : nat,
  z < n ->
- y z =
-   snd (proj1_sig (div_eucl (coPrimeBeta z (snd a))
+ y z = snd (proj1_sig (div_eucl (coPrimeBeta z (snd a))
                      (gtBeta z (snd a)) (fst a)))}.
 Proof.
   intros n y.
+  unfold beta.
   set (c := factorial (max n (maxBeta n y))) in *.
   set (x := fun z : nat => coPrimeBeta z c) in *.
   assert
@@ -1212,3 +1229,11 @@ Proof.
   exists (fst x2); apply p0.
 Qed.
 
+Lemma betaTheorem :
+  forall (n : nat) (y : nat -> nat),
+    {a : nat * nat
+    | forall z : nat, z < n -> y z = beta (fst a) (snd a) z}.
+Proof. 
+  intros n y; destruct (betaTheorem1 n y) as [x e]. 
+  unfold beta; now exists x. 
+Qed. 
