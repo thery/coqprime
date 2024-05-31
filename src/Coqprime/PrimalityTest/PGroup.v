@@ -178,14 +178,14 @@ Fixpoint mkRect (n m: nat) {struct n} : list (Z * Z) :=
 
 Theorem mkRect_length: forall n m, length (mkRect n m) = ((n + 1) * (m + 1))%nat.
 intros n; elim n; simpl; auto.
-intros n1; rewrite <- app_nil_end; rewrite mkLine_length; rewrite Nat.add_0_r; auto.
+intros n1; rewrite app_nil_r; rewrite mkLine_length; rewrite Nat.add_0_r; auto.
 intros n1 Rec m1; rewrite length_app; rewrite Rec; rewrite mkLine_length; auto.
 Qed.
 
 Theorem mkRect_in: forall n m p q, 0 <= p <= Z_of_nat n -> 0 <= q <= Z_of_nat m -> (In (p, q) (mkRect n m)).
 intros n m1; elim n; simpl.
 intros p  q  (H1, H2) (H3, H4); replace p with 0; auto with zarith.
-rewrite <- app_nil_end; apply mkLine_in; auto.
+rewrite app_nil_r; apply mkLine_in; auto.
 intros n1 Rec p q (H1, H2) (H3, H4).
 case (Zle_lt_or_eq p  (Z_of_nat (S n1))); auto with zarith; intros H5.
 rewrite inj_S in H5; apply in_or_app; auto with zarith.
@@ -194,7 +194,7 @@ Qed.
 
 Theorem in_mkRect: forall n m p, In p (mkRect n  m) ->  exists p1, exists  p2, 0 <= p1 <= Z_of_nat n  /\ 0 <= p2 <= Z_of_nat m  /\ p = (p1, p2).
 intros n m1 p; elim n; clear n; simpl.
-rewrite <- app_nil_end; intros H1.
+rewrite app_nil_r; intros H1.
 case in_mkLine with (1 := H1).
 intros p2 (H2, H3); exists 0; exists p2; auto with zarith.
 intros n Rec H1.
@@ -209,7 +209,7 @@ Qed.
 
 Theorem mkRect_ulist: forall n m, ulist (mkRect n m).
 intros n; elim n; simpl; auto.
-intros n1; rewrite <- app_nil_end; apply mkLine_ulist; auto.
+intros n1; rewrite app_nil_r; apply mkLine_ulist; auto.
 intros n1 Rec m1; apply ulist_app; auto.
 apply mkLine_ulist.
 intros a H1 H2.

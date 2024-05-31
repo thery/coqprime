@@ -148,7 +148,7 @@ intros a l H5; absurd (lt (length l2) (length l2)); auto with arith.
 pattern (length l2) at 2; rewrite H5; auto with arith.
 replace l1 with (app l1 l3); auto.
 apply permutation_sym; auto.
-rewrite H5; rewrite app_nil_end; auto.
+rewrite H5; rewrite app_nil_r; auto.
 Qed.
 
 
@@ -175,7 +175,7 @@ intros l1 l2 H1 Hi Hi0; case ulist_incl_permutation with ( 2 := Hi ); auto.
 intros l3 Hl3; rewrite permutation_length with ( 1 := Hl3 ); auto.
 rewrite length_app; simpl; auto with arith.
 generalize Hl3; case l3; simpl; auto with arith.
-rewrite <- app_nil_end; auto.
+rewrite app_nil_r; auto.
 intros H2; case Hi0; auto.
 intros a HH; apply permutation_in with ( 1 := H2 ); auto.
 intros a l Hl0; (rewrite Nat.add_comm; simpl; 
@@ -226,12 +226,12 @@ rewrite length_app; auto with arith.
 intros b [l3 [l4 [l5 [Hl3 Hl4]]]]; subst l1.
 exists b; exists (a :: l3); exists l4; exists (l5 ++ (a :: l2)); split; simpl;
  auto.
-(repeat (rewrite <- ass_app; simpl)); auto.
+(repeat (rewrite <- app_assoc; simpl)); auto.
 apply ulist_cons; auto.
 contradict Hl2; auto.
 replace (l3 ++ (b :: (l4 ++ (b :: l5)))) with ((l3 ++ (b :: l4)) ++ (b :: l5));
  auto with datatypes.
-(repeat (rewrite <- ass_app; simpl)); auto.
+(repeat (rewrite <- app_assoc; simpl)); auto.
 case (H l); auto; intros a1 [l1 [l2 [l3 [Hl3 Hl4]]]]; subst l.
 exists a1; exists (a :: l1); exists l2; exists l3; split; auto.
 simpl; apply ulist_cons; auto.
@@ -239,7 +239,7 @@ contradict H1.
 replace (l1 ++ (a1 :: (l2 ++ (a1 :: l3))))
      with ((l1 ++ (a1 :: l2)) ++ (a1 :: l3)).
 - auto with datatypes.
-- (repeat (rewrite <- ass_app; simpl)); auto.
+- (repeat (rewrite <- app_assoc; simpl)); auto.
 Qed.
 
 Theorem incl_length_repetition:

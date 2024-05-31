@@ -135,7 +135,7 @@ Hint Resolve permutation_app_comp : core.
 Theorem permutation_app_swap :
  forall l1 l2, permutation (l1 ++ l2) (l2 ++ l1).
 intros l1; elim l1; auto.
-intros; rewrite <- app_nil_end; auto.
+intros; rewrite app_nil_r; auto.
 intros a l H l2.
 replace (l2 ++ a :: l) with ((l2 ++ a :: nil) ++ l).
 apply permutation_trans with (l ++ l2 ++ a :: nil); auto.
@@ -148,8 +148,8 @@ apply permutation_app_comp; auto.
 elim l2; simpl in |- *; auto.
 intros a0 l0 H0.
 apply permutation_trans with (a0 :: a :: l0); auto.
-apply (app_ass l2 (a :: nil) l).
-apply (app_ass l2 (a :: nil) l).
+apply sym_equal; apply (app_assoc l2 (a :: nil) l).
+apply sym_equal; apply (app_assoc l2 (a :: nil) l).
 Qed.
 
 (**************************************
@@ -164,11 +164,11 @@ apply permutation_app_comp; auto.
 change
   (permutation ((a :: nil) ++ l2 ++ (b :: nil) ++ l3)
      ((b :: nil) ++ l2 ++ (a :: nil) ++ l3)) in |- *.
-repeat rewrite <- app_ass.
+repeat rewrite app_assoc.
 apply permutation_app_comp; auto.
 apply permutation_trans with ((b :: nil) ++ (a :: nil) ++ l2); auto.
 apply permutation_app_swap; auto.
-repeat rewrite app_ass.
+repeat rewrite <- app_assoc.
 apply permutation_app_comp; auto.
 apply permutation_app_swap; auto.
 Qed.
@@ -500,7 +500,7 @@ Theorem permutation_flat_map :
  permutation l1 l2 -> permutation (flat_map f l1) (flat_map f l2).
 intros A B f l1 l2 H; elim H; simpl in |- *; auto.
 intros a b l; auto.
-repeat rewrite <- app_ass.
+repeat rewrite app_assoc.
 apply permutation_app_comp; auto.
 intros k3 l4 l5 H0 H1 H2 H3; apply permutation_trans with (1 := H1); auto.
 Qed.

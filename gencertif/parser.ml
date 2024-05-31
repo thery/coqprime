@@ -1,6 +1,6 @@
 open Str
 
-open Big_int
+open Big_int_Z
 
 let shift = 6
 
@@ -268,7 +268,7 @@ let print_external k n =
   let _ = Sys.command (Filename.dirname (Sys.executable_name)^
                 "/pocklington -o " ^ fname ^ " -n " ^ !name ^
                  (string_of_int k)^ " " ^
-                 (string_of_big_int n)) in
+                 (string_of_big_int n)) in 
   if (not !split) then
   (let ic = open_in fname in
   let line = ref "" in
