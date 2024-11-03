@@ -25,8 +25,7 @@ intros; subst; auto.
 Qed.
 
 Theorem Zeq_iok: forall x y, x = y -> Zeq_bool x y = true.
-intros x y H; subst.
-unfold Zeq_bool; rewrite Z.compare_refl; auto.
+intros x y H; subst. apply Zeq_is_eq_bool, eq_refl.
 Qed.
 
 Lemma modz: forall x,
