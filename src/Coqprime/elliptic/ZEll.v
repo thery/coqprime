@@ -607,11 +607,7 @@ Local Coercion Zpos : positive >-> Z.
   Lemma is_zero_correct: forall x y,
     if (x ?= y) then x = y else x <> y.
   Proof.
-  intros x y; unfold Zeq_bool.
-  case (Zcompare_Eq_iff_eq x y).
-  case Z.compare; auto.
-  intros _ H1 H2; assert (H3:= H1 H2); discriminate.
-  intros _ H1 H2; assert (H3:= H1 H2); discriminate.
+  intros x y. apply Zeq_bool_if.
   Qed.
 
   Lemma inversible_is_not_k0: forall x, [x] -> x :%p  <> 0.
