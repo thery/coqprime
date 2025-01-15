@@ -1,6 +1,6 @@
 CFIRSTPRIMES=certif.c factorize.c firstprimes.c
 OFIRSTPRIMES=$(CFIRSTPRIMES:.c=.o)
-
+ZARITHIMPORT=$(shell ocamlfind query -i-format zarith)
 CPOCK=certif.c factorize.c pocklington.c
 OPOCK=$(CPOCK:.c=.o)
 
@@ -24,7 +24,7 @@ clean:
 	@CC@ @CPPFLAGS@ @CFLAGS@ -I$(GMPDIR) -I$(ECMDIR) -Wall -pedantic -c $<
 
 o2v: parser.ml
-	ocamlc -o o2v nums.cma str.cma parser.ml
-
+	ocamlc -o o2v -I +str $(ZARITHIMPORT) zarith.cma str.cma parser.ml
+	
 install: pocklington firstprimes o2v
 	cp pocklington firstprimes o2v @bindir@
