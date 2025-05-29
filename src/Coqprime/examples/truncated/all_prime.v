@@ -2,7 +2,10 @@ From Coqprime Require Export all_prime1 all_prime2 all_prime3 all_prime4.
 From Coqprime Require Export all_prime5 all_prime6 all_prime7 all_prime8.
 From Coqprime Require Export all_prime9.
 
+Declare Scope prime.
+
 Create HintDb prime discriminated.
+
 
 Hint Immediate fact_prime113 : prime.
 Hint Immediate fact_prime11 : prime.
