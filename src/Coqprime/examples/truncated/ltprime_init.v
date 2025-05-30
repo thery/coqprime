@@ -239,7 +239,7 @@ destruct H as [Hk1k | Hkk1].
   replace (log n + 1 + (k1 - (log n + 1))) with k1; lia.
 Qed.
 
-Lemma no_zero_digit1_decompose n m : 
+Lemma no_zero_digit_ldecompose n m : 
   0 < m < b  -> no_zero_digit n -> no_zero_digit (m * b ^ (log n +1) + n).
 Proof.
 intros mB nB; apply no_zero_digit_decompose; auto; [lia|].
@@ -350,7 +350,7 @@ Lemma ltprime_decompose n m :
   prime (m * b ^ (log n + 1) + n) -> ltprime (m * b ^ (log n + 1) + n).
 Proof.
 intros mB  [nNZ nM] mnP; split.
-  now apply no_zero_digit1_decompose.
+  now apply no_zero_digit_ldecompose.
 assert (nPr : prime n) by now apply ltprime_prime.
 assert (nP : 0 < n) by now apply GZnZ.p_pos.
 intros k kP.
@@ -439,6 +439,7 @@ assert (H1 : 0 < i < Z.of_nat m + 1 \/ i  = Z.of_nat (S m)) by lia.
 now destruct H1; auto.
 Qed.
 
+(*  593 933399 = 11941 × 49739 *)
 Definition primes := [::
 2;3;5;7;11;13;17;19;23;29;31;
 37;41;43;47;53;59;61;67;71;
@@ -571,7 +572,7 @@ Definition primes := [::
 11257; 11317; 11321; 11329; 11351; 11411; 11443; 11447; 
 11489; 11491; 11519; 11519; 11549; 11587; 11617; 11657; 
 11777; 11779; 11789; 11807; 11813; 11833; 11839; 11887; 
-11933; 11953; 11971; 11981; 12007; 12011; 12097; 12107; 
+11933; 11941; 11953; 11971; 11981; 12007; 12011; 12097; 12107; 
 12149; 12157; 12227; 12263; 12347; 12373; 12421; 12433; 
 12451; 12497; 12503; 12539; 12553; 12583; 12619; 12653; 
 12659; 12697; 12757; 12763; 12809; 12853; 12899; 12923; 
@@ -850,14 +851,14 @@ destruct Ik3 as [zE | Ink3l2].
 now apply IH; auto.
 Qed.
 
-Definition next (n : Z) (l1 : list Z) := 
+Definition lnext (n : Z) (l1 : list Z) := 
   let l := ldigit in 
   fold_left (fun l i => add_ltlist i n l1 l) l [::].
 
-Lemma next_correct n l1 k : 
+Lemma lnext_correct n l1 k : 
   0 <= n ->
   (forall k, ltprime k -> b ^ n <= k < b ^ (n + 1) -> In k l1) ->
-  ltprime k  -> b ^ (n + 1) <= k < b ^ (n + 2) -> In k (next (n + 1) l1).
+  ltprime k  -> b ^ (n + 1) <= k < b ^ (n + 2) -> In k (lnext (n + 1) l1).
 Proof.
 intros nP Hl Hlt Hk.
 assert (Le : log k = n + 1).
@@ -894,7 +895,7 @@ assert (Hk1 : In k1 l1).
   unfold k1.
   apply no_zero_digit_log; try lia.
   now case Hlt; auto.
-unfold next.
+unfold lnext.
 assert (mI : In m ldigit).
   now apply ldigit_correct.
 revert mI; generalize ([::] : list Z); elim ldigit; simpl; auto.
@@ -925,9 +926,9 @@ repeat (match goal with
        let v1' := eval compute in v1 in 
        apply (ltprime_decompose b (refl_equal _) v1' v2); [compute; auto| | ]
 |  |- prime ?a => 
-      solve [compute; auto with prime]
+      solve [compute; auto with lprime]
 end);
-try (apply ltprime_small; [lia|auto with prime|lia]).
+try (apply ltprime_small; [lia|auto with lprime|lia]).
 
 Notation "[ :: ]" := nil (format "[ :: ]") : seq_scope.
 

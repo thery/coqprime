@@ -21,7 +21,6 @@ Proof.
  native_cast_no_check (refl_equal true).
 Qed.
 
-
 Lemma fact_prime12113 : prime 12113.
 Proof.
  apply (Pocklington_refl
