@@ -1,5 +1,5 @@
 From Stdlib Require Import ZArith List Lia.
-From Coqprime Require Import PocklingtonRefl all_prime.
+From Coqprime Require Import PocklingtonRefl all_lprime.
 
 Declare Scope seq_scope.
 Open Scope seq_scope.

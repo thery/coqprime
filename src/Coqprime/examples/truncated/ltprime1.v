@@ -1,5 +1,5 @@
 From Stdlib Require Import ZArith List Lia.
-From Coqprime Require Import PocklingtonRefl all_prime ltprime_init.
+From Coqprime Require Import PocklingtonRefl all_lprime ltprime_init.
 
 Lemma ltprime_list1_ltprime i : In i ltprime_list1 -> ltprime 10 i.
 Proof.

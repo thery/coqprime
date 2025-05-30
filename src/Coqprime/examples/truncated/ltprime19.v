@@ -1,5 +1,5 @@
 From Stdlib Require Import ZArith List Lia.
-From Coqprime Require Import PocklingtonRefl all_prime ltprime_init.
+From Coqprime Require Import PocklingtonRefl all_lprime ltprime_init.
 
 Lemma ltprime_list19E : ltprime_list19 = lnext 10 18 ltprime_list18.
 Proof. now vm_cast_no_check (refl_equal ltprime_list19). Qed.
