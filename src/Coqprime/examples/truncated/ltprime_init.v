@@ -69,6 +69,7 @@ generalize p; elim h; simpl; auto; clear p.
 - intros p IH; case Z.ltb_spec0; lia.
 Qed.
 
+(* log in base b                                                              *)
 Definition log v := 
 match v with Zpos h => log_aux 0 v h | _ => 0 end.
 
@@ -162,6 +163,30 @@ assert (0 <= v mod b ^ k < b ^ k) by now apply Z.mod_pos_bound; lia.
 lia.
 Qed.
 
+Lemma log_0 : log 0 = 0.
+Proof. now auto. Qed.
+
+Lemma log_div n k : 
+  0 <= k <= log n -> log (n / b ^ k) = log n - k.
+Proof.
+intros kP.
+assert (Hn : n <= 0 \/ 0 < n); [lia|destruct Hn as [nE|nP1]].
+  rewrite !log_neg in kP; try lia.
+  rewrite !log_neg; try lia.
+  now apply Z.div_le_upper_bound; lia.
+apply log_inv; try lia; auto.
+assert (nB : b ^ log n <= n < b ^ (log n + 1)).
+apply log_correct; try lia.
+split.
+  apply Z.div_le_lower_bound; try lia.
+  rewrite <- Z.pow_add_r; try lia.
+  now replace (k + (log n - k)) with (log n); lia.
+apply Z.div_lt_upper_bound; try lia.
+rewrite <- Z.pow_add_r; try lia.
+now replace (k + (log n - k + 1)) with (log n + 1); lia.
+Qed.
+
+(* kth digit in base b                                                        *)
 Definition digit n k := (n / b ^ k) mod b.
 
 Lemma digitE n k : 0 <= k -> 0 <= n -> digit n k = n mod b ^ (k + 1) / b ^ k.
@@ -182,6 +207,14 @@ assert (H : 0 <= n mod b ^ (k + 1) < b ^ (k + 1)).
 now rewrite Z.pow_add_r in H at 3; lia.
 Qed.
 
+Lemma digit_div n k1 k2 : 
+  0 <= k1 -> 0 <= k2 -> digit (n / b ^ k1) k2 = digit n (k1 + k2).
+Proof.
+intros k1P k2P.
+now unfold digit; rewrite Zdiv_Zdiv, <- Z.pow_add_r; lia.
+Qed.
+
+(* Not having zero digit in base b                                            *)
 Definition no_zero_digit n :=
   0 < n /\ forall k, 0 <= k -> digit n k = 0 -> log n < k.
 
@@ -319,6 +352,40 @@ rewrite <- Z.pow_add_r; try lia.
 now apply log_pos.
 Qed.
 
+
+Lemma no_zero_digit_rdecompose n m : 
+  0 < m < b  -> no_zero_digit n -> no_zero_digit (n * b + m).
+Proof.
+intros mB nNZ.
+replace b with (b ^ (log m + 1)).
+  apply no_zero_digit_decompose; auto.
+    now apply no_zero_digit_pos.
+  now apply no_zero_digit_small; lia.
+replace (log m) with 0; [lia|].
+now apply sym_equal, log_inv; lia.
+Qed.
+
+Lemma no_zero_digit_div n k : 
+  0 <= k <= log n -> no_zero_digit n -> no_zero_digit (n / b ^ k).
+Proof.
+intros kP [Hn Hnl]; split.
+- assert (H : 0 <= n / b ^ k) by now apply Z_div_nonneg_nonneg; lia.
+  assert (n / b ^ k <> 0); [|lia].
+  assert (LP := log_pos n).
+  intros Hnb; assert (0 <= n < b ^ k \/ b ^ k < n <= 0).
+    now apply Z.div_small_iff; lia.
+  assert (b ^ log n <= n < b ^ (log n + 1)).
+    now apply log_correct; lia.
+  assert (b ^ k <= b ^ (log n)); [|lia].
+  now apply Z.pow_le_mono_r; lia.
+- intros k1 k1P Hm.
+  rewrite log_div; auto.
+  assert (log n < k + k1); [|lia].
+  apply Hnl; try lia.
+  now rewrite <- digit_div; lia.
+Qed.
+
+(* left truncated prime                                                       *)
 Definition ltprime n := 
   no_zero_digit n /\ forall k, 0 < k -> prime (n mod b ^ k).
 
@@ -345,7 +412,7 @@ assert (pB := log_correct _ pP).
 lia.
 Qed.
 
-Lemma ltprime_decompose n m : 
+Lemma ltprime_ldecompose n m : 
   0 < m < b -> ltprime n -> 
   prime (m * b ^ (log n + 1) + n) -> ltprime (m * b ^ (log n + 1) + n).
 Proof.
@@ -924,7 +991,7 @@ repeat (match goal with
        let v1 := constr: (a' mod (b ^ v)) in
        let v2 := constr: (a' / (b ^ v)) in
        let v1' := eval compute in v1 in 
-       apply (ltprime_decompose b (refl_equal _) v1' v2); [compute; auto| | ]
+       apply (ltprime_ldecompose b (refl_equal _) v1' v2); [compute; auto| | ]
 |  |- prime ?a => 
       solve [compute; auto with lprime]
 end);

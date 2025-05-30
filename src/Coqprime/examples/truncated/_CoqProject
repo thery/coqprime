@@ -1,15 +1,15 @@
 -R ../../../Coqprime Coqprime
 
-all_prime.v
-all_prime1.v
-all_prime2.v
-all_prime3.v
-all_prime4.v
-all_prime5.v
-all_prime6.v
-all_prime7.v
-all_prime8.v
-all_prime9.v
+all_lprime.v
+all_lprime1.v
+all_lprime2.v
+all_lprime3.v
+all_lprime4.v
+all_lprime5.v
+all_lprime6.v
+all_lprime7.v
+all_lprime8.v
+all_lprime9.v
 ltprime_init.v
 ltprime1.v
 ltprime2.v
@@ -37,6 +37,7 @@ ltprime23.v
 ltprime24.v
 ltprime25.v
 ltprime.v
+all_rprime.v
 rtprime.v
 
 

@@ -1,7 +1,7 @@
 From Stdlib Require Import ZArith List Lia.
 From Coqprime Require Import PocklingtonRefl all_prime ltprime_init.
 
-Lemma ltprime_list23E : ltprime_list23 = next 10 22 ltprime_list22.
+Lemma ltprime_list23E : ltprime_list23 = lnext 10 22 ltprime_list22.
 Proof. now vm_cast_no_check (refl_equal ltprime_list23). Qed.
 
 Compute (23, ltprime_list23, length ltprime_list23).

@@ -1,6 +1,6 @@
-From Coqprime Require Export all_prime1 all_prime2 all_prime3 all_prime4.
-From Coqprime Require Export all_prime5 all_prime6 all_prime7 all_prime8.
-From Coqprime Require Export all_prime9.
+From Coqprime Require Export all_lprime1 all_lprime2 all_lprime3 all_lprime4.
+From Coqprime Require Export all_lprime5 all_lprime6 all_lprime7 all_lprime8.
+From Coqprime Require Export all_lprime9.
 
 Declare Scope lprime.
 
