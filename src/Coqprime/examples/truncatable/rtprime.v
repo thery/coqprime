@@ -10,7 +10,7 @@ Section Digits.
 Variable b : Z.
 Hypotheses b_pos : 1 < b.
 
-(* right truncated prime                                                      *)
+(* right truncatable prime                                                    *)
 Definition rtprime n := 
   no_zero_digit b n /\ forall k, 0 <= k <= log b n -> prime (n / b ^ k).
 
