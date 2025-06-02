@@ -6,6 +6,41 @@ From Coqprime Require Import ltprime11 ltprime12 ltprime13 ltprime14 ltprime15.
 From Coqprime Require Import ltprime16 ltprime17 ltprime18 ltprime19 ltprime20.
 From Coqprime Require Import ltprime21 ltprime22 ltprime23 ltprime24 ltprime25.
 
+Definition l1 := [::2;3;5;7].
+Definition l2 := Eval compute in lnext 12 1 l1.
+Compute (l2, length l2).
+Definition l3 := Eval compute in lnext 12 2 l2.
+Compute (l3, length l3).
+Definition l4 := Eval compute in lnext 12 3 l3.
+Compute (l4, length l4).
+Definition l5 := Eval compute in lnext 12 4 l4.
+Compute (l5, length l5).
+Definition l6 := Eval compute in lnext 12 5 l5.
+Compute (l6, length l6).
+Definition l7 := Eval compute in lnext 11 6 l6.
+Compute (l7, length l7).
+Definition l8 := Eval compute in lnext 11 7 l7.
+Compute (l8, length l8).
+Definition l9 := Eval compute in lnext 11 8 l8.
+Compute (l9, length l9).
+Definition l10 := Eval compute in lnext 11 9 l9.
+Compute (l10, length l10).
+Definition l11 := Eval compute in lnext 11 10 l10.
+Compute (l11, length l11).
+Definition l12 := Eval compute in lnext 11 11 l11.
+Compute (l12, length l12).
+Definition l13 := Eval compute in lnext 11 12 l12.
+Compute (l13, length l13).
+
+
+
+
+
+
+
+
+
+
 Lemma ltprime_list1_correct k :
   ltprime 10 k -> 1 <= k < 10 -> In k ltprime_list1.
 Proof.
