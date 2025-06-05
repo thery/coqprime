@@ -891,37 +891,37 @@ case Z.leb; simpl; auto.
 - intros [|]; auto; case (IH H); auto.
 Qed.
 
-Definition add_ltlist i n l l1 := 
+Definition add_ltlist i n l1 l2 := 
   fold_left (fun l z => 
                let v := i * b ^ n + z in 
-               if is_pseudo_prime v then lZ_insert v l else l) l l1.
+               if is_pseudo_prime v then lZ_insert v l else l) l1 l2.
 
-Lemma add_ltlist_subset i n l l1 k : In k l1 -> In k (add_ltlist i n l l1).
+Lemma add_ltlist_subset i n l1 l2 k : In k l2 -> In k (add_ltlist i n l1 l2).
 Proof.
-generalize l1; elim l; simpl; auto.
-intros a l2 IH l3 Il3.
+generalize l2; elim l1; simpl; auto.
+intros a l3 IH l4 Il4.
 case is_pseudo_prime; apply IH; auto.
 now apply lZ_insert_consr.
 Qed.
 
-Lemma add_ltlist_correct i n l l1 k : 
+Lemma add_ltlist_correct i n l1 l2 k : 
   0 <= b -> 0 <= i -> 0 <= k ->
-  In k l -> prime(i * b ^ n + k) -> In (i * b ^ n + k) (add_ltlist i n l l1).
+  In k l1 -> prime(i * b ^ n + k) -> In (i * b ^ n + k) (add_ltlist i n l1 l2).
 Proof.
 intros bP iP.
-generalize l1 k; elim l; simpl; [intros _ _ _ []| intros z l2 IH l3 k3 k3P Ik3 inkP].
-destruct Ik3 as [zE | Ink3l2].
+generalize l2 k; elim l1; simpl; [intros _ _ _ []| intros z l3 IH l4 k4 k4P Ik4 inkP].
+destruct Ik4 as [zE | Ink4l4].
   subst z.
   apply add_ltlist_subset.
-  generalize (is_pseudo_prime_correct (i * b ^ n + k3)); case is_pseudo_prime.
+  generalize (is_pseudo_prime_correct (i * b ^ n + k4)); case is_pseudo_prime.
     now intros; apply lZ_insert_consl.
   now intros H; case H; auto; lia.
 now apply IH; auto.
 Qed.
 
 Definition lnext (n : Z) (l1 : list Z) := 
-  let l := ldigit in 
-  fold_left (fun l i => add_ltlist i n l1 l) l [::].
+  let l2 := ldigit in 
+  fold_left (fun l i => add_ltlist i n l1 l) l2 [::].
 
 Lemma lnext_correct n l1 k : 
   0 <= n ->
