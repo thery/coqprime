@@ -435,11 +435,12 @@ exact rtprime_list8_correct.
 Qed.
 
 Lemma rtprime_main : 
-  rtprime 10 73939133 /\ 
-  forall k, 73939133 < k -> ~ rtprime 10 k.
+  rtprime 10 73939133 /\ forall k, rtprime 10 k -> k <= 73939133.
 Proof.
 split; [now rtprime_tac 10|].
-intros k kL kLT.
+intros k kLT.
+assert (H : k <= 73939133 \/ 73939133 < k) by lia.
+destruct H as [|kL]; [lia|].
 assert (H : k < 10 ^ 8 \/ 10 ^ 8 <= k) by lia.
 destruct H as [H1|H1].
   assert (In k rtprime_list8).
