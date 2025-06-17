@@ -11,13 +11,13 @@
 
       Proof that an abelien ring is cyclic
  ************************************************************************)
-Require Import ZCAux.
-Require Import List.
-Require Import Root.
-Require Import UList.
-Require Import IGroup.
-Require Import EGroup.
-Require Import FGroup.
+From Coqprime Require Import ZCAux.
+From Coq Require Import List.
+From Coqprime Require Import Root.
+From Coqprime Require Import UList.
+From Coqprime Require Import IGroup.
+From Coqprime Require Import EGroup.
+From Coqprime Require Import FGroup.
 
 Open Scope Z_scope.
 

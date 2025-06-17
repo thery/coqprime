@@ -13,10 +13,10 @@
 
       Definition: ulist
 ************************************************************************)
-Require Import List.
-Require Import Arith.
-Require Import Permutation.
-Require Import ListSet.
+From Coq Require Import List.
+From Coq Require Import Arith.
+From Coqprime Require Import Permutation.
+From Coq Require Import ListSet.
 
 Section UniqueList.
 Variable A : Set.

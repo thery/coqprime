@@ -10,8 +10,8 @@ Set Implicit Arguments.
 
 From Bignums Require Import DoubleBase DoubleSub DoubleMul DoubleSqrt DoubleLift DoubleDivn1 DoubleDiv.
 From Bignums Require Import DoubleCyclic BigN.
-Require Import CyclicAxioms Cyclic63.
-Require Import ZArith ZCAux.
+From Coq Require Import CyclicAxioms Cyclic63 ZArith.
+From Coqprime Require Import ZCAux.
 Import CyclicAxioms DoubleType DoubleBase.
 
 (* For backward compatibility. The intended value is Set,

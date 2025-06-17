@@ -6,8 +6,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Export ZArith.
-Require Import Lia.
+From Coq Require Export ZArith Lia.
 
 (* Compatibility with Coq versions not supporting hint localities *)
 Set Warnings "-unsupported-attributes".

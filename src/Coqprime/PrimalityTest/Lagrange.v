@@ -14,12 +14,12 @@
 
     Definition: lagrange
   **********************************************************************)
-Require Import List.
-Require Import UList.
-Require Import ListAux.
-Require Import ZArith Znumtheory.
-Require Import NatAux.
-Require Import FGroup.
+From Coq Require Import List.
+From Coqprime Require Import UList.
+From Coqprime Require Import ListAux.
+From Coq Require Import ZArith Znumtheory.
+From Coqprime Require Import NatAux.
+From Coqprime Require Import FGroup.
 
 Open Scope Z_scope.
 

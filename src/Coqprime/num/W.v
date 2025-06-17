@@ -7,9 +7,11 @@
 (*************************************************************)
 
 Set Implicit Arguments.
-Require Import CyclicAxioms Cyclic63 Int63Compat.
+From Coq Require Import CyclicAxioms Cyclic63.
+From Coqprime Require Import Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
-Require Import ZArith ZCAux Mod_op.
+From Coq Require Import ZArith.
+From Coqprime Require Import ZCAux Mod_op.
 
 (* ** Type of words ** *)
 

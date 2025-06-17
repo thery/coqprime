@@ -5,17 +5,17 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import Ring.
-Require Import Field_tac.
-Require Import Ring_tac.
-Require Import Eqdep_dec.
-Require Import ZArith.
-Require Import ZCAux.
-Require Import Ppow.
-Require Import GZnZ.
-Require Import EGroup.
-Require Import SMain.
-Require Import Zmod.
+From Coq Require Import Ring.
+From Coq Require Import Field_tac.
+From Coq Require Import Ring_tac.
+From Coq Require Import Eqdep_dec.
+From Coq Require Import ZArith.
+From Coqprime Require Import ZCAux.
+From Coqprime Require Import Ppow.
+From Coqprime Require Import GZnZ.
+From Coqprime Require Import EGroup.
+From Coqprime Require Import SMain.
+From Coqprime Require Import Zmod.
 
 Set Implicit Arguments.
 

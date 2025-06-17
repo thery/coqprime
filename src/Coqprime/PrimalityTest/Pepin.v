@@ -13,9 +13,9 @@
 
     Definition: PepinTest
   **********************************************************************)
-Require Import ZArith.
-Require Import ZCAux.
-Require Import Pocklington.
+From Coq Require Import ZArith.
+From Coqprime Require Import ZCAux.
+From Coqprime Require Import Pocklington.
 
 Open Scope Z_scope.
 

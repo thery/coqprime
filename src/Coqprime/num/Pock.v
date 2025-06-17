@@ -6,21 +6,23 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import List.
-Require Import ZArith.
-Require Import Zorder.
-Require Import ZCAux.
-Require Import LucasLehmer.
-Require Import Pocklington.
-Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms Cyclic63 Int63Compat.
+From Coq Require Import List.
+From Coq Require Import ZArith.
+From Coq Require Import Zorder.
+From Coqprime Require Import ZCAux.
+From Coqprime Require Import LucasLehmer.
+From Coqprime Require Import Pocklington.
+From Coq Require Import ZArith Znumtheory Zpow_facts.
+From Coq Require Import CyclicAxioms Cyclic63.
+From Coqprime Require Import Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
-Require Import Pmod.
-Require Import Mod_op.
-Require Import W.
-Require Import Lucas.
-Require Export PocklingtonCertificat.
-Require Import NEll.
+From Coqprime Require Import Pmod.
+From Coqprime Require Import Mod_op.
+From Coqprime Require Import W.
+From Coqprime Require Import Lucas.
+From Coqprime Require Export PocklingtonCertificat.
+From Coqprime Require Import NEll.
+From Coqprime Require Import Bits.
 Import CyclicAxioms DoubleType DoubleBase List.
 
 Open Scope Z_scope.
@@ -267,8 +269,6 @@ end.
 Qed.
 
 End test.
-
-Require Import Bits.
 
 Definition test_pock N a dec sqrt :=
   if (2 ?< N) then

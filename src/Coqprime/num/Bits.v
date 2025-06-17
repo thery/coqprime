@@ -1,4 +1,4 @@
-Require Import ZArith Zpow_facts.
+From Coq Require Import ZArith Zpow_facts.
 
 Open Scope Z_scope.
 

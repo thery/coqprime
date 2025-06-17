@@ -11,15 +11,15 @@
 
     Given an element a, create the group {e, a, a^2, ..., a^n}
  **********************************************************************)
-Require Import ZArith.
-Require Import Tactic.
-Require Import List.
-Require Import ZCAux.
-Require Import ZArith Znumtheory.
-Require Import Wf_nat.
-Require Import UList.
-Require Import FGroup.
-Require Import Lagrange.
+From Coq Require Import ZArith.
+From Coqprime Require Import Tactic.
+From Coq Require Import List.
+From Coqprime Require Import ZCAux.
+From Coq Require Import ZArith Znumtheory.
+From Coq Require Import Wf_nat.
+From Coqprime Require Import UList.
+From Coqprime Require Import FGroup.
+From Coqprime Require Import Lagrange.
 
 Open Scope Z_scope.
 

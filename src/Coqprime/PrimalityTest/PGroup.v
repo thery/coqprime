@@ -14,15 +14,15 @@
 
     Definition: PGroup
  **********************************************************************)
-Require Import ZArith.
-Require Import Znumtheory.
-Require Import Tactic.
-Require Import Wf_nat.
-Require Import ListAux.
-Require Import UList.
-Require Import FGroup.
-Require Import EGroup.
-Require Import IGroup.
+From Coq Require Import ZArith.
+From Coq Require Import Znumtheory.
+From Coqprime Require Import Tactic.
+From Coq Require Import Wf_nat.
+From Coqprime Require Import ListAux.
+From Coqprime Require Import UList.
+From Coqprime Require Import FGroup.
+From Coqprime Require Import EGroup.
+From Coqprime Require Import IGroup.
 
 Open Scope Z_scope.
 

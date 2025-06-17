@@ -11,10 +11,10 @@
     Definition of the Euler Totient function
 
 *************************************************************************)
-Require Import ZArith.
-Require Export Znumtheory.
-Require Import Tactic.
-Require Export ZSum.
+From Coq Require Import ZArith.
+From Coq Require Export Znumtheory.
+From Coqprime Require Import Tactic.
+From Coqprime Require Export ZSum.
 
 Open Scope Z_scope.
 

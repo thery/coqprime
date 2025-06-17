@@ -6,14 +6,14 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import ZArith.
-Require Export Znumtheory.
-Require Import Tactic.
-Require Import ZCAux.
-Require Import Zp.
-Require Import FGroup.
-Require Import EGroup.
-Require Import Euler.
+From Coq Require Import ZArith.
+From Coq Require Export Znumtheory.
+From Coqprime Require Import Tactic.
+From Coqprime Require Import ZCAux.
+From Coqprime Require Import Zp.
+From Coqprime Require Import FGroup.
+From Coqprime Require Import EGroup.
+From Coqprime Require Import Euler.
 
 Open Scope Z_scope.
 
