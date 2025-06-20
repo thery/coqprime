@@ -11,8 +11,8 @@
 
     Defintion and properties of permutations
    **********************************************************************)
-Require Export List.
-Require Export ListAux.
+From Coq Require Export List.
+From Coqprime Require Export ListAux.
 
 Section permutation.
 Variable A : Set.

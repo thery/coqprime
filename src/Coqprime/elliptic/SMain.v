@@ -5,14 +5,14 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import Arith_base.
-Require Import Field_tac.
-Require Import Ring.
-Require Import Eqdep_dec.
-Require Import FGroup.
-Require Import List.
-Require Import UList.
-Require Import ZArith.
+From Coq Require Import Arith_base.
+From Coq Require Import Field_tac.
+From Coq Require Import Ring.
+From Coq Require Import Eqdep_dec.
+From Coqprime Require Import FGroup.
+From Coq Require Import List.
+From Coqprime Require Import UList.
+From Coq Require Import ZArith.
 
 Set Implicit Arguments.
 

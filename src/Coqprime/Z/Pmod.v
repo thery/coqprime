@@ -6,8 +6,8 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Export ZArith Lia.
-Require Export ZCmisc.
+From Coq Require Export ZArith Lia Zwf.
+From Coqprime Require Export ZCmisc.
 
 (* Compatibility with Coq versions not supporting hint localities *)
 Set Warnings "-unsupported-attributes".
@@ -382,9 +382,6 @@ Qed.
 Lemma gcd_log2_mod0 :
   forall a b c, a mod b = N0 -> gcd_log2 a b c = Some b.
 Proof. intros a b c H;destruct c;simpl;rewrite H;trivial. Qed.
-
-
-Require Import Zwf.
 
 Lemma Zwf_pos : well_founded (fun x y => Zpos x < Zpos y).
 Proof.

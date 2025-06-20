@@ -5,11 +5,11 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import ZArith Znumtheory.
-Require Import Eqdep_dec.
-Require Import List.
-Require Import Lia.
-Require Import UList.
+From Coq Require Import ZArith Znumtheory.
+From Coq Require Import Eqdep_dec.
+From Coq Require Import List.
+From Coq Require Import Lia.
+From Coqprime Require Import UList.
 
 Section ZnZ.
 
@@ -223,8 +223,8 @@ Qed.
 End ZnZ.
 
 
-Require Import Field.
-Require Import Pmod.
+From Coq Require Import Field.
+From Coqprime Require Import Pmod.
 
 Section ZpZ.
 

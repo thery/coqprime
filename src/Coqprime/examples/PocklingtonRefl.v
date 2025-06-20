@@ -6,8 +6,8 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Export List.
-Require Export ZArith.
-Require Export Znumtheory.
-Require Export Pock.
-Require Export BasePrimes.
+From Coq Require Export List.
+From Coq Require Export ZArith.
+From Coq Require Export Znumtheory.
+From Coqprime Require Export Pock.
+From Coqprime Require Export BasePrimes.

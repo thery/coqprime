@@ -11,11 +11,11 @@
 
       Proof that a polynomial has at most n roots
 ************************************************************************)
-Require Import ZArith.
-Require Import List.
-Require Import UList.
-Require Import Tactic.
-Require Import Permutation.
+From Coq Require Import ZArith.
+From Coq Require Import List.
+From Coqprime Require Import UList.
+From Coqprime Require Import Tactic.
+From Coqprime Require Import Permutation.
 
 Open Scope Z_scope.
 

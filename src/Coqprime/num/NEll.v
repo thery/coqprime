@@ -7,15 +7,16 @@
 (*************************************************************)
 
 
-Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms Cyclic63 Int63Compat.
+From Coq Require Import ZArith Znumtheory Zpow_facts.
+From Coq Require Import CyclicAxioms Cyclic63.
+From Coqprime Require Import Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
-Require Import W.
-Require Import Mod_op.
-Require Import ZEll.
-Require Import Bits.
+From Coqprime Require Import W.
+From Coqprime Require Import Mod_op.
+From Coqprime Require Import ZEll.
+From Coqprime Require Import Bits.
 Import CyclicAxioms DoubleType DoubleBase.
-Require Import Zmod.
+From Coqprime Require Import Zmod.
 
 
 Set Implicit Arguments.

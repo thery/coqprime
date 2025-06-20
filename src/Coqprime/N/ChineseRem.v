@@ -1,9 +1,9 @@
-Require Import Arith.
-Require Import Wf_nat.
-Require Import ZArith.
-Require Import Peano_dec.
-Require Import ZArith_dec.
-Require Import NatAux ZCAux ZCmisc ZSum Pmod Ppow.
+From Coq Require Import Arith.
+From Coq Require Import Wf_nat.
+From Coq Require Import ZArith.
+From Coq Require Import Peano_dec.
+From Coq Require Import ZArith_dec.
+From Coqprime Require Import NatAux ZCAux ZCmisc ZSum Pmod Ppow.
 
 Open Scope nat_scope.
 

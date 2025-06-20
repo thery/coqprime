@@ -5,7 +5,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import ZArith Znumtheory.
+From Coq Require Import ZArith Znumtheory.
 
 Set Implicit Arguments.
 

@@ -6,14 +6,14 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import List.
-Require Import ZArith.
-Require Import Zorder.
-Require Import ZCAux.
-Require Import LucasLehmer.
-Require Import Pocklington.
-Require Import ZCmisc.
-Require Import Pmod.
+From Coq Require Import List.
+From Coq Require Import ZArith.
+From Coq Require Import Zorder.
+From Coqprime Require Import ZCAux.
+From Coqprime Require Import LucasLehmer.
+From Coqprime Require Import Pocklington.
+From Coqprime Require Import ZCmisc.
+From Coqprime Require Import Pmod.
 
 (* Compatibility with Coq versions not supporting hint localities *)
 Set Warnings "-unsupported-attributes".

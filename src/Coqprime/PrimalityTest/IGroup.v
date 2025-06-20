@@ -13,12 +13,12 @@
 
     Definition: ZpGroup
   **********************************************************************)
-Require Import ZArith.
-Require Import Tactic.
-Require Import Wf_nat.
-Require Import UList.
-Require Import ListAux.
-Require Import FGroup.
+From Coq Require Import ZArith.
+From Coqprime Require Import Tactic.
+From Coq Require Import Wf_nat.
+From Coqprime Require Import UList.
+From Coqprime Require Import ListAux.
+From Coqprime Require Import FGroup.
 
 Open Scope Z_scope.
 

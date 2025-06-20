@@ -6,11 +6,11 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import List.
-Require Import ZArith.
+From Coq Require Import List.
+From Coq Require Import ZArith.
 From Coqprime Require Import ZCAux.
 
-Require Import Pock.
+From Coqprime Require Import Pock.
 
 Local Open Scope positive_scope.
 

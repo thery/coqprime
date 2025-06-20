@@ -1,4 +1,4 @@
-Require Import List ZArith Znumtheory Uint63 Cyclic63.
+From Coq Require Import List ZArith Znumtheory Uint63 Cyclic63.
 
 (* We are going to implement modular arithmetic with
    montgomery reduction

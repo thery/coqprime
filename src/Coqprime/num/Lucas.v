@@ -8,14 +8,15 @@
 
 Set Implicit Arguments.
 
-Require Import ZArith Znumtheory Zpow_facts.
-Require Import CyclicAxioms Cyclic63 Int63Compat.
+From Coq Require Import ZArith Znumtheory Zpow_facts.
+From Coq Require Import CyclicAxioms Cyclic63.
+From Coqprime Require Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
-Require Import ZCAux.
-Require Import W.
-Require Import Mod_op.
-Require Import LucasLehmer.
-Require Import Bits.
+From Coqprime Require Import ZCAux.
+From Coqprime Require Import W.
+From Coqprime Require Import Mod_op.
+From Coqprime Require Import LucasLehmer.
+From Coqprime Require Import Bits.
 Import CyclicAxioms DoubleType DoubleBase.
 
 Open Scope Z_scope.

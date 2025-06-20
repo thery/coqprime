@@ -12,10 +12,10 @@
      Auxillary functions & Theorems
  **********************************************************************)
 
-Require Import ArithRing.
-Require Export ZArith Zpow_facts.
-Require Export Znumtheory.
-Require Export Tactic.
+From Coq Require Import ArithRing.
+From Coq Require Export ZArith Zpow_facts.
+From Coq Require Export Znumtheory.
+From Coqprime Require Export Tactic.
 
 Theorem Zdivide_div_prime_le_square:  forall x, 1 < x -> ~prime x -> exists p, prime p /\ (p | x) /\ p * p <= x.
 intros x Hx; generalize Hx; pattern x; apply Z_lt_induction. 2: auto with zarith.
