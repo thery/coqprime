@@ -500,7 +500,7 @@ Proof.
  repeat rewrite Zmult_assoc.
  rewrite Z_div_mult;auto with zmisc zarith.
  rewrite <- fold_aux.
- rewrite <- (fold_aux a (R * q * mkProd' l) n l (prod * (a ^ (R * mkProd' l) - 1)))...
+ rewrite <- (fold_aux a (R * q * mkProd' l) n l (prod * (a ^ (R * mkProd' l) - 1))).
  assert ( ((prod * (A ^ mkProd' l - 1)) mod n) =
               ((prod * ((a ^ R) ^ mkProd' l - 1)) mod n)).
   repeat rewrite (Zmult_mod prod);auto with zmisc.
