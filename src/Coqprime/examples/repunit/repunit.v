@@ -8,7 +8,7 @@ Import ListNotations.
 Definition R (n : Z) := ((10 ^ n - 1) / 9)%Z.
 
 Compute R 1.
-Compute R 1031.
+Compute R 19.
 
 Lemma primeR2 : prime (R 2).
 Proof. now apply prime11. Qed.
