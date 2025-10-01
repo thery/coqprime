@@ -5,6 +5,12 @@ Require Import repunit1031.
 Local Open Scope positive_scope.
 Import ListNotations.
 
+(******************************************************************************)
+(*                                                                            *)
+(*                       First Repunit Primes                                 *)
+(*                                                                            *)
+(******************************************************************************)
+
 Definition R (n : Z) := ((10 ^ n - 1) / 9)%Z.
 
 Compute R 1.
