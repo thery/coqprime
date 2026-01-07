@@ -274,12 +274,12 @@ induction c; simpl; auto; try
   intros ((p1,p2),p3); case gcd_log2; auto).
 Qed.
 
-Ltac rw l :=
+Ltac rew l :=
   match l with
    | (?r, ?r1) =>
        match type of r with
          True => rewrite <- r1
-      |  _ => rw r; rw r1
+      |  _ => rew r; rew r1
       end
   | ?r => rewrite r
   end.
@@ -299,7 +299,7 @@ induction c; simpl; auto;
   simpl; intros r' (Hr'1, Hr'2); clear r1; auto;
   generalize (IHc r r'); case egcd_log2; auto;
   intros ((u',v'),w'); case gcd_log2; auto; intros;
-  rw ((I, H), Hr1, Hr'1); ring.
+  rew ((I, H), Hr1, Hr'1); ring.
 Qed.
 
 
