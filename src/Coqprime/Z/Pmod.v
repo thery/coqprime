@@ -452,7 +452,7 @@ Qed.
 Lemma egcd_log2_x0 : forall a b, egcd_log2 a b (xO b) <> None.
 Proof.
 intros a b H; generalize (egcd_gcd_log2 (xO b) a b) (gcd_log2_x0 a b);
-  rw H; case gcd_log2; auto.
+  rew H; case gcd_log2; auto.
 Qed.
 
 Definition gcd a b :=
@@ -598,10 +598,10 @@ Proof.
  split; repeat rewrite zx0; try (rewrite <- H1; ring); auto;
  (split; [idtac | red; intros; discriminate]).
  apply Zis_gcd_sym; auto.
- apply Zis_gcd_sym; apply Zis_gcd_minus; rw zx1;
+ apply Zis_gcd_sym; apply Zis_gcd_minus; rew zx1;
     apply Zis_gcd_sym; auto.
- apply Zis_gcd_minus; rw zx1; auto.
- apply Zis_gcd_minus; rw zx1; auto.
- apply Zis_gcd_minus; rw zx1; auto.
+ apply Zis_gcd_minus; rew zx1; auto.
+ apply Zis_gcd_minus; rew zx1; auto.
+ apply Zis_gcd_minus; rew zx1; auto.
  apply Zis_gcd_sym; auto.
 Qed.
