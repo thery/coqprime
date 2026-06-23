@@ -667,7 +667,7 @@ Qed.
  match goal with H: context[x] |- _ =>
    generalize H; clear H; intros HH1
  end.
- symmetry; apply GZnZ.Zeq_iok; auto.
+ symmetry; apply Zeq_is_eq_bool; auto.
  case_eq (Zeq_bool (z2Z x) (z2Z y)); intros H1; auto;
    generalize HH1; generalize (Zeq_bool_eq _ _ H1); unfold z2Z;
    intros HH; rewrite HH; auto with zarith.

@@ -10,7 +10,6 @@ src/Coqprime/List/UList.v
 src/Coqprime/List/ZProgression.v
 src/Coqprime/Z/Pmod.v
 src/Coqprime/Z/ZCAux.v
-src/Coqprime/Z/Zmod.v
 src/Coqprime/Z/Ppow.v
 src/Coqprime/Z/ZCmisc.v
 src/Coqprime/Z/ZSum.v
@@ -28,7 +27,6 @@ src/Coqprime/PrimalityTest/Pocklington.v
 src/Coqprime/PrimalityTest/Proth.v
 src/Coqprime/PrimalityTest/Root.v
 src/Coqprime/PrimalityTest/Zp.v
-src/Coqprime/elliptic/GZnZ.v
 src/Coqprime/elliptic/SMain.v
 src/Coqprime/elliptic/ZEll.v
 src/Coqprime/num/Bits.v

@@ -16,7 +16,7 @@ From Coqprime Require Import Mod_op.
 From Coqprime Require Import ZEll.
 From Coqprime Require Import Bits.
 Import CyclicAxioms DoubleType DoubleBase.
-From Coqprime Require Import Zmod.
+From Coq Require Import Zmod.
 
 
 Set Implicit Arguments.
@@ -390,7 +390,7 @@ Qed.
  match goal with H: context[x] |- _ =>
    generalize H; clear H; intros HH1
  end.
- symmetry; apply GZnZ.Zeq_iok; auto.
+ symmetry; apply Zeq_is_eq_bool; auto.
  case_eq (Zeq_bool (z2Z x) (z2Z y)); intros H1; auto;
    generalize HH1; generalize (Zeq_bool_eq _ _ H1); unfold z2Z;
    intros HH; rewrite HH; auto with zarith.
@@ -422,16 +422,16 @@ Ltac ftac := match goal with
 
 Lemma c2ww: forall x, ZEll.nmul (vN exx) 2 x = ZEll.nmul (vN exx) (z2Z c2) x.
 intros x; unfold ZEll.nmul.
-unfold c2; rewrite z2Zx; rewrite Zmodml; auto.
+unfold c2; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 Lemma c3ww: forall x, ZEll.nmul (vN exx) 3 x = ZEll.nmul (vN exx) (z2Z c3) x.
 intros x; unfold ZEll.nmul.
-unfold c3; rewrite z2Zx; rewrite Zmodml; auto.
+unfold c3; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 
 Lemma Aww: forall x, ZEll.nmul (vN exx) exx.(vA) x = ZEll.nmul (vN exx) (z2Z A) x.
 intros x; unfold ZEll.nmul.
-unfold A; rewrite z2Zx; rewrite Zmodml; auto.
+unfold A; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 
 Lemma nadd_correct: forall x y sc,
@@ -708,17 +708,17 @@ Qed.
 Hint Resolve f4 f27 Bw : core.
 
 Lemma mww: forall x y, ZEll.nmul (vN exx) (x mod (vN exx) ) y = ZEll.nmul (vN exx) x y.
-intros x  y; unfold ZEll.nmul; rewrite Zmodml; auto.
+intros x  y; unfold ZEll.nmul; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 
 Lemma wwA: forall x, ZEll.nmul (vN exx) x exx.(vA) = ZEll.nmul (vN exx) x (z2Z A).
 intros x; unfold ZEll.nmul.
-unfold A; rewrite z2Zx; rewrite Zmodmr; auto.
+unfold A; rewrite z2Zx; rewrite Zmult_mod_idemp_r; auto.
 Qed.
 
 Lemma wwB: forall x, ZEll.nmul (vN exx) x exx.(vB) = ZEll.nmul (vN exx) x (z2Z B).
 intros x; unfold ZEll.nmul.
-unfold B; rewrite z2Zx; rewrite Zmodmr; auto.
+unfold B; rewrite z2Zx; rewrite Zmult_mod_idemp_r; auto.
 Qed.
 
  Lemma  scalL_prime:
@@ -749,7 +749,7 @@ Qed.
       simpl; unfold Zpower_pos; simpl.
       repeat rewrite Zmult_1_r.
       intros HH.
-      match goal with |- ?t1 = ?t2 => rmod t1; auto end.
+      (rewrite_strat (bottomup (terms Zmult_mod_idemp_l Zmult_mod_idemp_r))).
       rewrite HH.
       rewrite Zplus_mod; auto; symmetry; rewrite Zplus_mod; auto; symmetry.
       apply f_equal2 with (f := Z.modulo); auto.
@@ -761,7 +761,7 @@ Qed.
       apply f_equal2 with (f := Z.modulo); auto.
       apply f_equal2 with (f := Zmult); auto.
       rewrite Zmod_mod; auto.
-      match goal with |- ?t1 = ?t2 => rmod t2; auto end.
+      (rewrite_strat (bottomup (terms Zmult_mod_idemp_l Zmult_mod_idemp_r))); auto.
       rewrite Zmult_mod; auto; symmetry; rewrite Zmult_mod; auto; symmetry.
       apply f_equal2 with (f := Z.modulo); auto.
       rewrite Zmod_mod; auto.
