@@ -19,7 +19,8 @@ COQ_EXTENDED_VERSION_OLD := $(shell cat $(COQ_VERSION_FILE) 2>/dev/null)
 # $(shell $(COQC) --print-version | cut -d " " -f 1)
 # instead of this $(firstword $(subst ...)) construct
 COQ_VERSION_PREFIX := The Coq Proof Assistant, version
-COQ_VERSION := $(firstword $(subst $(COQ_VERSION_PREFIX),,$(shell $(COQBIN)coqc --version 2>/dev/null)))
+ROCQ_VERSION_PREFIX := The Rocq Prover, version
+COQ_VERSION := $(firstword $(subst $(ROCQ_VERSION_PREFIX),,$(subst $(COQ_VERSION_PREFIX),,$(shell $(COQBIN)coqc --version 2>/dev/null))))
 COQ_EXTENDED_VERSION := $(shell (true | $(COQBIN)coqtop 2>/dev/null; $(COQBIN)coqc --version 2>/dev/null))
 
 # Set up EXPECTED_EXT based on supported versions
