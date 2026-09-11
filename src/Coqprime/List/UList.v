@@ -10,23 +10,22 @@
       UList.v
 
       Definition of list with distinct elements
-
-      Definition: ulist
 ************************************************************************)
 From Coq Require Import List.
 From Coq Require Import Arith.
 From Coqprime Require Import Permutation.
 From Coq Require Import ListSet.
 
+Notation ulist := NoDup (only parsing).
+Notation ulist_cons := NoDup_cons (only parsing).
 Section UniqueList.
 Variable A : Set.
 Variable eqA_dec : forall (a b : A),  ({ a = b }) + ({ a <> b }).
 (* A list is unique if there is not twice the same element in the list *)
 
-Inductive ulist : list A ->  Prop :=
-  ulist_nil: ulist nil
- | ulist_cons: forall a l, ~ In a l -> ulist l ->  ulist (a :: l) .
-Hint Constructors ulist : core.
+Local Notation ulist := (@NoDup A).
+Hint Constructors NoDup : core.
+
 (* Inversion theorem *)
 
 Theorem ulist_inv: forall a l, ulist (a :: l) ->  ulist l.
@@ -38,19 +37,12 @@ Theorem ulist_app:
  forall l1 l2,
  ulist l1 ->
  ulist l2 -> (forall (a : A), In a l1 -> In a l2 ->  False) ->  ulist (l1 ++ l2).
-intros L1; elim L1; simpl; auto.
-intros a l H l2 H0 H1 H2; apply ulist_cons; simpl; auto.
-red; intros H3; case in_app_or with ( 1 := H3 ); auto; intros H4.
-inversion H0; auto.
-apply H2 with a; auto.
-apply H; auto.
-apply ulist_inv with ( 1 := H0 ); auto.
-intros a0 H3 H4; apply (H2 a0); auto.
-Qed.
+Proof. intros. apply NoDup_app; auto. Qed.
 (* Iinversion theorem the appended list *)
 
 Theorem ulist_app_inv:
  forall l1 l2 (a : A), ulist (l1 ++ l2) -> In a l1 -> In a l2 ->  False.
+Proof.
 intros l1; elim l1; simpl; auto.
 intros a l H l2 a0 H0 [H1|H1] H2.
 inversion H0 as [|a1 l0 H3 H4 H5]; auto.
@@ -61,18 +53,12 @@ Qed.
 (* Iinversion theorem the appended list *)
 
 Theorem ulist_app_inv_l: forall (l1 l2 : list A), ulist (l1 ++ l2) ->  ulist l1.
-intros l1; elim l1; simpl; auto.
-intros a l H l2 H0.
-inversion H0 as [|il1 iH1 iH2 il2 [iH4 iH5]]; apply ulist_cons; auto.
-intros H5; case iH2; auto with datatypes.
-apply H with l2; auto.
-Qed.
+Proof. intros; eapply NoDup_app_remove_r; eassumption. Qed.
 (* Iinversion theorem the appended list *)
 
 Theorem ulist_app_inv_r: forall (l1 l2 : list A), ulist (l1 ++ l2) ->  ulist l2.
-intros l1; elim l1; simpl; auto.
-intros a l H l2 H0; inversion H0; auto.
-Qed.
+Proof. intros; eapply NoDup_app_remove_l; eassumption. Qed.
+
 (* Uniqueness is decidable *)
 
 Definition ulist_dec: forall l,  ({ ulist l }) + ({ ~ ulist l }).
@@ -154,10 +140,7 @@ Qed.
 
 Theorem ulist_incl_length:
  forall (l1 l2 : list A), ulist l1 -> incl l1 l2 ->  le (length l1) (length l2).
-intros l1 l2 H1 Hi; case ulist_incl_permutation with ( 2 := Hi ); auto.
-intros l3 Hl3; rewrite permutation_length with ( 1 := Hl3 ); auto.
-rewrite length_app; simpl; auto with arith.
-Qed.
+Proof. intros; apply NoDup_incl_length; trivial. Qed.
 
 Theorem ulist_incl2_permutation:
  forall (l1 l2 : list A),
@@ -263,15 +246,7 @@ Global Hint Constructors ulist : core.
 Theorem ulist_map:
  forall (A B : Set) (f : A ->  B) l,
  (forall x y, (In x l) -> (In y l) ->  f x = f y ->  x = y) -> ulist l ->  ulist (map f l).
-intros a b f l Hf Hl; generalize Hf; elim Hl; clear Hf;  auto.
-simpl; auto.
-intros a1 l1 H1 H2 H3 Hf; simpl.
-apply ulist_cons; auto with datatypes.
-contradict H1.
-case in_map_inv with ( 1 := H1 ); auto with datatypes.
-intros b1 [Hb1 Hb2].
-replace a1 with b1; auto with datatypes.
-Qed.
+Proof. intros; apply NoDup_map_NoDup_ForallPairs; assumption. Qed.
 
 Theorem ulist_list_prod:
  forall (A : Set) (l1 l2 : list A),
