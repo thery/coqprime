@@ -382,7 +382,7 @@ intros x1 y1 z1 y; case y; clear y; auto.
 Qed.
 
  Lemma ztest: forall x y,
-     x ?= y =Zeq_bool (z2Z x) (z2Z y).
+     (x ?= y) = Zeq_bool (z2Z x) (z2Z y).
  Proof.
  intros x y.
  unfold neq.
