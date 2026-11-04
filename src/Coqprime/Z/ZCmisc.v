@@ -113,10 +113,10 @@ Definition is_eq a b :=
   end.
 Infix "?=" := is_eq (at level 70, no associativity) : P_scope.
 
-Lemma is_eq_refl : forall n, n ?= n = true.
+Lemma is_eq_refl : forall n, (n ?= n) = true.
 Proof. intros n;unfold is_eq;rewrite Pos.compare_refl;trivial. Qed.
 
-Lemma is_eq_eq : forall n m, n ?= m = true -> n = m.
+Lemma is_eq_eq : forall n m, (n ?= m) = true -> n = m.
 Proof.
  unfold is_eq;intros n m H; apply Pos.compare_eq.
 destruct (n ?= m)%positive;trivial;try discriminate.
