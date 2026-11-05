@@ -12,7 +12,7 @@
       Proof that an abelien ring is cyclic
  ************************************************************************)
 From Coqprime Require Import ZCAux.
-From Coq Require Import List.
+From Stdlib Require Import List.
 From Coqprime Require Import Root.
 From Coqprime Require Import UList.
 From Coqprime Require Import IGroup.
@@ -60,6 +60,7 @@ Hint Resolve isupport_incl_hint : core.
 Theorem gpow_evaln: forall n, 0 < n ->
   exists p, (length p <=  Z.abs_nat  n)%nat /\  (forall i, In i p -> In i support) /\
   forall x, In x IA.(s) -> eval A plus mult zero (zero::p) x = gpow x IA n.
+Proof.
 intros n Hn; generalize Hn; pattern n; apply natlike_ind; auto with zarith.
 intros H1; contradict H1; auto with zarith.
 intros x Hx Rec _.
@@ -89,6 +90,7 @@ rewrite plus_comm; try rewrite plus_zero; auto.
 Qed.
 
 Definition check_list_gpow: forall l n, (incl l IA.(s)) -> {forall a, In a l -> gpow a IA n = e} + {exists a, In a l /\  gpow a IA n <> e}.
+Proof.
 intros l n; elim l; simpl; auto.
 intros H; left; intros a H1; case H1.
 intros a l1 Rec H.
@@ -104,9 +106,11 @@ Defined.
 
 
 Theorem prime_power_div: forall p q i, prime p -> 0 <= q -> 0 <= i -> (q | p ^ i)  -> exists j, 0 <= j <= i /\ q = p ^ j.
+Proof.
 intros p q i Hp Hq Hi H.
 assert (Hp1: 0 < p).
-apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
+apply prime_alt in Hp.
+apply Z.lt_le_trans  with 2; try apply Z.prime_ge_2; auto with zarith.
 pattern q; apply prime_div_induction with (p ^ i); auto with zarith.
 exists 0; rewrite Zpower_0_r; auto with zarith.
 intros p1 i1 Hp2 Hi1 H1.
@@ -119,8 +123,9 @@ exists i1; split; auto; try split; auto with zarith.
 case (Zle_or_lt i1 i); auto; intros H2.
 absurd (p1 ^ i1 <= p  ^ i).
 apply Zlt_not_le; rewrite Heq; apply Zpower_lt_monotone; auto with zarith.
-apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
-apply Zdivide_le; auto with zarith.
+apply prime_alt in Hp.
+apply Z.lt_le_trans  with 2; try apply Z.prime_ge_2; auto with zarith.
+apply Z.divide_pos_le; auto with zarith.
 rewrite Heq; auto.
 exists 0; repeat rewrite Zpower_exp_0; auto with zarith.
 intros p1 q1 Hpq (j1,((Hj1, Hj2), Hj3)) (j2, ((Hj4, Hj5), Hj6)).
@@ -129,19 +134,23 @@ case Zle_lt_or_eq with (1 := Hj4); clear Hj4; intros Hj4; subst.
 inversion Hpq as [ H0 H1 H2].
 absurd (p | 1).
 intros H3; absurd (1 < p).
-apply Zle_not_lt; apply Zdivide_le; auto with zarith.
-apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
+apply Zle_not_lt; apply Z.divide_pos_le; auto with zarith.
+apply rel_prime_iff_coprime in Hpq.
+apply prime_alt in Hp.
+apply Z.lt_le_trans  with 2; try apply Z.prime_ge_2; auto with zarith.
 apply H2; apply Zpower_divide; auto with zarith.
 exists j1; rewrite Zpower_0_r; auto with zarith.
 exists j2; rewrite Zpower_0_r; auto with zarith.
 Qed.
 
 Theorem inj_lt_inv: forall n m : nat, Z_of_nat n < Z_of_nat m -> (n < m)%nat.
+Proof.
 intros n m H; case (Nat.le_gt_cases m n); auto; intros H1; contradict H.
 apply Zle_not_lt; apply inj_le; auto.
 Qed.
 
 Theorem not_all_solutions: forall i, 0 < i < g_order IA -> exists a, In a IA.(s) /\ gpow a IA i <> e.
+Proof.
 intros i (Hi, Hi2).
 case (check_list_gpow IA.(s) i); try intros H; auto with datatypes.
 case (gpow_evaln i); auto; intros p (Hp1, (Hp2, Hp3)).
@@ -164,6 +173,7 @@ rewrite Z.abs_eq ; auto with zarith.
 Qed.
 
 Theorem divide_g_order_e_order: forall n, 0 <= n -> (n | g_order IA) -> exists a, In a IA.(s) /\ e_order A_dec  a IA = n.
+Proof.
 intros n Hn H.
 assert (Hg: 0 < g_order IA).
 apply g_order_pos.
@@ -173,7 +183,7 @@ pattern n; apply prime_div_induction with (n := g_order IA); auto.
 exists e; split; auto.
 apply IA.(e_in_s).
 apply Zle_antisym.
-apply Zdivide_le; auto with zarith.
+apply Z.divide_pos_le; auto with zarith.
 apply e_order_divide_gpow; auto with zarith.
 apply IA.(e_in_s).
 rewrite gpow_1; auto.
@@ -181,13 +191,15 @@ apply IA.(e_in_s).
 match goal with |- (_ <= ?X) => assert (0 < X) end; try apply e_order_pos; auto with zarith.
 intros p i Hp Hi K.
 assert (Hp1: 0 < p).
-apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
+apply prime_alt in Hp.
+apply Z.lt_le_trans  with 2; try apply Z.prime_ge_2; auto with zarith.
 assert (Hi1: 0 < p ^ i).
 apply Zpower_gt_0; auto.
 case Zle_lt_or_eq with (1 := Hi); clear Hi; intros Hi; subst.
 case (not_all_solutions (g_order IA / p)).
 apply Zdivide_Zdiv_lt_pos; auto with zarith.
-apply Z.lt_le_trans  with 2; try apply prime_ge_2; auto with zarith.
+apply prime_alt in Hp.
+apply Z.lt_le_trans  with 2; try apply Z.prime_ge_2; auto with zarith.
 apply Z.divide_trans  with (2 := K).
 apply Zpower_divide; auto.
 intros a (Ha1, Ha2).
@@ -237,6 +249,7 @@ Definition cyclic (A: Set) A_dec (op: A -> A -> A) (G: FGroup op):= exists a, In
 Unset Implicit Arguments.
 
 Theorem cyclic_field: cyclic A_dec IA.
+Proof.
 red; apply divide_g_order_e_order; auto.
 apply Zlt_le_weak; apply g_order_pos.
 exists 1; ring.

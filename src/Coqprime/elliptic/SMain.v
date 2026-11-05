@@ -5,14 +5,14 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Import Arith_base.
-From Coq Require Import Field_tac.
-From Coq Require Import Ring.
-From Coq Require Import Eqdep_dec.
+From Stdlib Require Import Arith_base.
+From Stdlib Require Import Field_tac.
+From Stdlib Require Import Ring.
+From Stdlib Require Import Eqdep_dec.
 From Coqprime Require Import FGroup.
-From Coq Require Import List.
+From Stdlib Require Import List.
 From Coqprime Require Import UList.
-From Coq Require Import ZArith.
+From Stdlib Require Import ZArith.
 
 Set Implicit Arguments.
 
@@ -60,6 +60,7 @@ Fixpoint pow (k: K) (n: nat) :=
 Notation "x ^ y" := (pow x y).
 
 Theorem pow_S: forall k n, k ^ (S n) = k * k ^ n.
+Proof.
 intros k n; simpl; auto; case n; auto.
 simpl; rewrite Eth.(Kfth).(F_R).(Rmul_comm).
 rewrite Eth.(Kfth).(F_R).(Rmul_1_l); auto.
@@ -69,6 +70,7 @@ Let Mkmul := rmul_ext3_Proper (Eq_ext kplus kmul kopp).
 
 Lemma Kpower_theory :
   power_theory 1 kmul (eq (A:=K)) BinNat.nat_of_N pow.
+Proof.
 constructor.
 intros r n; case n; simpl; auto.
 intros p; elim p using BinPos.Pind; auto.
@@ -117,7 +119,7 @@ Qed.
 
 (* Some stuff for K *)
 
-Notation  "x ?0" := (is_zero x) (at level 10).
+Notation  "x ?0" := (is_zero x) (at level 1).
 
 Fixpoint n2k (n: nat) : K := match n with
   O => kO | (S O) => kI | (S n1) => (1 + n2k n1) end.
@@ -216,6 +218,7 @@ rewrite H1; ring.
 Qed.
 
 Theorem diff_rm_quo: forall x y, x/y <> 0 -> y<>0 -> x <> 0.
+Proof.
 intros x y H H0 H1; case H; field [H1]; auto.
 Qed.
 
@@ -247,6 +250,7 @@ Inductive elt: Set :=
 | curve_elt: forall x y,  y^2 = x^3 +  A * x + B -> elt.
 
 Definition Kdec : forall a b: K, {a = b} + {a <> b}.
+Proof.
 intros a b; case_eq ((a - b) ?0); intros H.
   left; apply is_zero_diff; auto.
 right; intros H1.
@@ -284,12 +288,14 @@ right; intros H; injection H; intros H4 H5; case H3; auto.
 Defined.
 
 Theorem is_zero_true: forall e, is_zero e = true -> e = 0.
+Proof.
 intro e; generalize (Eth.(is_zero_correct) e); case is_zero; auto;
  intros (H,_); auto.
 Qed.
 
 
 Theorem is_zero_false: forall e, is_zero e = false -> e <> 0.
+Proof.
 intro e; generalize (Eth.(is_zero_correct) e); case is_zero; auto;
  intros (_,H); auto.
   intros; discriminate.
@@ -311,6 +317,7 @@ Qed.
 (***********************************************************)
 
 Definition opp: elt -> elt.
+Proof.
 refine (fun p => match p with inf_elt =>
                    inf_elt
                 | @curve_elt x y H => @curve_elt x (-y) _ end).
@@ -327,6 +334,7 @@ Theorem curve_elt_opp:
   forall x1 x2 y1 y2 H1 H2,
     x1 = x2 -> @curve_elt x1 y1 H1 = @curve_elt x2 y2 H2
            \/ @curve_elt x1 y1 H1 = opp (@curve_elt x2 y2 H2).
+Proof.
 intros x1 x2 y1 y2 H1 H2 H3.
 case (@Kmult_integral (y1 - y2) (y1 + y2));  try intros H4.
   ring_simplify.
@@ -392,6 +400,7 @@ Qed.
 (***********************************************************)
 
 Definition add: elt -> elt -> elt.
+Proof.
 refine (fun p1 p2 =>
              match p1 with
                inf_elt => p2
@@ -488,6 +497,7 @@ Theorem add_casew: forall P,
      x3 = l ^ 2 - x1 - x2 -> y3 = -y1 - l * (x3 - x1) ->
      P p1 p2 p3)->
   forall p q, P p q (add p q).
+Proof.
 intros; apply add_case; auto.
 intros; eapply X2; eauto.
 rewrite H; simpl; intros tmp; case H4; injection tmp;
@@ -531,6 +541,7 @@ Theorem spec1_assoc:
    is_generic (add p1 p2) p3 ->
    is_generic  p1 (add p2 p3) ->
    add p1 (add p2 p3) = add (add p1 p2) p3.
+Proof.
 intros p1 p2; kcase p1 p2.
 intros p p3  _ _ (HH, _); case HH; auto.
 intros p3 _ _ _ p4 _ _ _ _ _ _ _ _ _ _ _ p5 (_, (_, (HH, _)));
@@ -617,6 +628,7 @@ Theorem spec2_assoc:
    is_generic (add p1 p2) p3 ->
    is_generic  p1 (add p2 p3) ->
    add p1 (add p2 p3) = add (add p1 p2) p3.
+Proof.
 intros p1 p2; kcase p1 p2.
 intros p p3  _ _ (HH, _); case HH; auto.
 intros p3 _ _ _ p4 _ _ _ _ _ _ _ _ _ _ _ p5 (_, (_, (HH, _)));
@@ -707,6 +719,7 @@ Theorem spec3_assoc:
    is_generic (add p1 p2) p3 ->
    is_tangent  p1 (add p2 p3) ->
    add p1 (add p2 p3) = add (add p1 p2) p3.
+Proof.
 intros p1 p2.
 kcase p1 p2.
 intros p p3  _ _ (HH, _); case HH; auto.
@@ -1069,6 +1082,7 @@ Qed.
 
 Theorem add_opp_double_opp: forall p1 p2,
   add p1 p2 = opp p1 -> p2 = add (opp p1) (opp p1).
+Proof.
 intros p1 p2; intros H1.
 case (ceqb p1 (opp p1)); intros H2.
 pattern (opp p1) at 1; rewrite <- H2.
@@ -1147,6 +1161,7 @@ Qed.
 
 Theorem cancel:
   forall p1 p2 p3, add p1 p2 = add p1 p3 -> p2 = p3.
+Proof.
 intros p1 p2; pattern p1, p2, (add p1 p2);
  apply add_casew; clear p1 p2.
 intros; subst; auto.
@@ -1222,6 +1237,7 @@ rewrite <- He2; auto.
 Qed.
 
 Theorem add_minus_id: forall p1 p2, (add (add p1 p2) (opp p2)) = p1.
+Proof.
 intros p1 p2.
 case (ceqb (add p1 p2) (opp p2)).
   intros Hp12; rewrite Hp12; symmetry;
@@ -1270,6 +1286,7 @@ subst p1; apply curve_elt_irr; clear H6 H5 H4 H3;
 Qed.
 
 Theorem add_shift_minus: forall p1 p2 p3, add p1 p2 = p3 -> p1 = add p3 (opp p2).
+Proof.
 intros p1 p2 p3 H.
 apply cancel with (opp (opp p2)).
 repeat rewrite (add_comm (opp (opp p2))).
@@ -1282,6 +1299,7 @@ Theorem degen_assoc:
    (p1 = opp p2 \/ p2 = opp p3) \/
    (opp p1 = add p2 p3 \/ opp p3 = add p1 p2) ->
      add p1 (add p2 p3) = add (add p1 p2) p3.
+Proof.
 intros p1 p2 p3; intuition; subst;
   repeat (rewrite add_opp || rewrite add_0_r ||
           rewrite add_0_l); auto.
@@ -1308,6 +1326,7 @@ Qed.
 Theorem spec4_assoc:
   forall p1 p2,
    add p1 (add p2 p2) = add (add p1 p2) p2.
+Proof.
 intros p1 p2.
 case (ceqb p1 inf_elt); intros H1.
   apply degen_assoc; auto.
@@ -1351,6 +1370,7 @@ Qed.
 
 
 Theorem add_assoc: forall p1 p2 p3, add p1 (add p2 p3) = add (add p1 p2) p3.
+Proof.
 intros p1 p2 p3.
 case (ceqb p1 inf_elt); intros H1.
   apply degen_assoc; auto.
@@ -1426,6 +1446,7 @@ match Kfind_root r l with
   None => forall k, In k l -> kmul k k <> r
 | Some k => kmul k k = r
 end.
+Proof.
 intros r l; elim l; simpl.
   intros k H; case H.
 intros a l1 Hrec; generalize (Eth.(is_zero_correct) (ksub r (kmul a a)));
@@ -1468,6 +1489,7 @@ Fixpoint EKa (l: list K) : list (K * K) :=
 
 Theorem EKa_in: forall l x y,
   ~ In x l -> ~ In (x, y) (EKa l).
+Proof.
 intros l x y; elim l; simpl; auto.
 intros a l1 Rec; case KLroot; auto.
 intros k Hk; case (Eth.(is_zero_correct) k); case is_zero.
@@ -1482,6 +1504,7 @@ case Rec; auto.
 Qed.
 
 Theorem EKa_ulist: forall l, ulist l -> ulist (EKa l).
+Proof.
 intros l; elim l; simpl; auto.
 intros a l1 Hrec H; inversion_clear H.
 generalize (KLroot_root (kplus (kplus (kmul a (kmul a a)) (kmul A a)) B));
@@ -1505,6 +1528,7 @@ Let In_curve x y := kmul y y = kplus (kplus (x ^ 3) (kmul A x)) B.
 
 Theorem EKa_complete: forall l x y,
   In x l -> In_curve x y ->  In (x, y) (EKa l).
+Proof.
 unfold In_curve; intros l x y; elim l; simpl; auto.
 intros a l1 Hrec [H1 | H1] H2; subst; auto.
   generalize (KLroot_root (kplus (kplus (kmul x (kmul x x)) (kmul A x)) B));
@@ -1534,6 +1558,7 @@ Qed.
 
 Theorem EKa_length: forall l,
   (length (EKa l) <= 2 * length l)%nat.
+Proof.
 intros l; elim l; simpl; auto.
 intros a l1 H; case KLroot.
   intros k; case is_zero; simpl.
@@ -1547,6 +1572,7 @@ Qed.
 
 Theorem EKa_elt: forall l x y,
   In (x, y) (EKa l) -> In_curve x y.
+Proof.
 unfold In_curve; intros l x y; elim l; simpl; auto.
   intros H; case H.
 intros a l1 Hrec.
@@ -1564,27 +1590,30 @@ Qed.
 Definition ELK := EKa LK.
 
 Theorem ELK_ulist: ulist ELK.
+Proof.
 unfold ELK; apply EKa_ulist; apply ULK.
 Qed.
 
 Theorem ELK_complete: forall x y,
   In_curve x y -> In (x, y) ELK.
+Proof.
 intros x y Hxy; unfold ELK; apply EKa_complete; auto.
 Qed.
 
 Theorem ELK_length: (length ELK <= 2 * length LK)%nat.
+Proof.
 exact (EKa_length LK).
 Qed.
 
-
 Theorem ELK_elt: forall x y,
   In (x, y) ELK -> In_curve x y.
+Proof.
 exact (EKa_elt LK).
 Qed.
 
-
 Definition mk_lelt:
   forall l, (forall x y: K, In (x, y) l -> In_curve x y) -> list elt.
+Proof.
 fix mk_lelt 1; intros l;  case l.
   intros _; exact (@nil _).
 intros a l1; case a; intros x y H.
@@ -1599,6 +1628,7 @@ Defined.
 
 Theorem mk_lelt_inf:
   forall l H, ~In inf_elt (mk_lelt l H).
+Proof.
 intros l; elim l; simpl; auto.
 intros (x, y) l1 Hrec H H1; simpl.
 inversion_clear H1; try discriminate.
@@ -1609,6 +1639,7 @@ Qed.
 
 Theorem mk_lelt_in: forall x1 y1 H1 l H,
   In (@curve_elt x1 y1 H1) (mk_lelt l H) -> In (x1, y1) l.
+Proof.
 intros x1 y1 H1 l; elim l; simpl; auto.
 intros (x, y) l1 Hrec H; simpl; auto.
 intros [H2 | H2]; auto.
@@ -1618,6 +1649,7 @@ Qed.
 
 Theorem mk_lelt_in_rev: forall x1 y1 H1 l H,
   In (x1, y1) l -> In (@curve_elt x1 y1 H1) (mk_lelt l H).
+Proof.
 intros x1 y1 H1 l; elim l; simpl; auto.
 intros (x, y) l1 Hrec H; simpl; auto.
 intros [H2 | H2]; auto.
@@ -1626,6 +1658,7 @@ Qed.
 
 Theorem mk_lelt_ulist:
   forall l H, ulist l -> ulist (mk_lelt l H).
+Proof.
 intros l; elim l; simpl; auto.
 intros (x, y) l1 Hrec H; simpl; auto.
 intros H1; inversion_clear H1.
@@ -1635,6 +1668,7 @@ Qed.
 
 Theorem mk_lelt_length:
   forall l H, length (mk_lelt l H) = length l.
+Proof.
 intros l; elim l; simpl; auto.
 intros (x, y) l1 Hrec H; simpl; auto.
 Qed.
@@ -1642,12 +1676,14 @@ Qed.
 Definition FELLK := inf_elt::mk_lelt _ (ELK_elt).
 
 Theorem FELLK_in: forall e, In e FELLK.
+Proof.
 intros e; case e; unfold FELLK; simpl; auto.
 intros x y H; right; apply mk_lelt_in_rev.
 apply ELK_complete; auto.
 Qed.
 
 Theorem FELLK_ulist: ulist FELLK.
+Proof.
 unfold FELLK; constructor.
   apply mk_lelt_inf.
 apply mk_lelt_ulist.
@@ -1655,6 +1691,7 @@ apply ELK_ulist.
 Qed.
 
 Theorem FELLK_length:  (length FELLK <= 2 * length LK + 1)%nat.
+Proof.
 unfold FELLK; rewrite Nat.add_comm; simpl.
 rewrite mk_lelt_length.
 generalize ELK_length; simpl; auto with arith.
@@ -1667,6 +1704,7 @@ Qed.
 (***********************************************************)
 
 Definition EFGroup: FGroup add.
+Proof.
 refine
   (@mkGroup _ add FELLK _ _ _ inf_elt _ _ _ opp _ _ _); auto;
   try (intros; apply FELLK_in).
@@ -1678,6 +1716,7 @@ intros a _; apply add_opp.
 Defined.
 
 Lemma EFGroup_order: (g_order EFGroup <= 2 * Z_of_nat (length LK) + 1)%Z.
+Proof.
 unfold g_order; simpl s.
 change (Zpos 2) with (Z_of_nat 2).
 change (Zpos 1) with (Z_of_nat 1).
@@ -1717,6 +1756,7 @@ intros x1 y1 z1 H; rewrite <- H; simpl; ring.
 Qed.
 
 Definition popp: pelt -> pelt.
+Proof.
 refine (fun p => let (x,y,z,H) := p in
                  @mk_pelt x (-y) z _).
 apply popp_lem; auto.
@@ -1845,6 +1885,7 @@ Qed.
 
 (* Transfer function from projective to affine *)
 Definition pe2e: pelt -> elt.
+Proof.
 intros (x1,y1,z1,H1).
 case (wb (is_zero z1)); intros b; case b; intros Hb.
 exact (inf_elt).
@@ -1855,6 +1896,7 @@ Defined.
 (* Doubling is correct with respect to affine *)
 Theorem pe2e_double: forall p1,
   pe2e (pdouble p1) = add (pe2e p1) (pe2e p1).
+Proof.
 intros (x1,y1,z1,H1).
 unfold pdouble, pe2e.
 case wb; intros b; case b; intros Hb; clear b.
@@ -1891,6 +1933,7 @@ Qed.
 
 Theorem pe2e_add: forall p1 p2,
   pe2e (padd p1 p2) = add (pe2e p1) (pe2e p2).
+Proof.
 intros (x1,y1,z1,H1) (x2,y2,z2,H2).
 unfold padd, pe2e.
 case wb; intros b; case b; intros Hb; clear b.

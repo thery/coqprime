@@ -13,10 +13,10 @@
 
     Definition: FGroup
   **********************************************************************)
-From Coq Require Import List.
+From Stdlib Require Import List.
 From Coqprime Require Import UList.
 From Coqprime Require Import Tactic.
-From Coq Require Import ZArith.
+From Stdlib Require Import ZArith.
 
 Open Scope Z_scope.
 
@@ -71,6 +71,7 @@ Variable op: A -> A -> A.
  **************************************)
 
 Theorem g_cancel_l: forall (g : FGroup op), forall a b c, In a g.(s) -> In b g.(s) -> In c g.(s) -> op a b = op a c -> b = c.
+Proof.
 intros g a b c H1 H2 H3 H4; apply trans_equal with (op g.(e) b); sauto.
 replace (g.(e)) with (op (g.(i) a)  a); sauto.
 apply trans_equal with (op (i g a) (op a b)); sauto.
@@ -82,6 +83,7 @@ replace (op (g.(i) a)  a) with g.(e); sauto.
 Qed.
 
 Theorem g_cancel_r: forall (g : FGroup op), forall a b c, In a g.(s) -> In b g.(s) -> In c g.(s) -> op b a = op c a -> b = c.
+Proof.
 intros g a b c H1 H2 H3 H4; apply trans_equal with (op b g.(e)); sauto.
 replace (g.(e)) with (op a (g.(i) a)); sauto.
 apply trans_equal with (op (op b  a) (i g a)); sauto.
@@ -93,11 +95,13 @@ replace (op a (g.(i) a)) with g.(e); sauto.
 Qed.
 
 Theorem e_unique: forall (g : FGroup op), forall e1, In e1 g.(s) ->  (forall a, In a g.(s) -> op e1 a = a) -> e1 = g.(e).
+Proof.
 intros g e1 He1 H2.
 apply trans_equal with (op e1 g.(e)); sauto.
 Qed.
 
 Theorem inv_op: forall (g: FGroup op) a b, In a g.(s) -> In b g.(s) ->  g.(i) (op a b) = op (g.(i) b) (g.(i) a).
+Proof.
 intros g a1 b1 H1 H2; apply g_cancel_l with (g := g) (a := op a1 b1); sauto.
 repeat rewrite g.(assoc); sauto.
 apply trans_equal with g.(e); sauto.
@@ -107,6 +111,7 @@ rewrite g.(e_is_zero_r); sauto.
 Qed.
 
 Theorem i_e: forall (g: FGroup op), g.(i) g.(e) = g.(e).
+Proof.
 intro g; apply g_cancel_l with (g:= g) (a := g.(e)); sauto.
 apply trans_equal with g.(e); sauto.
 Qed.
@@ -116,6 +121,7 @@ Qed.
  **************************************)
 
 Theorem g_order_pos: forall g: FGroup op, 0 < g_order g.
+Proof.
 intro g; generalize g.(e_in_s); unfold g_order; case g.(s); simpl; auto with zarith.
 Qed.
 

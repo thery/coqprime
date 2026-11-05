@@ -6,9 +6,9 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Export List.
+From Stdlib Require Export List.
 From Coqprime Require Export Permutation.
-From Coq Require Import Arith.
+From Stdlib Require Import Arith.
 
 Section Iterator.
 Variables A B : Set.
@@ -23,6 +23,7 @@ Definition iter := fold_right (fun a r => g (f a) r) zero.
 Hint Unfold iter : core.
 
 Theorem iter_app: forall l1 l2,  iter (app l1 l2) = g (iter l1) (iter l2).
+Proof.
 intros l1; elim l1; simpl; auto.
 intros l2; rewrite g_sym; auto.
 intros a l H l2; rewrite H.
@@ -30,6 +31,7 @@ rewrite g_trans; auto.
 Qed.
 
 Theorem iter_permutation: forall l1 l2, permutation l1 l2 ->  iter l1 = iter l2.
+Proof.
 intros l1 l2 H; elim H; simpl; auto; clear H l1 l2.
 intros a l1 l2 H1 H2; apply f_equal2 with ( f := g ); auto.
 intros a b l; (repeat rewrite g_trans).
@@ -42,6 +44,7 @@ Lemma iter_inv:
  P zero ->
  (forall a b, P a -> P b ->  P (g a b)) ->
  (forall x, In x l ->  P (f x)) ->  P (iter l).
+Proof.
 intros P l H H0; (elim l; simpl; auto).
 Qed.
 Variable next : A ->  A.
@@ -58,6 +61,7 @@ Theorem progression_app:
  le m n ->
  b = next_n a m ->
   progression a n = app (progression a m) (progression b (n - m)).
+Proof.
 intros a b n m; generalize a b n; clear a b n; elim m; clear m; simpl.
 intros a b n H H0; apply f_equal2 with ( f := progression ); auto with arith.
 intros m H a b n; case n; simpl; clear n.
@@ -73,11 +77,13 @@ Theorem iter_progression_app:
  b = next_n a m ->
   iter (progression a n) =
   g (iter (progression a m)) (iter (progression b (n - m))).
+Proof.
 intros a b n m H H0; unfold iter_progression; rewrite (progression_app a b n m);
  (try apply iter_app); auto.
 Qed.
 
 Theorem length_progression: forall z n,  length (progression z n) = n.
+Proof.
 intros z n; generalize z; elim n; simpl; auto.
 Qed.
 
@@ -92,6 +98,7 @@ Global Hint Unfold next_n : core.
 Theorem iter_ext:
  forall (A B : Set) zero (f1 : A ->  B) f2 g l,
  (forall a, In a l ->  f1 a = f2 a) ->  iter zero f1 g l = iter zero f2 g l.
+Proof.
 intros A B zero f1 f2 g l; elim l; simpl; auto.
 intros a l0 H H0; apply f_equal2 with ( f := g ); auto.
 Qed.
@@ -99,6 +106,7 @@ Qed.
 Theorem iter_map:
  forall (A B C : Set) zero (f : B ->  C) g (k : A ->  B) l,
   iter zero f g (map k l) = iter zero (fun x => f (k x)) g l.
+Proof.
 intros A B C zero f g k l; elim l; simpl; auto.
 intros; apply f_equal2 with ( f := g ); auto with arith.
 Qed.
@@ -110,6 +118,7 @@ Theorem iter_comp:
  (forall a b,  g a b = g b a) ->
   g (iter zero f1 g l) (iter zero f2 g l) =
   iter zero (fun x => g (f1 x) (f2 x)) g l.
+Proof.
 intros A B zero f1 f2 g l g_zero g_trans g_sym; elim l; simpl; auto.
 intros a l0 H; rewrite <- H; (repeat rewrite <- g_trans).
 apply f_equal2 with ( f := g ); auto.
@@ -123,6 +132,7 @@ Theorem iter_com:
  (forall a b,  g a b = g b a) ->
   iter zero (fun x => iter zero (fun y => f x y) g l1) g l2 =
   iter zero (fun y => iter zero (fun x => f x y) g l2) g l1.
+Proof.
 intros A B zero f g l1 l2 H H0 H1; generalize l2; elim l1; simpl; auto;
  clear l1 l2.
 intros l2; elim l2; simpl; auto with arith.
@@ -148,11 +158,13 @@ Theorem iter_comp_const:
  k zero = zero ->
  (forall a b,  k (g a b) = g (k a) (k b)) ->
   k (iter zero f g l) = iter zero (fun x => k (f x)) g l.
+Proof.
 intros A B zero f g k l H H0; elim l; simpl; auto.
 intros a l0 H1; rewrite H0; apply f_equal2 with ( f := g ); auto.
 Qed.
 
 Lemma next_n_S: forall n m,  next_n S n m = plus n m.
+Proof.
 intros n m; generalize n; elim m; clear n m; simpl; auto with arith.
 intros m H n; case n; simpl.
 - rewrite H; auto with arith.
@@ -161,6 +173,7 @@ Qed.
 
 Theorem progression_S_le_init:
  forall n m p, In p (progression S n m) ->  le n p.
+Proof.
 intros n m; generalize n; elim m; clear n m; simpl; auto.
 intros; contradiction.
 intros m H n p [H1|H1]; auto with arith.
@@ -170,6 +183,7 @@ Qed.
 
 Theorem progression_S_le_end:
  forall n m p, In p (progression S n m) ->  lt p (n + m).
+Proof.
 intros n m; generalize n; elim m; clear n m; simpl; auto.
 intros; contradiction.
 intros m H n p [H1|H1]; auto with arith.

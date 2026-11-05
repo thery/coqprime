@@ -12,12 +12,13 @@
      Auxillary functions & Theorems
  **********************************************************************)
 
-From Coq Require Import ArithRing.
-From Coq Require Export ZArith Zpow_facts.
-From Coq Require Export Znumtheory.
+From Stdlib Require Import ArithRing.
+From Stdlib Require Export ZArith Zpow_facts.
+From Stdlib Require Export Znumtheory.
 From Coqprime Require Export Tactic.
 
 Theorem Zdivide_div_prime_le_square:  forall x, 1 < x -> ~prime x -> exists p, prime p /\ (p | x) /\ p * p <= x.
+Proof.
 intros x Hx; generalize Hx; pattern x; apply Z_lt_induction. 2: auto with zarith.
 clear x Hx; intros x Rec H H1.
 case (not_prime_divide x). 1-2: auto.
@@ -31,7 +32,7 @@ apply Zmult_le_compat_r; auto with zarith.
 case (prime_dec x2); intros H7.
 exists x2. apply (conj H7). split. auto with zarith.
 apply Zmult_le_compat_l. auto with zarith.
-apply Z.le_trans with 2%Z; try apply prime_ge_2; auto with zarith.
+apply Z.le_trans with 2%Z; try apply Z.prime_ge_2, prime_alt; auto with zarith.
 case (Zle_or_lt 0 x2); intros H8.
 case Zle_lt_or_eq with (1 := H8); clear H8; intros H8; subst. 2: auto with zarith.
 case (Zle_lt_or_eq 1 x2). auto with zarith. 1-2: clear H8; intros H8; subst. 2: auto with zarith.
@@ -48,6 +49,7 @@ Qed.
 
 
 Theorem Zmult_interval: forall p q, 0 < p * q  -> 1 < p -> 0 < q < p * q.
+Proof.
 intros p q H1 H2; assert (0 < q).
 case (Zle_or_lt q 0); auto; intros H3; contradict H1; apply Zle_not_lt.
 rewrite <- (Zmult_0_r p).
@@ -58,6 +60,7 @@ apply Zmult_lt_compat_r; auto with zarith.
 Qed.
 
 Theorem prime_induction: forall (P: Z -> Prop), P 0 -> P 1 -> (forall p q, prime p -> P q -> P (p * q)) -> forall p, 0 <= p -> P p.
+Proof.
 intros P H H1 H2 p Hp.
 generalize Hp; pattern p; apply Z_lt_induction; auto; clear p Hp.
 intros p Rec Hp.
@@ -69,16 +72,17 @@ rewrite <- (Zmult_1_r p); apply H2; auto.
 intros q (Hq1, ((q2, Hq2), Hq3)); subst.
 case (Zmult_interval q q2).
 rewrite Zmult_comm; apply Z.lt_trans with 1; auto with zarith.
-apply Z.lt_le_trans with 2; auto with zarith; apply prime_ge_2; auto.
+apply Z.lt_le_trans with 2; auto with zarith; apply Z.prime_ge_2, prime_alt; auto.
 intros H4 H5; rewrite Zmult_comm; apply H2; auto.
 apply Rec. split. 1, 3: auto with zarith.
 rewrite Zmult_comm; auto.
 Qed.
 
 Theorem div_power_max: forall p q, 1 < p -> 0 < q -> exists n, 0 <= n /\ (p ^n | q)  /\ ~(p ^(1 + n) | q).
+Proof.
 intros p q H1 H2; generalize H2; pattern q; apply Z_lt_induction; auto with zarith; clear q H2.
 intros q Rec H2.
-case (Zdivide_dec p q); intros H3.
+case (Z.BoolSpec_divide p q); intros H3.
 case (Zdivide_Zdiv_lt_pos p q); auto with zarith; intros H4 H5.
 case (Rec (Z.div q p)); auto with zarith.
 intros n (Ha1, (Ha2, Ha3)); exists (n + 1); split; auto with zarith; split.
@@ -102,6 +106,7 @@ Theorem prime_div_induction:
     (forall p i, prime p -> 0 <= i -> (p^i | n) -> P (p^i)) ->
     (forall p q, rel_prime p q -> P p -> P q -> P (p * q)) ->
    forall m, 0 <= m -> (m | n) -> P m.
+Proof.
 intros P n P1 Hn H H1 m Hm.
 generalize Hm; pattern m; apply Z_lt_induction; auto; clear m Hm.
 intros m Rec Hm H2.
@@ -113,18 +118,18 @@ case Zle_lt_or_eq with (1 := Hm); clear Hm; intros Hm; subst.
 case (Zle_lt_or_eq 1 m); auto with zarith; clear Hm; intros Hm; subst; auto.
 case Zdivide_div_prime_le_square with m; auto.
 intros p (Hp1, (Hp2, Hp3)).
+assert (HpL2 : 2 <= p).
+apply Z.prime_ge_2, prime_alt; auto with zarith.
 case (div_power_max p m); auto with zarith.
-generalize (prime_ge_2 p Hp1); auto with zarith.
 intros i (Hi, (Hi1, Hi2)).
 case Zle_lt_or_eq with (1 := Hi); clear Hi; intros Hi.
 assert (Hpi: 0 < p ^ i).
 apply Zpower_gt_0; auto with zarith.
-apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 rewrite (Z_div_exact_2 m (p ^ i)); auto with zarith.
 apply H1; auto with zarith.
-apply rel_prime_sym; apply rel_prime_Zpower_r; auto with zarith.
-apply rel_prime_sym.
-apply prime_rel_prime; auto.
+apply rel_prime_iff_coprime, Z.coprime_pow_l; auto with zarith.
+apply Z.coprime_prime_l.
+now apply prime_alt.
 contradict Hi2.
 case Hi1; intros; subst.
 rewrite Z_div_mult in Hi2; auto with zarith.
@@ -136,29 +141,30 @@ apply Rec; auto with zarith.
 split; auto with zarith.
 apply Z_div_pos; auto with zarith.
 apply Z_div_lt; auto with zarith.
-apply Z.le_ge; apply Z.le_trans with p.
-apply prime_ge_2; auto.
+apply Z.le_ge; apply Z.le_trans with p; auto with zarith.
 pattern p at 1; rewrite <- Zpower_1_r; apply Zpower_le_monotone; auto with zarith.
-apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
 apply Z_div_pos; auto with zarith.
 apply Z.divide_trans with (2 := H2); auto.
 exists (p ^ i); apply Z_div_exact_2; auto with zarith.
-apply Zdivide_mod; auto with zarith.
-apply Zdivide_mod; auto with zarith.
+apply Z.mod0_divide; auto with zarith.
+apply Z.mod0_divide; auto with zarith.
 case Hi2; rewrite <- Hi; rewrite Zplus_0_r; rewrite Zpower_1_r; auto.
 Qed.
 
 Theorem prime_div_Zpower_prime: forall n p q, 0 <= n -> prime p -> prime q -> (p | q ^ n) -> p = q.
+Proof.
 intros n p q Hp Hq; generalize p q Hq; pattern n; apply natlike_ind; auto; clear n p q Hp Hq.
 intros  p q Hp Hq; rewrite Zpower_0_r.
 intros (r, H); subst.
 case (Zmult_interval p r); auto; try rewrite Zmult_comm.
 rewrite <- H; auto with zarith.
-apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply Z.lt_le_trans with 2; try apply Z.prime_ge_2, prime_alt; auto with zarith.
 rewrite <- H; intros H1 H2; contradict H2; auto with zarith.
 intros n1 H Rec p q Hp Hq; try rewrite Zpower_Zsucc; auto with zarith; intros H1.
-case prime_mult with (2 := H1); auto.
-intros H2; apply prime_div_prime; auto.
+case ( Z.divide_prime_mul q (q ^ n1) p).
+now apply prime_alt.
+intros Hv _; case (Hv H1); auto.
+now intros H2; apply Z.divide_prime_prime; auto; apply prime_alt.
 Qed.
 
 Definition Zmodd  a b :=
@@ -183,6 +189,7 @@ match a with
 end.
 
 Theorem Zmodd_correct: forall a b, Zmodd a b = Z.modulo a b.
+Proof.
 intros a b; unfold Z.modulo; case a; simpl; auto.
 intros p; case b; simpl; auto.
 intros p1; refine (Zmod_POS_correct _ _); auto.
@@ -197,82 +204,91 @@ Qed.
 
 Theorem prime_divide_prime_eq:
  forall p1 p2, prime p1 -> prime p2 -> Z.divide p1 p2 ->  p1 = p2.
+Proof.
 intros p1 p2 Hp1 Hp2 Hp3.
 assert (Ha: 1 < p1).
 inversion Hp1; auto.
 assert (Ha1: 1 < p2).
 inversion Hp2; auto.
 case (Zle_lt_or_eq p1 p2); auto with zarith.
-apply Zdivide_le; auto with zarith.
+apply Z.divide_pos_le; auto with zarith.
 intros Hp4.
-case (prime_div_prime p1 p2); auto with zarith.
+now case (Z.divide_prime_prime p1 p2); auto with zarith; apply prime_alt.
 Qed.
 
 Theorem Zdivide_Zpower: forall n m, 0 < n -> (forall p i, prime p -> 0 < i -> (p^i | n) -> (p^i | m)) -> (n | m).
+Proof.
 intros n m Hn; generalize m Hn; pattern n; apply prime_induction; auto with zarith; clear n m Hn.
 intros m H1; contradict H1; auto with zarith.
 intros p q H Rec m H1 H2.
 assert (H3: (p | m)).
-rewrite <- (Zpower_1_r p); apply H2; auto with zarith; rewrite Zpower_1_r; apply Zdivide_factor_r.
+rewrite <- (Zpower_1_r p); apply H2; auto with zarith; rewrite Zpower_1_r; apply Z.divide_factor_l.
 case (Zmult_interval p q); auto.
-apply Z.lt_le_trans with 2; auto with zarith; apply prime_ge_2; auto.
+apply Z.lt_le_trans with 2; auto with zarith; apply Z.prime_ge_2, prime_alt; auto.
 case H3; intros k Hk; subst.
 intros Hq Hq1.
-rewrite (Zmult_comm k); apply Zmult_divide_compat_l.
+rewrite (Zmult_comm k); apply Z.mul_divide_mono_l.
 apply Rec; auto.
 intros p1 i Hp1 Hp2 Hp3.
 case (Z.eq_dec p p1); intros Hpp1; subst.
 case (H2 p1 (Z.succ i)); auto with zarith.
-rewrite Zpower_Zsucc; try apply Zmult_divide_compat_l; auto with zarith.
+rewrite Zpower_Zsucc; try apply Z.mul_divide_mono_l; auto with zarith.
 intros q2 Hq2; exists q2.
 apply Zmult_reg_r with p1.
-contradict H; subst; apply not_prime_0.
+now contradict H; subst; intros Hv; case Z.not_prime_0; apply prime_alt.
 rewrite Hq2; rewrite Zpower_Zsucc; try ring; auto with zarith.
-apply Gauss with p.
+apply Z.gauss with p.
 rewrite Zmult_comm; apply H2; auto.
 apply Z.divide_trans with (1:= Hp3).
-apply Zdivide_factor_l.
-apply rel_prime_sym; apply rel_prime_Zpower_r; auto with zarith.
-apply prime_rel_prime; auto.
+apply Z.divide_factor_r.
+apply Z.coprime_pow_l; auto with zarith.
+apply Z.Symmetric_coprime.
+apply Z.coprime_prime_l.
+now apply prime_alt.
 contradict Hpp1; apply prime_divide_prime_eq; auto.
 Qed.
 
 Theorem prime_divide_Zpower_Zdiv: forall m a p i, 0 <= i -> prime p -> (m | a) -> ~(m | (a/p)) -> (p^i | a) -> (p^i | m).
+Proof.
 intros m a p i Hi Hp (k, Hk) H (l, Hl); subst.
+assert (Hp0: 2 <= p) by now apply Z.prime_ge_2, prime_alt.
 case (Zle_lt_or_eq 0 i); auto with arith; intros Hi1; subst.
-assert (Hp0: 0 < p).
-apply Z.lt_le_trans with 2; auto with zarith; apply prime_ge_2; auto.
-case (Zdivide_dec p k); intros H1.
+case (Z.BoolSpec_divide p k); intros H1.
 case H1; intros k' H2; subst.
 case H; replace (k' * p * m) with ((k' * m) * p); try ring; rewrite Z_div_mult; auto with zarith.
-apply Gauss with k.
+apply Z.gauss with k.
 exists l; rewrite Hl; ring.
-apply rel_prime_sym; apply rel_prime_Zpower_r; auto.
-apply rel_prime_sym; apply prime_rel_prime; auto.
-rewrite Zpower_0_r; apply Zone_divide.
+apply Z.coprime_pow_l; auto with zarith.
+apply Z.coprime_prime_l; auto with zarith.
+now apply prime_alt.
+rewrite Zpower_0_r; apply Z.divide_1_l.
 Qed.
 
 Theorem Zle_square_mult: forall a b, 0 <= a <= b -> a * a <= b * b.
+Proof.
 intros a b (H1, H2); apply Z.le_trans with (a * b); auto with zarith.
 Qed.
 
 Theorem Zlt_square_mult_inv: forall a b, 0 <= a -> 0 <= b -> a * a < b * b -> a < b.
+Proof.
 intros a b H1 H2 H3; case (Zle_or_lt b a); auto; intros H4; apply Zmult_lt_reg_r with a;
    contradict H3; apply Zle_not_lt; apply Zle_square_mult; auto.
 Qed.
 
 
 Theorem Zmod_closeby_eq: forall a b n,  0 <= a -> 0 <= b < n -> a - b < n -> a mod n = b -> a = b.
+Proof.
 intros a b n H H1 H2 H3.
 case (Zle_or_lt 0 (a - b)); intros H4.
 case Zle_lt_or_eq with (1 := H4); clear H4; intros H4; auto with zarith.
-contradict H2; apply Zle_not_lt; apply Zdivide_le; auto with zarith.
+contradict H2; apply Zle_not_lt; apply Z.divide_pos_le; auto with zarith.
 apply Zmod_divide_minus; auto with zarith.
 rewrite <- (Zmod_small a n); try split; auto with zarith.
 Qed.
 
 
 Theorem Zpow_mod_pos_Zpower_pos_correct: forall a m n, 0 < n -> Zpow_mod_pos a m n = (Zpower_pos a m) mod n.
+Proof.
 intros a m; elim m; simpl; auto.
 intros p Rec n H1; rewrite xI_succ_xO; rewrite Pplus_one_succ_r; rewrite <- Pplus_diag; auto.
 repeat rewrite Zpower_pos_is_exp; auto.
@@ -291,6 +307,7 @@ unfold Zpower_pos; simpl; rewrite Zmult_1_r; auto with zarith.
 Qed.
 
 Theorem Zpow_mod_Zpower_correct: forall a m n, 1 < n -> 0 <= m -> Zpow_mod a m n = (a ^ m) mod n.
+Proof.
 intros a m n; case m; simpl; auto.
 intros; apply Zpow_mod_pos_Zpower_pos_correct; auto with zarith.
 Qed.

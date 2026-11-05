@@ -11,8 +11,8 @@
 
       Proof that a polynomial has at most n roots
 ************************************************************************)
-From Coq Require Import ZArith.
-From Coq Require Import List.
+From Stdlib Require Import ZArith.
+From Stdlib Require Import List.
 From Coqprime Require Import UList.
 From Coqprime Require Import Tactic.
 From Coqprime Require Import Permutation.
@@ -69,6 +69,7 @@ Hypothesis mult_integral: forall a b, P a -> P b -> mult a b = zero -> a = zero 
 Hypothesis A_dec: forall a b: A, {a = b} + {a <> b}.
 
 Theorem eval_P: forall p a, P a -> (forall i, In i p -> P i) -> P (eval p a).
+Proof.
 intros p a Pa; elim p; simpl; auto with datatypes.
 intros a1 l1 Rec H; apply Pplus; auto.
 Qed.
@@ -76,6 +77,7 @@ Qed.
 Hint Resolve eval_P : core.
 
 Theorem div_P: forall p a, P a -> (forall i, In i p -> P i) -> (forall i, In i (fst (div p a)) -> P i) /\ P (snd (div p a)).
+Proof.
 intros p a Pa; elim p; auto with datatypes.
 intros a1 l1; case l1.
 simpl; intuition.
@@ -95,6 +97,7 @@ Qed.
 
 Theorem div_correct:
   forall p x y, P x -> P y -> (forall i, In i p -> P i) -> eval p y = plus (mult (eval (fst (div p x)) y) (plus y (op x))) (snd (div p x)).
+Proof.
 intros p x y; elim p; simpl.
 intros; rewrite mult_zero; try rewrite plus_zero; auto.
 intros a l; case l; simpl; auto.
@@ -130,6 +133,7 @@ Qed.
 Theorem div_correct_factor:
   forall p a, (forall i, In i p -> P i) -> P a ->
        eval p a = zero -> forall x,  P x -> eval p x =  (mult (eval (fst (div p a)) x) (plus x (op a))).
+Proof.
 intros p a Hp Ha H x px.
 case (div_P p a); auto; intros Hd1 Hd2.
 rewrite (div_correct p a x); auto.
@@ -140,6 +144,7 @@ rewrite (fun x => plus_comm x zero); auto.
 Qed.
 
 Theorem length_decrease: forall p x, p <> nil -> (length (fst (div p x)) < length p)%nat.
+Proof.
 intros p x; elim p; simpl; auto.
 intros H1; case H1; auto.
 intros a l; case l; simpl; auto.
@@ -152,6 +157,7 @@ Qed.
 Theorem root_max:
 forall p l, ulist l -> (forall i, In i p -> P i) -> (forall i, In i l -> P i) ->
   (forall x, In x l -> eval p x = zero) -> (length p <= length l)%nat -> forall x, P x -> eval p x = zero.
+Proof.
 intros p l; generalize p; elim l; clear l p; simpl; auto.
 intros p; case p; simpl; auto.
 intros a p1 _ _ _ _ H; contradict H; auto with arith.
@@ -182,6 +188,7 @@ Qed.
 Theorem root_max_is_zero:
 forall p l, ulist l -> (forall i, In i p -> P i) -> (forall i, In i l -> P i) ->
   (forall x, In x l -> eval p x = zero) -> (length p <= length l)%nat -> forall x, (In x p) -> x = zero.
+Proof.
 intros p l; generalize p; elim l; clear l p; simpl; auto.
 intros p; case p; simpl; auto.
 intros _ _ _  _ _ x H; case H.

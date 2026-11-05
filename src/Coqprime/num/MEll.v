@@ -7,7 +7,7 @@
 (*************************************************************)
 
 
-From Coq Require Import ZArith Znumtheory Zpow_facts Uint63.
+From Stdlib Require Import ZArith Znumtheory Zpow_facts Uint63.
 From Coqprime Require Import ZEll montgomery.
 
 Set Implicit Arguments.

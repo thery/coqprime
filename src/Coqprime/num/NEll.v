@@ -7,8 +7,8 @@
 (*************************************************************)
 
 
-From Coq Require Import ZArith Znumtheory Zpow_facts.
-From Coq Require Import CyclicAxioms Cyclic63.
+From Stdlib Require Import ZArith Znumtheory Zpow_facts.
+From Stdlib Require Import CyclicAxioms Cyclic63.
 From Coqprime Require Import Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
 From Coqprime Require Import W.
@@ -16,7 +16,7 @@ From Coqprime Require Import Mod_op.
 From Coqprime Require Import ZEll.
 From Coqprime Require Import Bits.
 Import CyclicAxioms DoubleType DoubleBase.
-From Coq Require Import Zmod.
+From Stdlib Require Import Zmod.
 
 
 Set Implicit Arguments.
@@ -276,6 +276,7 @@ Definition wfe p := match p with
 end.
 
 Lemma z2Zx: forall x, z2Z (Z2z x) = x mod exx.(vN).
+Proof.
 unfold Z2z; intros x.
 generalize (Z_mod_lt x exx.(vN)).
 case_eq (x mod exx.(vN)).
@@ -382,7 +383,7 @@ intros x1 y1 z1 y; case y; clear y; auto.
 Qed.
 
  Lemma ztest: forall x y,
-     (x ?= y) = Zeq_bool (z2Z x) (z2Z y).
+     (x ?= y) = Z.eqb (z2Z x) (z2Z y).
  Proof.
  intros x y.
  unfold neq.
@@ -390,13 +391,12 @@ Qed.
  match goal with H: context[x] |- _ =>
    generalize H; clear H; intros HH1
  end.
- symmetry; apply Zeq_is_eq_bool; auto.
- case_eq (Zeq_bool (z2Z x) (z2Z y)); intros H1; auto;
-   generalize HH1; generalize (Zeq_bool_eq _ _ H1); unfold z2Z;
-   intros HH; rewrite HH; auto with zarith.
- case_eq (Zeq_bool (z2Z x) (z2Z y)); intros H1; auto;
-   generalize HH1; generalize (Zeq_bool_eq _ _ H1); unfold z2Z;
-   intros HH; rewrite HH; auto with zarith.
+ case Z.eqb_spec; auto with zarith.
+ intros []; auto.
+ case Z.eqb_spec; auto with zarith.
+ unfold z2Z; intros HH; rewrite HH in HH1; auto with zarith.
+ case Z.eqb_spec; auto with zarith.
+ unfold z2Z; intros HH; rewrite HH in HH1; auto with zarith.
  Qed.
 
  Lemma zc0: z2Z c0 = 0.
@@ -421,15 +421,18 @@ Ltac ftac := match goal with
     end.
 
 Lemma c2ww: forall x, ZEll.nmul (vN exx) 2 x = ZEll.nmul (vN exx) (z2Z c2) x.
+Proof.
 intros x; unfold ZEll.nmul.
 unfold c2; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 Lemma c3ww: forall x, ZEll.nmul (vN exx) 3 x = ZEll.nmul (vN exx) (z2Z c3) x.
+Proof.
 intros x; unfold ZEll.nmul.
 unfold c3; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 
 Lemma Aww: forall x, ZEll.nmul (vN exx) exx.(vA) x = ZEll.nmul (vN exx) (z2Z A) x.
+Proof.
 intros x; unfold ZEll.nmul.
 unfold A; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
@@ -729,7 +732,7 @@ Qed.
   let (a2, sc2) := scal sc1 a1 S1 in
   let (a3, sc3) := scalL sc2 a2 R1 in
     match a3 with
-     nzero => if (Zeq_bool (Z.gcd (z2Z sc3) exx.(vN)) 1) then prime exx.(vN)
+     nzero => if (Z.eqb (Z.gcd (z2Z sc3) exx.(vN)) 1) then prime exx.(vN)
               else True
    | _ => True
    end.
@@ -739,7 +742,7 @@ Qed.
   case_eq (psplit (vR exx)); intros S1 R1 HS1.
   case_eq (scal sc1 a1 S1); intros a2 sc2 Ha2.
   case_eq (scalL sc2 a2 R1); intros a3 sc3; case a3; auto.
-  intros Ha3; case_eq (Zeq_bool (Z.gcd (z2Z sc3) (vN exx)) 1); auto.
+  intros Ha3; case_eq (Z.eqb (Z.gcd (z2Z sc3) (vN exx)) 1); auto.
   intros H1.
   assert (F0:
      (vy exx mod vN exx) ^ 2 mod vN exx =
@@ -825,6 +828,7 @@ Fixpoint plength (p: positive) : positive :=
   end.
 
 Theorem plength_correct: forall p, (Zpos p < 2 ^ Zpos (plength p))%Z.
+Proof.
 assert (F: (forall p, 2 ^ (Zpos (Pos.succ p)) = 2 * 2 ^ Zpos p)%Z).
 intros p; replace (Zpos (Pos.succ p)) with (1 + Zpos p)%Z.
 rewrite Zpower_exp; auto with zarith.
@@ -841,6 +845,7 @@ Qed.
 
 Theorem plength_pred_correct: forall p, (Zpos p <= 2 ^ Zpos (plength (Pos.pred p)))
 %Z.
+Proof.
 intros p; case (Psucc_pred p); intros H1.
 subst; simpl plength.
 rewrite Zpower_1_r; auto with zarith.
@@ -852,6 +857,7 @@ Qed.
 Definition pheight p := plength (Pos.pred (plength (Pos.pred p))).
 
 Theorem pheight_correct: forall p, (Zpos p <= 2 ^ (2 ^ (Zpos (pheight p))))%Z.
+Proof.
 intros p; apply Z.le_trans with (1 := (plength_pred_correct p)).
 apply Zpower_le_monotone; auto with zarith.
 split; auto with zarith.
@@ -899,7 +905,7 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
           let (a2, sc2) := scal ex op mop sc1 a1 S1 in
           let (a3, sc3) := scalL ex op mop sc2 a2 R1 in
           match a3 with
-           nzero _ => if (Zeq_bool (Z.gcd (z2Z op sc3) N) 1) then true
+           nzero _ => if (Z.eqb (Z.gcd (z2Z op sc3) N) 1) then true
                     else false
           | _ => false
           end
@@ -919,6 +925,7 @@ Lemma ell_test_correct: forall (N S: positive) (l: List.list (positive * positiv
                       (A B x y: Z),
   (forall p, List.In p l -> prime (fst p)) ->
   if ell_test N S l A B x y then prime N else True.
+Proof.
 intros N S1 l A1 B1 x y H; unfold ell_test.
 generalize (isM2_correct N); case isM2; auto.
 intros (H1, H2).
@@ -960,7 +967,7 @@ case ZEll.psplit; intros S2 R2.
 case scal; intros a2 sc2.
 case scalL; intros a3 sc3.
 case a3; auto.
-case Zeq_bool; auto.
+case Z.eqb; auto.
 Qed.
 
 Time Eval vm_compute in (ell_test

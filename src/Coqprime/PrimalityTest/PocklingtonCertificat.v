@@ -6,9 +6,9 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Import List.
-From Coq Require Import ZArith.
-From Coq Require Import Zorder.
+From Stdlib Require Import List.
+From Stdlib Require Import ZArith.
+From Stdlib Require Import Zorder.
 From Coqprime Require Import ZCAux.
 From Coqprime Require Import LucasLehmer.
 From Coqprime Require Import Pocklington.
@@ -278,7 +278,8 @@ Proof.
  intros;simpl;apply Zge_0_pos.
 Qed.
 
-Global Hint Resolve Zpower_gt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak
+#[global]
+Hint Resolve Zpower_gt_0 Zlt_0_pos Zge_0_pos Zlt_le_weak
   Zge_0_pos_add: zmisc.
 
 #[global]
@@ -296,23 +297,23 @@ Qed.
 Global Hint Resolve mod_lt : zmisc.
 
 Lemma Zmult_mod_l : forall (n:positive) a b, (a mod n * b) mod n = (a * b) mod n.
-Proof with mauto.
- intros;rewrite Zmult_mod ... rewrite (Zmult_mod a) ...
+Proof.
+ intros;rewrite Zmult_mod; mauto. rewrite (Zmult_mod a); mauto.
 Qed.
 
 Lemma Zmult_mod_r : forall (n:positive) a b, (a * (b mod n)) mod n = (a * b) mod n.
-Proof with mauto.
- intros;rewrite Zmult_mod ... rewrite (Zmult_mod a) ...
+Proof.
+ intros;rewrite Zmult_mod; mauto. rewrite (Zmult_mod a); mauto.
 Qed.
 
 Lemma Zminus_mod_l : forall (n:positive) a b, (a mod n - b) mod n = (a - b) mod n.
-Proof with mauto.
- intros;rewrite Zminus_mod ... rewrite (Zminus_mod a) ...
+Proof.
+ intros;rewrite Zminus_mod; mauto. rewrite (Zminus_mod a); mauto.
 Qed.
 
 Lemma Zminus_mod_r : forall (n:positive) a b, (a - (b mod n)) mod n = (a - b) mod n.
-Proof with mauto.
- intros;rewrite Zminus_mod ... rewrite (Zminus_mod a) ...
+Proof.
+ intros;rewrite Zminus_mod; mauto. rewrite (Zminus_mod a); mauto.
 Qed.
 
 #[global]
@@ -605,10 +606,13 @@ Lemma in_mkProd_prime_div_in :
 Proof.
  induction l;simpl mkProd; simpl In; mauto.
  intros _ H1; absurd (p <= 1).
- apply Zlt_not_le; apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
- apply Zdivide_le; auto with zarith.
+ apply prime_alt in H.
+ apply Zlt_not_le; apply Z.lt_le_trans with 2; try apply Z.prime_ge_2; auto with zarith.
+ apply Z.divide_pos_le; auto with zarith.
  intros.
- case prime_mult with (2 := H1); auto with zarith; intros H2.
+ case (Z.divide_prime_mul (fst a ^ snd a) (mkProd l) p); auto with zarith.
+ now apply prime_alt.
+ intros HH _; case (HH H1); intros H2.
  exists (snd a);left.
  destruct a;simpl in *.
  assert (Zpos p = Zpos p0).
@@ -619,21 +623,6 @@ Proof.
  exists n; auto.
 Qed.
 
-Lemma gcd_Zis_gcd : forall a b:positive, (Zis_gcd b a (gcd b a)%P).
-Proof.
- intros a;assert (Hacc := Zwf_pos a);induction Hacc;rename x into a;intros.
- generalize (div_eucl_spec b a); mauto.
- rewrite <- (Pmod_div_eucl b a).
- CaseEq (b mod a)%P;[intros Heq|intros r Heq]; intros (H1,H2).
- simpl in H1;rewrite Zplus_0_r in H1.
- rewrite (gcd_mod0 _ _ Heq).
- constructor;mauto.
- apply Zdivide_intro with (fst (b/a)%P);trivial.
- rewrite (gcd_mod _ _ _ Heq).
- rewrite H1;apply Zis_gcd_sym.
- rewrite Zmult_comm;apply Zis_gcd_for_euclid2;simpl in *.
- apply Zis_gcd_sym;auto.
-Qed.
 
 Lemma test_pock_correct : forall N a dec sqrt,
    (forall k, In k dec -> prime (Zpos (fst k))) ->
@@ -692,19 +681,19 @@ Proof.
  apply is_odd_Zodd; auto.
  intros p; case p; clear p.
  intros HH; contradict HH.
- apply not_prime_0.
+ now intros HH; case Z.not_prime_0; apply prime_alt.
  2: intros p (V1, _); contradict V1; apply Zle_not_lt; red; simpl; intros;
      discriminate.
  intros p Hprime Hdec; exists (Zpos a);repeat split. 1-2: auto with zarith.
- apply Zis_gcd_gcd. auto with zarith.
- change (rel_prime (a ^ ((N - 1) / p) - 1) N).
+ apply rel_prime_iff_coprime.
  match type of H12 with _ = ?X mod _ =>
    apply rel_prime_div with (p := X)
  end.
- apply rel_prime_mod_rev. auto with zarith.
+ apply rel_prime_iff_coprime.
+ apply Z.coprime_mod_l_iff . auto with zarith.
  red.
  pattern 1 at 3; rewrite <- H10; rewrite <- H12.
- apply Pmod.gcd_Zis_gcd.
+ apply Pmod.gcd_Z_gcd.
  destruct (in_mkProd_prime_div_in _ Hprime _ H Hdec) as (q,Hin).
  revert H2; autorewrite with zmisc; intro H2.
  rewrite <- H2.
@@ -742,10 +731,10 @@ Qed.
 Lemma test_Certif_In_Prime :
   forall lc, test_Certif lc = true ->
    forall c, In c lc -> prime (nprim c).
-Proof with mauto.
+Proof.
  induction lc;simpl;intros. elim H0.
  destruct H0.
- subst c;destruct a;simpl...
+ subst c;destruct a;simpl; mauto.
  elimif.
  CaseEq (Mp p);[intros Heq|intros N' Heq|intros N' Heq];rewrite Heq in H;
   try discriminate H. elimif.

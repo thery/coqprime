@@ -6,8 +6,8 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Import ZArith.
-From Coq Require Export Znumtheory.
+From Stdlib Require Import ZArith.
+From Stdlib Require Export Znumtheory.
 From Coqprime Require Import Tactic.
 From Coqprime Require Import ZCAux.
 From Coqprime Require Import Zp.
@@ -21,13 +21,15 @@ Theorem Pocklington:
 forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 ->
    (forall p, prime p -> (p | F1) -> exists a,  1 < a /\ a^(N - 1) mod N = 1 /\ Z.gcd (a ^ ((N - 1)/ p) - 1) N = 1) ->
   forall n, prime n -> (n | N) -> n mod F1 = 1.
+Proof.
 intros N F1 R1 HF1 HR1 Neq Rec n Hn H.
 assert (HN: 1 < N).
 cut (0 < N - 1). auto with zarith.
 rewrite Neq.
 apply Z.lt_le_trans with (1* R1); auto with zarith.
 assert (Hn1: 1 < n).
-apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply prime_alt in Hn.
+apply Z.lt_le_trans with 2; try apply Z.prime_ge_2; auto with zarith.
 assert (H1: (F1 | n - 1)).
 2: rewrite <- (Zmod_small 1 F1) by auto with zarith.
 2: case H1; intros k H1'.
@@ -46,30 +48,32 @@ apply Zmod_divide_minus; auto with zarith.
 assert (~(n | a)).
 intros H1; absurd (0 = 1). auto with zarith.
 rewrite <- HNn.
-apply sym_equal; apply Zdivide_mod.
+apply sym_equal; apply Z.mod0_divide.
 apply Z.divide_trans with (1 := H1); apply Zpower_divide; auto with zarith.
 assert (Hr: rel_prime a n).
-apply rel_prime_sym; apply prime_rel_prime; auto.
+apply rel_prime_iff_coprime, Z.Symmetric_coprime; apply Z.coprime_prime_l; auto.
+now apply prime_alt.
 assert (Hz: 0 < Zorder a n).
 apply Zorder_power_pos; auto.
 apply Z.divide_trans with (Zorder a n).
 apply prime_divide_Zpower_Zdiv with (N - 1). 1-2: auto with zarith.
 apply Zorder_div_power; auto with zarith.
-intros H1; absurd (1 < n); auto; apply Zle_not_lt; apply Zdivide_le. 1-2: auto with zarith.
-rewrite <- Ha3; apply Zdivide_Zgcd. 2: auto with zarith.
+intros H1; absurd (1 < n); auto; apply Zle_not_lt; apply Z.divide_pos_le. 1-2: auto with zarith.
+rewrite <- Ha3; apply Z.gcd_greatest. 2: auto with zarith.
 apply Zmod_divide_minus. auto with zarith.
 case H1; intros t Ht; rewrite Ht.
 assert (Ht1: 0 <= t).
 apply Zmult_le_reg_r with (Zorder a n). auto with zarith.
 rewrite Zmult_0_l; rewrite <- Ht.
 apply Z.ge_le; apply Z_div_ge0. 2: auto with zarith.
-apply Z.lt_gt; apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply prime_alt in Hp.
+apply Z.lt_gt; apply Z.lt_le_trans with 2; try apply Z.prime_ge_2; auto with zarith.
 rewrite Zmult_comm. rewrite Zpower_mult by auto with zarith.
 rewrite Zpower_mod by auto with zarith.
 rewrite Zorder_power_is_1 by auto with zarith.
 rewrite Zpower_1_l by auto with zarith.
 apply Zmod_small; auto with zarith.
-apply Z.divide_trans with (1:= HiF1); rewrite Neq; apply Zdivide_factor_r.
+apply Z.divide_trans with (1:= HiF1); rewrite Neq; apply Z.divide_factor_l.
 apply Zorder_div; auto.
 Qed.
 
@@ -77,6 +81,7 @@ Theorem PocklingtonCorollary1:
 forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 -> N < F1 * F1 ->
    (forall p, prime p -> (p | F1) -> exists a,  1 < a /\ a^(N - 1) mod N = 1 /\ Z.gcd (a ^ ((N - 1)/ p) - 1) N = 1) ->
    prime N.
+Proof.
 intros N F1 R1 H H1 H2 H3 H4; case (prime_dec N); intros H5; auto.
 assert (HN: 1 < N).
 cut (0 < N - 1). auto with zarith.
@@ -85,9 +90,11 @@ apply Z.lt_le_trans with (1* R1); auto with zarith.
 case Zdivide_div_prime_le_square with (2:= H5); auto with zarith.
 intros n (Hn, (Hn1, Hn2)).
 assert (Hn3: 0 <= n).
-apply Z.le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply prime_alt in Hn.
+apply Z.le_trans with 2; try apply Z.prime_ge_2; auto with zarith.
 absurd (n = 1).
-intros H6; contradict Hn; subst; apply not_prime_1.
+intros H6; contradict Hn; subst; intros HH.
+now case Z.not_prime_1; apply prime_alt.
 rewrite <- (Zmod_small n F1); try split; auto.
 apply Pocklington with (R1 := R1) (4 := H4); auto.
 apply Zlt_square_mult_inv; auto with zarith.
@@ -97,6 +104,7 @@ Theorem PocklingtonCorollary2:
 forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 ->
    (forall p,  prime p -> (p | F1) -> exists a,  1 < a /\ a^(N - 1) mod N = 1 /\ Z.gcd (a ^ ((N - 1)/ p) - 1) N = 1) ->
   forall n, 0 <= n -> (n | N) -> n mod F1 = 1.
+Proof.
 intros N F1 R1 H1 H2 H3 H4 n H5; pattern n; apply prime_induction; auto.
 assert (HN: 1 < N).
 cut (0 < N - 1). auto with zarith.
@@ -108,8 +116,8 @@ intros p q Hp Hp1 Hp2; rewrite Zmult_mod; auto with zarith.
 rewrite Pocklington with (n := p) (R1 := R1) (4 := H4); auto.
 rewrite Hp1.
 rewrite Zmult_1_r; rewrite Zmod_small; auto with zarith.
-apply Z.divide_trans with (2 := Hp2); apply Zdivide_factor_l.
-apply Z.divide_trans with (2 := Hp2); apply Zdivide_factor_r; auto.
+apply Z.divide_trans with (2 := Hp2); apply Z.divide_factor_r.
+apply Z.divide_trans with (2 := Hp2); apply Z.divide_factor_l; auto.
 Qed.
 
 Definition isSquare x := exists y, x = y * y.
@@ -122,6 +130,7 @@ forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 -> Zeven F1 -> Zodd R1 ->
     let r := (R1 mod (2 * F1)) in
       N < (m * F1 + 1) * (2 * F1 * F1 + (r - m) * F1 + 1) ->
       (s = 0 \/ ~ isSquare (r * r - 8 * s)) -> prime N.
+Proof.
 intros N F1 R1 H1 H2 H3 OF1 ER1 H4 m H5 H6 s r H7 H8.
 case (prime_dec N). auto. intros H9.
 assert (HN: 1 < N).
@@ -131,7 +140,8 @@ apply Z.lt_le_trans with (1* R1); auto with zarith.
 case  Zdivide_div_prime_le_square with N. 1-2: auto.
 intros X (Hx1, (Hx2, Hx3)).
 assert (Hx0: 1 < X).
-apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+apply prime_alt in Hx1.
+apply Z.lt_le_trans with 2; try apply Z.prime_ge_2; auto with zarith.
 pose (c := (X /  F1)).
 assert(Hc1: 0 <= c).
 apply Z.ge_le; unfold c; apply Z_div_ge0; auto with zarith.
@@ -243,6 +253,7 @@ forall N F1 R1, 1 < F1 -> 0 < R1 -> N - 1 = F1 * R1 -> Zeven F1 -> Zodd R1 ->
     let s := (R1 / (2 * F1)) in
     let r := (R1 mod (2 * F1)) in
       N < 2 * F1 * F1 * F1 ->  (s = 0 \/ ~ isSquare (r * r - 8 * s)) -> prime N.
+Proof.
 intros N F1 R1 H1 H2 H3 OF1 ER1 H4 s r H5 H6.
 apply PocklingtonExtra with (6 := H4) (R1 := R1) (m := 1); auto with zarith.
 apply Z.lt_le_trans with (1 := H5).
@@ -269,11 +280,9 @@ Proof.
   intros.
   rewrite Zpow_mod_correct in * by Lia.lia.
   eapply Pocklington.PocklingtonCorollary1; revgoals; eauto; intros p' Hp' Hd.
-  eapply prime_div_prime in Hd; trivial; subst.
+  eapply Z.divide_prime_prime in Hd; trivial; try apply prime_alt; subst; auto.
   exists a; intuition idtac.
-  eapply Zgcd_1_rel_prime in H7.
-  eapply rel_prime_mod in H7; trivial.
+  rewrite <- Z.gcd_mod_l in H7.
   rewrite Zminus_mod_idemp_l in H7.
-  eapply Zgcd_1_rel_prime.
-  eapply rel_prime_mod_rev; trivial.
+  now rewrite <- Z.gcd_mod_l.
 Qed.

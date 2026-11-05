@@ -11,24 +11,25 @@
 
       Definition of list with distinct elements
 ************************************************************************)
-From Coq Require Import List.
-From Coq Require Import Arith.
+From Stdlib Require Import List.
+From Stdlib Require Import Arith.
 From Coqprime Require Import Permutation.
-From Coq Require Import ListSet.
+From Stdlib Require Import ListSet.
 
-Notation ulist := NoDup (only parsing).
-Notation ulist_cons := NoDup_cons (only parsing).
+Abbreviation ulist := NoDup (only parsing).
+Abbreviation ulist_cons := NoDup_cons (only parsing).
 Section UniqueList.
 Variable A : Set.
 Variable eqA_dec : forall (a b : A),  ({ a = b }) + ({ a <> b }).
 (* A list is unique if there is not twice the same element in the list *)
 
-Local Notation ulist := (@NoDup A).
+Local Abbreviation ulist := (@NoDup A).
 Hint Constructors NoDup : core.
 
 (* Inversion theorem *)
 
 Theorem ulist_inv: forall a l, ulist (a :: l) ->  ulist l.
+Proof.
 intros a l H; inversion H; auto.
 Qed.
 (* The append of two unique list is unique if the list are distinct *)
@@ -72,6 +73,7 @@ Defined.
 
 Theorem ulist_perm:
  forall (l1 l2 : list A), permutation l1 l2 -> ulist l1 ->  ulist l2.
+Proof.
 intros l1 l2 H; elim H; clear H l1 l2; simpl; auto.
 intros a l1 l2 H0 H1 H2; apply ulist_cons; auto.
 inversion_clear H2 as [|ia il iH1 iH2 [iH3 iH4]]; auto.
@@ -93,6 +95,7 @@ Qed.
 Theorem ulist_def:
  forall l a,
  In a l -> ulist l ->  ~ (exists l1 , permutation l (a :: (a :: l1)) ).
+Proof.
 intros l a H H0 [l1 H1].
 absurd (ulist (a :: (a :: l1))); auto.
 intros H2; inversion_clear H2; simpl; auto with datatypes.
@@ -102,6 +105,7 @@ Qed.
 Theorem ulist_incl_permutation:
  forall (l1 l2 : list A),
  ulist l1 -> incl l1 l2 ->  (exists l3 , permutation l2 (l1 ++ l3) ).
+Proof.
 intros l1; elim l1; simpl; auto.
 intros l2 H H0; exists l2; simpl; auto.
 intros a l H l2 H0 H1; auto.
@@ -124,6 +128,7 @@ Qed.
 Theorem ulist_eq_permutation:
  forall (l1 l2 : list A),
  ulist l1 -> incl l1 l2 -> length l1 = length l2 ->  permutation l1 l2.
+Proof.
 intros l1 l2 H1 H2 H3.
 case (ulist_incl_permutation l1 l2); auto.
 intros l3 H4.
@@ -145,6 +150,7 @@ Proof. intros; apply NoDup_incl_length; trivial. Qed.
 Theorem ulist_incl2_permutation:
  forall (l1 l2 : list A),
  ulist l1 -> ulist l2 -> incl l1 l2 -> incl l2 l1  ->  permutation l1 l2.
+Proof.
 intros l1 l2 H1 H2 H3 H4.
 apply ulist_eq_permutation; auto.
 apply Nat.le_antisymm; apply ulist_incl_length; auto.
@@ -154,6 +160,7 @@ Qed.
 Theorem ulist_incl_length_strict:
  forall (l1 l2 : list A),
  ulist l1 -> incl l1 l2 -> ~ incl l2 l1 ->  lt (length l1) (length l2).
+Proof.
 intros l1 l2 H1 Hi Hi0; case ulist_incl_permutation with ( 2 := Hi ); auto.
 intros l3 Hl3; rewrite permutation_length with ( 1 := Hl3 ); auto.
 rewrite length_app; simpl; auto with arith.
@@ -167,6 +174,7 @@ Qed.
 
 Theorem in_inv_dec:
  forall (a b : A) l, In a (cons b l) ->  a = b \/ ~ a = b /\ In a l.
+Proof.
 intros a b l H; case (eqA_dec a b); auto; intros H1.
 right; split; auto; inversion H; auto.
 case H1; auto.
@@ -176,6 +184,7 @@ Theorem in_ex_app_first:
  forall (a : A) (l : list A),
  In a l ->
   (exists l1 : list A , exists l2 : list A , l = l1 ++ (a :: l2) /\ ~ In a l1  ).
+Proof.
 intros a l; elim l; clear l; auto.
 intros H; case H.
 intros a1 l H H1; auto.
@@ -195,6 +204,7 @@ Theorem ulist_inv_ulist:
    exists l1 ,
    exists l2 ,
    exists l3 , l = l1 ++ ((a :: l2) ++ (a :: l3)) /\ ulist (l1 ++ (a :: l2))    ).
+Proof.
 intros l; elim l  using list_length_ind; clear l.
 intros l; case l; simpl; auto; clear l.
 intros Rec H0; case H0; auto.
@@ -234,6 +244,7 @@ Theorem incl_length_repetition:
    exists ll2 ,
    exists ll3 ,
    l1 = ll1 ++ ((a :: ll2) ++ (a :: ll3)) /\ ulist (ll1 ++ (a :: ll2))    ).
+Proof.
 intros l1 l2 H H0; apply ulist_inv_ulist.
 intros H1; absurd (le (length l1) (length l2)); auto with arith.
 apply ulist_incl_length; auto.
@@ -251,6 +262,7 @@ Proof. intros; apply NoDup_map_NoDup_ForallPairs; assumption. Qed.
 Theorem ulist_list_prod:
  forall (A : Set) (l1 l2 : list A),
  ulist l1 -> ulist l2 ->  ulist (list_prod l1 l2).
+Proof.
 intros A l1 l2 Hl1 Hl2; elim Hl1; simpl; auto.
 intros a l H1 H2 H3; apply ulist_app; auto.
 apply ulist_map; auto.
