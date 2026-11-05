@@ -5,7 +5,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Import ZArith Zpow_facts.
+From Stdlib Require Import ZArith Zpow_facts.
 
 Open Scope Z_scope.
 
@@ -18,6 +18,7 @@ Fixpoint Ppow a z {struct z}:=
 
 Theorem Ppow_correct: forall a z,
   Zpos (Ppow a z) = (Zpos a) ^ (Zpos z).
+Proof.
 intros a z; elim z; simpl Ppow; auto;
   try (intros z1 Hrec; repeat rewrite Zpos_mult_morphism; rewrite Hrec).
   rewrite Zpos_xI; rewrite Zpower_exp. 3: auto with zarith.
@@ -35,6 +36,7 @@ Qed.
 
 Theorem Ppow_plus: forall a z1 z2,
  Ppow a (z1 + z2) = ((Ppow a z1) * (Ppow a z2))%positive.
+Proof.
 intros a z1 z2.
   assert (tmp: forall x y, Zpos x = Zpos y -> x = y).
     intros x y H; injection H; auto.

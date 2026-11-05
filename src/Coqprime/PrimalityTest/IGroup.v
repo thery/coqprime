@@ -13,9 +13,9 @@
 
     Definition: ZpGroup
   **********************************************************************)
-From Coq Require Import ZArith.
+From Stdlib Require Import ZArith.
 From Coqprime Require Import Tactic.
-From Coq Require Import Wf_nat.
+From Stdlib Require Import Wf_nat.
 From Coqprime Require Import UList.
 From Coqprime Require Import ListAux.
 From Coqprime Require Import FGroup.
@@ -47,6 +47,7 @@ Fixpoint is_inv_aux (l: list A) (a: A) {struct l}: bool :=
   end.
 
 Theorem is_inv_aux_false: forall b l, (forall a, (In a l) -> op b a <> e \/  op a b <> e) -> is_inv_aux l b = false.
+Proof.
 intros b l; elim l; simpl; auto.
 intros a l1 Rec H; case (A_dec (op a b) e); case (A_dec (op b a) e); auto.
 intros H1 H2; case (H a); auto; intros H3; case H3; auto.
@@ -69,12 +70,14 @@ Fixpoint isupport_aux (l: list A) : list  A :=
  **************************************)
 
 Theorem isupport_aux_is_inv_true: forall l a, In a (isupport_aux l) -> is_inv a = true.
+Proof.
 intros l a; elim l; simpl; auto.
 intros b l1 H; case_eq (is_inv b); intros H1; simpl; auto.
 intros [H2 | H2]; subst; auto.
 Qed.
 
 Theorem isupport_aux_is_in: forall l a,  is_inv a = true -> In a l -> In a (isupport_aux l).
+Proof.
 intros l a; elim l; simpl; auto.
 intros b l1 Rec H [H1 | H1]; subst.
 rewrite H; auto with datatypes.
@@ -84,6 +87,7 @@ Qed.
 
 Theorem isupport_aux_not_in:
   forall b l, (forall a, (In a support) -> op b a <> e \/  op a b <> e) -> ~ In b (isupport_aux l).
+Proof.
 intros b l; elim l; simpl; simpl; auto.
 intros a l1 H; case_eq (is_inv a); intros H1; simpl; auto.
 intros H2 [H3 | H3]; subst.
@@ -93,11 +97,13 @@ case H; auto; apply isupport_aux_is_in; auto.
 Qed.
 
 Theorem isupport_aux_incl: forall l, incl (isupport_aux l) l.
+Proof.
 intros l; elim l; simpl; auto with datatypes.
 intros a l1 H1; case (is_inv a); auto with datatypes.
 Qed.
 
 Theorem isupport_aux_ulist: forall l, ulist l -> ulist (isupport_aux l).
+Proof.
 intros l; elim l; simpl; auto with datatypes.
 intros a l1 H1 H2; case_eq (is_inv a); intros H3; auto with datatypes.
 apply ulist_cons; auto with datatypes.
@@ -118,23 +124,28 @@ Definition isupport := isupport_aux support.
  **************************************)
 
 Theorem isupport_is_inv_true: forall a, In a isupport -> is_inv a = true.
+Proof.
 unfold isupport; intros a H; apply isupport_aux_is_inv_true with (1 := H).
 Qed.
 
 Theorem isupport_is_in: forall a,  is_inv a = true -> In a support -> In a isupport.
+Proof.
 intros a H H1; unfold isupport; apply isupport_aux_is_in; auto.
 Qed.
 
 Theorem isupport_incl: incl isupport support.
+Proof.
 unfold isupport; apply isupport_aux_incl.
 Qed.
 
 Theorem isupport_ulist: ulist isupport.
+Proof.
 unfold isupport; apply isupport_aux_ulist.
 apply support_ulist.
 Qed.
 
 Theorem isupport_length: (length isupport <= length support)%nat.
+Proof.
 apply ulist_incl_length.
 apply isupport_ulist.
 apply isupport_incl.
@@ -143,6 +154,7 @@ Qed.
 Theorem isupport_length_strict:
   forall b, (In b support) -> (forall a, (In a support) -> op b a <> e \/  op a b <> e) ->
            (length isupport < length support)%nat.
+Proof.
 intros b H H1; apply ulist_incl_length_strict.
 apply isupport_ulist.
 apply isupport_incl.
@@ -155,18 +167,21 @@ Fixpoint inv_aux (l: list A) (a: A) {struct l}: A :=
   end.
 
 Theorem inv_aux_prop_r: forall l a, is_inv_aux l a = true -> op a (inv_aux l a) = e.
+Proof.
 intros l a; elim l; simpl.
 intros; discriminate.
 intros b l1 H1; case (A_dec (op a b) e); case (A_dec (op b a) e); intros H3 H4; subst; auto.
 Qed.
 
 Theorem inv_aux_prop_l: forall l a, is_inv_aux l a = true -> op (inv_aux l a) a = e.
+Proof.
 intros l a; elim l; simpl.
 intros; discriminate.
 intros b l1 H1; case (A_dec (op a b) e); case (A_dec (op b a) e); intros H3 H4; subst; auto.
 Qed.
 
 Theorem inv_aux_inv: forall l a b, op a b = e -> op b a = e ->  (In a l) -> is_inv_aux l b = true.
+Proof.
 intros l a b; elim l; simpl.
 intros  _ _ H; case H.
 intros c l1 Rec H H0 H1; case H1; clear H1; intros H1. subst c.
@@ -175,6 +190,7 @@ case (A_dec (op b c) e); case (A_dec (op c b) e); auto.
 Qed.
 
 Theorem inv_aux_in: forall l a,  In (inv_aux l a) l \/ inv_aux l a = e.
+Proof.
 intros l a; elim l; simpl; auto.
 intros b l1; case (A_dec (op a b) e); case (A_dec (op b a) e); intros _ _ [H1 | H1]; auto.
 Qed.
@@ -190,26 +206,31 @@ Definition inv := inv_aux support.
  **************************************)
 
 Theorem inv_prop_r: forall a, In a isupport -> op a (inv a) = e.
+Proof.
 intros a H; unfold inv; apply inv_aux_prop_r with (l := support).
 change (is_inv a = true).
 apply isupport_is_inv_true; auto.
 Qed.
 
 Theorem inv_prop_l: forall a, In a isupport -> op (inv a) a = e.
+Proof.
 intros a H; unfold inv; apply inv_aux_prop_l with (l := support).
 change (is_inv a = true).
 apply isupport_is_inv_true; auto.
 Qed.
 
 Theorem is_inv_true: forall a b, op b a = e ->  op a b = e -> (In a support) -> is_inv b = true.
+Proof.
 intros a b H H1 H2; unfold is_inv; apply inv_aux_inv with a; auto.
 Qed.
 
 Theorem is_inv_false: forall b, (forall a, (In a support) -> op b a <> e \/  op a b <> e) -> is_inv b = false.
+Proof.
 intros b H; unfold is_inv; apply is_inv_aux_false; auto.
 Qed.
 
 Theorem inv_internal: forall a, In a isupport -> In (inv a) isupport.
+Proof.
 intros a H; apply isupport_is_in.
 apply is_inv_true with a; auto.
 apply inv_prop_l; auto.
@@ -224,6 +245,7 @@ Qed.
  **************************************)
 
 Definition IGroup : (FGroup op).
+Proof.
 generalize (fun x=> (isupport_incl x)); intros Hx.
 apply mkGroup with (s := isupport) (e := e) (i := inv); auto.
 apply isupport_ulist.

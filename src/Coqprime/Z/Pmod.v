@@ -6,7 +6,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Export ZArith Lia Zwf.
+From Stdlib Require Export ZArith Lia Zwf.
 From Coqprime Require Export ZCmisc.
 
 (* Compatibility with Coq versions not supporting hint localities *)
@@ -48,74 +48,32 @@ Fixpoint div_eucl (a b : positive) {struct a} : N * N :=
 Infix "/" := div_eucl : P_scope.
 
 Open Scope Z_scope.
-Opaque Zmult.
+
 Lemma div_eucl_spec : forall a b,
           Zpos a = fst (a/b)%P * b + snd (a/b)%P
        /\ snd (a/b)%P < b.
-Proof with zsimpl;try apply Zlt_0_pos;try ((ring;fail) || lia).
- intros a b;generalize a;clear a;induction a;simpl;zsimpl.
- case IHa; destruct (a/b)%P as [q r].
-   case q; case r; simpl fst; simpl snd.
-     rewrite Zmult_0_l; rewrite Zplus_0_r; intros HH; discriminate HH.
-  intros p H; rewrite H;
-  match goal with
-  | [|- context [ ?xx ?< b ]] =>
-    generalize (is_lt_spec xx b);destruct (xx ?< b)
-  | _ => idtac
-  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto.
-  rewrite PminusN_le...
-  generalize H1; zsimpl; auto.
-  rewrite PminusN_le...
-  intros p H; rewrite H;
-  match goal with
-  | [|- context [ ?xx ?< b ]] =>
-    generalize (is_lt_spec xx b);destruct (xx ?< b)
-  | _ => idtac
-  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto; try ring.
-  ring_simplify.
-  case (Zle_lt_or_eq _ _ H1); auto with zarith.
-  intros p p1 H; rewrite H.
-  match goal with
-  | [|- context [ ?xx ?< b ]] =>
-    generalize (is_lt_spec xx b);destruct (xx ?< b)
-  | _ => idtac
-  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto; try ring.
-  rewrite PminusN_le...
-  generalize H1; zsimpl; auto.
-  rewrite PminusN_le...
- case IHa; destruct (a/b)%P as [q r].
-   case q; case r; simpl fst; simpl snd.
-     rewrite Zmult_0_l; rewrite Zplus_0_r; intros HH; discriminate HH.
-  intros p H; rewrite H;
-  match goal with
-  | [|- context [ ?xx ?< b ]] =>
-    generalize (is_lt_spec xx b);destruct (xx ?< b)
-  | _ => idtac
-  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto.
-  rewrite PminusN_le...
-  generalize H1; zsimpl; auto.
-  rewrite PminusN_le...
-  intros p H; rewrite H; simpl; intros H1; split; auto.
-  zsimpl; ring.
-  intros p p1 H; rewrite H.
-  match goal with
-  | [|- context [ ?xx ?< b ]] =>
-    generalize (is_lt_spec xx b);destruct (xx ?< b)
-  | _ => idtac
-  end; zsimpl; simpl; intros H1 H2; split; zsimpl; auto; try ring.
-  rewrite PminusN_le...
-  generalize H1; zsimpl; auto.
-  rewrite PminusN_le...
-  match goal with
-  | [|- context [ ?xx ?< b ]] =>
-    generalize (is_lt_spec xx b);destruct (xx ?< b)
-  | _ => idtac
-  end; zsimpl; simpl.
-  split; auto.
-  case (Zle_lt_or_eq 1 b). 2-3: auto with zarith.
-  generalize (Zlt_0_pos b); auto with zarith.
+Proof.
+intro a; induction a as [a IHa|a IHa|]; simpl.
+intros b; generalize (IHa b); destruct ((a / b)%P) as [[|q] [|r]].
+  unfold fst, snd; lia.
+  generalize (is_lt_spec r~1 b);destruct (r~1 ?< b).
+    unfold fst, snd; lia.
+    unfold fst, snd; intros; rewrite !PminusN_le; try lia.
+  generalize (is_lt_spec 1 b);destruct (1 ?< b); unfold fst, snd; lia.
+  generalize (is_lt_spec r~1 b);destruct (r~1 ?< b).
+    unfold fst, snd; lia.
+    unfold fst, snd; intros; rewrite !PminusN_le; try lia.
+intros b; generalize (IHa b); destruct ((a / b)%P) as [[|q] [|r]].
+  unfold fst, snd; lia.
+  generalize (is_lt_spec r~0 b);destruct (r~0 ?< b).
+    unfold fst, snd; lia.
+    unfold fst, snd; intros; rewrite !PminusN_le; try lia.
+  unfold fst, snd; lia.
+  generalize (is_lt_spec r~0 b);destruct (r~0 ?< b).
+    unfold fst, snd; lia.
+    unfold fst, snd; intros; rewrite !PminusN_le; try lia.
+intro b; destruct b; simpl; lia.
 Qed.
-Transparent Zmult.
 
 (******** Definition du modulo ************)
 
@@ -145,7 +103,7 @@ Infix "mod" := Pmod (at level 40, no associativity) : P_scope.
 Local Open Scope P_scope.
 
 Lemma Pmod_div_eucl : forall a b, a mod b = snd (a/b).
-Proof with auto.
+Proof.
  intros a b;generalize a;clear a;induction a;simpl;
  try (rewrite IHa;
   assert (H1 := div_eucl_spec a b); destruct (a/b) as [q r];
@@ -154,9 +112,9 @@ Proof with auto.
    | [|- context [ ?xx ?< b ]] =>
       assert (H2 := is_lt_spec xx b);destruct (xx ?< b)
   | _ => idtac
-  end;simpl) ...
+  end;simpl); auto.
  destruct H1 as [H3 H4];discriminate H3.
- destruct (1 ?< b);simpl ...
+ destruct (1 ?< b); simpl; auto.
 Qed.
 
 Lemma mod1: forall a, a mod 1 = 0%N.
@@ -265,6 +223,7 @@ Lemma egcd_gcd_log2: forall c a b,
   | Some (u,v,r), Some r' => r = r'
   | _, _ => False
   end.
+Proof.
 induction c; simpl; auto; try
  (intros a b; generalize (Pmod_div_eucl a b); case (a/b); simpl;
   intros q r1 H; subst; case (a mod b); auto;
@@ -289,6 +248,7 @@ Lemma egcd_log2_ok: forall c a b,
     None => True
   | Some (u,v,r) => u * a + v * b = r
   end.
+Proof.
 induction c; simpl; auto;
  intros a b; generalize (div_eucl_spec a b); case (a/b);
   simpl fst; simpl snd; intros q r1; case r1; try (intros; ring);
@@ -314,12 +274,9 @@ Lemma gcd_log2_1: forall a c, gcd_log2  a xH c = Some xH.
 Proof. destruct c;simpl;try rewrite mod1;trivial. Qed.
 
 Lemma log2_Zle :forall a b, Zpos a <= Zpos b -> log2 a <= log2 b.
-Proof with zsimpl;try lia.
- induction a;destruct b;zsimpl;intros;simpl ...
- assert (log2 a <= log2 b) ...  apply IHa ...
- assert (log2 a <= log2 b) ...  apply IHa ...
- assert (log2 a <= log2 b) ...  apply IHa ...
- assert (log2 a <= log2 b) ...  apply IHa ...
+Proof.
+ induction a;destruct b;zsimpl;intros;simpl; try lia;
+  (assert (log2 a <= log2 b) by now apply IHa; lia); lia.
 Qed.
 
 Lemma log2_1_inv : forall a, Zpos (log2 a) = 1 -> a = xH.
@@ -361,9 +318,9 @@ Proof. intros;apply gcd_log2_None_aux;auto with zarith. Qed.
 Lemma gcd_log2_Zle :
    forall c1 c2 a b, log2 c1 <= log2 c2 ->
       gcd_log2 a b c1 <> None -> gcd_log2 a b c2 = gcd_log2 a b c1.
-Proof with zsimpl;trivial;try lia.
+Proof.
  induction c1;destruct c2;simpl;intros;
-   (destruct (a mod b) as [|r];[idtac | destruct (b mod r)]) ...
+   (destruct (a mod b) as [|r];[idtac | destruct (b mod r)]); auto; try lia.
  apply IHc1;trivial. generalize H;zsimpl;intros;lia.
  apply IHc1;trivial. generalize H;zsimpl;intros;lia.
  apply IHc1;trivial. generalize H;zsimpl;intros;lia.
@@ -393,13 +350,12 @@ Proof.
  intros a;apply H with (Zpos a);trivial.
 Qed.
 
-Opaque Pmod.
 Lemma gcd_log2_mod : forall a b, Zpos b <= Zpos a ->
   forall r, a mod b = Npos r -> gcd_log2 a b b = gcd_log2 b r r.
 Proof.
  intros a b;generalize a;clear a; assert (Hacc := Zwf_pos b).
  induction Hacc; intros a Hle r Hmod.
- rename x into b. destruct b;simpl;rewrite Hmod.
+ rename x into b. destruct b; unfold gcd_log2; fold gcd_log2; rewrite Hmod.
  CaseEq (xI b mod r)%P;intros. rewrite gcd_log2_mod0;trivial.
  assert (H2 := mod_le _ _ _ H1);assert (H3 := mod_lt _ _ _ Hmod);
   assert (H4 := mod_le _ _ _ Hmod).
@@ -499,8 +455,8 @@ Proof.
  destruct (gcd_log2 b r r);intros;trivial.
 Qed.
 
-Require Import ZArith.
-Require Import Znumtheory.
+From Stdlib Require Import ZArith.
+From Stdlib Require Import Znumtheory.
 
 #[global]
 Hint Rewrite  Zpos_mult times_Zmult square_Zmult Psucc_Zplus: zmisc.
@@ -508,40 +464,39 @@ Hint Rewrite  Zpos_mult times_Zmult square_Zmult Psucc_Zplus: zmisc.
 Ltac mauto :=
   trivial;autorewrite with zmisc;trivial;auto with zarith.
 
-Lemma gcd_Zis_gcd : forall a b:positive, (Zis_gcd b a (gcd b a)%P).
-Proof with mauto.
- intros a;assert (Hacc := Zwf_pos a);induction Hacc;rename x into a;intros.
- generalize (div_eucl_spec b a)...
+Lemma gcd_Z_gcd : forall a b: positive, Z.gcd b a = gcd b a.
+Proof.
+ intros a;assert (Hacc := Zwf_pos a);induction Hacc as [a H1 H2].
+ intros b.
+ generalize (div_eucl_spec b a); mauto.
  rewrite <- (Pmod_div_eucl b a).
- CaseEq (b mod a)%P;[intros Heq|intros r Heq]; intros (H1,H2).
- simpl in H1;rewrite Zplus_0_r in H1.
- rewrite (gcd_mod0 _ _ Heq).
- constructor;mauto.
- apply Zdivide_intro with (fst (b/a)%P);trivial.
+ CaseEq (b mod a)%P;[intros Heq|intros r Heq]; intros (Hb,Hlt).
+ simpl in Hb;rewrite Zplus_0_r in Hb.
+ rewrite Hb, Z.gcd_comm, Z.mul_comm, Z.gcd_mul_diag_l; try lia.
+ rewrite (gcd_mod0 _ _ Heq); trivial; lia.
  rewrite (gcd_mod _ _ _ Heq).
- rewrite H1;apply Zis_gcd_sym.
- rewrite Zmult_comm;apply Zis_gcd_for_euclid2;simpl in *.
- apply Zis_gcd_sym;auto.
+ rewrite Hb, Z.add_comm, Z.gcd_comm, Z.gcd_add_mult_diag_r.
+ apply H2; lia.
 Qed.
 
 Lemma egcd_Zis_gcd : forall a b:positive,
    let (uv,w) := egcd a b in
    let  (u,v) := uv in
-     u * a + v * b = w /\ (Zis_gcd b a w).
-Proof with mauto.
+     u * a + v * b = w /\ Z.gcd a b = w.
+Proof.
  intros a b; unfold egcd.
  generalize (egcd_log2_ok (xO b) a b) (egcd_gcd_log2 (xO b) a b)
-            (egcd_log2_x0 a b) (gcd_Zis_gcd b a); unfold egcd, gcd.
+            (egcd_log2_x0 a b) (gcd_Z_gcd b a); unfold egcd, gcd.
  case egcd_log2; try (intros ((u,v),w)); case gcd_log2;
  try (intros; match goal with H: False |- _ => case H end);
  try (intros _ _ H1; case H1; auto; fail).
- intros; subst; split; try apply Zis_gcd_sym; auto.
+ intros; subst; lia.
 Qed.
 
 Definition Zgcd a b :=
   match a, b with
-  | Z0, _ => b
-  | _, Z0 => a
+  | Z0, _ => Z.abs b
+  | _, Z0 => Z.abs a
   | Zpos a, Zneg b => Zpos (gcd a b)
   | Zneg a, Zpos b => Zpos (gcd a b)
   | Zpos a, Zpos b => Zpos (gcd a b)
@@ -549,18 +504,13 @@ Definition Zgcd a b :=
   end.
 
 
-Lemma Zgcd_is_gcd : forall x y, Zis_gcd x y (Zgcd x y).
+Lemma Zgcd_Z_gcd : forall x y, Z.gcd x y = Zgcd x y.
 Proof.
- destruct x;destruct y;simpl.
- apply Zis_gcd_0.
- apply Zis_gcd_sym;apply Zis_gcd_0.
- apply Zis_gcd_sym;apply Zis_gcd_0.
- apply Zis_gcd_0.
- apply gcd_Zis_gcd.
- apply Zis_gcd_sym;apply Zis_gcd_minus;simpl;apply gcd_Zis_gcd.
- apply Zis_gcd_0.
- apply Zis_gcd_minus;simpl;apply Zis_gcd_sym;apply gcd_Zis_gcd.
- apply Zis_gcd_minus;apply Zis_gcd_minus;simpl;apply gcd_Zis_gcd.
+ destruct x;destruct y;simpl; auto.
+ now rewrite <- gcd_Z_gcd.
+ now rewrite <- gcd_Z_gcd.
+ now rewrite <- gcd_Z_gcd.
+ now rewrite <- gcd_Z_gcd.
 Qed.
 
 Definition Zegcd a b :=
@@ -580,28 +530,23 @@ Definition Zegcd a b :=
      match egcd a b with (u,v,w) => (-u,-v, Zpos w) end
   end.
 
-Lemma Zegcd_is_egcd : forall x y,
+Lemma Zegcd_Z_gcd : forall x y,
   match Zegcd x y with
-   (u,v,w) => u * x + v * y = w /\ Zis_gcd x y w /\ 0 <= w
+   (u, v, w) => u * x + v * y = Z.gcd x y /\ w = Z.gcd x y
   end.
 Proof.
  assert (zx0: forall x, Zneg x = -x).
     simpl; auto.
  assert (zx1: forall x, -(-x) = x).
    intro x; case x; simpl; auto.
- destruct x;destruct y;simpl; try (split; [idtac|split]);
-  auto; try (red; simpl; intros; discriminate);
- try (rewrite zx0; apply Zis_gcd_minus; try rewrite zx1; auto;
-       apply Zis_gcd_minus; try rewrite zx1; simpl; auto);
- try apply Zis_gcd_0; try (apply Zis_gcd_sym;apply Zis_gcd_0);
- generalize (egcd_Zis_gcd p p0); case egcd; intros (u,v) w (H1, H2);
- split; repeat rewrite zx0; try (rewrite <- H1; ring); auto;
- (split; [idtac | red; intros; discriminate]).
- apply Zis_gcd_sym; auto.
- apply Zis_gcd_sym; apply Zis_gcd_minus; rew zx1;
-    apply Zis_gcd_sym; auto.
- apply Zis_gcd_minus; rew zx1; auto.
- apply Zis_gcd_minus; rew zx1; auto.
- apply Zis_gcd_minus; rew zx1; auto.
- apply Zis_gcd_sym; auto.
+ destruct x as [|p|p];destruct y as [|q|q];simpl; try (split; [idtac|split]);
+  auto; try (red; simpl; intros; discriminate); auto.
+generalize (egcd_Zis_gcd p q); destruct egcd as [[u v] k].
+  rewrite Pos2Z.inj_gcd; lia.
+generalize (egcd_Zis_gcd p q); destruct egcd as [[u v] k].
+  rewrite Pos2Z.inj_gcd; lia.
+generalize (egcd_Zis_gcd p q); destruct egcd as [[u v] k].
+  rewrite Pos2Z.inj_gcd; lia.
+generalize (egcd_Zis_gcd p q); destruct egcd as [[u v] k].
+  rewrite Pos2Z.inj_gcd; lia.
 Qed.

@@ -6,8 +6,8 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Import List.
-From Coq Require Import ZArith.
+From Stdlib Require Import List.
+From Stdlib Require Import ZArith.
 From Coqprime Require Import ZCAux.
 
 From Coqprime Require Import Pock.
@@ -17,7 +17,8 @@ Local Open Scope positive_scope.
 Ltac enc t := vm_cast_no_check t.
 
 Lemma prime2 : prime 2.
-exact prime_2.
+Proof.
+apply prime_alt, Z.prime_2.
 Qed.
 
 Lemma prime3 : prime 3.

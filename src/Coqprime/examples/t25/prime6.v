@@ -14,6 +14,7 @@ Proof.
 Qed.
 
 Lemma prime6789012345678901234567903: prime  6789012345678901234567903.
+Proof.
 apply (Pocklington_refl
 
 (SPock_certif

@@ -7,12 +7,13 @@
 (*************************************************************)
 
 From Coqprime Require Export Iterator.
-From Coq Require Import ZArith.
-From Coq Require Import Lia.
+From Stdlib Require Import ZArith.
+From Stdlib Require Import Lia.
 From Coqprime Require Export UList.
 Open Scope Z_scope.
 
 Theorem next_n_Z: forall n m,  next_n Z.succ n m = n + Z_of_nat m.
+Proof.
 intros n m; generalize n; elim m; clear n m.
 intros n; simpl; auto with zarith.
 intros m H n.
@@ -25,6 +26,7 @@ Theorem Zprogression_end:
  forall n m,
   progression Z.succ n (S m) =
   app (progression Z.succ n m) (cons (n + Z_of_nat m) nil).
+Proof.
 intros n m; generalize n; elim m; clear n m.
 simpl; intros; apply f_equal2 with ( f := @cons Z ); auto with zarith.
 intros m1 Hm1 n1.
@@ -39,6 +41,7 @@ Theorem Zprogression_pred_end:
  forall n m,
   progression Z.pred n (S m) =
   app (progression Z.pred n m) (cons (n - Z_of_nat m) nil).
+Proof.
 intros n m; generalize n; elim m; clear n m.
 simpl; intros; apply f_equal2 with ( f := @cons Z ); auto with zarith.
 intros m1 Hm1 n1.
@@ -52,6 +55,7 @@ Qed.
 Theorem Zprogression_opp:
  forall n m,
   rev (progression Z.succ n m) = progression Z.pred (n + Z_of_nat (pred m)) m.
+Proof.
 intros n m; generalize n; elim m; clear n m.
 simpl; auto.
 intros m Hm n.
@@ -67,6 +71,7 @@ Qed.
 
 Theorem Zprogression_le_init:
  forall n m p, In p (progression Z.succ n m) ->  (n <= p).
+Proof.
 intros n m; generalize n; elim m; clear n m; simpl; auto.
 intros; contradiction.
 intros m H n p [H1|H1]; auto with zarith.
@@ -75,6 +80,7 @@ Qed.
 
 Theorem Zprogression_le_end:
  forall n m p, In p (progression Z.succ n m) ->  (p < n + Z_of_nat m).
+Proof.
 intros n m; generalize n; elim m; clear n m; auto.
 intros; contradiction.
 intros m H n p H1; simpl in H1 |-; case H1; clear H1; intros H1.
@@ -85,6 +91,7 @@ lia.
 Qed.
 
 Theorem ulist_Zprogression: forall a n,  ulist (progression Z.succ a n).
+Proof.
 intros a n; generalize a; elim n; clear a n; simpl; auto with zarith.
 intros n H1 a; apply ulist_cons; auto.
 intros H2; absurd (Z.succ a <= a); auto with zarith.
@@ -93,6 +100,7 @@ Qed.
 
 Theorem in_Zprogression:
  forall a b n, ( a <= b < a + Z_of_nat n ) ->  In b (progression Z.succ a n).
+Proof.
 intros a b n; generalize a b; elim n; clear a b n; auto with zarith.
 simpl; auto with zarith.
 intros n H a b.

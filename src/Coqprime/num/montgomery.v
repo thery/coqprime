@@ -1,4 +1,4 @@
-From Coq Require Import List ZArith Znumtheory Uint63 Cyclic63.
+From Stdlib Require Import List ZArith Znumtheory Uint63 Cyclic63.
 
 (* We are going to implement modular arithmetic with
    montgomery reduction
@@ -47,7 +47,7 @@ Eval vm_compute in
 Eval vm_compute in
   positive_to_num 2147483648.
 
-Local Notation wB := Uint63.wB.
+Local Abbreviation wB := Uint63.wB.
 Definition m_to_Z (n : number) :=
   fold_right (fun i r => to_Z i + wB * r )%Z 0%Z n.
 
@@ -291,7 +291,7 @@ Fixpoint incr_num (n: number): number :=
              end
   end.
 
-Notation "a .+1" := (incr_num a) (at level 0).
+Notation "a .+1" := (incr_num a) (at level 1).
 
 Lemma incr_correct n : ([n.+1] = [n] + 1)%Z.
 Proof.
@@ -553,7 +553,7 @@ Fixpoint decr_num (n: number): number :=
              end
   end.
 
-Notation "a .-1" := (decr_num a) (at level 0).
+Notation "a .-1" := (decr_num a) (at level 1).
 
 Lemma decr_correct n : (0 < [n])%Z -> ([n.-1] = [n] - 1)%Z.
 Proof.

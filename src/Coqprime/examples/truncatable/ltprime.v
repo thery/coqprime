@@ -265,7 +265,7 @@ case (ltprime_list25_correct (k mod 10 ^ 25)); auto.
 replace 25 with (24 + 1) by lia.
 replace 24 with (log 10 (k mod 10 ^ 25)) at 1 4.
   apply log_correct; try lia.
-  now apply GZnZ.p_pos, (ltprime_prime 10).
+  now apply prime_pos, (ltprime_prime 10).
 replace 25 with (24 + 1) by lia.
 apply no_zero_digit_log; try lia; auto; [|case kLt; auto].
 assert (log 10 (10 ^ 24) <= log 10 k) by now apply log_incr; lia.

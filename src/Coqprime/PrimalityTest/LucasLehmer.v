@@ -13,10 +13,10 @@
 
     Definition: LucasLehmer
   **********************************************************************)
-From Coq Require Import ZArith.
+From Stdlib Require Import ZArith.
 From Coqprime Require Import ZCAux.
 From Coqprime Require Import Tactic.
-From Coq Require Import Wf_nat.
+From Stdlib Require Import Wf_nat.
 From Coqprime Require Import NatAux.
 From Coqprime Require Import UList.
 From Coqprime Require Import ListAux.
@@ -36,10 +36,12 @@ Definition w := (2, 1).
 Definition v := (2, -1).
 
 Theorem w_plus_v: pplus w v = (4, 0).
+Proof.
 simpl; auto.
 Qed.
 
 Theorem w_mult_v : pmult w v = (1, 0).
+Proof.
 simpl; auto.
 Qed.
 
@@ -54,16 +56,19 @@ Definition ppow p n := match n with  Zpos q => iter_pos _ (pmult p) (1, 0) q | _
  **************************************)
 
 Theorem ppow_0: forall n, ppow n 0 = (1, 0).
+Proof.
 simpl; auto.
 Qed.
 
 Theorem ppow_1: forall n, ppow (1, 0) n = (1, 0).
+Proof.
 intros n; case n; simpl; auto.
 intros p; apply iter_pos_invariant with (Inv := fun x => x = (1, 0)); auto.
 intros x H; rewrite H; auto.
 Qed.
 
 Theorem ppow_op: forall a b p, iter_pos _ (pmult a) b p = pmult (iter_pos _ (pmult a) (1, 0) p) b.
+Proof.
 intros a b p; generalize b; elim p; simpl; auto; clear  b p.
 intros p Rec b.
 rewrite (Rec b).
@@ -76,6 +81,7 @@ intros b; rewrite pmult_1_r; auto.
 Qed.
 
 Theorem ppow_add: forall n m p, 0 <= m -> 0 <= p ->  ppow n (m + p) = pmult (ppow n m) (ppow n p).
+Proof.
 intros n m; case m; clear m.
 intros p _ _; rewrite ppow_0; rewrite pmult_1_l; auto.
 2: intros p m H; contradict H; auto with zarith.
@@ -88,6 +94,7 @@ rewrite ppow_op; auto.
 Qed.
 
 Theorem ppow_ppow: forall n m p, 0 <= n -> 0 <= m -> ppow p (n * m ) = ppow (ppow p n) m.
+Proof.
 intros n m; case n.
 intros p _ Hm; rewrite Zmult_0_l.
 rewrite ppow_0; apply sym_equal; apply ppow_1.
@@ -105,6 +112,7 @@ Qed.
 
 
 Theorem ppow_mult: forall n m p, 0 <= n -> ppow (pmult m p) n = pmult (ppow m n) (ppow p n).
+Proof.
 intros n m p; case n; simpl; auto.
 intros p1 _; pattern p1; apply Pind; simpl; auto.
 repeat rewrite pmult_1_r; auto.
@@ -129,10 +137,12 @@ Definition s n := pplus (ppow w (2 ^ n)) (ppow v (2 ^ n)).
  **************************************)
 
 Theorem s0 : s 0 = (4, 0).
+Proof.
 simpl; auto.
 Qed.
 
 Theorem sn_aux: forall n, 0 <= n -> s (n+1) = (pplus (pmult (s n) (s n)) (-2, 0)).
+Proof.
 intros n Hn.
 assert (Hu: 0 <= 2 ^n); auto with zarith.
 set (y := (fst (s n) * fst (s n) - 2, 0)).
@@ -155,6 +165,7 @@ simpl; case (ppow (7, -4) (2 ^n)); simpl; intros z1 z2; eq_tac; auto with zarith
 Qed.
 
 Theorem sn_snd: forall n, snd (s n) = 0.
+Proof.
 intros n; case n; simpl; auto.
 intros p; pattern p; apply Pind; auto.
 intros p1 H; rewrite Zpos_succ_morphism; unfold Z.succ.
@@ -164,12 +175,14 @@ intros x y H1; rewrite H1; auto with zarith.
 Qed.
 
 Theorem sn: forall n, 0 <= n -> s (n+1) = (fst (s n) * fst  (s n) -2, 0).
+Proof.
 intros n Hn; rewrite sn_aux; generalize (sn_snd n); case (s n); auto.
 intros x y H; simpl in H; rewrite H; simpl.
 eq_tac; ring.
 Qed.
 
 Theorem sn_w: forall n, 0 <= n ->  ppow w (2 ^ (n + 1)) = pplus (pmult (s n) (ppow w (2 ^ n))) (- 1, 0).
+Proof.
 intros n H; unfold s; simpl; rewrite Zpower_exp; auto with zarith.
 assert (Hu: 0 <= 2 ^n); auto with zarith.
 rewrite Zpower_1_r; rewrite ppow_ppow; auto with zarith.
@@ -184,6 +197,7 @@ simpl; case (ppow (7, 4) (2 ^n)); simpl; intros z1 z2; eq_tac; auto with zarith.
 Qed.
 
 Theorem sn_w_next: forall n, 0 <= n ->  ppow w (2 ^ (n + 1)) = pplus (pmult (s n) (ppow w (2 ^ n))) (- 1, 0).
+Proof.
 intros n H; unfold s; simpl; rewrite Zpower_exp; auto with zarith.
 assert (Hu: 0 <= 2 ^n); auto with zarith.
 rewrite Zpower_1_r; rewrite ppow_ppow; auto with zarith.
@@ -207,7 +221,8 @@ Variable p: Z.
 
 Definition Mp := 2^p -1.
 
-Theorem mersenne_pos:  1 < p -> 1 < Mp.
+Theorem mersenne_pos: 1 < p -> 1 < Mp.
+Proof.
 intros H; unfold Mp; enough (2 < 2 ^p) by auto with zarith.
 apply Z.lt_le_trans with (2^2).
 refine (refl_equal _).
@@ -233,6 +248,7 @@ Hypothesis q_divide_Mp: (q | Mp).
 Hypothesis q_pos2: 2 < q.
 
 Theorem q_pos: 1 < q.
+Proof.
 apply Z.lt_trans with (2 := q_pos2); auto with zarith.
 Qed.
 
@@ -243,6 +259,7 @@ Qed.
 Definition pgroup := PGroup q q_pos.
 
 Theorem w_in_pgroup: (In w pgroup.(FGroup.s)).
+Proof.
 generalize q_pos; intros HM.
 generalize q_pos2; intros HM2.
 assert (H0: 0 < q); auto with zarith.
@@ -258,7 +275,7 @@ rewrite Z_mod_same; auto with zarith.
 rewrite Zmult_0_r; repeat rewrite Zmod_small; auto with zarith.
 apply trans_equal with (2 * q mod q).
 eq_tac; auto with zarith.
-apply Zdivide_mod; auto with zarith; exists 2; auto with zarith.
+apply Z.mod0_divide; auto with zarith; exists 2; auto with zarith.
 apply is_inv_true with (2, q - 1); auto.
 rewrite zpmult_comm; auto.
 apply mL_in; auto with zarith.
@@ -266,11 +283,13 @@ unfold w; apply mL_in; auto with zarith.
 Qed.
 
 Theorem e_order_divide_order: (e_order P_dec w pgroup | g_order pgroup).
+Proof.
 apply e_order_divide_g_order.
 apply w_in_pgroup.
 Qed.
 
 Theorem order_lt:  g_order pgroup < q * q.
+Proof.
 unfold g_order, pgroup, PGroup; simpl.
 rewrite <- (Z.abs_eq (q * q)); auto with zarith.
 rewrite <- (inj_Zabs_nat (q * q)); auto with zarith.
@@ -295,6 +314,7 @@ Definition zpow a := gpow a pgroup.
 Theorem zpow_def:
   forall a b, In a pgroup.(FGroup.s) -> 0 <= b ->
      zpow a b = ((fst (ppow a b)) mod q, (snd (ppow a b)) mod q).
+Proof.
 generalize q_pos; intros HM.
 generalize q_pos2; intros HM2.
 assert (H0: 0 < q); auto with zarith.
@@ -324,6 +344,7 @@ repeat rewrite (Zmult_mod t); auto with zarith.
 Qed.
 
 Theorem zpow_w_n_minus_1: zpow w (2 ^ (p - 1)) = (-1 mod q, 0).
+Proof.
 generalize q_pos; intros HM.
 generalize q_pos2; intros HM2.
 assert (H0: 0 < q); auto with zarith.
@@ -351,6 +372,7 @@ apply Zlt_le_weak; apply Zpower_gt_0; auto with zarith.
 Qed.
 
 Theorem zpow_w_n: zpow w (2 ^ p) = (1, 0).
+Proof.
 generalize q_pos; intros HM.
 generalize q_pos2; intros HM2.
 assert (H0: 0 < q); auto with zarith.
@@ -373,6 +395,7 @@ Qed.
  **************************************)
 
 Theorem e_order_divide_pow: (e_order P_dec w pgroup | 2 ^ p).
+Proof.
 generalize q_pos; intros HM.
 generalize q_pos2; intros HM2.
 assert (H0: 0 < q); auto with zarith.
@@ -387,9 +410,8 @@ Qed.
  **************************************)
 
 Theorem e_order_le_pow : e_order P_dec w pgroup <= 2 ^ p.
-apply Zdivide_le.
-apply Zlt_le_weak; apply e_order_pos.
-apply Zpower_gt_0; auto with zarith.
+Proof.
+apply Z.divide_pos_le; auto with zarith.
 apply e_order_divide_pow.
 Qed.
 
@@ -398,9 +420,10 @@ Qed.
  **************************************)
 
 Theorem e_order_eq_pow:  exists q, (e_order P_dec w pgroup)  = 2 ^ q.
+Proof.
 case (Zdivide_power_2 (e_order P_dec w pgroup) 2 p); auto with zarith.
 apply Zlt_le_weak; apply e_order_pos.
-apply prime_2.
+apply prime_alt, Z.prime_2.
 apply e_order_divide_pow; auto.
 intros x H; exists x; auto with zarith.
 Qed.
@@ -410,18 +433,17 @@ Qed.
  **************************************)
 
 Theorem e_order_eq_p: e_order P_dec w pgroup = 2 ^ p.
+Proof.
 case (Zdivide_power_2 (e_order P_dec w pgroup) 2 p); auto with zarith.
 apply Zlt_le_weak; apply e_order_pos.
-apply prime_2.
+apply prime_alt, Z.prime_2.
 apply e_order_divide_pow; auto.
 intros p1 Hp1.
 case (Zle_lt_or_eq p1 p); try (intro H1; subst; auto; fail).
 case (Zle_or_lt p1 p); auto; intros H1.
 absurd (2 ^ p1 <= 2 ^ p); auto with zarith.
 apply Zlt_not_le; apply Zpower_lt_monotone; auto with zarith.
-apply Zdivide_le.
-apply Zlt_le_weak; apply Zpower_gt_0; auto with zarith.
-apply Zpower_gt_0; auto with zarith.
+apply Z.divide_pos_le; auto with zarith.
 rewrite <- Hp1; apply e_order_divide_pow.
 intros H1.
 assert (Hu: 0 <= p1).
@@ -451,12 +473,12 @@ Qed.
  **************************************)
 
 Theorem q_more_than_square:  Mp <  q * q.
+Proof.
 unfold Mp.
 assert (2 ^ p <= q * q); auto with zarith.
 rewrite <- e_order_eq_p.
 apply Z.le_trans with (g_order pgroup).
-apply Zdivide_le; auto with zarith.
-apply Zlt_le_weak; apply e_order_pos; auto with zarith.
+apply Z.divide_pos_le; auto with zarith.
 2: apply e_order_divide_order.
 2: apply Zlt_le_weak; apply order_lt.
 apply Z.lt_le_trans with 2; auto with zarith.
@@ -492,9 +514,10 @@ Definition SS p :=
 Theorem SS_aux_correct:
   forall p z1 z2 n, 0 <= n -> 0 < z1 -> z2 = fst (s n) mod z1 ->
         iter_pos _ (fun x => Zmodd (Z.square x - 2) z1) z2 p = fst (s (n + Zpos p)) mod z1.
+Proof.
 intros p; pattern p; apply Pind.
 simpl.
-intros z1 z2 n Hn H H1; rewrite sn; auto; rewrite H1;  rewrite Zmodd_correct; rewrite Zsquare_correct; simpl.
+intros z1 z2 n Hn H H1; rewrite sn; auto; rewrite H1;  rewrite Zmodd_correct; rewrite Z.square_spec; simpl.
 unfold Zminus; rewrite Zplus_mod; auto.
 rewrite (Zplus_mod (fst (s n) * fst (s n))); auto with zarith.
 eq_tac; auto.
@@ -504,7 +527,7 @@ intros n Rec z1 z2 n1 Hn1 H1 H2.
 rewrite Pplus_one_succ_l; rewrite iter_pos_plus.
 rewrite (Rec _ _ n1); auto.
 replace (n1 + Zpos (1 + n)) with ((n1 + Zpos n) + 1).
-rewrite sn; simpl; try rewrite Zmodd_correct; try rewrite Zsquare_correct; simpl; auto with zarith.
+rewrite sn; simpl; try rewrite Zmodd_correct; try rewrite Z.square_spec; simpl; auto with zarith.
 unfold Zminus; rewrite Zplus_mod; auto.
 unfold Zmodd.
 rewrite (Zplus_mod (fst (s (n1 + Zpos n)) * fst (s (n1 + Zpos n)))).
@@ -515,6 +538,7 @@ rewrite Zpos_plus_distr; auto with zarith.
 Qed.
 
 Theorem SS_prop: forall n, 1 < n -> SS n = fst(s (n -2)) mod (Mp n).
+Proof.
 intros n Hn; unfold SS.
 cut (0 <= n - 2); auto with zarith.
 case (n - 2).
@@ -526,13 +550,15 @@ intros p1 H2; case H2; auto.
 Qed.
 
 Theorem SS_prop_cor: forall p, 1 < p -> SS p = 0 -> (Mp p | fst(s (p -2))).
+Proof.
 intros p H H1.
-apply Zmod_divide.
+apply Z.mod_divide.
 generalize (mersenne_pos _ H); auto with zarith.
 apply trans_equal with (2:= H1); apply sym_equal; apply SS_prop; auto.
 Qed.
 
 Theorem LucasLehmer:  forall p, 2 < p -> SS p = 0 -> prime (Mp p).
+Proof.
 intros p H H1; case (prime_dec (Mp p)); auto; intros H2.
 case Zdivide_div_prime_le_square with (2 := H2).
 apply mersenne_pos; apply Z.lt_trans with 2; auto with zarith.
@@ -542,10 +568,11 @@ apply q_more_than_square; auto.
 apply SS_prop_cor; auto.
 apply Z.lt_trans with 2; auto with zarith.
 case (Zle_lt_or_eq 2 q); auto.
-apply prime_ge_2; auto.
+apply Z.prime_ge_2; auto.
+now apply prime_alt.
 intros H5; subst.
 absurd (2 <= 1); auto with arith.
-apply Zdivide_le; auto with zarith.
+apply Z.divide_pos_le; auto with zarith.
 case H4; intros x Hx.
 exists (2 ^ (p -1) - x).
 rewrite Zmult_minus_distr_r; rewrite <- Hx; unfold Mp.
@@ -561,31 +588,38 @@ Definition lucas_test  n :=
    if Z_lt_dec 2 n then if Z.eq_dec (SS n) 0 then true else false else false.
 
 Theorem LucasTest: forall n, lucas_test n = true -> prime (Mp n).
+Proof.
 intros n; unfold lucas_test; case (Z_lt_dec 2 n); intros H1; try (intros; discriminate).
 case (Z.eq_dec (SS n) 0); intros H2; try (intros; discriminate).
 intros _; apply LucasLehmer; auto.
 Qed.
 
 Theorem prime7: prime 7.
+Proof.
 exact (LucasTest 3 (refl_equal _)).
 Qed.
 
 Theorem prime31: prime 31.
+Proof.
 exact (LucasTest 5 (refl_equal _)).
 Qed.
 
 Theorem prime127: prime 127.
+Proof.
 exact (LucasTest 7 (refl_equal _)).
 Qed.
 
 Theorem prime8191: prime 8191.
+Proof.
 exact (LucasTest 13 (refl_equal _)).
 Qed.
 
 Theorem prime131071: prime 131071.
+Proof.
 exact (LucasTest 17 (refl_equal _)).
 Qed.
 
 Theorem prime524287: prime 524287.
+Proof.
 exact (LucasTest 19 (refl_equal _)).
 Qed.

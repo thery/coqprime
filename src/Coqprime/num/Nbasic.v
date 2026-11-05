@@ -3,6 +3,7 @@ Require Import Basic_type.
 
 
 Definition zn2z_word_comm : forall w n, zn2z (word w n) = word (zn2z w) n.
+Proof.
  fix zn2z_word_comm 2.
  intros w n; case n.
   reflexivity.
@@ -28,6 +29,7 @@ Section ExtendMax.
     + {p:nat| word (word w m) p = word w n})%type.
 
  Definition max : forall n m, Tmax n m.
+Proof.
   fix max 1;intros n.
   case n.
   intros m;left;exists m;exact (refl_equal (word w m)).
@@ -47,6 +49,7 @@ Section ExtendMax.
  Definition extend_to_max :
   forall n m (x:zn2z (word w n)) (y:zn2z (word w m)),
         (zn2z (word w m) + zn2z (word w n))%type.
+Proof.
   intros n m x y.
    case (max n m);intros (p, Heq).
    left; case Heq;exact (extend p (word w n) x).

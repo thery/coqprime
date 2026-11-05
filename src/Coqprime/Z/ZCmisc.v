@@ -6,7 +6,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Export ZArith Lia.
+From Stdlib Require Export ZArith Lia.
 
 (* Compatibility with Coq versions not supporting hint localities *)
 Set Warnings "-unsupported-attributes".
@@ -30,6 +30,9 @@ Proof. intros p;rewrite Zpos_xO;ring. Qed.
 
 Lemma Psucc_Zplus : forall p, Zpos (Pos.succ p) = p + 1.
 Proof. intros p;rewrite Zpos_succ_morphism; unfold Z.succ; trivial. Qed.
+
+Create Rewrite HintDb zmisc.
+Create HintDb zmisc.
 
 #[global]
 Hint Rewrite Zpos_xI_add Zpos_xO_add Pplus_carry_spec

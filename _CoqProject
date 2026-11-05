@@ -33,6 +33,7 @@ src/Coqprime/num/Bits.v
 src/Coqprime/num/Int63Compat.v
 src/Coqprime/num/Lucas.v
 src/Coqprime/num/NEll.v
+src/Coqprime/num/MontMod.v
 src/Coqprime/num/MEll.v
 src/Coqprime/num/Mod_op.v
 src/Coqprime/num/Pock.v

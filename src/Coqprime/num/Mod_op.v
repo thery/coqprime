@@ -10,7 +10,7 @@ Set Implicit Arguments.
 
 From Bignums Require Import DoubleBase DoubleSub DoubleMul DoubleSqrt DoubleLift DoubleDivn1 DoubleDiv.
 From Bignums Require Import DoubleCyclic BigN.
-From Coq Require Import CyclicAxioms Cyclic63 ZArith.
+From Stdlib Require Import CyclicAxioms Cyclic63 ZArith.
 From Coqprime Require Import ZCAux.
 Import CyclicAxioms DoubleType DoubleBase.
 
@@ -24,6 +24,7 @@ Defined.
 
 
 Theorem Zpos_pos: forall x, 0 < Zpos x.
+Proof.
 red; simpl; auto.
 Qed.
 Global Hint Resolve Zpos_pos: zarith.
@@ -173,6 +174,7 @@ Notation "[[ x ]]" :=
 
 
  Lemma Zpower_n: 0 < 2 ^ [|n|].
+ Proof.
  apply Zpower_gt_0; auto with zarith.
  case (ZnZ.spec_to_Z n); auto with zarith.
  Qed.
@@ -180,6 +182,8 @@ Notation "[[ x ]]" :=
  Hint Resolve Zpower_n Zmult_lt_0_compat Zpower_gt_0 : core.
 
  Variable m_op : mod_op.
+
+Create Rewrite HintDb w_rewrite.
 
  Hint Rewrite
     ZnZ.spec_0
@@ -215,20 +219,24 @@ Notation "[[ x ]]" :=
   end.
 
  Let _w0_is_0: [|w0|] = 0.
+ Proof.
  unfold ZnZ.to_Z; rewrite <- ZnZ.spec_0; auto.
  Qed.
 
  Let _w1_is_1: [|w1|] = 1.
+ Proof.
  unfold ZnZ.to_Z; rewrite <-ZnZ.spec_1; simpl; auto.
  Qed.
 
  Theorem Zmod_plus_one: forall a1 b1, 0 < b1 -> (a1 + b1) mod b1 = a1 mod b1.
+ Proof.
  intros a1 b1 H; rewrite Zplus_mod; auto with zarith.
  rewrite Z_mod_same; try rewrite Zplus_0_r; auto with zarith.
  apply Zmod_mod; auto.
  Qed.
 
  Theorem Zmod_minus_one: forall a1 b1, 0 < b1 -> (a1 - b1) mod b1 = a1 mod b1.
+ Proof.
  intros a1 b1 H; rewrite Zminus_mod; auto with zarith.
  rewrite Z_mod_same; try rewrite Zminus_0_r; auto with zarith.
  apply Zmod_mod; auto.
@@ -236,6 +244,7 @@ Notation "[[ x ]]" :=
 
  Lemma without_c_b: forall w2, [|w2|] < [|b|] ->
     [|w_succ w2|] = [|w2|] + 1.
+ Proof.
  intros w2 H.
  unfold w_succ;rewrite ZnZ.spec_succ.
  rewrite Zmod_small;auto.
@@ -245,6 +254,7 @@ Notation "[[ x ]]" :=
 
  Lemma _succ_mod_spec: forall w t, [|w|]= t mod [|b|] ->
     [|_succ_mod w|] = ([|w|] + 1) mod [|b|].
+ Proof.
  intros w2 t H; unfold _succ_mod, w_compare; simpl.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t [|b|]); auto with zarith.
@@ -271,6 +281,7 @@ Notation "[[ x ]]" :=
 
  Lemma _add_mod_correct: forall w1 w2, [|w1|] + [|w2|] < 2 * [|b|] ->
      [|_add_mod w1 w2|] = ([|w1|] + [|w2|]) mod [|b|].
+ Proof.
  intros w2 w3; unfold _add_mod, w_compare, w_add_c; intros H.
  match goal with |- context[ZnZ.add_c ?x ?y] =>
    generalize (ZnZ.spec_add_c x y); unfold interp_carry;
@@ -319,6 +330,7 @@ Notation "[[ x ]]" :=
 
  Lemma _add_mod_spec: forall w1 w2 t1 t2, [|w1|] = t1 mod [|b|] -> [|w2|] = t2 mod [|b|] ->
      [|_add_mod w1 w2|] = ([|w1|] + [|w2|]) mod [|b|].
+ Proof.
  intros w2 w3 t1 t2 H H1.
  apply _add_mod_correct; auto with zarith.
  assert (F: [|w2|] < [|b|]).
@@ -336,6 +348,7 @@ Notation "[[ x ]]" :=
 
  Lemma _pred_mod_spec: forall w t, [|w|] = t mod [|b|] ->
    [|_pred_mod w|] = ([|w|] - 1) mod [|b|].
+ Proof.
  intros w2 t H; unfold _pred_mod, w_compare, bm1; simpl.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t [|b|]); auto with zarith.
@@ -362,6 +375,7 @@ Notation "[[ x ]]" :=
 
  Lemma _sub_mod_spec: forall w1 w2 t1 t2, [|w1|] = t1 mod [|b|] -> [|w2|] = t2 mod [|b|] ->
    [|_sub_mod w1 w2|] = ([|w1|] - [|w2|]) mod [|b|].
+ Proof.
  intros w2 w3 t1 t2; unfold _sub_mod, w_compare, w_sub_c; intros H H1.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t1 [|b|]); auto with zarith.
@@ -402,6 +416,7 @@ Notation "[[ x ]]" :=
   end.
 
  Theorem high_zero:forall x, [[x]] < base w_digits -> [|fst (split x)|] = 0.
+ Proof.
   intros x; case x; simpl; auto.
  intros xh xl H; case (Zle_lt_or_eq 0 [|xh|]); auto with zarith.
  case (ZnZ.spec_to_Z xh); auto with zarith.
@@ -417,10 +432,12 @@ Notation "[[ x ]]" :=
 
  Theorem n_spec: base (ZnZ.digits w_op) / 2 <= 2 ^ [|n|] * [|b|]
                         < base (ZnZ.digits w_op).
+ Proof.
  unfold n, w_head0; apply (ZnZ.spec_head0); auto with zarith.
  Qed.
 
  Theorem b2n_spec: [|b2n|] = 2 ^ [|n|] * [|b|].
+ Proof.
  unfold b2n, w_add_mul_div; case n_spec; intros Hp Hp1.
  assert (F1: [|n|] < Zpos (ZnZ.digits w_op)).
  case (Zle_or_lt (Zpos (ZnZ.digits w_op)) [|n|]); auto with zarith.
@@ -434,6 +451,7 @@ Notation "[[ x ]]" :=
 
  Theorem ww_lsl_n_spec: forall w, [[w]] < [|b|] * [|b|] ->
    [[ww_lsl_n w]] = 2 ^ [|n|] * [[w]].
+ Proof.
  intros w2 H; unfold ww_lsl_n.
  case n_spec; intros Hp Hp1.
  assert (F0: forall x, 2 * x = x + x) by auto with zarith.
@@ -505,6 +523,7 @@ Notation "[[ x ]]" :=
 
  Theorem w_lsr_n_spec: forall w, [|w|] < 2 ^ [|n|] *  [|b|]->
    [|w_lsr_n w|] = [|w|] / 2 ^ [|n|].
+ Proof.
  intros w2 H.
  case (ZnZ.spec_to_Z w2); intros U1 U2.
  unfold w_lsr_n, w_add_mul_div.
@@ -556,11 +575,13 @@ Notation "[[ x ]]" :=
  Qed.
 
  Lemma split_correct: forall x, let (xh, xl) := split x in [[WW xh xl]] = [[x]].
+ Proof.
  intros x; case x; simpl; unfold w0, w_to_Z;try rewrite ZnZ.spec_0; auto with zarith.
  Qed.
 
  Lemma _mul_mod_spec: forall w1 w2 t1 t2, [|w1|] = t1 mod [|b|] -> [|w2|] = t2 mod [|b|] ->
    [|_mul_mod w1 w2|] = ([|w1|] * [|w2|]) mod [|b|].
+ Proof.
  intros w2 w3 t1 t2 H H1; unfold _mul_mod, wwb.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t1 [|b|]); auto with zarith.
@@ -669,6 +690,7 @@ Notation "[[ x ]]" :=
 
  Lemma _square_mod_spec: forall w t, [|w|] = t mod [|b|] ->
     [|_square_mod w|] = ([|w|] * [|w|]) mod [|b|].
+ Proof.
  intros w2 t2 H; unfold _square_mod, wwb.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t2 [|b|]); auto with zarith.
@@ -771,6 +793,7 @@ Notation "[[ x ]]" :=
 
  Lemma _power_mod_spec: forall w t p, [|w|] = t mod [|b|] ->
    [|_power_mod w p|] = (Zpower_pos [|w|] p) mod [|b|].
+ Proof.
  intros w2 t p; elim p; simpl; auto with zarith.
  intros p' Rec H.
  assert (F: [|w2|] < [|b|]).
@@ -814,6 +837,7 @@ Notation "[[ x ]]" :=
      _mul_mod _square_mod _power_mod.
 
   Definition make_mod_spec: mod_spec make_mod_op.
+  Proof.
   apply mk_mod_spec.
   exact _succ_mod_spec.
   exact _add_mod_spec.
@@ -835,6 +859,7 @@ Notation "[[ x ]]" :=
  Let p1 := Pminus (xO w_digits) p.
 
  Theorem p_p1: Zpos p + Zpos p1 = Zpos (xO w_digits).
+ Proof.
  unfold p1.
  rewrite Zpos_minus.
  rewrite Zmax_right.
@@ -847,6 +872,7 @@ Notation "[[ x ]]" :=
 
  Let spec_add2: forall x y,
   [[w_add2 x y]] = [|x|] + [|y|].
+  Proof.
   unfold w_add2.
   intros xh xl; generalize (ZnZ.spec_add_c xh xl).
   unfold w_add_c; case ZnZ.add_c; unfold interp_carry; simpl ww_to_Z.
@@ -884,6 +910,7 @@ Notation "[[ x ]]" :=
              ZnZ.spec_sub_carry.
 
  Theorem zp1_b: [[zp1]] = Zpos p1.
+ Proof.
  change ([[DoubleSub.ww_sub w0 wWW w_opp_c w_opp_carry w_sub_c w_opp w_sub
             w_sub_carry ww_zdigits (WW w0 zp)]] =
           Zpos p1).
@@ -932,6 +959,7 @@ Notation "[[ x ]]" :=
  Hint Unfold w_digits : core.
 
  Lemma WW_0: forall x y, [[WW x y]] = 0 -> [|x|] = 0 /\ [|y|] =0.
+ Proof.
  intros x y; simpl; case (ZnZ.spec_to_Z x); intros H1 H2;
    case (ZnZ.spec_to_Z y); intros H3 H4 H5.
  case Zle_lt_or_eq with (1 := H1); clear H1; intros H1.
@@ -947,11 +975,13 @@ Notation "[[ x ]]" :=
  Qed.
 
  Theorem WW0_is_0: [[W0]] = 0.
+ Proof.
  simpl; auto.
  Qed.
   Hint Rewrite WW0_is_0: w_rewrite.
 
  Theorem mmul_aux0: Zpos (xO w_digits) - Zpos p1 = Zpos p.
+ Proof.
  unfold w_digits.
  apply trans_equal with (Zpos p + Zpos p1 - Zpos p1).
  rewrite p_p1; auto with zarith.
@@ -960,6 +990,7 @@ Notation "[[ x ]]" :=
 
  Theorem mmul_aux1: 2 ^ Zpos w_digits =
      2 ^ (Zpos w_digits - Zpos p) * 2 ^ Zpos p.
+ Proof.
  rewrite <- Zpower_exp; auto with zarith.
  eq_tac; auto with zarith.
  Qed.
@@ -967,6 +998,7 @@ Notation "[[ x ]]" :=
  Theorem mmul_aux2:forall x,
    x mod (2 ^ Zpos p - 1) =
     ((x / 2 ^ Zpos p) + (x mod 2 ^ Zpos p)) mod (2 ^ Zpos p - 1).
+ Proof.
  intros x; pattern x at 1; rewrite Z_div_mod_eq_full with (b := 2 ^ Zpos p).
  match goal with |- (?X * ?Y + ?Z) mod (?X - 1) = ?T =>
   replace (X * Y + Z) with (Y * (X - 1) + (Y + Z)); try ring
@@ -979,6 +1011,7 @@ Notation "[[ x ]]" :=
 
  Theorem mmul_aux3:forall xh xl,
    [[WW xh xl]] mod (2 ^ Zpos p) = [|xl|] mod (2 ^ Zpos p).
+ Proof.
  intros xh xl; simpl ww_to_Z; unfold base.
  rewrite Zplus_mod; auto with zarith.
  generalize mmul_aux1; unfold w_digits; intros tmp; rewrite tmp;
@@ -990,6 +1023,7 @@ Notation "[[ x ]]" :=
 
  Let spec_low: forall x,
   [|low x|] = [[x]] mod base w_digits.
+  Proof.
   intros x; case x; simpl low; auto with zarith.
   intros xh xl; simpl.
   rewrite Zplus_comm; rewrite Z_mod_plus; auto with zarith.
@@ -1004,6 +1038,7 @@ Notation "[[ x ]]" :=
           W0 => 0
         | WW _ xl2 => [|xl2|]
      end = [[x]] / 2 ^ Zpos p.
+ Proof.
  intros x Hx.
  assert (Hp: [[zp1]] <= Zpos (xO w_digits)).
    rewrite zp1_b; rewrite <- p_p1.
@@ -1074,6 +1109,7 @@ Notation "[[ x ]]" :=
         | WW _ xl2 => _add_mod xl1 xl2
         end  in
         [|r|] = [[WW xh xl]] mod [|b|].
+ Proof.
  intros xh xl Hx xl1 r; unfold r; clear r.
  generalize (mmul_aux4 _ Hx).
  simpl ww_to_Z; rewrite p_b.
@@ -1138,6 +1174,7 @@ Notation "[[ x ]]" :=
 
  Lemma _mmul_mod_spec: forall w1 w2 t1 t2, [|w1|] = t1 mod [|b|] -> [|w2|] = t2 mod [|b|] ->
    [|_mmul_mod w1 w2|] = ([|w1|] * [|w2|]) mod [|b|].
+ Proof.
  intros w2 w3 t1 t2; unfold _mmul_mod, w_mul_c; intros H H1.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t1 [|b|]); auto with zarith.
@@ -1176,6 +1213,7 @@ Notation "[[ x ]]" :=
 
  Lemma _msquare_mod_spec: forall w1 t1, [|w1|] = t1 mod [|b|] ->
    [|_msquare_mod w1|] = ([|w1|] * [|w1|]) mod [|b|].
+ Proof.
  intros w2 t2; unfold _msquare_mod, w_square_c; intros H.
  assert (F: [|w2|] < [|b|]).
  case (Z_mod_lt t2 [|b|]); auto with zarith.
@@ -1201,6 +1239,7 @@ Notation "[[ x ]]" :=
      _mmul_mod _msquare_mod _power_mod.
 
  Definition mmake_mod_spec: mod_spec mmake_mod_op.
+  Proof.
   apply mk_mod_spec.
   exact _succ_mod_spec.
   exact _add_mod_spec.
