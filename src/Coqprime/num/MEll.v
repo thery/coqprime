@@ -58,7 +58,7 @@ Variable op : ZnZ.Ops w.
 Variable op_spec : ZnZ.Specs op.
 
 Notation "[| x |]" := (ZnZ.to_Z x) (at level 0, x at level 99).
-Notation wB := (base (@ZnZ.digits _ op)).
+Abbreviation wB := (base (@ZnZ.digits _ op)).
 
 Variable wN wN' wR2 : w.
 Variable mop : mod_op w.
