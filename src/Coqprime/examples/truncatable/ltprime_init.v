@@ -5,6 +5,10 @@ Declare Scope seq_scope.
 Open Scope seq_scope.
 Open Scope Z_scope.
 
+(* formerly prime_pos; GZnZ.v was removed in 35ee5b5 *)
+Lemma prime_pos p : prime p -> 0 < p.
+Proof. intros Hp; generalize (prime_ge_2 p Hp); lia. Qed.
+
 Section Digits.
 
 Variable b : Z.
@@ -392,7 +396,7 @@ Definition ltprime n :=
 Lemma ltprime_small p : prime p -> p < b -> ltprime p.
 Proof.
 intros pP pB.
-assert (H : 0 < p) by now apply GZnZ.p_pos.
+assert (H : 0 < p) by now apply prime_pos.
 split.
   now apply no_zero_digit_small; lia.
 intros k kP; rewrite Z.mod_small; auto.
@@ -419,7 +423,7 @@ Proof.
 intros mB  [nNZ nM] mnP; split.
   now apply no_zero_digit_ldecompose.
 assert (nPr : prime n) by now apply ltprime_prime.
-assert (nP : 0 < n) by now apply GZnZ.p_pos.
+assert (nP : 0 < n) by now apply prime_pos.
 intros k kP.
 assert (Hl := log_correct n nP).
 assert (lP := log_pos n).
@@ -936,7 +940,7 @@ pose (m := k / (b ^ (n + 1))).
 assert (mE : m = digit k (n + 1)).
   unfold digit; rewrite Z.mod_small; auto.
   assert (0 < k).
-    now apply GZnZ.p_pos, ltprime_prime.
+    now apply prime_pos, ltprime_prime.
   split; [apply Z.div_pos; lia|].
   apply Z.div_lt_upper_bound; try lia.
   replace b with (b ^ 1) at 2 by lia.
@@ -953,7 +957,7 @@ assert (kE : k = m * b ^ (n + 1) + k1).
   now fold m; fold k1; lia.
 rewrite kE.
 assert (k1Lt : ltprime k1) by now apply ltprime_mod; try lia; auto.
-assert (k1P : 0 < k1) by now apply GZnZ.p_pos, ltprime_prime.
+assert (k1P : 0 < k1) by now apply prime_pos, ltprime_prime.
 fold k1; fold m.
 assert (Hk1 : In k1 l1).
   apply Hl.
