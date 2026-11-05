@@ -6,14 +6,14 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-From Coq Require Import List.
-From Coq Require Import ZArith.
-From Coq Require Import Zorder.
+From Stdlib Require Import List.
+From Stdlib Require Import ZArith.
+From Stdlib Require Import Zorder.
 From Coqprime Require Import ZCAux.
 From Coqprime Require Import LucasLehmer.
 From Coqprime Require Import Pocklington.
-From Coq Require Import ZArith Znumtheory Zpow_facts.
-From Coq Require Import CyclicAxioms Cyclic63.
+From Stdlib Require Import ZArith Znumtheory Zpow_facts.
+From Stdlib Require Import CyclicAxioms Cyclic63.
 From Coqprime Require Import Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
 From Coqprime Require Import Pmod.
@@ -59,6 +59,7 @@ Definition fold_pow_mod (a: w) l :=
 
 Lemma fold_pow_mod_spec : forall l (a:w),
   ([|a|] < [|b|])%Z -> [|fold_pow_mod a l|] = ([|a|]^(mkProd' l) mod [|b|])%Z.
+Proof.
 intros l; unfold fold_pow_mod; elim l; simpl fold_left; simpl mkProd'; auto; clear l.
 intros a H; rewrite Zpower_1_r; rewrite Zmod_small; auto with zarith.
 case (ZnZ.spec_to_Z a); auto with zarith.
@@ -90,6 +91,7 @@ Fixpoint all_pow_mod (prod a: w) (l:dec_prime) {struct l}: w*w :=
 Lemma snd_all_pow_mod :
  forall l (prod a :w), ([|a|] < [|b|])%Z ->
    [|snd (all_pow_mod prod a l)|] = ([|a|]^(mkProd' l) mod [|b|])%Z.
+Proof.
 intros l; elim l; simpl all_pow_mod; simpl mkProd'; simpl snd; clear l.
 intros _ a H; rewrite Zpower_1_r; auto with zarith.
 rewrite Zmod_small; auto with zarith.
@@ -116,6 +118,7 @@ Lemma fold_aux : forall a N l prod,
   fold_left
      (fun (r : Z) (k : positive * positive) =>
       r * (a^(N / fst k) - 1)) l prod mod [|b|])%Z.
+Proof.
 induction l;simpl;intros.
 rewrite Zmod_mod; auto with zarith.
 rewrite <- IHl; auto with zarith.
@@ -132,6 +135,7 @@ Lemma fst_all_pow_mod :
     ((fold_left
       (fun r (k:positive*positive) =>
         (r * ([|a|] ^ (R* mkProd' l / (fst k)) - 1))) l [|prod|]) mod [|b|])%Z.
+Proof.
 intros l; elim l; simpl all_pow_mod; simpl fold_left; simpl fst;
   auto with zarith; clear l.
 intros (p1,q1) l Rec; simpl fst.
@@ -210,6 +214,7 @@ Fixpoint pow_mod_pred (a:w) (l:dec_prime) {struct l} : w :=
 
 Lemma iter_pow_mod_spec : forall q p a, [|a|] = ([|a|] mod [|b|])%Z ->
   ([|iter_pos _ (fun x => pow x q) a p|] = [|a|]^q^p mod [|b|])%Z.
+Proof.
 intros q1 p1; elim p1; simpl iter_pos; clear p1.
 intros p1 Rec a Ha.
 rewrite(fun x => m_op_spec.(power_mod_spec) x [|x|]).
@@ -252,6 +257,7 @@ Qed.
 Lemma pow_mod_pred_spec : forall l a,
   ([|a|] = [|a|] mod [|b|] ->
   [|pow_mod_pred a l|] = [|a|]^(mkProd_pred l) mod [|b|])%Z.
+Proof.
 intros l; elim l; simpl pow_mod_pred; simpl mkProd_pred; clear l.
 intros; rewrite Zpower_1_r; auto with zarith.
 intros (p1,q1) l Rec a H; simpl snd; simpl fst.
@@ -320,6 +326,7 @@ Lemma test_pock_correct : forall N a dec sqrt,
    (forall k, In k dec -> prime (Zpos (fst k))) ->
    test_pock N a dec sqrt = true ->
    prime N.
+Proof.
 unfold test_pock;intros N a dec sqrt H.
 match goal with |- context[if ?x then _ else _] =>
   case_eq x; intros If1; auto
@@ -456,7 +463,7 @@ intros HH; contradict If3; rewrite <- HH.
 apply Zodd_not_Zeven; red; auto.
 intros p; case p; clear p.
 intros HH; contradict HH.
-apply not_prime_0.
+now intros HH3; case Z.not_prime_0; apply prime_alt.
 2: intros p (V1, _); contradict V1; apply Zle_not_lt; red; simpl; intros;
      discriminate.
 intros p Hprime Hdec; exists (Zpos a);repeat split.
@@ -543,12 +550,13 @@ rewrite F5 in H6; rewrite F1 in H6; rewrite F4 in H6.
 case in_mkProd_prime_div_in with (3 := Hdec); auto.
 intros p1 Hp1.
 rewrite <- F6 in H6.
-apply Zis_gcd_gcd; auto with zarith.
-change (rel_prime (a ^ ((N - 1) / p) - 1) N).
+apply rel_prime_iff_coprime.
 match type of H6 with _ = ?X mod _ =>
   apply rel_prime_div with (p := X); auto with zarith
 end.
-apply rel_prime_mod_rev; auto with zarith.
+apply rel_prime_iff_coprime.
+unfold Z.coprime; rewrite <- Z.gcd_mod_l.
+apply rel_prime_iff_coprime.
 red.
 pattern 1 at 4; rewrite <- If7; rewrite <- H6.
 pattern N at 2; rewrite <- F1.
@@ -622,6 +630,7 @@ Lemma test_spock_correct : forall N a dec,
    (forall k, In k dec -> prime (Zpos (fst k))) ->
    test_spock N a dec = true ->
    prime N.
+Proof.
 unfold test_spock;intros N a dec H.
 match goal with |- context[if ?x then _ else _] =>
   case_eq x; intros If1; auto
@@ -744,7 +753,7 @@ apply Zle_not_lt; auto with zarith.
 1-3: auto with zmisc zarith.
 intros p; case p; clear p.
 intros HH; contradict HH.
-apply not_prime_0.
+now intros HH1; case Z.not_prime_0; apply prime_alt.
 2: intros p (V1, _); contradict V1; apply Zle_not_lt; red; simpl; intros;
      discriminate.
 intros p Hprime Hdec; exists (Zpos a);repeat split; auto with zarith.
@@ -822,12 +831,13 @@ rewrite F5 in H6; rewrite F1 in H6; rewrite F4 in H6.
 case in_mkProd_prime_div_in with (3 := Hdec); auto.
 intros p1 Hp1.
 rewrite <- F6 in H6.
-apply Zis_gcd_gcd; auto with zarith.
-change (rel_prime (a ^ ((N - 1) / p) - 1) N).
+apply rel_prime_iff_coprime.
 match type of H6 with _ = ?X mod _ =>
   apply rel_prime_div with (p := X); auto with zarith
 end.
-apply rel_prime_mod_rev; auto with zarith.
+apply rel_prime_iff_coprime.
+unfold Z.coprime; rewrite <- Z.gcd_mod_l.
+apply rel_prime_iff_coprime.
 red.
 pattern 1 at 4; rewrite <- If6; rewrite <- H6.
 pattern N at 2; rewrite <- F1.
@@ -903,6 +913,7 @@ Fixpoint test_Certif (lc : Certif) : bool :=
 Lemma test_Certif_In_Prime :
   forall lc, test_Certif lc = true ->
    forall c, In c lc -> prime (nprim c).
+Proof.
 intros lc; elim lc; simpl; auto.
 intros _ c H; case H.
 intros a; case a; simpl; clear a lc.

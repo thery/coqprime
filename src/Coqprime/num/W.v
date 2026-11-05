@@ -7,10 +7,10 @@
 (*************************************************************)
 
 Set Implicit Arguments.
-From Coq Require Import CyclicAxioms Cyclic63.
+From Stdlib Require Import CyclicAxioms Cyclic63.
 From Coqprime Require Import Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
-From Coq Require Import ZArith.
+From Stdlib Require Import ZArith.
 From Coqprime Require Import ZCAux Mod_op.
 
 (* ** Type of words ** *)
@@ -19,6 +19,7 @@ From Coqprime Require Import ZCAux Mod_op.
 (* Make the words *)
 
 Definition mk_word: forall (w: Type) (n:nat), Type.
+Proof.
 fix mk_word 2.
 intros w n; case n; simpl.
 exact int.
@@ -35,6 +36,7 @@ Fixpoint mk_op (w : univ_of_cycles) (op : ZnZ.Ops w) (n : nat) {struct n} :
 
 Theorem mk_op_digits: forall (w:univ_of_cycles) (op: ZnZ.Ops w) n,
   (Zpos (ZnZ.digits (mk_op op n)) = 2 ^ Z_of_nat n * Zpos (ZnZ.digits op))%Z.
+Proof.
 intros w op n; elim n; simpl mk_op; auto; clear n.
 intros n Rec; simpl ZnZ.digits.
 rewrite Zpos_xO; rewrite Rec.
@@ -45,6 +47,7 @@ Qed.
 
 Theorem digits_pos: forall (w:univ_of_cycles) (op: ZnZ.Ops w) n,
   (1 < Zpos (ZnZ.digits op) ->  1 < Zpos (ZnZ.digits (mk_op op n)))%Z.
+Proof.
 intros w op n H.
 rewrite mk_op_digits.
 rewrite <- (Zmult_1_r 1).
@@ -82,6 +85,7 @@ Definition w63_13_op := mk_zn2z_ops_karatsuba w63_12_op.
 Definition w63_14_op := mk_zn2z_ops_karatsuba w63_13_op.
 
 Definition cmk_op: forall (n: nat), ZnZ.Ops (word int n).
+Proof.
 intros n; case n; clear n.
 exact int_ops.
 intros n; case n; clear n.
@@ -119,6 +123,7 @@ end.
 Defined.
 
 Definition cmk_spec: forall n, ZnZ.Specs (cmk_op n).
+Proof.
 assert (S1: ZnZ.Specs w63_1_op).
 unfold w63_1_op; apply mk_zn2z_specs; auto with zarith.
 exact int_specs.
@@ -197,6 +202,7 @@ Defined.
 
 Theorem cmk_op_digits: forall n,
   (Zpos (ZnZ.digits (cmk_op n)) = 2 ^ (Z_of_nat n) * 63)%Z.
+Proof.
 do 15 (intros n; case n; clear n; [try reflexivity | idtac]).
 intros n; unfold cmk_op; lazy beta.
 rewrite mk_op_digits; auto.

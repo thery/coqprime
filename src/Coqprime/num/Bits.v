@@ -1,4 +1,4 @@
-From Coq Require Import ZArith Zpow_facts.
+From Stdlib Require Import ZArith Zpow_facts.
 
 Open Scope Z_scope.
 
@@ -10,6 +10,7 @@ Fixpoint plength (p: positive) : positive :=
   end.
 
 Theorem plength_correct: forall p, (Zpos p < 2 ^ Zpos (plength p))%Z.
+Proof.
 assert (F: (forall p, 2 ^ (Zpos (Pos.succ p)) = 2 * 2 ^ Zpos p)%Z).
 intros p; replace (Zpos (Pos.succ p)) with (1 + Zpos p)%Z.
 rewrite Zpower_exp. 1-2: auto with zarith.
@@ -26,6 +27,7 @@ rewrite Zpower_1_r; auto with zarith.
 Qed.
 
 Theorem plength_pred_correct: forall p, (Zpos p <= 2 ^ Zpos (plength (Pos.pred p)))%Z.
+Proof.
 intros p; case (Psucc_pred p); intros H1.
 subst; simpl plength.
 rewrite Zpower_1_r; auto with zarith.
@@ -45,6 +47,7 @@ Definition Pdiv p q :=
 
 Theorem Pdiv_le: forall p q,
   Zpos p <= Zpos q * Zpos (Pdiv p q).
+Proof.
 intros p q.
 unfold Pdiv.
 assert (H1: Zpos q > 0); auto with zarith.
@@ -70,6 +73,7 @@ Qed.
 Definition is_one p := match p with xH => true | _ => false end.
 
 Theorem is_one_one: forall p, is_one p = true -> p = xH.
+Proof.
 intros p; case p; auto; intros p1 H1; discriminate H1.
 Qed.
 
@@ -80,6 +84,7 @@ Definition get_height digits p :=
 Theorem get_height_correct:
   forall digits N,
    Zpos N <= Zpos digits * (2 ^ (Zpos (get_height digits N) -1)).
+Proof.
 intros digits N.
 unfold get_height.
 assert (H1 := Pdiv_le N digits).

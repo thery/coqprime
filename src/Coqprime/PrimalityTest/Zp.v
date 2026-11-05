@@ -14,9 +14,9 @@
 
     Definition: ZpGroup
  **********************************************************************)
-From Coq Require Import ZArith Znumtheory Zpow_facts.
+From Stdlib Require Import ZArith Znumtheory Zpow_facts.
 From Coqprime Require Import Tactic.
-From Coq Require Import Wf_nat.
+From Stdlib Require Import Wf_nat.
 From Coqprime Require Import UList.
 From Coqprime Require Import FGroup.
 From Coqprime Require Import EGroup.
@@ -46,10 +46,12 @@ Fixpoint mkZp_aux (m: nat): list Z:=
  **************************************)
 
 Theorem mkZp_aux_length: forall m, length (mkZp_aux m) = (m + 1)%nat.
+Proof.
 intros m; elim m; simpl; auto.
 Qed.
 
 Theorem mkZp_aux_in: forall m p, 0 <= p <= Z_of_nat m -> In p (mkZp_aux m).
+Proof.
 intros m; elim m.
 simpl; auto with zarith.
 intros n1 Rec p (H1, H2); case Zle_lt_or_eq with (1 := H2); clear H2; intro H2.
@@ -59,6 +61,7 @@ rewrite H2; simpl; auto.
 Qed.
 
 Theorem in_mkZp_aux: forall m p, In p (mkZp_aux  m) ->  0 <= p <= Z_of_nat m.
+Proof.
 intros m; elim m; clear m.
 simpl; intros p H1; case H1; clear H1; intros H1; subst; auto with zarith.
 intros m1; generalize (inj_S m1); simpl.
@@ -68,6 +71,7 @@ rewrite H; case (Rec p); auto with zarith.
 Qed.
 
 Theorem mkZp_aux_ulist: forall m, ulist (mkZp_aux m).
+Proof.
 intros m; elim m; simpl; auto.
 intros m1 H; apply ulist_cons; auto.
 change (~ In (Z_of_nat (S m1)) (mkZp_aux m1)).
@@ -86,6 +90,7 @@ Definition mkZp := mkZp_aux (Z.abs_nat (n - 1)).
  **************************************)
 
 Theorem mkZp_length: length mkZp = Z.abs_nat n.
+Proof.
 unfold mkZp; rewrite mkZp_aux_length.
 apply inj_eq_rev.
 rewrite inj_plus.
@@ -94,18 +99,21 @@ repeat rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem mkZp_in: forall p, 0 <= p < n -> In p mkZp.
+Proof.
 intros p (H1, H2); unfold mkZp; apply mkZp_aux_in.
 rewrite inj_Zabs_nat.
 repeat rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem in_mkZp: forall p, In p mkZp ->  0 <= p < n.
+Proof.
 intros p H; case (in_mkZp_aux (Z.abs_nat  (n - 1)) p). auto with zarith.
 rewrite inj_Zabs_nat.
 repeat rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem mkZp_ulist: ulist mkZp.
+Proof.
 unfold mkZp; apply mkZp_aux_ulist; auto.
 Qed.
 
@@ -120,6 +128,7 @@ Definition pmult (p q: Z) := (p * q) mod n.
  **************************************)
 
 Theorem pmult_assoc: forall p q r, (pmult p (pmult q r)) = (pmult (pmult p q) r).
+Proof.
 assert (Hu: 0 < n); try apply Z.lt_trans with 1; auto with zarith.
 generalize Zmod_mod; intros H.
 intros p q r; unfold pmult.
@@ -138,29 +147,33 @@ rewrite <- Zmult_mod; sauto.
 Qed.
 
 Theorem pmult_1_l: forall p, In p mkZp -> pmult 1 p = p.
+Proof.
 intros p H; unfold pmult; rewrite Zmult_1_l.
 apply Zmod_small.
 case (in_mkZp p); auto with zarith.
 Qed.
 
 Theorem pmult_1_r: forall p, In p mkZp -> pmult p 1 = p.
+Proof.
 intros p H; unfold pmult; rewrite Zmult_1_r.
 apply Zmod_small.
 case (in_mkZp p); auto with zarith.
 Qed.
 
 Theorem pmult_comm: forall p q, pmult p q = pmult q p.
+Proof.
 intros p q; unfold pmult; rewrite Zmult_comm; auto.
 Qed.
 
 Definition Lrel := isupport_aux _ pmult  mkZp 1 Z.eq_dec (progression Z.succ 0 (Z.abs_nat n)).
 
 Theorem rel_prime_is_inv:
-  forall a, is_inv Z pmult mkZp 1 Z.eq_dec a = if (rel_prime_dec a n) then true else false.
+  forall a, is_inv Z pmult mkZp 1 Z.eq_dec a = if Z.gcd a n =? 1 then true else false.
+Proof.
 assert (Hu: 0 < n); try apply Z.lt_trans with 1; auto with zarith.
-intros a; case (rel_prime_dec a n); intros H.
-assert (H1: Bezout a n 1); try apply rel_prime_bezout; auto.
-inversion H1 as [c d Hcd]; clear H1.
+intros a; case (Z.BoolSpec_coprime a n); intros H.
+assert (H1: Z.Bezout a n 1) by now apply Z.Bezout_coprime.
+case H1; intros c [d Hcd]; clear H1.
 assert (pmult (c mod n) a = 1).
 unfold pmult; rewrite Zmult_mod; try rewrite Zmod_mod; auto.
 rewrite <- Zmult_mod; auto.
@@ -174,8 +187,8 @@ apply mkZp_in; auto with zarith.
 apply Z_mod_lt; auto with zarith.
 apply is_inv_false.
 intros c H1; left; intros H2; contradict H.
-apply bezout_rel_prime.
-apply Bezout_intro with c  (- (Z.div (c * a) n)).
+apply Z.coprime_Bezout.
+exists c; exists  (- (Z.div (c * a) n)).
 pattern (c * a) at 1; rewrite (Z_div_mod_eq_full (c * a) n).
 unfold pmult in H2; rewrite (Zmult_comm c); try rewrite H2.
 ring.
@@ -186,6 +199,7 @@ Qed.
  **************************************)
 
 Definition ZPGroup : (FGroup pmult).
+Proof.
 apply IGroup with (support := mkZp) (e:= 1).
 exact Z.eq_dec.
 apply mkZp_ulist.
@@ -198,14 +212,16 @@ exact pmult_1_r.
 Defined.
 
 Theorem in_ZPGroup: forall p, rel_prime p n -> 0 <= p < n -> In p ZPGroup.(s).
+Proof.
 intros p H (H1, H2); unfold ZPGroup; simpl.
 apply isupport_is_in.
-generalize (rel_prime_is_inv p); case (rel_prime_dec p); auto.
+apply rel_prime_iff_coprime in H.
+generalize (rel_prime_is_inv p); rewrite H; simpl; auto.
 apply mkZp_in; auto with zarith.
 Qed.
 
-
 Theorem phi_is_length: phi n = Z_of_nat (length Lrel).
+Proof.
 assert (Hu: 0 < n); try apply Z.lt_trans with 1; auto with zarith.
 rewrite phi_def_with_0; auto.
 unfold Zsum, Lrel; rewrite Zle_imp_le_bool; auto with zarith.
@@ -214,11 +230,12 @@ elim (progression Z.succ 0 (Z.abs_nat n)); simpl; auto.
 intros a l1 Rec.
 rewrite Rec.
 rewrite rel_prime_is_inv.
-case (rel_prime_dec a n); auto with zarith.
+case (Z.BoolSpec_coprime a n); auto with zarith.
 simpl length; rewrite inj_S; auto with zarith.
 Qed.
 
 Theorem phi_is_order: phi n = g_order ZPGroup.
+Proof.
 unfold g_order; rewrite phi_is_length.
 eq_tac; apply permutation_length.
 apply ulist_incl2_permutation.
@@ -249,6 +266,7 @@ apply in_mkZp; auto.
 Qed.
 
 Theorem Zp_cyclic: prime n -> cyclic Z.eq_dec ZPGroup.
+Proof.
 intros H1.
 unfold ZPGroup, pmult;
 generalize (cyclic_field _ (fun x y => (x + y) mod n) (fun x y => (x *  y) mod n) (fun x => (-x) mod n) 0);
@@ -282,22 +300,24 @@ repeat rewrite <- Zplus_mod; auto with zarith.
 rewrite <- (Zmod_small 0 n); auto with zarith.
 eq_tac; auto with zarith.
 apply in_mkZp; auto.
-intros a b Ha Hb H; case (prime_mult n H1 a b).
-apply Zmod_divide; auto with zarith.
-intros H2; left.
+intros a b Ha Hb H; case (Z.divide_prime_mul a b n).
+now apply prime_alt.
+intros [] _.
+apply Z.mod_divide; auto with zarith.
+left.
 case (Zle_lt_or_eq 0 a); auto.
 case (in_mkZp a); auto.
 intros H3; absurd (n <= a).
 apply Zlt_not_le.
 case (in_mkZp a); auto.
-apply Zdivide_le; auto with zarith.
-intros H2; right.
+apply Z.divide_pos_le; auto with zarith.
+right.
 case (Zle_lt_or_eq 0 b); auto.
 case (in_mkZp b); auto.
 intros H3; absurd (n <= b).
 apply Zlt_not_le.
 case (in_mkZp b); auto.
-apply Zdivide_le; auto with zarith.
+apply Z.divide_pos_le; auto with zarith.
 Qed.
 
 End Zp.
@@ -305,12 +325,14 @@ End Zp.
 (* Definition of the order (0 for q < 1) *)
 
 Definition Zorder: Z -> Z -> Z.
+Proof.
 intros p q; case (Z_le_dec q 1); intros H.
 exact 0.
 refine (e_order Z.eq_dec (p mod q) (ZPGroup q _)); auto with zarith.
 Defined.
 
 Theorem Zorder_pos: forall p n, 0 <= Zorder p n.
+Proof.
 intros p n; unfold Zorder.
 case (Z_le_dec n 1); auto with zarith.
 intros n1.
@@ -320,15 +342,19 @@ Qed.
 Theorem in_mod_ZPGroup
      : forall (n : Z) (n_pos : 1 < n) (p : Z),
        rel_prime p n -> In (p mod n) (s (ZPGroup n n_pos)).
+Proof.
 intros n H p H1.
 apply in_ZPGroup; auto.
-apply rel_prime_mod; auto with zarith.
+apply rel_prime_iff_coprime.
+apply Z.coprime_mod_l_iff; auto with zarith.
+now apply rel_prime_iff_coprime.
 apply Z_mod_lt; auto with zarith.
 Qed.
 
 
 Theorem Zpower_mod_is_gpow:
   forall p q n (Hn: 1 < n), rel_prime p n -> 0 <= q -> p ^ q mod n = gpow (p mod n) (ZPGroup n Hn) q.
+Proof.
 intros p q n H Hp H1; generalize H1; pattern q; apply natlike_ind; simpl; auto.
 intros _; apply Zmod_small; auto with zarith.
 intros n1 Hn1 Rec _; simpl.
@@ -341,6 +367,7 @@ Qed.
 
 
 Theorem Zorder_div_power: forall p q n, 1 < n -> rel_prime p n -> p ^ q  mod n = 1 -> (Zorder p n | q).
+Proof.
 intros p q n H H1 H2.
 assert (Hq: 0 <= q).
 generalize H2; case q; simpl; auto with zarith.
@@ -353,18 +380,21 @@ rewrite <- Zpower_mod_is_gpow; auto with zarith.
 Qed.
 
 Theorem Zorder_div:  forall p n,  prime n -> ~(n | p) -> (Zorder p n | n - 1).
+Proof.
 intros p n H; unfold Zorder.
 case (Z_le_dec n 1); intros H1 H2.
-contradict H1; generalize (prime_ge_2 n H); auto with zarith.
+apply prime_alt in H.
+contradict H1; generalize (Z.prime_ge_2 n H); auto with zarith.
 rewrite <- prime_phi_n_minus_1; auto.
 match goal with |- context[ZPGroup _ ?H2] => rewrite phi_is_order with (n_pos := H2) end.
 apply e_order_divide_g_order; auto.
 apply in_mod_ZPGroup; auto.
-apply rel_prime_sym; apply prime_rel_prime; auto.
+apply rel_prime_iff_coprime, Z.Symmetric_coprime, Z.coprime_prime_l; auto.
+now apply prime_alt.
 Qed.
 
-
 Theorem Zorder_power_is_1:  forall p n, 1 < n -> rel_prime p n -> p ^ (Zorder p n)  mod n = 1.
+Proof.
 intros p n H H1;  unfold Zorder.
 case (Z_le_dec n 1); intros H2.
 contradict H; auto with zarith.
@@ -376,6 +406,7 @@ apply Zlt_le_weak; apply e_order_pos.
 Qed.
 
 Theorem Zorder_power_pos: forall p n, 1 < n -> rel_prime p n -> 0 < Zorder p n.
+Proof.
 intros p n H H1;  unfold Zorder.
 case (Z_le_dec n 1); intros H2.
 contradict H; auto with zarith.
@@ -383,6 +414,7 @@ apply e_order_pos.
 Qed.
 
 Theorem phi_power_is_1:  forall p n, 1 < n -> rel_prime p n -> p ^ (phi n)  mod n = 1.
+Proof.
 intros p n H H1.
 assert (V1:= Zorder_power_pos p n H H1).
 assert (H2: (Zorder p n | phi n)).

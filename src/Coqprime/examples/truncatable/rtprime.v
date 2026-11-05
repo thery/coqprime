@@ -17,7 +17,7 @@ Definition rtprime n :=
 Lemma rtprime_small p : prime p -> p < b -> rtprime p.
 Proof.
 intros pP pB.
-assert (H : 0 < p) by now apply GZnZ.p_pos.
+assert (H : 0 < p) by now apply prime_pos.
 split.
   now apply no_zero_digit_small; lia.
 intros k.
@@ -41,7 +41,7 @@ Proof.
 intros mB  [nNZ nM] mnP; split.
   now apply no_zero_digit_rdecompose; try lia; auto.
 assert (nPr : prime n) by now apply rtprime_prime.
-assert (nP : 0 < n) by now apply GZnZ.p_pos.
+assert (nP : 0 < n) by now apply prime_pos.
 intros k kP.
 assert (Hl := log_correct b b_pos n nP).
 assert (lP := log_pos b n).
@@ -148,7 +148,7 @@ rewrite kE.
 assert (k1Lt : rtprime k1).
   unfold k1; replace b with (b ^ 1) by lia.
   now apply rtprime_div; try lia.
-assert (k1P : 0 < k1) by now apply GZnZ.p_pos, rtprime_prime.
+assert (k1P : 0 < k1) by now apply prime_pos, rtprime_prime.
 fold k1; fold m.
 assert (Hk1 : In k1 l1).
   apply Hl.
@@ -457,6 +457,6 @@ case (rtprime_list9_correct (k / 10 ^ (log 10 k - 8))); auto.
 replace 9 with (8 + 1) by lia.
 replace 8 with (log 10 (k / 10 ^ (log 10 k - 8))) at 1 4.
   apply log_correct; try lia.
-  now apply GZnZ.p_pos, (rtprime_prime 10).
+  now apply prime_pos, (rtprime_prime 10).
 now rewrite log_div; lia.
 Qed.

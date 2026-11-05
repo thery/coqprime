@@ -8,8 +8,8 @@
 
 Set Implicit Arguments.
 
-From Coq Require Import ZArith Znumtheory Zpow_facts.
-From Coq Require Import CyclicAxioms Cyclic63.
+From Stdlib Require Import ZArith Znumtheory Zpow_facts.
+From Stdlib Require Import CyclicAxioms Cyclic63.
 From Coqprime Require Int63Compat.
 From Bignums Require Import DoubleCyclic BigN.
 From Coqprime Require Import ZCAux.
@@ -37,6 +37,7 @@ Hypothesis p_more_1: 2 < Zpos p.
 Hypothesis b_p: [|b|] = 2 ^ Zpos p - 1.
 
 Lemma b_pos: 0 < [|b|].
+Proof.
 rewrite b_p.
 assert (2 ^ 0 < 2 ^ Zpos p).
 apply Zpower_lt_monotone; auto with zarith.
@@ -51,6 +52,7 @@ Variable m_op_spec: mod_spec w_op b m_op.
 Let w2 := m_op.(add_mod) ZnZ.one ZnZ.one.
 
 Lemma w1_b: [|ZnZ.one|] = 1 mod [|b|].
+Proof.
 rewrite ZnZ.spec_1; simpl; auto.
 rewrite Zmod_small; auto with zarith.
 split; auto with zarith.
@@ -61,6 +63,7 @@ rewrite Zpower_1_r in H; auto with zarith.
 Qed.
 
 Lemma w2_b: [|w2|] = 2 mod [|b|].
+Proof.
 unfold w2; rewrite (add_mod_spec m_op_spec _ _ _ _ w1_b w1_b).
 rewrite w1_b; rewrite <- Zplus_mod; auto with zarith.
 Qed.
@@ -68,6 +71,7 @@ Qed.
 Let w4 := m_op.(add_mod) w2 w2.
 
 Lemma w4_b: [|w4|] = 4 mod [|b|].
+Proof.
 unfold w4; rewrite (add_mod_spec m_op_spec _ _ _ _ w2_b w2_b).
 rewrite w2_b; rewrite <- Zplus_mod; auto with zarith.
 Qed.
@@ -162,6 +166,7 @@ Qed.
 Theorem lucastest_step_correct:
  forall p1 z n, 0 <= n -> [|z|] = fst (s n) mod (2 ^ Zpos p - 1) ->
        [|lucastest_step z p1|] = fst (s (n + Zpos p1)) mod (2 ^ Zpos p - 1).
+Proof.
 unfold lucastest_step.
 intros p1; pattern p1; apply Pind; simpl iter_pos; simpl s; clear p1.
 intros z p1 Hp1 H.
@@ -195,6 +200,7 @@ Qed.
 Definition lucastest := [|lucastest_step w4 (Pminus p 2)|].
 
 Theorem lucastest_prop: lucastest = fst(s (Zpos p -2)) mod (2 ^ Zpos p - 1).
+Proof.
 unfold lucastest.
 assert (F: 0 <= 0); auto with zarith.
 generalize (lucastest_step_correct (p -2) w4 F); simpl Zplus;
@@ -205,8 +211,9 @@ rewrite <- b_p; simpl; exact w4_b.
 Qed.
 
 Theorem lucastest_prop_cor: lucastest = 0 -> (2 ^ Zpos p - 1 | fst(s (Zpos p - 2)))%Z.
+Proof.
 intros H.
-apply Zmod_divide.
+apply Z.mod_divide.
 assert (H1: 2 ^ 1 < 2 ^ Zpos p).
 apply Zpower_lt_monotone; auto with zarith.
 rewrite Zpower_1_r in H1; auto with zarith.
@@ -214,6 +221,7 @@ apply trans_equal with (2:= H); apply sym_equal; apply lucastest_prop; auto.
 Qed.
 
 Theorem lucastest_prime:  lucastest = 0 -> prime (2 ^ Zpos p - 1).
+Proof.
 intros H1; case (prime_dec (2 ^ Zpos p - 1)); auto; intros H2.
 case Zdivide_div_prime_le_square with (2 := H2).
 assert (H3: 2 ^ 1 < 2 ^ Zpos p).
@@ -225,10 +233,10 @@ generalize q_more_than_square; unfold Mp; intros tmp; apply tmp;
   auto; clear tmp.
 apply lucastest_prop_cor; auto.
 case (Zle_lt_or_eq 2 q); auto.
-apply prime_ge_2; auto.
+apply Z.prime_ge_2, prime_alt; auto.
 intros H5; subst.
 absurd (2 <= 1); auto with arith.
-apply Zdivide_le; auto with zarith.
+apply Z.divide_pos_le; auto with zarith.
 case H4; intros x Hx.
 exists (2 ^ (Zpos p -1) - x).
 rewrite Zmult_minus_distr_r; rewrite <- Hx; unfold Mp.
@@ -309,6 +317,7 @@ Qed.
 
 Theorem lucas_prime:
  forall p, 2 < Zpos p -> lucas p = 0 -> prime (2 ^ Zpos p - 1).
+Proof.
 intros p Hp H.
 assert(A1: ZnZ.Specs (op p)).
 apply cmk_spec; auto.

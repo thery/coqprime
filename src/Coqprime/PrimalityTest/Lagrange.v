@@ -14,10 +14,10 @@
 
     Definition: lagrange
   **********************************************************************)
-From Coq Require Import List.
+From Stdlib Require Import List.
 From Coqprime Require Import UList.
 From Coqprime Require Import ListAux.
-From Coq Require Import ZArith Znumtheory.
+From Stdlib Require Import ZArith Znumtheory.
 From Coqprime Require Import NatAux.
 From Coqprime Require Import FGroup.
 
@@ -42,6 +42,7 @@ Hypothesis G_in_H: (incl G.(s)  H.(s)).
  **************************************)
 
 Theorem same_e_for_H_and_G: H.(e) = G.(e).
+Proof.
 apply trans_equal with (op H.(e) H.(e)); sauto.
 apply trans_equal with (op H.(e) (op G.(e) (H.(i) G.(e)))); sauto.
 eq_tac; sauto.
@@ -77,6 +78,7 @@ Fixpoint mkList (base l: (list A)) { struct l}  : (list A) :=
 Definition mkGH := mkList G.(s) H.(s).
 
 Theorem mkGH_length:  divide (length G.(s)) (length mkGH).
+Proof.
 unfold mkGH; elim H.(s); simpl.
 exists 0%nat; auto with arith.
 intros a l1 (c, H1); case (In_dec A_dec a (mkList  G.(s) l1)); intros H2.
@@ -85,6 +87,7 @@ exists (1 + c)%nat; rewrite ListAux.length_app; rewrite ListAux.length_map; rewr
 Qed.
 
 Theorem mkGH_incl: incl H.(s) mkGH.
+Proof.
 assert (H1: forall l, incl l H.(s) -> incl l  (mkList G.(s) l)).
 intros l; elim l; simpl; auto with datatypes.
 intros a l1 H1 H2.
@@ -108,6 +111,7 @@ unfold mkGH; apply H1; auto with datatypes.
 Qed.
 
 Theorem incl_mkGH: incl mkGH H.(s).
+Proof.
 assert (H1: forall l, incl l H.(s) -> incl (mkList G.(s) l) H.(s)).
 intros l; elim l; simpl; auto with datatypes.
 intros a l1 H1 H2.
@@ -123,6 +127,7 @@ unfold mkGH; apply H1; auto with datatypes.
 Qed.
 
 Theorem ulist_mkGH: ulist mkGH.
+Proof.
 assert (H1: forall l, incl l H.(s) -> ulist  (mkList G.(s) l)).
 intros l; elim l; simpl; auto with datatypes.
 intros a l1 H1 H2.
@@ -166,6 +171,7 @@ Qed.
  **************************************)
 
 Theorem lagrange: (g_order G | (g_order H)).
+Proof.
 unfold g_order.
 rewrite Permutation.permutation_length with  (l := H.(s)) (m:= mkGH).
 case mkGH_length; intros x H1; exists (Z_of_nat x).

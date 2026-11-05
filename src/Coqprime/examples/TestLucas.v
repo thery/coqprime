@@ -6,7 +6,7 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Import ZArith.
+From Stdlib Require Import ZArith.
 From Coqprime Require Import Lucas.
 
 Eval native_compute in 2.

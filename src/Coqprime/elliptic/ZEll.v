@@ -5,17 +5,18 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-Require Coqprime.Z.ZCmisc.
-From Coq Require Import Ring.
-From Coq Require Import Field_tac.
-From Coq Require Import Ring_tac.
-From Coq Require Import Eqdep_dec.
-From Coq Require Import ZArith.
+
+From Coqprime Require ZCmisc.
+From Stdlib Require Import Ring.
+From Stdlib Require Import Field_tac.
+From Stdlib Require Import Ring_tac.
+From Stdlib Require Import Eqdep_dec.
+From Stdlib Require Import ZArith.
 From Coqprime Require Import ZCAux.
 From Coqprime Require Import Ppow.
 From Coqprime Require Import EGroup.
 From Coqprime Require Import SMain.
-From Coq Require Import Zmod.
+From Stdlib Require Import Zmod.
 
 Set Implicit Arguments.
 
@@ -42,7 +43,7 @@ Section Nell.
  Notation "x ** y" := (nmul x y) (at level 40, left associativity).
  Notation "-- x" := (ninv x) (at level 40, left associativity).
 
- Notation "x ?= y" := (Zeq_bool x y).
+ Notation "x ?= y" := (Z.eqb x y).
 
  Definition ndouble := fun (sc: Z) (p1: nelt) =>
  match p1 with
@@ -100,13 +101,11 @@ Section Nell.
 
  Definition inversible n x := exists y, Z.modulo (x * y) n = 1%Z.
 
-
  Lemma inversible_1: forall n, 1 < n -> inversible n 1.
  Proof.
  intros n Hn; exists 1%Z; rewrite Zmult_1_r;
    apply Zmod_small; split; auto with zarith.
  Qed.
-
 
  Notation "[ x ]" := (inversible N x).
 
@@ -169,7 +168,7 @@ Section Nell.
  unfold ndouble; intros sc x; case x; auto.
    intros H; inversion_clear H.
    repeat split; auto; try constructor; auto.
- intros x1 y1 z1; case Zeq_bool; auto.
+ intros x1 y1 z1; case Z.eqb; auto.
    intros H; inversion_clear H.
    repeat split; auto; try constructor; auto; repeat itac.
  intros H; inversion_clear H; auto.
@@ -189,9 +188,9 @@ Section Nell.
  intros x1 y1 z1; case y; auto.
    intros H; inversion_clear H.
    repeat split; auto; try constructor; repeat itac.
- intros x2 y2 z2; case Zeq_bool.
- case Zeq_bool.
- case Zeq_bool.
+ intros x2 y2 z2; case Z.eqb.
+ case Z.eqb.
+ case Z.eqb.
  intros H; inversion_clear H; auto.
  repeat split; auto; try constructor; repeat itac.
  intros H; inversion_clear H; auto.
@@ -355,6 +354,7 @@ Local Coercion Zpos : positive >-> Z.
 
  Lemma Zmull_div: forall a l, List.In a l ->
     Zmull l  = (Zmull l / a) * a :> Z.
+Proof.
  intros a l; generalize a; elim l; clear a l; auto.
  intros a H; inversion H.
  simpl List.In; intros a l Hrec b [H | H]; subst.
@@ -451,11 +451,13 @@ Local Coercion Zpos : positive >-> Z.
     case H1.
     absurd (p <= 1).
       apply Zlt_not_le; case H1; auto.
-      apply Zdivide_le; auto with zarith.
+      apply Z.divide_pos_le; auto with zarith.
    intros (a1, n1) l1 Hrec p Hp Hp1 Hp2.
    rewrite Zmullp_cons in Hp2.
    rewrite Zpos_mult_morphism in Hp2.
-   case (prime_mult _ Hp1 _ _ Hp2); intros H1.
+   case (Z.divide_prime_mul (Ppow (fst (a1, n1))  (snd (a1, n1))) (Zmullp l1) p).
+   now apply prime_alt.
+   intros HH _; case (HH Hp2); intros H1; clear HH.
      assert (Hap: prime a1).
        change a1 with (fst (a1, n1)); apply Hp; auto with datatypes.
      simpl; case n1; try intros p1; case psplit; intros p2 l2; simpl snd;
@@ -476,14 +478,17 @@ Local Coercion Zpos : positive >-> Z.
   Hypothesis p_div_N: (p | N)%Z.
 
   Theorem p_pos : 0 < p.
-  Proof. generalize (prime_ge_2 _ p_prime); lia. Qed.
+  Proof. 
+  assert (Hp : Z.prime p) by now apply prime_alt.
+  generalize (Z.prime_ge_2 _ Hp); lia.
+  Qed.
   Let p_pos' := p_pos.
 
   Definition pK := (Zmod.Zmod p).
 
   Let to_p x:pK := Zmod.of_Z _ x.
 
-  Notation "x :%p" := (to_p x) (at level 30).
+  Notation "x :%p" := (to_p x) (at level 1).
 
   Definition pkO: pK := Zmod.zero.
 
@@ -535,9 +540,15 @@ Local Coercion Zpos : positive >-> Z.
     Zmod.unsigned_of_Z Zmod.unsigned_add Zmod.unsigned_mul
     Zplus_mod_idemp_l Zplus_mod_idemp_r Zmult_mod_idemp_l Zmult_mod_idemp_r))).
   intros H1.
-  apply (fun H HH => Zrel_prime_neq_mod_0 _ _ H HH H1).
-  generalize (prime_ge_2 _ p_prime); auto with zarith.
-  apply rel_prime_sym; auto.
+  match goal with 
+    H1 : ?X mod ?Y = 0%Z |- _ => absurd (Z.coprime X Y)
+  end.
+  unfold Z.coprime; rewrite <- Z.gcd_mod_l, H1, Z.gcd_0_l.
+  rewrite Z.abs_eq; auto with zarith.
+  assert (2 <= p)%Z; auto with zarith.
+  now apply Z.prime_ge_2, prime_alt.
+  apply Z.Symmetric_coprime.
+  apply rel_prime_iff_coprime.
   apply rel_prime_div with N; try apply p_div_N.
   generalize NonSingular.
   repeat rewrite Zmult_assoc; auto.
@@ -547,19 +558,19 @@ Local Coercion Zpos : positive >-> Z.
 
   Lemma pone_not_zero: 1 <> 0.
   Proof.
-    apply Zmod.one_neq_zero, prime_ge_2.
+    apply Zmod.one_neq_zero, Z.prime_ge_2.
+    apply prime_alt.
     rewrite Z.abs_eq; trivial; lia.
   Qed.
 
   Lemma ptwo_not_zero: 2 <> 0.
   Proof.
   intros H%(f_equal Zmod.unsigned); revert H.
-  pose proof (prime_ge_2 _ p_prime).
+  assert (Hp : 2 <= p) by now apply Z.prime_ge_2, prime_alt.
   cbv ["2" "1"].
   rewrite Zmod.unsigned_0, Zmod.unsigned_add, Zmod.unsigned_1_pos by trivial.
-  repeat (rewrite Zmod_small); generalize (prime_ge_2 _ p_prime);
-    auto with zarith.
-  intros H1; case (Zle_lt_or_eq _ _ H1); intros H2; auto with zarith.
+  repeat (rewrite Zmod_small); auto with zarith.
+  case (Zle_lt_or_eq _ _ Hp); intros H2; auto with zarith.
   case N_not_div_2; rewrite H2; auto.
   Qed.
 
@@ -598,14 +609,15 @@ Local Coercion Zpos : positive >-> Z.
   Lemma is_zero_correct: forall x y,
     if (x ?= y) then x = y else x <> y.
   Proof.
-  intros x y. apply Zeq_bool_if.
+  intros x y; case Z.eqb_spec; auto.
   Qed.
 
   Lemma inversible_is_not_k0: forall x, [x] -> x :%p  <> 0.
   Proof.
   intros x1 (k, Hk) H1.
   assert (F2: 2 < p). {
-    case (Zle_lt_or_eq _ _  (prime_ge_2 p p_prime)); auto.
+    assert (Hp : 2 <= p) by now apply Z.prime_ge_2, prime_alt.
+    case (Zle_lt_or_eq _ _ Hp); auto.
     intros HH1; case N_not_div_2; rewrite HH1.
     apply p_div_N. }
   assert (F3:= N_lt_2).
@@ -618,7 +630,8 @@ Local Coercion Zpos : positive >-> Z.
     rewrite Zmult_mod by auto with zarith.
     rewrite HH. rewrite Zmult_0_l.
     repeat rewrite Zmod_small; auto with zarith. }
-  apply Zmod_div_mod; auto with zarith.
+  apply sym_equal.
+  apply Z.mod_mod_divide; auto with zarith.
   Qed.
 
   Lemma inversible_is_zero: forall x,
@@ -637,9 +650,8 @@ Local Coercion Zpos : positive >-> Z.
   unfold nmul, to_p, pkmul.
   apply Zmod.to_Z_inj; rewrite ?Zmod.to_Z_mul, ?Zmod.to_Z_of_Z.
   assert (F1:= p_pos).
-  rewrite <- Zmod_div_mod; auto.
+  rewrite Z.mod_mod_divide; auto.
   rewrite Zmult_mod; auto.
-  generalize N_lt_2; auto with zarith.
   Qed.
 
   Lemma to_p_pow: forall x n,
@@ -655,7 +667,7 @@ Local Coercion Zpos : positive >-> Z.
   rewrite Zpower_1_r; rewrite Zmult_comm.
   unfold to_p, nmul, pkmul, pK.
   apply Zmod.of_Z_inj.
-  rewrite <- Zmod_div_mod; auto with zarith.
+  rewrite Z.mod_mod_divide; auto with zarith.
   Qed.
 
   Lemma to_p_nplus: forall x y, (x ++ y):%p = x:%p + y:%p.
@@ -664,9 +676,8 @@ Local Coercion Zpos : positive >-> Z.
   unfold nplus, to_p, pkplus.
   apply Zmod.to_Z_inj; rewrite ?Zmod.to_Z_add, ?Zmod.to_Z_of_Z.
   assert (F1:= p_pos).
-  rewrite <- Zmod_div_mod; auto.
+  rewrite Z.mod_mod_divide; auto.
   rewrite Zplus_mod; auto.
-  generalize N_lt_2; auto with zarith.
   Qed.
 
   Lemma to_p_nsub: forall x y, (x -- y):%p = x:%p - y:%p.
@@ -675,9 +686,8 @@ Local Coercion Zpos : positive >-> Z.
   unfold nsub, to_p, pksub.
   apply Zmod.to_Z_inj; rewrite ?Zmod.to_Z_sub, ?Zmod.to_Z_of_Z.
   assert (F1:= p_pos).
-  rewrite <- Zmod_div_mod; auto.
+  rewrite Z.mod_mod_divide; auto.
   rewrite Zminus_mod; auto.
-  generalize N_lt_2; auto with zarith.
   Qed.
 
   Lemma to_p_2: 2:%p = 2.
@@ -751,7 +761,7 @@ Local Coercion Zpos : positive >-> Z.
   case Kdec; [idtac | intros HH; case HH]; auto.
   intros e.
   match goal with |- context[?x ?= ?y] =>
-    generalize (is_zero_correct x y); case (Zeq_bool x y)
+    generalize (is_zero_correct x y); case (Z.eqb x y)
   end.
   intros HH; case Kdec.
      intros; constructor.
@@ -762,10 +772,10 @@ Local Coercion Zpos : positive >-> Z.
   intros HH1.
   assert (N1: inversible N y).
     inversion V1.
-       generalize H3; generalize (Zeq_bool_eq y 0); case Zeq_bool.
+       generalize H3; case (Z.eqb_spec y 0).
          intros; case HH1; auto.
        intros; discriminate.
-       generalize H3; case Zeq_bool; clear H3.
+       generalize H3; case Z.eqb; clear H3.
          intros; discriminate.
       intros HH; injection HH; clear HH.
       intros _ HH _ _; subst z0.
@@ -806,7 +816,7 @@ Local Coercion Zpos : positive >-> Z.
   assert (F0b:= (inversible_is_not_k0 NI0)).
   generalize V1; simpl.
   repeat match goal with |- context[?x ?= ?y] =>
-    generalize (is_zero_correct x y); case (Zeq_bool x y)
+    generalize (is_zero_correct x y); case (Z.eqb x y)
   end; repeat case Kdec; auto.
   intros; constructor.
   intros n e K1 K2 K3 U1; subst y.
@@ -934,7 +944,7 @@ Local Coercion Zpos : positive >-> Z.
    intros H5; apply (@inversible_kO z 0); auto. }
  unfold ninv, pkopp, to_p, pK.
  apply Zmod.to_Z_inj; repeat rewrite ?Zmod.unsigned_opp, ?Zmod.to_Z_of_Z.
- rewrite <- Zmod_div_mod; auto with zarith.
+ rewrite Z.mod_mod_divide; auto with zarith.
  pattern y at 1; rewrite (Z_div_mod_eq_full y p).
  rewrite Zopp_plus_distr.
  rewrite Zopp_mult_distr_r.
@@ -1206,7 +1216,7 @@ Section pell.
  Notation "x ++ y " := (nplus N x y).
  Notation "x -- y" := (nsub N x y) (at level 50, left associativity).
  Notation "x ** y" := (nmul N x y) (at level 40, left associativity).
- Notation "x ?= y" := (Zeq_bool x y).
+ Notation "x ?= y" := (Z.eqb x y).
 
  Ltac itac :=
   match goal with
@@ -1228,7 +1238,7 @@ Section pell.
   let (a2, sc2) := scal N A sc1 a1 S1 in
   let (a3, sc3) := scalL N A sc2 a2 R1 in
     match a3 with
-     nzero => if (Zeq_bool (Z.gcd sc3 N) 1) then prime N
+     nzero => if (Z.eqb (Z.gcd sc3 N) 1) then prime N
               else True
    | _ => True
    end.
@@ -1241,7 +1251,7 @@ Section pell.
   case_eq (scalL N A sc2 a2 R1); intros a3.
   case a3; auto.
   intros sc3 Hsc3.
-  generalize (Zeq_bool_eq (Z.gcd sc3 N) 1); case Zeq_bool; intros Hz; auto.
+  case Z.eqb_spec; intros Hz; auto.
   case (prime_dec N); auto; intros Hn.
   case (Zdivide_div_prime_le_square N); auto with zarith.
   intros p (Hp, (Hp1, Hp2)).
@@ -1249,10 +1259,9 @@ Section pell.
   pose (to_p := fun x => Zmod.of_Z p x).
   assert (Ni1: nInversible N (scalL N A sc2 a2 R1)).
     rewrite Hsc3; constructor.
-    assert (tmp: Bezout sc3 N 1).
-      apply Zis_gcd_bezout.
-      rewrite <- Hz; auto; apply Zgcd_is_gcd.
-   inversion_clear tmp as [u v Huv].
+    assert (tmp: Z.Bezout sc3 N 1).
+      apply Z.Bezout_coprime_iff; auto.
+   inversion_clear tmp as [u [v Huv]].
    exists u.
    rewrite Zmult_comm.
    rewrite <- Z_mod_plus with (b := v); auto with zarith.
@@ -1271,9 +1280,10 @@ Section pell.
   clear Nt1 Nt2; intros Ni4 Ni5.
   assert (Rp: rel_prime N (4 * A * A * A  + 27 * B * B)).
     case Ni5; intros z1 Hz1.
-    apply bezout_rel_prime.
+    apply rel_prime_iff_coprime.
+    apply Z.coprime_Bezout.
     set (d := 4 * A * A * A + 27 * B * B).
-    apply Bezout_intro with (- ((d * z1)/N)) z1.
+    exists (- ((d * z1)/N)); exists z1.
     generalize Hz1; unfold isc.
     unfold nplus, nmul.
     rewrite (Zmult_mod_idemp_l (4 * A)).
@@ -1297,16 +1307,16 @@ Section pell.
                     (pkmul (pA A p) (to_p x)))
                  (pB B p)).
     unfold pA, pB, to_p.
-    repeat rewrite <- (to_p_pow N_lt_2 Hp); auto.
+    repeat rewrite <- (to_p_pow Hp Hp1); auto.
     simpl Z_of_nat.
-    repeat rewrite <- (to_p_nmul N_lt_2 Hp); auto.
-    repeat rewrite <- (to_p_nplus N_lt_2 Hp); auto.
+    repeat rewrite <- (to_p_nmul Hp Hp1); auto.
+    repeat rewrite <- (to_p_nplus Hp Hp1); auto.
     apply Zmod.of_Z_inj.
-    rewrite (@Zmod_div_mod p N); auto;
-       rewrite on_curve; rewrite <- Zmod_div_mod; auto.
+    rewrite <- (@Z.mod_mod_divide _ N); auto.
+       rewrite on_curve; rewrite Z.mod_mod_divide; auto.
        unfold nmul, nplus.
        rewrite (fun xx => @Zplus_mod_idemp_r xx (x^3)).
-       rewrite Zplus_mod_idemp_l; auto; rewrite <- Zmod_div_mod; auto.
+       rewrite Zplus_mod_idemp_l; auto; rewrite Z.mod_mod_divide; auto.
   pose (pcurve_elt := curve_elt (pkI p) (@pkplus p)
                                 (@pkmul p) (pA A p) (pB B p)).
   assert (E1: pequiv a (pcurve_elt (to_p x) (to_p y) Hoc)).
@@ -1342,8 +1352,9 @@ Section pell.
       intros z1 Hz1 Hz2.
         assert (E2: Zpos (z2p z1) = z1).
           generalize Hz1; case z1; simpl; auto; try (intros p2 HH || intro HH).
-            case not_prime_0; auto.
-          generalize (prime_ge_2 _ HH); unfold Z.le; simpl;
+            case Z.not_prime_0; auto; apply prime_alt; auto.
+          apply prime_alt in HH.
+          generalize (Z.prime_ge_2 _ HH); unfold Z.le; simpl;
               intros HH1; case HH1; auto.
         rewrite <- psplit_correct.
         rewrite HS1; simpl fst; simpl snd.
@@ -1357,7 +1368,8 @@ Section pell.
        rewrite (Zmull_div (z2p z1)); auto.
        rewrite E2; rewrite Zmult_assoc.
        assert (Hpz1: z1 > 0).
-         apply Z.lt_gt; apply Z.lt_le_trans with 2; try apply prime_ge_2; auto with zarith.
+         apply Z.lt_gt; apply Z.lt_le_trans with 2; auto with zarith.
+        apply Z.prime_ge_2, prime_alt; auto with zarith.
          red; auto.
        rewrite Z_div_mult; auto.
        rewrite gpow_gpow.
@@ -1393,9 +1405,7 @@ Section pell.
         red; simpl; intros; discriminate.
         red; simpl; intros; discriminate.
       rewrite <- tmp; auto.
-     apply Zdivide_le; auto.
-     apply Zlt_le_weak.
-     apply e_order_pos; auto.
+     apply Z.divide_pos_le; auto with zarith.
      apply FGroup.g_order_pos.
      apply e_order_divide_g_order; auto.
 Qed.

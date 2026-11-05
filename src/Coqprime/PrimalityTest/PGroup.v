@@ -14,10 +14,10 @@
 
     Definition: PGroup
  **********************************************************************)
-From Coq Require Import ZArith.
-From Coq Require Import Znumtheory.
+From Stdlib Require Import ZArith.
+From Stdlib Require Import Znumtheory.
 From Coqprime Require Import Tactic.
-From Coq Require Import Wf_nat.
+From Stdlib Require Import Wf_nat.
 From Coqprime Require Import ListAux.
 From Coqprime Require Import UList.
 From Coqprime Require Import FGroup.
@@ -34,6 +34,7 @@ Definition base := 3.
  **************************************)
 
 Definition P_dec: forall p q: Z * Z, {p = q} + {p <> q}.
+Proof.
 intros p1 q1; case p1; case q1; intros z t x y; case (Z.eq_dec x z); intros H1.
 case (Z.eq_dec y t); intros H2.
 left; eq_tac; auto.
@@ -53,11 +54,13 @@ Definition pplus (p q: Z * Z) := let (x ,y) := p in let (z,t) := q in (x + z, y 
  **************************************)
 
 Theorem pplus_assoc: forall p q r, (pplus p (pplus q r)) = (pplus (pplus p q) r).
+Proof.
 intros p q r; case p; case q; case r; intros r1 r2 q1 q2 p1 p2; unfold pplus.
 eq_tac; ring.
 Qed.
 
 Theorem pplus_comm: forall p q, (pplus p q) = (pplus q p).
+Proof.
 intros p q; case p; case q; intros q1 q2 p1 p2; unfold pplus.
 eq_tac; ring.
 Qed.
@@ -73,38 +76,46 @@ Definition pmult (p q: Z * Z) := let (x ,y) := p in let (z,t) := q in (x * z + b
  **************************************)
 
 Theorem pmult_assoc: forall p q r, (pmult p (pmult q r)) = (pmult (pmult p q) r).
+Proof.
 intros p q r; case p; case q; case r; intros r1 r2 q1 q2 p1 p2; unfold pmult.
 eq_tac; ring.
 Qed.
 
 Theorem pmult_0_l: forall p, (pmult (0, 0) p) = (0, 0).
+Proof.
 intros p; case p; intros x y; unfold pmult; eq_tac; ring.
 Qed.
 
 Theorem pmult_0_r: forall p, (pmult p (0, 0)) = (0, 0).
+Proof.
 intros p; case p; intros x y; unfold pmult; eq_tac; ring.
 Qed.
 
 Theorem pmult_1_l: forall p, (pmult (1, 0) p) = p.
+Proof.
 intros p; case p; intros x y; unfold pmult; eq_tac; ring.
 Qed.
 
 Theorem pmult_1_r: forall p, (pmult p (1, 0)) = p.
+Proof.
 intros p; case p; intros x y; unfold pmult; eq_tac; ring.
 Qed.
 
 Theorem pmult_comm: forall p q, (pmult p q) = (pmult q p).
+Proof.
 intros p q; case p; case q; intros q1 q2 p1 p2; unfold pmult.
 eq_tac; ring.
 Qed.
 
 Theorem pplus_pmult_dist_l: forall p q r, (pmult p (pplus q r)) = (pplus (pmult p q) (pmult p r)).
+Proof.
 intros p q r; case p; case q; case r; intros r1 r2 q1 q2 p1 p2; unfold pplus, pmult.
 eq_tac; ring.
 Qed.
 
 
 Theorem pplus_pmult_dist_r: forall p q r, (pmult (pplus q r) p) = (pplus (pmult q p) (pmult r p)).
+Proof.
 intros p q r; case p; case q; case r; intros r1 r2 q1 q2 p1 p2; unfold pplus, pmult.
 eq_tac; ring.
 Qed.
@@ -130,10 +141,12 @@ Fixpoint mkLine (a: Z) (n: nat) {struct n} : list (Z * Z) :=
  **************************************)
 
 Theorem mkLine_length: forall a n, length (mkLine a n) = (n + 1)%nat.
+Proof.
 intros a n; elim n; simpl; auto.
 Qed.
 
 Theorem mkLine_in: forall a n p, 0 <= p <= Z_of_nat n -> (In (a, p) (mkLine a n)).
+Proof.
 intros a n; elim n.
 simpl; auto with zarith.
 intros p (H1, H2); replace p with 0; auto with zarith.
@@ -146,6 +159,7 @@ intros H3; subst; simpl; auto.
 Qed.
 
 Theorem in_mkLine: forall a n p, In p (mkLine  a n) ->  exists  q, 0 <= q <= Z_of_nat n  /\ p = (a, q).
+Proof.
 intros a n p; elim n; clear n.
 simpl; intros [H1 | H1]; exists 0; auto with zarith; case H1.
 simpl; intros n Rec [H1 | H1]; auto.
@@ -156,6 +170,7 @@ rewrite inj_S; auto with zarith.
 Qed.
 
 Theorem mkLine_ulist: forall a n, ulist (mkLine a n).
+Proof.
 intros a n; elim n; simpl; auto.
 intros n1 H; apply ulist_cons; auto.
 change (~ In (a, Z_of_nat (S n1)) (mkLine a n1)).
@@ -177,12 +192,14 @@ Fixpoint mkRect (n m: nat) {struct n} : list (Z * Z) :=
  **************************************)
 
 Theorem mkRect_length: forall n m, length (mkRect n m) = ((n + 1) * (m + 1))%nat.
+Proof.
 intros n; elim n; simpl; auto.
 intros n1; rewrite app_nil_r; rewrite mkLine_length; rewrite Nat.add_0_r; auto.
 intros n1 Rec m1; rewrite length_app; rewrite Rec; rewrite mkLine_length; auto.
 Qed.
 
 Theorem mkRect_in: forall n m p q, 0 <= p <= Z_of_nat n -> 0 <= q <= Z_of_nat m -> (In (p, q) (mkRect n m)).
+Proof.
 intros n m1; elim n; simpl.
 intros p  q  (H1, H2) (H3, H4); replace p with 0; auto with zarith.
 rewrite app_nil_r; apply mkLine_in; auto.
@@ -193,6 +210,7 @@ apply in_or_app; left; subst; apply mkLine_in; auto with zarith.
 Qed.
 
 Theorem in_mkRect: forall n m p, In p (mkRect n  m) ->  exists p1, exists  p2, 0 <= p1 <= Z_of_nat n  /\ 0 <= p2 <= Z_of_nat m  /\ p = (p1, p2).
+Proof.
 intros n m1 p; elim n; clear n; simpl.
 rewrite app_nil_r; intros H1.
 case in_mkLine with (1 := H1).
@@ -208,6 +226,7 @@ rewrite inj_S; auto with zarith.
 Qed.
 
 Theorem mkRect_ulist: forall n m, ulist (mkRect n m).
+Proof.
 intros n; elim n; simpl; auto.
 intros n1; rewrite app_nil_r; apply mkLine_ulist; auto.
 intros n1 Rec m1; apply ulist_app; auto.
@@ -231,23 +250,27 @@ Definition mL := mkRect (Z.abs_nat (m - 1)) (Z.abs_nat (m -1)).
  **************************************)
 
 Theorem mL_length : length mL = Z.abs_nat (m * m).
+Proof.
 unfold mL; rewrite mkRect_length; simpl; apply inj_eq_rev.
 repeat (rewrite inj_mult || rewrite inj_plus || rewrite inj_Zabs_nat || rewrite Z.abs_eq); simpl. 2-3: auto with zarith.
 eq_tac; auto with zarith.
 Qed.
 
 Theorem mL_in: forall p q, 0 <= p < m -> 0 <= q <  m -> (In (p, q) mL).
+Proof.
 intros p q (H1, H2) (H3, H4); unfold mL; apply mkRect_in; rewrite inj_Zabs_nat;
   rewrite Z.abs_eq; auto with zarith.
 Qed.
 
 Theorem in_mL: forall p, In p mL->  exists p1, exists  p2, 0 <= p1 < m  /\ 0 <= p2 < m  /\ p = (p1, p2).
+Proof.
 unfold mL; intros p H1; case in_mkRect with (1 := H1).
 repeat (rewrite inj_Zabs_nat || rewrite Z.abs_eq); auto with zarith.
 intros p1 (p2, ((H2, H3), ((H4, H5), H6))); exists p1; exists p2; repeat split; auto with zarith.
 Qed.
 
 Theorem mL_ulist:  ulist mL.
+Proof.
 unfold mL; apply mkRect_ulist; auto.
 Qed.
 
@@ -263,12 +286,14 @@ Definition zpmult (p q: Z * Z) :=
  **************************************)
 
 Theorem zpmult_internal: forall p q, (In (zpmult p q) mL).
+Proof.
 intros p q; unfold zpmult; case (pmult p q); intros z y; apply mL_in; auto with zarith.
 apply Z_mod_lt; auto with zarith.
 apply Z_mod_lt; auto with zarith.
 Qed.
 
 Theorem zpmult_assoc: forall p q r, (zpmult p (zpmult q r)) = (zpmult (zpmult p q) r).
+Proof.
 assert (U: 0 < m); auto with zarith.
 intros p q r; unfold zpmult.
 generalize (pmult_assoc p q r).
@@ -310,23 +335,27 @@ repeat (rewrite Zmod_mod); auto.
 Qed.
 
 Theorem zpmult_0_l: forall p, (zpmult (0, 0) p) = (0, 0).
+Proof.
 intros p; case p; intros x y; unfold zpmult, pmult; simpl.
 rewrite Zmod_small; auto with zarith.
 Qed.
 
 Theorem zpmult_1_l: forall p, In p mL -> zpmult (1, 0) p = p.
+Proof.
 intros p H; case in_mL with (1 := H); clear H; intros p1 (p2, ((H1, H2), (H3, H4))); subst.
 unfold zpmult; rewrite pmult_1_l.
 repeat rewrite Zmod_small; auto with zarith.
 Qed.
 
 Theorem zpmult_1_r: forall p, In p mL -> zpmult p (1, 0) = p.
+Proof.
 intros p H; case in_mL with (1 := H); clear H; intros p1 (p2, ((H1, H2), (H3, H4))); subst.
 unfold zpmult; rewrite pmult_1_r.
 repeat rewrite Zmod_small; auto with zarith.
 Qed.
 
 Theorem zpmult_comm: forall p q, zpmult p q = zpmult q p.
+Proof.
 intros p q; unfold zpmult; rewrite pmult_comm; auto.
 Qed.
 
@@ -335,6 +364,7 @@ Qed.
  **************************************)
 
 Definition PGroup : (FGroup zpmult).
+Proof.
 apply IGroup with (support := mL) (e:= (1, 0)).
 exact P_dec.
 apply mL_ulist.

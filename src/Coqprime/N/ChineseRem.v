@@ -1,8 +1,8 @@
-From Coq Require Import Arith.
-From Coq Require Import Wf_nat.
-From Coq Require Import ZArith.
-From Coq Require Import Peano_dec.
-From Coq Require Import ZArith_dec.
+From Stdlib Require Import Arith.
+From Stdlib Require Import Wf_nat.
+From Stdlib Require Import ZArith.
+From Stdlib Require Import Peano_dec.
+From Stdlib Require Import ZArith_dec.
 From Coqprime Require Import NatAux ZCAux ZCmisc ZSum Pmod Ppow.
 
 Open Scope nat_scope.
@@ -93,19 +93,18 @@ Definition factorial (n : nat) : nat := prod n S.
 
 (** A [nat] version of [rel-prime] *)
 
-Definition CoPrime (a b : nat) := Zis_gcd (Z.of_nat a) (Z.of_nat b) 1%Z.
+Definition CoPrime (a b : nat) := Z.coprime (Z.of_nat a) (Z.of_nat b).
 
 Lemma coPrimeSym: forall a b : nat, CoPrime a b -> CoPrime b a.
-Proof. intros. now apply Zis_gcd_sym. Qed.
+Proof. intros. now apply Z.Symmetric_coprime. Qed.
 
 Lemma gcd_bezout_nat: forall (x y d : nat),
   (x > 0)%nat ->
-  Zis_gcd (Z_of_nat x) (Z_of_nat y) (Z_of_nat d) ->
-  Bezout (Z_of_nat x) (Z_of_nat y)  (Z_of_nat d) .
+  Z.gcd (Z_of_nat x) (Z_of_nat y) = (Z_of_nat d) ->
+  Z.Bezout (Z_of_nat x) (Z_of_nat y)  (Z_of_nat d) .
 Proof.
-  intros x y d H H0; destruct (Zis_gcd_bezout (Z.of_nat x)
-                                 (Z.of_nat y) (Z.of_nat d) H0)
-                              as [u v ?]; now exists u v.
+  intros x y d H H0.
+  now apply Z.gcd_bezout.
 Qed.
 
 Lemma coPrimeMult : 
@@ -118,22 +117,21 @@ Proof.
     cbn in H0; rewrite Nat.eq_mul_0 in H0. (* b = O \/ c = O *)
     destruct H0 as [H1 | H1].
     + rewrite H1 in H; simpl in H.
-      inversion H. clear H H0 H1 H2.
-      assert (2 | 0). { exists 0%Z. auto. }
-      destruct (H3 _ H H). nia.
+      inversion H.
     + rewrite H1; now exists 0%nat. 
   - assert (H1: (S a > 0)%nat) by apply Nat.lt_0_succ.
     pose (gcd_bezout_nat (S a) b 1 H1 H) as W.
-    inversion W; clear W; destruct H0 as [x1 H0].
-    assert (1 * Z.of_nat c =
-              Z_of_nat (S a) * (u * Z.of_nat c + Z.of_nat x1 * v))%Z.
+    inversion W as [u [v Huv]]; clear W.
+    destruct H0 as [x1 Hx1].
+    assert (H3 : (1 * Z.of_nat c =
+              Z_of_nat (S a) * (u * Z.of_nat c + Z.of_nat x1 * v))%Z).
     { rewrite (Z.mul_comm (Z.of_nat (S a))).
       rewrite  Z.mul_add_distr_r.
       rewrite (Z.mul_comm (u * Z.of_nat c)).
       rewrite (Z.mul_comm (Z.of_nat x1 * v)).
       repeat rewrite Z.mul_assoc.
       rewrite <- Znat.inj_mult.
-      rewrite <- H0.
+      rewrite <- Hx1.
       rewrite Znat.inj_mult.
       rewrite (Z.mul_comm (Z.of_nat b)).
       rewrite <- (Z.mul_assoc (Z.of_nat c)).
@@ -141,10 +139,10 @@ Proof.
       rewrite <- Z.mul_add_distr_r.
       nia. }
     rewrite Zmult_1_l in H3.
-    assert (Z.divide (Z.of_nat (S a)) (Z.of_nat c)).
+    assert (H4 : Z.divide (Z.of_nat (S a)) (Z.of_nat c)).
     { exists (u * Z.of_nat c + Z.of_nat x1 * v)%Z.
       now rewrite Z.mul_comm at 1. }
-    clear H2 H3 u v.
+    clear Huv H3 u v.
     rewrite <- (Znat.Zabs2Nat.id (S a)).
     rewrite <- (Znat.Zabs2Nat.id c).
     repeat rewrite Zabs2Nat.id. destruct H4. exists (Z.to_nat x). nia.
@@ -344,27 +342,31 @@ Qed.
 
 Lemma euclid_gcd1 :
   forall (d : nat) (x y q r : Z),
-    Zis_gcd x y (Z.of_nat d) -> x = (q * y + r)%Z ->
-    Zis_gcd r y (Z.of_nat d).
+    Z.gcd x y = Z.of_nat d -> x = (q * y + r)%Z ->
+    Z.gcd r y = Z.of_nat d.
 Proof.
   intros. rewrite H0 in H. clear H0 x.
-  replace r with  (y * - q + (q * y + r))%Z by lia.
-  apply Zis_gcd_sym. 
-  apply Zis_gcd_for_euclid2; auto with zarith.
+  replace r with  ((q * y + r) + - q * y)%Z by lia.
+  rewrite Z.gcd_comm.
+  rewrite Z.gcd_add_mult_diag_r.
+  now rewrite Z.gcd_comm.
 Qed.
 
 Lemma euclid_gcd (d1 d2 : nat) (x y q r : Z) :
-   x = (q * y + r)%Z -> Zis_gcd x y (Z.of_nat d1) ->
-   Zis_gcd r y (Z.of_nat d2) -> d1 = d2.
+   x = (q * y + r)%Z -> Z.gcd x y = Z.of_nat d1 ->
+   Z.gcd r y = Z.of_nat d2 -> d1 = d2.
 Proof.
-   intros H H0 H1 ; pose proof (euclid_gcd1 d1 x y q r H0 H) as H2.
-   pose proof (Zis_gcd_unique r y _ _ H2 H1); lia.
+   intros H H0 H1.
+   apply Nat2Z.inj.
+   rewrite <- H0, <- H1, H.
+   rewrite Z.gcd_comm.
+   now rewrite Z.add_comm, Z.gcd_add_mult_diag_r, Z.gcd_comm.
 Qed.
-
+  
 Lemma gcd_lincomb_nat_dec :
  forall x y d : nat,
  x > 0 ->
- Zis_gcd (Z.of_nat x) (Z.of_nat y) (Z.of_nat d) ->
+ Z.gcd (Z.of_nat x) (Z.of_nat y) = Z.of_nat d ->
  {a : Z * Z |
    Z.of_nat d = (Z.of_nat x * fst a + Z.of_nat y * snd a)%Z}.
 Proof.
@@ -384,11 +386,8 @@ Proof.
      apply (euclid_gcd d X (Z.of_nat y) (Z.of_nat X) (Z.of_nat q) 0).
      rewrite <- Zplus_0_r_reverse; rewrite <- Znat.inj_mult;
        apply Znat.inj_eq; assumption.
-     apply Zis_gcd_sym; assumption.
-     constructor.
-     + exists 0%Z. auto.
-     + exists 1%Z. lia.
-     + auto.
+     rewrite Z.gcd_comm; assumption.
+     rewrite Z.gcd_0_l, Z.abs_eq; auto with zarith.
    - (* case r > 0 *)
    intros r1 [H1 H2].
    elim (IH (S r1) H2 X d).
@@ -412,7 +411,7 @@ Proof.
    rewrite Zplus_opp_l. simpl in |- *. apply Z.add_comm.
    + auto with arith. 
    + apply (euclid_gcd1 d (Z.of_nat y) (Z.of_nat X) (Z.of_nat q) (Z.of_nat (S r1))).
-     * apply Zis_gcd_sym; assumption.
+     * rewrite Z.gcd_comm; assumption.
      * rewrite <- Znat.inj_mult; rewrite <- Znat.inj_plus;
           apply Znat.inj_eq; assumption.
 Qed.
@@ -427,7 +426,7 @@ Lemma chineseRemainderTheoremHelp :
           a = snd (proj1_sig (div_eucl x1 (ltgt1 _ _ pa) y)) /\
           b = snd (proj1_sig (div_eucl x2 (ltgt1 _ _ pb) y))}.
 Proof.
-  intros ? ? H a b pa pb H0. unfold CoPrime in H.
+  intros ? ? H a b pa pb H0. unfold CoPrime, Z.coprime in H.
   replace 1%Z with (Z.of_nat 1) in H by auto.
   destruct (gcd_lincomb_nat_dec _ _ _ (ltgt1 _ _ pa) H)
     as [(a0,b0) p]. 
@@ -564,58 +563,37 @@ Qed.
 
 Lemma coPrime1 : forall a : nat, CoPrime 1 a.
 Proof.
-  split.
-  - simpl. exists 1%Z. auto.
-  - exists (Z.of_nat a); lia.
-  - intros e [H H0] [H1 H2].
-    simpl in H0. symmetry in H0.
-    assert (H >= 0 \/ H <= 0)%Z by lia. destruct H3.
-    + pose proof (Zmult_one _ _ H3 H0). subst. exists 1%Z. lia.
-    + assert (- H >= 0)%Z by lia.
-      replace (H * e)%Z with ((- H) * (- e))%Z in H0 by lia.
-      pose proof (Zmult_one _ _ H4 H0). rewrite H5 in H0.
-      exists (-1)%Z. lia.
+  intro a; apply Z.coprime_1_l.
 Qed.
 
 Lemma coPrimeMult3 (a b c: nat):
   a > 0 -> b > 0 -> c > 0 ->
   CoPrime a c -> CoPrime b c -> CoPrime (a * b) c.
 Proof.
+unfold CoPrime.
   intros H H0 H1 H2 H3;
-    assert (H4: Bezout (Z.of_nat a) (Z.of_nat c) (Z.of_nat 1)).
+    assert (H4: Z.Bezout (Z.of_nat a) (Z.of_nat c) (Z.of_nat 1)).
   { apply gcd_bezout_nat.
     assumption.
     apply H2.
   }
-  assert (H5: Bezout (Z.of_nat b) (Z.of_nat c) (Z.of_nat 1)).
+  assert (H5: Z.Bezout (Z.of_nat b) (Z.of_nat c) (Z.of_nat 1)).
   { apply gcd_bezout_nat.
     assumption.
     apply H3.
   }
-  inversion H4 as [x x0 H6]; clear H4.
-  inversion H5 as [x1 x2 H7]; clear H5.
-  split.
-  - exists (Z.of_nat (a * b)). lia.
-  - exists (Z.of_nat c). lia.
-  - intros e [H8 H9].
-    set (A := Z.of_nat a) in *.
-    set (B := Z.of_nat b) in *.
-    set (C := Z.of_nat c) in *.
-    assert (H10:
-             (1%Z =
-                (A * B * (x * x1) +
-                   C * (x0 * B * x1 + x2 * A * x + x0 * x2 * C))%Z)).
-    {
-      change  1%Z with (Z.of_nat 1 * Z.of_nat 1)%Z.
-      rewrite <- H6 at 1.
-      rewrite <- H7. 
-      ring; reflexivity. 
-    }
-    intros. destruct H4. rewrite H10.
-    apply Z.divide_add_r.
-    + exists (H8 * x * x1)%Z. assert (A * B = Z.of_nat (a * b))%Z by lia.
-      rewrite H5. rewrite H9. lia.
-    + apply Z.divide_mul_l. exists x3. auto.
+  case H4; intros x [x0 H6]; clear H4.
+  case H5; intros x1 [x2 H7]; clear H5.
+  apply Z.coprime_Bezout.
+  exists (x * x1)%Z.
+  exists (x * Z.of_nat a *  x2 + x1 * Z.of_nat b * x0 + 
+           x0 * Z.of_nat c * x2)%Z.
+  rewrite Nat2Z.inj_mul.
+  replace 1%Z with (Z.of_nat 1 * 1)%Z; auto with zarith.
+  rewrite <- H6.
+  replace 1%Z with (Z.of_nat 1)%Z; auto with zarith.
+  rewrite <- H7.
+  ring.
 Qed.
 
 Lemma coPrimeProd :
@@ -880,7 +858,7 @@ Lemma Prime_prime (n: nat) : Prime n -> prime (Z.of_nat n).
 Proof.
   intros. unfold Prime in H. destruct H. constructor.
   + lia.
-  + intros. destruct H1. unfold rel_prime.
+  + intros. destruct H1. apply rel_prime_iff_coprime; unfold Z.coprime.
     set (Z.gcd n0 (Z.of_nat n)) as W.
     assert (W <= n0)%Z.
     { pose proof (Z.gcd_divide_l n0 (Z.of_nat n)).
@@ -891,8 +869,7 @@ Proof.
       pose proof (Z.gcd_nonneg n0 (Z.of_nat n)).
       nia. }
     apply H0 in H5. destruct H5.
-    - assert (W = 1)%Z by lia.
-      rewrite <- H6. apply Znumtheory.Zgcd_is_gcd.
+    - lia.
     - lia.
 Qed.
 
@@ -928,28 +905,45 @@ Lemma coPrimePrime :
                     ~ divide p a \/ ~ divide p b) ->
    CoPrime a b.
 Proof.
-  intros. unfold CoPrime. constructor.
-  + exists (Z.of_nat a). lia.
-  + exists (Z.of_nat b). lia.
-  + intros. apply Zdivide_Zabs_inv_l in H0. apply Zdivide_Zabs_inv_l in H1.
-    assert (Z.abs x = 0 \/ Z.abs x = 1 \/ 1 < Z.abs x)%Z by lia.
-    destruct H2 as [H2 | [H2 | H2]].
-    - destruct H0. rewrite H2 in H0. destruct H1. rewrite H2 in H1.
-      assert (a = 0) by lia. assert (b = 0) by lia. subst.
-      assert (Prime 2).
-      { apply prime_Prime. simpl. apply prime_2. }
-      pose proof (H _ H3). destruct H4.
-      * elim H4. exists 0. auto.
-      * elim H4. exists 0. auto.
-    - assert (x < 0 \/ 0 <= x)%Z by lia. destruct H3.
-      * exists (-1)%Z. lia.
-      * exists 1%Z. lia.
-    - assert (1 < Z.to_nat (Z.abs x)) by lia.
-      apply primeDiv in H3.
-      destruct H3 as [p [H3 H4]]. pose proof (H _ H3).
-      exfalso. destruct H4. destruct H5.
-      * apply H5. destruct H0. exists (x0 * Z.to_nat x1). nia.
-      * apply H5. destruct H1. exists (x0 * Z.to_nat x1). nia.
+  intros a b H; unfold CoPrime, Z.coprime.
+  pose (W := Z.gcd (Z.of_nat a) (Z.of_nat b)).
+  assert (W_pos : (0 <= W)%Z) by apply Z.gcd_nonneg.
+  assert (H1 : (W = 0 \/ 1 <= W)%Z) by lia.
+  destruct H1 as [H1|H1].
+  - case (H 2).
+      + now apply prime_Prime, prime_alt, Z.prime_2.
+      + intros []; exists 0; auto with zarith.
+         now apply Nat2Z.inj, (Z.gcd_eq_0_l _ _ H1).
+      + intros [].
+        replace b with 0.
+        -- exists 0; auto.
+        -- apply Nat2Z.inj.
+           rewrite (Z.gcd_eq_0_r _ _ H1); auto.
+  - assert (H2 : (W = 1 \/ 1 < W)%Z) by lia.
+    destruct H2 as [H2|H2]; auto.
+    assert (H3 : exists p, prime p /\ (p | W)).
+    + case (prime_dec W); intros HH.
+      -- exists W; split; auto.
+           exists 1%Z; lia.
+      -- case (Zdivide_div_prime_le_square W); auto with zarith.
+           intros p [H1p [H2p H3p]]; exists p; auto with zarith.
+    + destruct H3 as [p [H3p H4p]].
+      assert (H5p : (2 <= p)%Z) by now apply Z.prime_ge_2, prime_alt.
+      case (H (Z.to_nat p)).
+      -- apply prime_Prime.
+         rewrite Z2Nat.id; auto with zarith.
+      -- intros [].
+         apply Z.gcd_divide_iff in H4p.
+         destruct H4p as [[p' Hp'] _].
+         exists (Z.to_nat p').
+         apply Nat2Z.inj.
+         rewrite Hp', Nat2Z.inj_mul, !Z2Nat.id; auto with zarith.
+      -- intros [].
+         apply Z.gcd_divide_iff in H4p.
+         destruct H4p as [_ [p' Hp']].
+         exists (Z.to_nat p').
+         apply Nat2Z.inj.
+         rewrite Hp', Nat2Z.inj_mul, !Z2Nat.id; auto with zarith.
 Qed.
 
 Lemma div_plus_r :
@@ -970,9 +964,11 @@ Lemma primedivmult :
 Proof.
   intros. apply Prime_prime in H. assert (Z.divide (Z.of_nat p) (Z.of_nat n * Z.of_nat m)).
   { destruct H0. exists (Z.of_nat x). nia. }
-  apply prime_mult in H1; auto. destruct H1.
-  + left. destruct H1. exists (Z.to_nat x). nia.
-  + right. destruct H1. exists (Z.to_nat x). nia.
+  apply Z.divide_prime_mul in H1.
+  + auto. destruct H1.
+    - left. destruct H1. exists (Z.to_nat x). nia.
+    - right. destruct H1. exists (Z.to_nat x). nia.
+  + now apply prime_alt.
 Qed.
 
 
@@ -1055,7 +1051,7 @@ Qed.
 (** * Goedel's beta function *)
 
 
-#[global] Notation rem a b Hposb :=
+#[global] Abbreviation rem a b Hposb :=
   (snd (proj1_sig (div_eucl b Hposb a))).
 
 Definition coPrimeBeta (z c : nat) : nat := S (c * S z).
