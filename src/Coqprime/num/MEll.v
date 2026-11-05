@@ -1,4 +1,3 @@
-
 (*************************************************************)
 (*      This file is distributed under the terms of the      *)
 (*      GNU Lesser General Public License Version 2.1        *)
@@ -6,19 +5,21 @@
 (*    Benjamin.Gregoire@inria.fr Laurent.Thery@inria.fr      *)
 (*************************************************************)
 
-
-From Stdlib Require Import ZArith Lia Znumtheory Zpow_facts Uint63.
+From Stdlib Require Import ZArith Lia Znumtheory Zpow_facts.
+From Stdlib Require Import CyclicAxioms DoubleType Cyclic63.
+From Coqprime Require Import Int63Compat.
+From Bignums Require Import DoubleCyclic BigN.
+From Coqprime Require Import W Mod_op ZEll Bits MontMod.
+Import CyclicAxioms DoubleType DoubleBase.
 From Stdlib Require Import Zmod.
-From Coqprime Require Import ZEll montgomery.
 
-(* NEll with Montgomery arithmetic: the elements of Z/NZ are the numbers
-   of montgomery.v (lists of 63-bit words) in Montgomery form. *)
-
+(* NEll with Montgomery multiplication on the words of BigN: the elements
+   of Z/NZ are BigN words in Montgomery form (x R mod N, R the base of
+   the words); the product needs three multiplications and no division. *)
 
 Set Implicit Arguments.
 
 Open Scope Z_scope.
-
 
 Record ex: Set := mkEx {
   vN : positive;
@@ -43,255 +44,126 @@ Record ex_spec (exx: ex): Prop := mkExS {
     vy exx ^ 2 mod vN exx = (vx exx ^ 3 + vA exx * vx exx + vB exx) mod vN exx
 }.
 
-Section InvM.
 
-Local Open Scope uint63_scope.
-
-(* invM m v: the x such that v * x = m modulo 2^63, for an odd v,
-   computed bit by bit from the low bit. *)
-Fixpoint invM_aux (n : nat) (m v : int) : int :=
-  match n with
-  | O => 0
-  | S n =>
-    if is_even m then (invM_aux n (m >> 1) v) << 1
-    else 1 lor ((invM_aux n ((m - v) >> 1) v) << 1)
-  end.
-
-Definition invM := invM_aux 63.
-
-Local Open Scope Z_scope.
-
-Lemma wB_pow : wB = 2 ^ 63.
-Proof. reflexivity. Qed.
-
-(* 2^n divides wB when n <= 63 *)
-Lemma pow_divide_wB (n : nat) : (n <= 63)%nat -> (2 ^ Z.of_nat n | wB).
-Proof.
-intros Hn; rewrite wB_pow.
-assert (H : 63 = Z.of_nat n + (63 - Z.of_nat n)) by lia.
-rewrite H, Z.pow_add_r by lia.
-apply Z.divide_factor_l.
-Qed.
-
-(* reducing modulo wB first changes nothing modulo 2^n *)
-Lemma mod_wB_pow a (n : nat) : (n <= 63)%nat ->
-  (a mod wB) mod 2 ^ Z.of_nat n = a mod 2 ^ Z.of_nat n.
-Proof. intros Hn; apply Z.mod_mod_divide, pow_divide_wB, Hn. Qed.
-
-Lemma mul_mod_wB_r a b (n : nat) : (n <= 63)%nat ->
-  (a * (b mod wB)) mod 2 ^ Z.of_nat n = (a * b) mod 2 ^ Z.of_nat n.
-Proof.
-intros Hn; rewrite <- (mod_wB_pow (a * (b mod wB))), <- (mod_wB_pow (a * b))
-  by exact Hn.
-rewrite Z.mul_mod_idemp_r; [reflexivity | rewrite wB_pow; lia].
-Qed.
-
-Lemma add_mod_wB_l a b (n : nat) : (n <= 63)%nat ->
-  ((a mod wB) + b) mod 2 ^ Z.of_nat n = (a + b) mod 2 ^ Z.of_nat n.
-Proof.
-intros Hn; rewrite <- (mod_wB_pow (a mod wB + b)), <- (mod_wB_pow (a + b))
-  by exact Hn.
-rewrite Z.add_mod_idemp_l; [reflexivity | rewrite wB_pow; lia].
-Qed.
-
-(* or-ing 1 into an even number adds 1 *)
-Lemma lor_1_even k : Z.lor 1 (2 * k) = 2 * k + 1.
-Proof.
-assert (Hland : Z.land 1 (2 * k) = 0).
-{ rewrite Z.land_comm.
-  assert (H1 : 1 = Z.ones 1) by reflexivity.
-  rewrite H1, Z.land_ones by lia.
-  rewrite Z.pow_1_r, Z.mul_comm, Z.mod_mul; lia. }
-rewrite <- Z.lxor_lor, <- Z.add_nocarry_lxor by exact Hland.
-lia.
-Qed.
-
-Lemma invM_aux_spec (n : nat) m v : (n <= 63)%nat -> is_even v = false ->
-  φ (v * invM_aux n m v)%uint63 mod 2 ^ Z.of_nat n = φ m mod 2 ^ Z.of_nat n.
-Proof.
-intros Hn Hv.
-assert (Hvo : φ v mod 2 = 1).
-{ generalize (is_even_spec v); rewrite Hv; auto. }
-revert m; induction n as [| n IH]; intros m.
-- rewrite !Z.mod_1_r; reflexivity.
-- assert (Hn' : (n <= 63)%nat) by lia.
-  assert (Hp : 0 < 2 ^ Z.of_nat n) by (apply Z.pow_pos_nonneg; lia).
-  assert (HS : 2 ^ Z.of_nat (S n) = 2 * 2 ^ Z.of_nat n).
-  { rewrite Nat2Z.inj_succ, Z.pow_succ_r by lia; ring. }
-  simpl invM_aux; rewrite mul_spec, mod_wB_pow by exact Hn.
-  case_eq (is_even m); intros Hm.
-  + (* m even: x = 2 x' with v x' = m / 2 *)
-    assert (Hme : φ m mod 2 = 0).
-    { generalize (is_even_spec m); rewrite Hm; auto. }
-    set (x' := invM_aux n (m >> 1) v).
-    assert (IHm := IH Hn' (m >> 1)); fold x' in IHm.
-    rewrite mul_spec, mod_wB_pow, lsr_spec, to_Z_1 in IHm by exact Hn'.
-    rewrite lsl_spec, to_Z_1, Z.pow_1_r, mul_mod_wB_r by exact Hn.
-    rewrite Z.pow_1_r in IHm.
-    assert (Hm2 : φ m = 2 * (φ m / 2)).
-    { apply Z.div_exact; lia. }
-    rewrite Hm2.
-    rewrite HS.
-    replace (φ v * (φ x' * 2)) with (2 * (φ v * φ x')) by ring.
-    rewrite !Z.mul_mod_distr_l by lia.
-    rewrite IHm; reflexivity.
-  + (* m odd: x = 1 + 2 x' with v x' = (m - v) / 2 *)
-    assert (Hmo : φ m mod 2 = 1).
-    { generalize (is_even_spec m); rewrite Hm; auto. }
-    set (x' := invM_aux n ((m - v) >> 1) v).
-    assert (IHm := IH Hn' ((m - v) >> 1)); fold x' in IHm.
-    rewrite mul_spec, mod_wB_pow, lsr_spec, sub_spec, to_Z_1 in IHm
-      by exact Hn'.
-    rewrite Z.pow_1_r in IHm.
-    set (D := (φ m - φ v) mod wB) in IHm.
-    assert (HD2 : D mod 2 = 0).
-    { unfold D; rewrite Z.mod_mod_divide.
-      - rewrite Zminus_mod, Hmo, Hvo; reflexivity.
-      - rewrite wB_pow; exists (2 ^ 62); reflexivity. }
-    assert (HD : D = 2 * (D / 2)).
-    { apply Z.div_exact; lia. }
-    rewrite lor_spec', to_Z_1, lsl_spec, to_Z_1, Z.pow_1_r.
-    assert (Hx2 : (φ x' * 2) mod wB = 2 * ((φ x' * 2) mod wB / 2)).
-    { apply Z.div_exact; [lia |].
-      rewrite Z.mod_mod_divide.
-      - apply Z.mod_mul; lia.
-      - rewrite wB_pow; exists (2 ^ 62); reflexivity. }
-    rewrite Hx2, lor_1_even, <- Hx2.
-    assert (HpS : 2 ^ Z.of_nat (S n) <> 0) by lia.
-    (* v * x' * 2 = D modulo 2^(n+1) *)
-    assert (H2 : (φ v * (φ x' * 2)) mod 2 ^ Z.of_nat (S n)
-                 = D mod 2 ^ Z.of_nat (S n)).
-    { rewrite HS.
-      replace (φ v * (φ x' * 2)) with (2 * (φ v * φ x')) by ring.
-      rewrite HD.
-      rewrite !Z.mul_mod_distr_l by lia.
-      rewrite IHm; reflexivity. }
-    rewrite Z.mul_add_distr_l, Z.mul_1_r.
-    rewrite Z.add_mod by exact HpS.
-    rewrite mul_mod_wB_r, H2 by exact Hn.
-    rewrite <- Z.add_mod by exact HpS.
-    (* (m - v) mod wB + v = m modulo 2^(n+1) *)
-    unfold D; rewrite add_mod_wB_l by exact Hn.
-    f_equal; ring.
-Qed.
-
-Lemma invM_spec m v : is_even v = false -> (v * invM m v)%uint63 = m.
-Proof.
-intros Hv; apply to_Z_inj.
-generalize (@invM_aux_spec 63 m v (le_n 63) Hv).
-change (2 ^ Z.of_nat 63) with wB.
-rewrite !Z.mod_small by apply to_Z_bounded.
-auto.
-Qed.
-
-End InvM.
-
-(* a number of length k is smaller than wB^k *)
-Lemma num_lt_length (l : number) : [l] < Zpower_nat wB (length l).
-Proof.
-induction l as [| a l IH].
-- rewrite to_Z_nil; simpl; lia.
-- rewrite to_Z_cons; simpl length; rewrite Zpower_nat_S.
-  assert (Ha := to_Z_bounded a).
-  assert (Hl := to_Z_pos l).
-  assert (H : wB * ([l] + 1) <= wB * Zpower_nat wB (length l)).
-  { apply Z.mul_le_mono_nonneg_l; lia. }
-  lia.
-Qed.
-
-(* for an odd N, the Montgomery constant - (nhead M)^-1 mod 2^63 *)
-Lemma mont_const (p : positive) : ~ (2 | Zpos p) ->
-  let M := positive_to_num p in
-  φ (nhead M * invM (0 - 1)%uint63 (nhead M))%uint63 = wB - 1.
-Proof.
-intros Hp M.
-assert (Hodd : is_even (nhead M) = false).
-{ generalize (is_even_spec (nhead M)); case_eq (is_even (nhead M));
-    intros He Hs; [exfalso | reflexivity].
-  apply Hp, Z.mod_divide; [lia |].
-  unfold M; rewrite <- positive_to_Z, to_Z_head_tail, to_Z_cons.
-  assert (HwB : wB = 2 ^ 62 * 2) by reflexivity.
-  match goal with |- (?a + wB * ?b) mod 2 = 0 =>
-    replace (a + wB * b) with (a + (2 ^ 62 * b) * 2) by (rewrite HwB; ring) end.
-  rewrite Z_mod_plus_full; exact Hs. }
-rewrite invM_spec by exact Hodd.
-rewrite sub_spec, to_Z_0, to_Z_1; reflexivity.
-Qed.
 
 Section NEll.
 
 Variable exx: ex.
 Variable exxs: ex_spec exx.
 
-(* The modulus N as a montgomery number MN, its Montgomery constant mM,
-   its length nM in words and R^2 mod N: computed once by ell_test. *)
-Variable MN : number.
-Variable mM : int.
-Variable nM : nat.
-Variable rM : number.
-Hypothesis MN_Z : [MN] = exx.(vN).
-Hypothesis Hmm' : φ (nhead MN * mM)%uint63 = wB - 1.
-Hypothesis M_small : [MN] < Zpower_nat wB nM.
-Hypothesis HrM : rM = r_square MN nM.
+(* the words of BigN, the modulus wN, N' = - N^-1 mod R and R^2 mod N,
+   with R = wB: all computed once by ell_test *)
+Variable w : univ_of_cycles.
+Variable op : ZnZ.Ops w.
+Variable op_spec : ZnZ.Specs op.
+
+Notation "[| x |]" := (ZnZ.to_Z x) (at level 0, x at level 99).
+Notation wB := (base (@ZnZ.digits _ op)).
+
+Variable wN wN' wR2 : w.
+Variable mop : mod_op w.
+Hypothesis HwN : [|wN|] = exx.(vN).
+Hypothesis mop_spec : mod_spec op wN mop.
+Hypothesis Hinv : [|ZnZ.mul wN wN'|] = wB - 1.
+Hypothesis HR2 : [|wR2|] = (wB * wB) mod exx.(vN).
+
+Definition mmul x y := @mont_mul _ op wN wN' x y.
 
 (* An element of Z/NZ is stored in Montgomery form: z2Z reads it back. *)
-Definition z2Z t := decode MN mM nM t.
-Definition Z2z z := reduce_mult_num MN mM nM (Z_to_num (z mod exx.(vN))) rM.
-
-Lemma Z2z_encode z : Z2z z = encode MN mM nM (z mod exx.(vN)).
-Proof. unfold Z2z, encode; rewrite HrM, MN_Z, Zmod_mod; reflexivity. Qed.
+Definition z2Z t := [|mmul t ZnZ.one|].
+Definition Z2z z := mmul (ZnZ.of_Z (z mod exx.(vN))) wR2.
 
 Lemma vN_pos: 0 < exx.(vN).
 Proof. red; simpl; auto. Qed.
 
 Hint Resolve vN_pos : core.
 
-Definition wft t := [t] mod [MN] = [t].
+Lemma vN_gt1 : 1 < exx.(vN).
+Proof. generalize exxs.(n_pos); auto with zarith. Qed.
 
-Lemma wft_iff t : wft t <-> 0 <= [t] < [MN].
+Lemma wN_pos : 0 < [|wN|].
+Proof. rewrite HwN; auto. Qed.
+
+(* the invariant of a stored w: it is reduced modulo N *)
+Definition wft t := [|t|] = [|t|] mod exx.(vN).
+
+Lemma wft_lt t : wft t -> 0 <= [|t|] < exx.(vN).
+Proof. intros Ht; rewrite Ht; apply Z.mod_pos_bound; auto. Qed.
+
+Lemma wft_intro t : 0 <= [|t|] < exx.(vN) -> wft t.
+Proof. intros Ht; unfold wft; rewrite Zmod_small; auto. Qed.
+
+Lemma one_wft : wft ZnZ.one.
+Proof. apply wft_intro; rewrite ZnZ.spec_1; generalize vN_gt1; auto with zarith. Qed.
+
+Lemma mmul_spec x y : wft x -> wft y ->
+  wft (mmul x y) /\ ([|mmul x y|] * wB) mod exx.(vN) = ([|x|] * [|y|]) mod exx.(vN).
 Proof.
-assert (H := to_Z_pos t); assert (HM : 0 < [MN]) by (rewrite MN_Z; auto).
-unfold wft; split; intros Ht.
-- rewrite <- Ht; apply Z.mod_pos_bound; lia.
-- apply Zmod_small; lia.
+intros Hx Hy; apply wft_lt in Hx; apply wft_lt in Hy.
+rewrite <- HwN in Hx, Hy |- *.
+destruct (@mont_mul_spec _ op op_spec wN wN' wN_pos Hinv x y) as [H1 H2];
+  try tauto.
+split; auto.
+apply wft_intro; rewrite <- HwN; split; auto.
+case (ZnZ.spec_to_Z (mont_mul op wN wN' x y)); auto.
 Qed.
 
-Definition RM := Zpower_nat wB nM.
+(* R is invertible modulo N: (N N' + 1) / R is its inverse *)
+Lemma R_cancel a b : (a * wB) mod exx.(vN) = (b * wB) mod exx.(vN) ->
+  a mod exx.(vN) = b mod exx.(vN).
+Proof.
+intros H.
+assert (HR : 0 < wB).
+{ unfold base; apply Z.pow_pos_nonneg; auto with zarith. }
+set (q := ([|wN|] * [|wN'|]) / wB + 1).
+assert (Hq : (q * wB) mod exx.(vN) = 1).
+{ assert (H1 : ([|wN|] * [|wN'|]) mod wB = wB - 1).
+  { rewrite <- Hinv; symmetry; apply ZnZ.spec_mul. }
+  assert (H2 := Z_div_mod_eq_full ([|wN|] * [|wN'|]) wB).
+  replace (q * wB) with (1 + [|wN'|] * [|wN|]).
+  - rewrite HwN, Z_mod_plus_full, Zmod_small; generalize vN_gt1; auto with zarith.
+  - unfold q; rewrite H1 in H2; lia. }
+assert (E : forall c, c mod exx.(vN) = ((c * wB) * q) mod exx.(vN)).
+{ intros c.
+  replace (c * wB * q) with (c * (q * wB)) by ring.
+  rewrite Zmult_mod, Hq, Z.mul_1_r, Zmod_mod; reflexivity. }
+rewrite (E a), (E b), Zmult_mod, H, <- Zmult_mod; reflexivity.
+Qed.
 
-Lemma RM_pos : 0 < RM.
-Proof. apply Zpower_base_pos. Qed.
+Lemma z2Z_spec t : wft t ->
+  wft (mmul t ZnZ.one) /\ (z2Z t * wB) mod exx.(vN) = [|t|] mod exx.(vN).
+Proof.
+intros Ht; destruct (mmul_spec Ht one_wft) as [H1 H2].
+split; auto.
+unfold z2Z; rewrite H2, ZnZ.spec_1, Z.mul_1_r; reflexivity.
+Qed.
 
 Lemma z2Z_bound t : wft t -> 0 <= z2Z t < exx.(vN).
-Proof.
-intros Ht; rewrite <- MN_Z.
-apply (reduce_bound_small MN mM Hmm' nM M_small); apply wft_iff; exact Ht.
-Qed.
+Proof. intros Ht; apply wft_lt, (z2Z_spec Ht). Qed.
 
-Lemma z2Z_R t : (z2Z t * RM) mod exx.(vN) = [t] mod exx.(vN).
-Proof. rewrite <- MN_Z; apply (reduce_correct MN mM Hmm'). Qed.
+Lemma z2Z_R t : wft t -> (z2Z t * wB) mod exx.(vN) = [|t|] mod exx.(vN).
+Proof. intros Ht; apply (z2Z_spec Ht). Qed.
 
 (* z2Z t is the only z in [0, N) with z * R = [t] modulo N *)
 Lemma z2Z_char t z : wft t -> 0 <= z < exx.(vN) ->
-  (z * RM) mod exx.(vN) = [t] mod exx.(vN) -> z2Z t = z.
+  (z * wB) mod exx.(vN) = [|t|] mod exx.(vN) -> z2Z t = z.
 Proof.
 intros Ht Hz Hzt.
 assert (Hb := z2Z_bound Ht).
-assert (H : (z2Z t * RM) mod [MN] = (z * RM) mod [MN]).
-{ rewrite MN_Z, Hzt; apply z2Z_R. }
-generalize (eq_Tn_correct MN mM Hmm' (z2Z t) z nM H).
-rewrite MN_Z, !Zmod_small by lia; auto.
+assert (H := R_cancel (z2Z t) z).
+rewrite (Zmod_small (z2Z t)), (Zmod_small z) in H by auto.
+apply H; rewrite Hzt; apply z2Z_R; auto.
 Qed.
 
-Definition nplus x y := add_mod MN x y.
-Definition nsub x y := sub_mod MN x y.
-Definition nmul x y := reduce_mult_num MN mM nM x y.
-Definition neq x y := eq_num x y.
-
+Definition nplus x y := mop.(add_mod) x y.
+Definition nsub x y := mop.(sub_mod) x y.
+Definition nmul x y := mmul x y.
+Definition neq x y := match ZnZ.compare x y with Eq => true | _ => false end.
 
 Definition S := exx.(vS).
 Definition R := exx.(vR).
 (* the constants used by the point operations: computed once by ell_test *)
-Variable c0 c2 c3 A : number.
+Variable c0 c2 c3 A : w.
 Hypothesis Hc0 : c0 = Z2z 0.
 Hypothesis Hc2 : c2 = Z2z 2.
 Hypothesis Hc3 : c3 = Z2z 3.
@@ -302,7 +174,7 @@ Definition yy := Z2z exx.(vy).
 Definition c1 := Z2z 1.
 
 Inductive nelt: Type :=
-  nzero | ntriple: number -> number -> number  -> nelt.
+  nzero | ntriple: w -> w -> w  -> nelt.
 
 Definition pp := ntriple xx yy c1.
 
@@ -312,7 +184,7 @@ Notation "x -- y" := (nsub x y) (at level 50, left associativity).
 Notation "x ** y" := (nmul x y) (at level 40, left associativity).
 Notation "x ?= y" := (neq x y).
 
-Definition ndouble: number -> nelt -> (nelt * number):= fun (sc: number) (p1: nelt) =>
+Definition ndouble: w -> nelt -> (nelt * w):= fun (sc: w) (p1: nelt) =>
  match p1 with
   nzero => (p1, sc)
  | (ntriple x1 y1 z1) =>
@@ -331,7 +203,7 @@ Definition ndouble: number -> nelt -> (nelt * number):= fun (sc: number) (p1: ne
   end.
 
 
-Definition nadd := fun (sc: number) (p1 p2: nelt) =>
+Definition nadd := fun (sc: w) (p1 p2: nelt) =>
  match p1, p2 with
   nzero, _ => (p2, sc)
  | _ , nzero => (p1, sc)
@@ -371,8 +243,8 @@ Definition nadd := fun (sc: number) (p1 p2: nelt) =>
 Definition nopp p :=
   match p with nzero => p | (ntriple x1 y1 z1) => (ntriple x1 (c0 -- y1) z1) end.
 
-Fixpoint scalb (sc: number) (b:bool) (a: nelt) (p: positive) {struct p}:
- nelt * number :=
+Fixpoint scalb (sc: w) (b:bool) (a: nelt) (p: positive) {struct p}:
+ nelt * w :=
  match p with
    xH => if b then ndouble sc a else (a,sc)
  | xO p1 => let (a1, sc1) := scalb sc false a p1 in
@@ -392,9 +264,9 @@ Definition scal sc a p := scalb sc false a p.
 
 Definition scal_list sc a l :=
   List.fold_left
-  (fun (asc: nelt * number) p1 => let (a,sc) := asc in scal sc a p1) l (a,sc).
+  (fun (asc: nelt * w) p1 => let (a,sc) := asc in scal sc a p1) l (a,sc).
 
-Fixpoint scalL (sc:number) (a: nelt) (l: List.list positive) {struct l}: (nelt * number) :=
+Fixpoint scalL (sc:w) (a: nelt) (l: List.list positive) {struct l}: (nelt * w) :=
    match l with
      List.nil => (a,sc)
    | List.cons n l1 =>
@@ -419,17 +291,26 @@ Definition e2E n :=
 
 
 
+
+Lemma wft_b t : wft t -> [|t|] = [|t|] mod [|wN|].
+Proof. rewrite HwN; auto. Qed.
+
 Lemma nplusw: forall x y, wft x -> wft y ->  wft (x ++ y).
-Proof. intros x y Hx Hy; apply wft_iff, add_mod_bound; apply wft_iff; auto. Qed.
+Proof.
+intros x y Hx Hy; unfold wft, nplus.
+rewrite (mop_spec.(add_mod_spec) _ _ _ _ (wft_b Hx) (wft_b Hy)), HwN.
+rewrite Zmod_mod; auto.
+Qed.
 
 Lemma nsubw: forall x y, wft x -> wft y ->  wft (x -- y).
-Proof. intros x y Hx Hy; apply wft_iff, sub_mod_bound; apply wft_iff; auto. Qed.
+Proof.
+intros x y Hx Hy; unfold wft, nsub.
+rewrite (mop_spec.(sub_mod_spec) _ _ _ _ (wft_b Hx) (wft_b Hy)), HwN.
+rewrite Zmod_mod; auto.
+Qed.
 
 Lemma nmulw: forall x y, wft x -> wft y ->  wft (x ** y).
-Proof.
-intros x y Hx Hy; apply wft_iff, (reduce_mult_bound_small MN mM Hmm' nM M_small);
-  apply wft_iff; auto.
-Qed.
+Proof. intros x y Hx Hy; apply (mmul_spec Hx Hy). Qed.
 
 Hint Resolve nmulw nplusw nsubw : core.
 
@@ -439,9 +320,10 @@ Proof.
 intros x y Hx Hy; unfold ZEll.nplus.
 apply z2Z_char; auto.
 - apply Z.mod_pos_bound; auto.
-- unfold nplus; rewrite add_mod_correct, MN_Z by (apply wft_iff; auto).
+- unfold nplus; rewrite (mop_spec.(add_mod_spec) _ _ _ _ (wft_b Hx) (wft_b Hy)), HwN.
   rewrite Zmod_mod, Zmult_mod_idemp_l, Z.mul_add_distr_r.
-  rewrite Z.add_mod, !z2Z_R, <- Z.add_mod by lia; reflexivity.
+  rewrite Z.add_mod by auto with zarith.
+  rewrite (z2Z_R Hx), (z2Z_R Hy), <- Z.add_mod by auto with zarith; reflexivity.
 Qed.
 
 Lemma nsubz: forall x y, wft x -> wft y ->
@@ -450,9 +332,9 @@ Proof.
 intros x y Hx Hy; unfold ZEll.nsub.
 apply z2Z_char; auto.
 - apply Z.mod_pos_bound; auto.
-- unfold nsub; rewrite sub_mod_correct, MN_Z by (apply wft_iff; auto).
+- unfold nsub; rewrite (mop_spec.(sub_mod_spec) _ _ _ _ (wft_b Hx) (wft_b Hy)), HwN.
   rewrite Zmod_mod, Zmult_mod_idemp_l, Z.mul_sub_distr_r.
-  rewrite Zminus_mod, !z2Z_R, <- Zminus_mod; reflexivity.
+  rewrite Zminus_mod, (z2Z_R Hx), (z2Z_R Hy), <- Zminus_mod; reflexivity.
 Qed.
 
 Lemma nmulz: forall x y, wft x -> wft y ->
@@ -462,13 +344,13 @@ intros x y Hx Hy; unfold ZEll.nmul.
 apply z2Z_char; auto.
 - apply Z.mod_pos_bound; auto.
 - rewrite Zmult_mod_idemp_l.
-  (* cancel one factor RM: both sides times RM are [x] * [y] *)
-  assert (H : ([x ** y] * RM) mod [MN] = (z2Z x * z2Z y * RM * RM) mod [MN]).
-  { unfold nmul, RM; rewrite (reduce_mult_correct MN mM Hmm'); fold RM.
-    replace (z2Z x * z2Z y * RM * RM) with ((z2Z x * RM) * (z2Z y * RM)) by ring.
-    rewrite MN_Z, (Z.mul_mod (z2Z x * RM)), !z2Z_R, <- Z.mul_mod by lia;
-    reflexivity. }
-  generalize (eq_Tn_correct MN mM Hmm' _ _ nM H); rewrite MN_Z; auto.
+  (* cancel one factor R: both sides times R are [x] * [y] *)
+  assert (H : ([|x ** y|] * wB) mod exx.(vN) = (z2Z x * z2Z y * wB * wB) mod exx.(vN)).
+  { unfold nmul; rewrite (proj2 (mmul_spec Hx Hy)).
+    replace (z2Z x * z2Z y * wB * wB) with ((z2Z x * wB) * (z2Z y * wB)) by ring.
+    rewrite (Z.mul_mod (z2Z x * wB)), (z2Z_R Hx), (z2Z_R Hy), <- Z.mul_mod
+      by auto with zarith; reflexivity. }
+  rewrite (R_cancel _ _ H); reflexivity.
 Qed.
 
 Definition wfe p := match p with
@@ -476,20 +358,38 @@ Definition wfe p := match p with
 | _ => True
 end.
 
+Lemma of_Z_mod x : [|ZnZ.of_Z (x mod exx.(vN))|] = x mod exx.(vN).
+Proof.
+apply ZnZ.of_Z_correct.
+assert (H := ZnZ.spec_to_Z wN); rewrite HwN in H.
+generalize (Z.mod_pos_bound x (vN exx) vN_pos); auto with zarith.
+Qed.
+
+Lemma R2_wft : wft wR2.
+Proof. apply wft_intro; rewrite HR2; apply Z.mod_pos_bound; auto. Qed.
+
+Lemma Z2z_spec x : wft (Z2z x) /\
+  ([|Z2z x|] * wB) mod exx.(vN) = (x * wB * wB) mod exx.(vN).
+Proof.
+assert (Hu : wft (ZnZ.of_Z (ops := op) (x mod exx.(vN)))).
+{ apply wft_intro; rewrite of_Z_mod; apply Z.mod_pos_bound; auto. }
+destruct (mmul_spec Hu R2_wft) as [H1 H2].
+split; auto.
+unfold Z2z; rewrite H2, of_Z_mod, HR2.
+rewrite Zmult_mod_idemp_l, Zmult_mod_idemp_r, Z.mul_assoc; reflexivity.
+Qed.
 
 Lemma z2Zx: forall x, z2Z (Z2z x) = x mod exx.(vN).
 Proof.
-intros x; unfold z2Z; rewrite Z2z_encode.
-rewrite (decode_encode MN mM Hmm' nM M_small); auto.
-rewrite MN_Z; apply Z.mod_pos_bound; auto.
+intros x; destruct (Z2z_spec x) as [H1 H2].
+apply z2Z_char; auto.
+- apply Z.mod_pos_bound; auto.
+- rewrite Zmult_mod_idemp_l.
+  apply R_cancel; rewrite H2; reflexivity.
 Qed.
 
 Lemma z2Zx1: forall x, wft (Z2z x).
-Proof.
-intros x; rewrite Z2z_encode; apply wft_iff.
-apply (encode_bound MN mM Hmm' nM M_small).
-rewrite MN_Z; apply Z.mod_pos_bound; auto.
-Qed.
+Proof. intros x; apply (Z2z_spec x). Qed.
 
 Lemma c0w: wft c0.
 Proof. rewrite Hc0; apply z2Zx1. Qed.
@@ -532,17 +432,20 @@ Qed.
      (x ?= y) = Z.eqb (z2Z x) (z2Z y).
  Proof.
  intros x y Hx Hy; unfold neq.
- generalize (eq_correct x y); case eq_num; intros Hxy.
+ rewrite ZnZ.spec_compare; case Z.compare_spec; intros Hxy.
  - assert (H : z2Z y = z2Z x).
    { apply z2Z_char; auto.
      - apply z2Z_bound; auto.
-     - rewrite z2Z_R, Hxy; reflexivity. }
+     - rewrite (z2Z_R Hx), Hxy; reflexivity. }
    rewrite H, Z.eqb_refl; reflexivity.
- - case Z.eqb_spec; auto; intros H; exfalso; apply Hxy.
-   assert (H1 : [x] mod exx.(vN) = [y] mod exx.(vN)).
-   { rewrite <- !z2Z_R, H; reflexivity. }
-   revert H1; apply wft_iff in Hx; apply wft_iff in Hy; rewrite MN_Z in Hx, Hy.
-   rewrite !Zmod_small; auto.
+ - case Z.eqb_spec; auto; intros H; exfalso.
+   assert (H1 : [|x|] mod exx.(vN) = [|y|] mod exx.(vN)).
+   { rewrite <- (z2Z_R Hx), <- (z2Z_R Hy), H; reflexivity. }
+   rewrite <- Hx, <- Hy in H1; auto with zarith.
+ - case Z.eqb_spec; auto; intros H; exfalso.
+   assert (H1 : [|x|] mod exx.(vN) = [|y|] mod exx.(vN)).
+   { rewrite <- (z2Z_R Hx), <- (z2Z_R Hy), H; reflexivity. }
+   rewrite <- Hx, <- Hy in H1; auto with zarith.
  Qed.
 
  Lemma zc0: z2Z c0 = 0.
@@ -853,15 +756,18 @@ Qed.
 Hint Resolve f4 f27 Bw : core.
 
 Lemma mww: forall x y, ZEll.nmul (vN exx) (x mod (vN exx) ) y = ZEll.nmul (vN exx) x y.
+Proof.
 intros x  y; unfold ZEll.nmul; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 
 Lemma wwA: forall x, ZEll.nmul (vN exx) x exx.(vA) = ZEll.nmul (vN exx) x (z2Z A).
+Proof.
 intros x; unfold ZEll.nmul.
 rewrite HA, z2Zx; rewrite Zmult_mod_idemp_r; auto.
 Qed.
 
 Lemma wwB: forall x, ZEll.nmul (vN exx) x exx.(vB) = ZEll.nmul (vN exx) x (z2Z B).
+Proof.
 intros x; unfold ZEll.nmul.
 unfold B; rewrite z2Zx; rewrite Zmult_mod_idemp_r; auto.
 Qed.
@@ -980,20 +886,30 @@ case x; simpl; intros; discriminate.
 case p1; red; simpl; auto.
 Qed.
 
+
+
 Definition ell_test (N S: positive) (l: List.list (positive * positive))
                       (A B x y: Z) :=
+  let k := Peano.pred (nat_of_P (get_height 63 (plength N))) in
+  let op := cmk_op k in
+  let wN := ZnZ.of_Z (ops := op) N in
+  let mop := Mod_op.make_mod_op op wN in
+  (* N' = - N^-1 mod R by Newton iteration; checked below *)
+  let wN' := ZnZ.sub ZnZ.zero
+    (List.fold_left (fun u _ => ZnZ.mul u (ZnZ.sub (ZnZ.of_Z 2) (ZnZ.mul wN u)))
+       (List.repeat tt (k + 7)) ZnZ.one) in
+  (* R^2 mod N *)
+  let wR := rmodn op mop (ZnZ.digits op) in
+  let wR2 := mop.(mul_mod) wR wR in
     if isM2 N then
     match (4 * N) ?= (ZEll.Zmullp l - 1) ^ 2  with
       Lt =>
        match y ^ 2 mod N ?= (x ^ 3 + A * x + B) mod N with
        Eq =>
+         match ZnZ.compare (ZnZ.mul wN wN') (ZnZ.sub ZnZ.zero ZnZ.one) with
+         Eq =>
           let ex := mkEx N S l A B x y in
-          (* the data of the modulus, computed once *)
-          let MN := positive_to_num N in
-          let nM := length MN in
-          let mM := invM (0 - 1)%uint63 (nhead MN) in
-          let rM := r_square MN nM in
-          let e := Z2z ex MN mM nM rM in
+          let e := Z2z ex op wN wN' wR2 in
           let c0 := e 0 in
           let c2 := e 2 in
           let c3 := e 3 in
@@ -1002,18 +918,20 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
           let a := ntriple (e x) (e y) (e 1)  in
           let d4 := e 4 in
           let d27 := e 27 in
-          let da := nplus MN in
-          let dm := nmul MN mM nM in
+          let da := nplus mop in
+          let dm := nmul op wN wN' in
           let isc := (da (dm (dm  (dm d4 dA) dA) dA) (dm (dm d27 dB) dB)) in
-          let (a1, sc1) := scal MN mM nM c0 c2 c3 dA isc a S in
+          let (a1, sc1) := scal op wN wN' mop c0 c2 c3 dA isc a S in
           let (S1,R1) := ZEll.psplit l in
-          let (a2, sc2) := scal MN mM nM c0 c2 c3 dA sc1 a1 S1 in
-          let (a3, sc3) := scalL MN mM nM c0 c2 c3 dA sc2 a2 R1 in
+          let (a2, sc2) := scal op wN wN' mop c0 c2 c3 dA sc1 a1 S1 in
+          let (a3, sc3) := scalL op wN wN' mop c0 c2 c3 dA sc2 a2 R1 in
           match a3 with
-           nzero => if (Z.eqb (Z.gcd (z2Z MN mM nM sc3) N) 1) then true
+           nzero _ => if (Z.eqb (Z.gcd (z2Z op wN wN' sc3) N) 1) then true
                     else false
           | _ => false
           end
+        | _ => false
+        end
       | _  => false
        end
     | _  => false
@@ -1040,18 +958,49 @@ end; intros H3.
 match goal with |- context[?x ?= ?y] =>
   generalize (Zcompare_correct x y); case Z.compare; auto
 end; intros H4.
+set (n := Peano.pred (nat_of_P (get_height 63 (plength N)))).
+set (op := cmk_op n).
+set (op_spec := cmk_spec n).
 set (exx := mkEx N S1 l A1 B1 x y).
 assert (exxs: ex_spec exx).
   constructor; auto.
-set (MN := positive_to_num N).
-set (nM := length MN).
-set (mM := invM (0 - 1)%uint63 (nhead MN)).
-set (rM := r_square MN nM).
-assert (MN_Z : [MN] = vN exx) by apply positive_to_Z.
-assert (Hmm' : φ (nhead MN * mM)%uint63 = wB - 1) by (apply mont_const; auto).
-assert (M_small : [MN] < Zpower_nat wB nM) by apply num_lt_length.
-generalize (@scalL_prime exx exxs MN mM nM rM MN_Z Hmm' M_small eq_refl
-  _ _ _ _ eq_refl eq_refl eq_refl eq_refl).
+assert (H0: N < base (ZnZ.digits op)).
+  apply Z.lt_le_trans with (1 := plength_correct N).
+  unfold op, base.
+  rewrite cmk_op_digits.
+  apply Zpower_le_monotone; split. auto with zarith.
+  generalize (get_height_correct 63 (plength N)); unfold n.
+  set (p := plength N).
+  replace (Z_of_nat (Peano.pred (nat_of_P (get_height 63 p)))) with
+       ((Zpos (get_height 63 p) - 1) ). auto with zarith.
+  rewrite <- Nat.sub_1_r; rewrite inj_minus1.
+  rewrite <- Zpos_eq_Z_of_nat_o_nat_of_P; reflexivity.
+  generalize (lt_O_nat_of_P (get_height 63 p)); auto with zarith.
+set (wN := ZnZ.of_Z (ops := op) N).
+assert (HwN : ZnZ.to_Z wN = vN exx).
+  unfold wN; rewrite ZnZ.of_Z_correct; auto with zarith.
+set (mop := Mod_op.make_mod_op op wN).
+assert (mspec: mod_spec op wN mop).
+  unfold mop; apply Mod_op.make_mod_spec; auto.
+  rewrite HwN; simpl; auto with zarith.
+match goal with |- context[ZnZ.compare ?a ?b] =>
+  generalize (ZnZ.spec_compare a b); case ZnZ.compare; auto
+end; intros Hc.
+set (wN' := ZnZ.sub ZnZ.zero _) in Hc |- *.
+assert (Hinv : ZnZ.to_Z (ZnZ.mul wN wN') = base (ZnZ.digits op) - 1).
+  assert (HB : 0 < base (ZnZ.digits op)).
+    unfold base; apply Z.pow_pos_nonneg; auto with zarith.
+  rewrite (Z.compare_eq _ _ (eq_sym Hc)), ZnZ.spec_sub, ZnZ.spec_0, ZnZ.spec_1.
+  rewrite <- (Z_mod_plus_full (0 - 1) 1), Zmod_small; auto with zarith.
+set (wR := rmodn op mop (ZnZ.digits op)).
+assert (HR2 : ZnZ.to_Z (mop.(mul_mod) wR wR) =
+              (base (ZnZ.digits op) * base (ZnZ.digits op)) mod vN exx).
+  assert (HN1 : 1 < ZnZ.to_Z wN) by (rewrite HwN; simpl; auto with zarith).
+  assert (HR := rmodn_spec op_spec mspec HN1 (ZnZ.digits op)); fold op in HR; fold wR in HR.
+  rewrite (mspec.(mul_mod_spec) _ _ _ _ HR HR), HR, HwN, <- Zmult_mod.
+  unfold base; reflexivity.
+generalize (@scalL_prime exx exxs _ op op_spec wN wN' (mop.(mul_mod) wR wR) mop
+  HwN mspec Hinv HR2 _ _ _ _ eq_refl eq_refl eq_refl eq_refl).
 lazy zeta.
 unfold c1, B, nplus, nmul;
   simpl (exx.(vA)); simpl (exx.(vB)); simpl (exx.(vx)); simpl (exx.(vy));

@@ -63,6 +63,7 @@ Proof. intros; eapply NoDup_app_remove_l; eassumption. Qed.
 (* Uniqueness is decidable *)
 
 Definition ulist_dec: forall l,  ({ ulist l }) + ({ ~ ulist l }).
+Proof.
 intros l; elim l; auto.
 intros a l1 [H|H]; auto.
 case (In_dec eqA_dec a l1); intros H2; auto.

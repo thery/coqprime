@@ -170,6 +170,7 @@ Qed.
 Hint Resolve Kmult_integral_contrapositive : core.
 
 Theorem Kmult_eq_compat_l: forall x y z, y = z -> x * y = x * z.
+Proof.
 intros x y z H; rewrite H; auto.
 Qed.
 
@@ -1465,6 +1466,7 @@ match KLroot r with
   None => forall k, kmul k k <> r
 | Some k => kmul k k = r
 end.
+Proof.
 intros r; generalize (Kfind_root_root r LK); unfold KLroot;
   case Kfind_root; auto.
 Qed.

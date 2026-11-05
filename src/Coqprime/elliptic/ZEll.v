@@ -354,6 +354,7 @@ Local Coercion Zpos : positive >-> Z.
 
  Lemma Zmull_div: forall a l, List.In a l ->
     Zmull l  = (Zmull l / a) * a :> Z.
+Proof.
  intros a l; generalize a; elim l; clear a l; auto.
  intros a H; inversion H.
  simpl List.In; intros a l Hrec b [H | H]; subst.

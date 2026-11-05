@@ -610,6 +610,7 @@ Qed.
 Theorem order_div: forall (A : Set) (A_dec: forall (a b: A), {a = b} + {a <>b}) (op : A -> A -> A) (a: A) (G : FGroup op) m,
  0 < m -> (forall p, prime p -> (p | m) -> gpow a G (m / p) <> G.(e)) ->
  In a G.(s) -> gpow a G m = G.(e) -> e_order A_dec a G = m.
+Proof.
 intros A Adec op a G m Hm H H1 H2.
 assert (F1: 0 <= m); auto with zarith.
 case (e_order_divide_gpow A Adec op a G H1 m F1 H2); intros q Hq.

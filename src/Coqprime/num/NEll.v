@@ -62,6 +62,7 @@ Variable mop_spec: mod_spec op zN mop.
 Variable N_small:  exx.(vN) < base (ZnZ.digits op).
 
 Lemma z2ZN: z2Z zN = exx.(vN).
+Proof.
 apply (@ZnZ.of_Z_correct _ _ op_spec exx.(vN)); split; auto with zarith.
 Qed.
 
@@ -73,14 +74,16 @@ Definition Z2z z :=
 
 Definition S := exx.(vS).
 Definition R := exx.(vR).
-Definition A := Z2z exx.(vA).
+(* the constants used by the point operations: computed once by ell_test *)
+Variable c0 c2 c3 A : zZ.
+Hypothesis Hc0 : c0 = Z2z 0.
+Hypothesis Hc2 : c2 = Z2z 2.
+Hypothesis Hc3 : c3 = Z2z 3.
+Hypothesis HA : A = Z2z exx.(vA).
 Definition B := Z2z exx.(vB).
 Definition xx := Z2z exx.(vx).
 Definition yy := Z2z exx.(vy).
-Definition c3 := Z2z 3.
-Definition c2 := Z2z 2.
 Definition c1 := Z2z 1.
-Definition c0 := Z2z 0.
 
 Inductive nelt: Type :=
   nzero | ntriple: zZ -> zZ -> zZ  -> nelt.
@@ -205,6 +208,7 @@ Definition e2E n :=
 Definition wft t :=  z2Z t = (z2Z t) mod (z2Z zN).
 
 Lemma vN_pos: 0 < exx.(vN).
+Proof.
 red; simpl; auto.
 Qed.
 
@@ -340,22 +344,22 @@ Qed.
 
 Lemma c0w: wft c0.
 Proof.
-red; unfold c0; apply z2Zx1.
+rewrite Hc0; red; apply z2Zx1.
 Qed.
 
 Lemma c2w: wft c2.
 Proof.
-red; unfold c2; apply z2Zx1.
+rewrite Hc2; red; apply z2Zx1.
 Qed.
 
 Lemma c3w: wft c3.
 Proof.
-red; unfold c3; apply z2Zx1.
+rewrite Hc3; red; apply z2Zx1.
 Qed.
 
 Lemma Aw: wft A.
 Proof.
-red; unfold A; apply z2Zx1.
+rewrite HA; red; apply z2Zx1.
 Qed.
 
 Hint Resolve c0w c2w c3w Aw : core.
@@ -401,7 +405,7 @@ Qed.
 
  Lemma zc0: z2Z c0 = 0.
  Proof.
- unfold z2Z, c0, z2Z; simpl.
+ rewrite Hc0; unfold z2Z; simpl.
  generalize ZnZ.spec_0; auto.
  Qed.
 
@@ -423,18 +427,18 @@ Ltac ftac := match goal with
 Lemma c2ww: forall x, ZEll.nmul (vN exx) 2 x = ZEll.nmul (vN exx) (z2Z c2) x.
 Proof.
 intros x; unfold ZEll.nmul.
-unfold c2; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
+rewrite Hc2, z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 Lemma c3ww: forall x, ZEll.nmul (vN exx) 3 x = ZEll.nmul (vN exx) (z2Z c3) x.
 Proof.
 intros x; unfold ZEll.nmul.
-unfold c3; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
+rewrite Hc3, z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 
 Lemma Aww: forall x, ZEll.nmul (vN exx) exx.(vA) x = ZEll.nmul (vN exx) (z2Z A) x.
 Proof.
 intros x; unfold ZEll.nmul.
-unfold A; rewrite z2Zx; rewrite Zmult_mod_idemp_l; auto.
+rewrite HA, z2Zx; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 
 Lemma nadd_correct: forall x y sc,
@@ -711,15 +715,18 @@ Qed.
 Hint Resolve f4 f27 Bw : core.
 
 Lemma mww: forall x y, ZEll.nmul (vN exx) (x mod (vN exx) ) y = ZEll.nmul (vN exx) x y.
+Proof.
 intros x  y; unfold ZEll.nmul; rewrite Zmult_mod_idemp_l; auto.
 Qed.
 
 Lemma wwA: forall x, ZEll.nmul (vN exx) x exx.(vA) = ZEll.nmul (vN exx) x (z2Z A).
+Proof.
 intros x; unfold ZEll.nmul.
-unfold A; rewrite z2Zx; rewrite Zmult_mod_idemp_r; auto.
+rewrite HA, z2Zx; rewrite Zmult_mod_idemp_r; auto.
 Qed.
 
 Lemma wwB: forall x, ZEll.nmul (vN exx) x exx.(vB) = ZEll.nmul (vN exx) x (z2Z B).
+Proof.
 intros x; unfold ZEll.nmul.
 unfold B; rewrite z2Zx; rewrite Zmult_mod_idemp_r; auto.
 Qed.
@@ -892,18 +899,22 @@ Definition ell_test (N S: positive) (l: List.list (positive * positive))
        match y ^ 2 mod N ?= (x ^ 3 + A * x + B) mod N with
        Eq =>
           let ex := mkEx N S l A B x y in
-          let a := ntriple (Z2z ex op x) (Z2z ex op y) (Z2z ex op 1)  in
+          (* the constants, computed once *)
+          let c0 := Z2z ex op 0 in
+          let c2 := Z2z ex op 2 in
+          let c3 := Z2z ex op 3 in
           let A := (Z2z  ex op A) in
+          let a := ntriple (Z2z ex op x) (Z2z ex op y) (Z2z ex op 1)  in
           let B := (Z2z  ex op B) in
           let d4 := (Z2z  ex op 4) in
           let d27 := (Z2z  ex op 27) in
           let da := mop.(add_mod) in
           let dm := mop.(mul_mod) in
           let isc := (da (dm (dm  (dm d4 A) A) A) (dm (dm d27 B) B)) in
-          let (a1, sc1) := scal ex op mop isc a S in
+          let (a1, sc1) := scal op mop c0 c2 c3 A isc a S in
           let (S1,R1) := ZEll.psplit l in
-          let (a2, sc2) := scal ex op mop sc1 a1 S1 in
-          let (a3, sc3) := scalL ex op mop sc2 a2 R1 in
+          let (a2, sc2) := scal op mop c0 c2 c3 A sc1 a1 S1 in
+          let (a3, sc3) := scalL op mop c0 c2 c3 A sc2 a2 R1 in
           match a3 with
            nzero _ => if (Z.eqb (Z.gcd (z2Z op sc3) N) 1) then true
                     else false
@@ -957,9 +968,10 @@ assert (H0: N < base (ZnZ.digits op)).
 assert (mspec: mod_spec op (zN exx op) mop).
   unfold mop; apply make_mod_spec; auto.
   rewrite ZnZ.of_Z_correct; auto with zarith.
-generalize (@scalL_prime exx exxs _ op (cmk_spec n) mop mspec H0).
+generalize (@scalL_prime exx exxs _ op (cmk_spec n) mop mspec H0
+  _ _ _ _ eq_refl eq_refl eq_refl eq_refl).
 lazy zeta.
-unfold c1, A, B,  nplus, nmul;
+unfold c1, B,  nplus, nmul;
   simpl (exx.(vA)); simpl (exx.(vB)); simpl (exx.(vx)); simpl (exx.(vy));
   simpl (exx.(vS)); simpl (exx.(vR)); simpl (exx.(vN)).
 case scal; intros a1 sc1.

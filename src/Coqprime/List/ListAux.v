@@ -80,6 +80,7 @@ Qed.
 
 Theorem app_inv_head:
  forall (l1 l2 l3 : list A), l1 ++ l2 = l1 ++ l3 ->  l2 = l3.
+Proof.
 intros l1; elim l1; simpl; auto.
 intros a l H l2 l3 H0; apply H; injection H0; auto.
 Qed.

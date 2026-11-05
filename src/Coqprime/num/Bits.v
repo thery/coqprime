@@ -73,6 +73,7 @@ Qed.
 Definition is_one p := match p with xH => true | _ => false end.
 
 Theorem is_one_one: forall p, is_one p = true -> p = xH.
+Proof.
 intros p; case p; auto; intros p1 H1; discriminate H1.
 Qed.
 

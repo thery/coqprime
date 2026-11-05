@@ -317,6 +317,7 @@ Qed.
 
 Theorem lucas_prime:
  forall p, 2 < Zpos p -> lucas p = 0 -> prime (2 ^ Zpos p - 1).
+Proof.
 intros p Hp H.
 assert(A1: ZnZ.Specs (op p)).
 apply cmk_spec; auto.

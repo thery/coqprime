@@ -248,7 +248,7 @@ Lemma mod_unique : forall b q1 r1 q2 r2,
      0 <= r2 < b ->
      b * q1 + r1 = b * q2 + r2 ->
      q1 = q2 /\ r1 = r2.
-Proof with auto with zarith.
+Proof.
  intros b q1 r1 q2 r2 H1 H2 H3.
  assert (r2 = (b * q1 + r1) -b*q2).  rewrite H3;ring.
  assert (b*(q2 - q1) = r1 - r2 ).  rewrite H;ring.

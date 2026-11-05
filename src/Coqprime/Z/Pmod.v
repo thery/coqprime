@@ -223,6 +223,7 @@ Lemma egcd_gcd_log2: forall c a b,
   | Some (u,v,r), Some r' => r = r'
   | _, _ => False
   end.
+Proof.
 induction c; simpl; auto; try
  (intros a b; generalize (Pmod_div_eucl a b); case (a/b); simpl;
   intros q r1 H; subst; case (a mod b); auto;
@@ -247,6 +248,7 @@ Lemma egcd_log2_ok: forall c a b,
     None => True
   | Some (u,v,r) => u * a + v * b = r
   end.
+Proof.
 induction c; simpl; auto;
  intros a b; generalize (div_eucl_spec a b); case (a/b);
   simpl fst; simpl snd; intros q r1; case r1; try (intros; ring);
@@ -481,7 +483,7 @@ Lemma egcd_Zis_gcd : forall a b:positive,
    let (uv,w) := egcd a b in
    let  (u,v) := uv in
      u * a + v * b = w /\ Z.gcd a b = w.
-Proof with mauto.
+Proof.
  intros a b; unfold egcd.
  generalize (egcd_log2_ok (xO b) a b) (egcd_gcd_log2 (xO b) a b)
             (egcd_log2_x0 a b) (gcd_Z_gcd b a); unfold egcd, gcd.
