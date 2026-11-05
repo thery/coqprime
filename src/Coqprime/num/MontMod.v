@@ -28,7 +28,7 @@ Variable w : univ_of_cycles.
 Variable op : ZnZ.Ops w.
 Variable op_spec : ZnZ.Specs op.
 
-Notation wB := (base (@ZnZ.digits _ op)).
+Abbreviation wB := (base (@ZnZ.digits _ op)).
 
 Variables wN wN' : w.
 Hypothesis HN : 0 < [|wN|].

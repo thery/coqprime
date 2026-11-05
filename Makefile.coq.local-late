@@ -24,6 +24,9 @@ COQ_VERSION := $(firstword $(subst $(ROCQ_VERSION_PREFIX),,$(subst $(COQ_VERSION
 COQ_EXTENDED_VERSION := $(shell (true | $(COQC) top 2>/dev/null; $(COQC) --version 2>/dev/null))
 
 # Set up EXPECTED_EXT based on supported versions
+ifneq (,$(filter 9.%,$(COQ_VERSION)))
+EXPECTED_EXT:=.v9
+else
 ifneq (,$(filter 8.11%,$(COQ_VERSION)))
 EXPECTED_EXT:=.v811
 else
@@ -40,6 +43,7 @@ ifneq (,$(filter 8.15%,$(COQ_VERSION)))
 EXPECTED_EXT:=.v815
 else
 EXPECTED_EXT:=.v816
+endif
 endif
 endif
 endif
